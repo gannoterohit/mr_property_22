@@ -158,6 +158,7 @@ Route::middleware(['auth','role:admin','admin.permission','admin.activity'])->pr
     Route::get('/maintenance', [BusinessSettingsController::class, 'maintenance'])->name('maintenance');
     Route::post('/maintenance', [BusinessSettingsController::class, 'updateMaintenance'])->name('maintenance.update');
     Route::get('/cities', [CityController::class, 'index'])->name('cities.index');
+    Route::get('/cities/create', [CityController::class, 'create'])->name('cities.create');
     Route::post('/cities', [CityController::class, 'store'])->name('cities.store');
     Route::put('/cities/{city}', [CityController::class, 'update'])->name('cities.update');
     Route::get('/home-page', [\App\Http\Controllers\Admin\HomePageController::class, 'index'])->name('home-page.index');
@@ -179,8 +180,14 @@ Route::middleware(['auth','role:admin','admin.permission','admin.activity'])->pr
     Route::post('/offers/display-settings', [\App\Http\Controllers\Admin\OfferController::class, 'updateDisplaySettings'])->name('offers.display-settings');
     
     // Users Management
+    Route::get('/members', [AdminController::class, 'member360'])->name('members.index');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/users/create', [AdminController::class, 'createUser'])->name('users.create');
+    Route::post('/users', [AdminController::class, 'storeUser'])->name('users.store');
     Route::get('/users/{user}', [AdminController::class, 'userDetail'])->name('users.detail');
+    Route::get('/users/{user}/edit', [AdminController::class, 'editUser'])->name('users.edit');
+    Route::put('/users/{user}', [AdminController::class, 'updateUser'])->name('users.update');
+    Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
     Route::post('/users/{user}/toggle-block', [AdminController::class, 'toggleBlock'])->name('users.toggleBlock');
     Route::put('/members/{user}/notes', [AdminController::class, 'updateMemberNotes'])->name('members.notes');
     Route::post('/members/{user}/restore', [AdminController::class, 'restoreMember'])->name('members.restore');
@@ -190,6 +197,9 @@ Route::middleware(['auth','role:admin','admin.permission','admin.activity'])->pr
     Route::get('/owners/create', [AdminController::class, 'createOwner'])->name('owners.create');
     Route::post('/owners', [AdminController::class, 'storeOwner'])->name('owners.store');
     Route::get('/owners/{owner}', [AdminController::class, 'ownerDetail'])->name('owners.detail');
+    Route::get('/owners/{owner}/edit', [AdminController::class, 'editOwner'])->name('owners.edit');
+    Route::put('/owners/{owner}', [AdminController::class, 'updateOwner'])->name('owners.update');
+    Route::delete('/owners/{owner}', [AdminController::class, 'destroyOwner'])->name('owners.destroy');
     Route::post('/owners/{user}/toggle-block', [AdminController::class, 'toggleBlock'])->name('owners.toggleBlock');
 
     Route::get('/reports', [AdminController::class, 'reports'])->name('reports');

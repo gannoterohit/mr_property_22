@@ -303,7 +303,8 @@ class AdminController extends Controller
         if ($request->search) {
             $query->where(function($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+                  ->orWhere('email', 'like', '%' . $request->search . '%')
+                  ->orWhere('phone', 'like', '%' . $request->search . '%');
             });
         }
         if ($request->status === 'blocked') $query->where('is_blocked',true);
@@ -311,7 +312,65 @@ class AdminController extends Controller
         if ($request->status === 'deleted') $query->onlyTrashed();
         
         $users = $query->latest()->paginate(10);
-        return view('admin.users', compact('users'));
+        $memberStats = [
+            'total' => User::where('role', 'user')->count(),
+            'active' => User::where('role', 'user')->where('is_blocked', false)->count(),
+            'blocked' => User::where('role', 'user')->where('is_blocked', true)->count(),
+            'deleted' => User::onlyTrashed()->where('role', 'user')->count(),
+        ];
+        return view('admin.users', compact('users', 'memberStats'));
+    }
+
+    public function member360(Request $request)
+    {
+        $term = trim((string) $request->input('q'));
+        $matches = collect();
+
+        if ($term !== '') {
+            $matches = User::withTrashed()
+                ->whereIn('role', ['user', 'owner'])
+                ->where(function ($query) use ($term) {
+                    $query->where('name', 'like', "%{$term}%")
+                        ->orWhere('email', 'like', "%{$term}%")
+                        ->orWhere('phone', 'like', "%{$term}%")
+                        ->orWhere('referral_code', 'like', "%{$term}%");
+                    if (ctype_digit($term)) {
+                        $query->orWhere('id', (int) $term);
+                    }
+                })
+                ->withCount(['rooms', 'payments', 'enquiries', 'complaints'])
+                ->latest()
+                ->limit(20)
+                ->get();
+        }
+
+        $member = null;
+        $history = [];
+        if ($request->filled('member_id')) {
+            $member = User::withTrashed()
+                ->whereIn('role', ['user', 'owner'])
+                ->withCount(['rooms', 'payments', 'subscriptions', 'enquiries', 'bookings', 'wishlists', 'complaints', 'cityAlerts', 'referrals'])
+                ->findOrFail($request->integer('member_id'));
+
+            $history = [
+                'rooms' => Room::where('user_id', $member->id)->latest()->limit(25)->get(),
+                'payments' => \App\Models\Payment::where('user_id', $member->id)->latest()->limit(25)->get(),
+                'subscriptions' => \App\Models\Subscription::with('plan')->where('user_id', $member->id)->latest()->limit(25)->get(),
+                'enquiries' => \App\Models\Enquiry::with('room')->where('user_id', $member->id)->latest()->limit(25)->get(),
+                'bookings' => \App\Models\Booking::with('room')->where('user_id', $member->id)->latest()->limit(25)->get(),
+                'complaints' => \App\Models\Complaint::with(['room', 'againstUser'])
+                    ->where(fn ($query) => $query->where('user_id', $member->id)->orWhere('against_user_id', $member->id))
+                    ->latest()->limit(25)->get(),
+                'wishlists' => \App\Models\Wishlist::with('room')->where('user_id', $member->id)->latest()->limit(25)->get(),
+                'city_alerts' => \App\Models\CityAlert::where('user_id', $member->id)->latest()->limit(25)->get(),
+                'referrals' => User::withTrashed()->where('referred_by_id', $member->id)->latest()->limit(25)->get(),
+                'activities' => \App\Models\AdminActivityLog::with('actor')
+                    ->where('subject_type', User::class)->where('subject_id', $member->id)
+                    ->latest()->limit(25)->get(),
+            ];
+        }
+
+        return view('admin.members.index', compact('term', 'matches', 'member', 'history'));
     }
 
     public function owners(Request $request)
@@ -321,25 +380,35 @@ class AdminController extends Controller
         if ($request->search) {
             $query->where(function($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+                  ->orWhere('email', 'like', '%' . $request->search . '%')
+                  ->orWhere('phone', 'like', '%' . $request->search . '%');
             });
         }
         if ($request->filled('verification_status')) $query->where('verification_status',$request->verification_status);
+        if ($request->status === 'active') $query->where('is_blocked', false)->whereNull('deleted_at');
         if ($request->status === 'blocked') $query->where('is_blocked',true);
         if ($request->status === 'deleted') $query->onlyTrashed();
         
         $owners = $query->latest()->paginate(10);
-        return view('admin.owners', compact('owners'));
+        $memberStats = [
+            'total' => User::where('role', 'owner')->count(),
+            'verified' => User::where('role', 'owner')->where('verification_status', 'verified')->count(),
+            'blocked' => User::where('role', 'owner')->where('is_blocked', true)->count(),
+            'deleted' => User::onlyTrashed()->where('role', 'owner')->count(),
+        ];
+        return view('admin.owners', compact('owners', 'memberStats'));
     }
 
     public function userDetail(User $user)
     {
+        abort_unless($user->role === 'user', 404);
         $user->load(['payments','subscriptions.plan','complaints','enquiries.room','adminActivities.actor']);
         return view('admin.user-detail', compact('user'));
     }
 
     public function ownerDetail(User $owner)
     {
+        abort_unless($owner->role === 'owner', 404);
         $owner->load(['rooms','payments','subscriptions.plan','complaints','adminActivities.actor']);
         $rooms = $owner->rooms()->latest()->paginate(10);
         return view('admin.owner-detail', compact('owner', 'rooms'));
@@ -370,6 +439,37 @@ class AdminController extends Controller
         $member=User::withTrashed()->findOrFail($user); $member->restore(); return back()->with('success','Account restored.');
     }
 
+    public function createUser()
+    {
+        return view('admin.members.form', ['member' => new User(), 'memberRole' => 'user']);
+    }
+
+    public function storeUser(Request $request)
+    {
+        $user = $this->createMember($request, 'user');
+        return redirect()->route('admin.users.detail', $user)->with('success', 'User account created successfully.');
+    }
+
+    public function editUser(User $user)
+    {
+        abort_unless($user->role === 'user', 404);
+        return view('admin.members.form', ['member' => $user, 'memberRole' => 'user']);
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        abort_unless($user->role === 'user', 404);
+        $this->updateMember($request, $user);
+        return redirect()->route('admin.users.detail', $user)->with('success', 'User account updated successfully.');
+    }
+
+    public function destroyUser(User $user)
+    {
+        abort_unless($user->role === 'user', 404);
+        $user->delete();
+        return redirect()->route('admin.users')->with('success', 'User account deleted. It can be restored from the Deleted filter.');
+    }
+
 
     public function cityAlerts(Request $request)
     {
@@ -394,28 +494,82 @@ class AdminController extends Controller
     // New Owner Registration by Admin
     public function createOwner()
     {
-        return view('admin.owners.create');
+        return view('admin.members.form', ['member' => new User(), 'memberRole' => 'owner']);
     }
 
     public function storeOwner(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:20|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        $owner = $this->createMember($request, 'owner');
+        return redirect()->route('admin.owners.detail', $owner)->with('success', 'Owner account created successfully.');
+    }
 
-        $owner = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-            'role' => 'owner',
-            'is_verified' => true, // Admin created owners are verified by default
-        ]);
+    public function editOwner(User $owner)
+    {
+        abort_unless($owner->role === 'owner', 404);
+        return view('admin.members.form', ['member' => $owner, 'memberRole' => 'owner']);
+    }
 
-        return redirect()->route('admin.owners')->with('success', 'Owner registered successfully!');
+    public function updateOwner(Request $request, User $owner)
+    {
+        abort_unless($owner->role === 'owner', 404);
+        $this->updateMember($request, $owner);
+        return redirect()->route('admin.owners.detail', $owner)->with('success', 'Owner account updated successfully.');
+    }
+
+    public function destroyOwner(User $owner)
+    {
+        abort_unless($owner->role === 'owner', 404);
+        $owner->delete();
+        return redirect()->route('admin.owners')->with('success', 'Owner account deleted. Listings are retained and the account can be restored.');
+    }
+
+    private function createMember(Request $request, string $role): User
+    {
+        $data = $this->validateMember($request, null, true);
+        $data['password'] = Hash::make($data['password']);
+        $data['role'] = $role;
+        $data['is_verified'] = $data['verification_status'] === 'verified';
+        $data['verified_at'] = $data['is_verified'] ? now() : null;
+        $data['email_verified_at'] = $request->boolean('email_verified') ? now() : null;
+        $data['is_blocked'] = $request->boolean('is_blocked');
+        $data['block_reason'] = $data['is_blocked'] ? ($data['block_reason'] ?: 'Blocked by administrator') : null;
+        unset($data['email_verified']);
+
+        return User::create($data);
+    }
+
+    private function updateMember(Request $request, User $member): void
+    {
+        $data = $this->validateMember($request, $member);
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+        $data['is_verified'] = $data['verification_status'] === 'verified';
+        $data['verified_at'] = $data['is_verified'] ? ($member->verified_at ?: now()) : null;
+        $data['email_verified_at'] = $request->boolean('email_verified') ? ($member->email_verified_at ?: now()) : null;
+        $data['is_blocked'] = $request->boolean('is_blocked');
+        $data['block_reason'] = $data['is_blocked'] ? ($data['block_reason'] ?: 'Blocked by administrator') : null;
+        unset($data['email_verified']);
+        $member->update($data);
+    }
+
+    private function validateMember(Request $request, ?User $member = null, bool $passwordRequired = false): array
+    {
+        return $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($member?->id)],
+            'phone' => ['nullable', 'string', 'max:20', Rule::unique('users', 'phone')->ignore($member?->id)],
+            'password' => [$passwordRequired ? 'required' : 'nullable', 'string', 'min:8', 'confirmed'],
+            'verification_status' => ['required', Rule::in(['pending', 'under_review', 'verified', 'rejected'])],
+            'wallet_balance' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
+            'free_unlocks' => ['required', 'integer', 'min:0', 'max:100000'],
+            'admin_notes' => ['nullable', 'string', 'max:5000'],
+            'block_reason' => ['nullable', 'string', 'max:255'],
+            'is_blocked' => ['nullable', 'boolean'],
+            'email_verified' => ['nullable', 'boolean'],
+        ]);
     }
 
     // Room Management by Admin

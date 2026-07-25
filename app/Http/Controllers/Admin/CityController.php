@@ -16,13 +16,18 @@ class CityController extends Controller
         return view('admin.cities.index', compact('cities'));
     }
 
+    public function create()
+    {
+        return view('admin.cities.create');
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:100|unique:cities,name',
             'state' => 'nullable|string|max:100',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
             'is_default' => 'nullable|boolean',
@@ -34,7 +39,7 @@ class CityController extends Controller
 
         City::create($data);
 
-        return back()->with('success', 'City added successfully.');
+        return redirect()->route('admin.cities.index')->with('success', 'City added successfully.');
     }
 
     public function update(Request $request, City $city)
