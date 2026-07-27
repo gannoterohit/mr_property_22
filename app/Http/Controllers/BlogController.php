@@ -40,7 +40,13 @@ class BlogController extends Controller
         $blog = Blog::where('slug', $slug)
                     ->where('is_published', true)
                     ->firstOrFail();
-                    
-        return view('blogs.show', compact('blog'));
+
+        $recentBlogs = Blog::where('is_published', true)
+            ->where('id', '!=', $blog->id)
+            ->latest()
+            ->take(4)
+            ->get();
+
+        return view('blogs.show', compact('blog', 'recentBlogs'));
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
@@ -52,11 +53,12 @@ test('email verification status is unchanged when the email address is unchanged
 
 test('user can delete their account', function () {
     $user = User::factory()->create();
+    Cache::put('delete_otp_' . $user->id, '123456', now()->addMinutes(10));
 
     $response = $this
         ->actingAs($user)
         ->delete('/profile', [
-            'password' => 'password',
+            'otp' => '123456',
         ]);
 
     $response
@@ -64,21 +66,22 @@ test('user can delete their account', function () {
         ->assertRedirect('/');
 
     $this->assertGuest();
-    $this->assertNull($user->fresh());
+    $this->assertSoftDeleted($user);
 });
 
-test('correct password must be provided to delete account', function () {
+test('correct otp must be provided to delete account', function () {
     $user = User::factory()->create();
+    Cache::put('delete_otp_' . $user->id, '123456', now()->addMinutes(10));
 
     $response = $this
         ->actingAs($user)
         ->from('/profile')
         ->delete('/profile', [
-            'password' => 'wrong-password',
+            'otp' => '000000',
         ]);
 
     $response
-        ->assertSessionHasErrorsIn('userDeletion', 'password')
+        ->assertSessionHas('error', 'Invalid or expired verification code.')
         ->assertRedirect('/profile');
 
     $this->assertNotNull($user->fresh());

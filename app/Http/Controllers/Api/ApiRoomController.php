@@ -236,7 +236,8 @@ class ApiRoomController extends BaseApiController
         try {
             $data = $request->except('photos', 'video');
             $data['user_id'] = Auth::id();
-            $data['status'] = 'pending';
+            $data['status'] = 'active';
+            $data['listing_status'] = 'pending';
             $data['listing_fee_paid'] = false;
 
             if ($request->hasFile('photos')) {

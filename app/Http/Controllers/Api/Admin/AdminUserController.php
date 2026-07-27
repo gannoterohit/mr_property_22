@@ -8,9 +8,17 @@ use App\Models\Room;
 use App\Http\Resources\RoomResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AdminUserController extends BaseApiController
 {
+    public function createUser(Request $request)
+    {
+        return $this->createMember($request, 'user');
+    }
+
     /**
      * List all regular users
      */
@@ -54,6 +62,33 @@ class AdminUserController extends BaseApiController
         if (!$user) return $this->sendError('User not found');
         $user->update(['is_blocked' => !$user->is_blocked]);
         return $this->sendSuccess(['is_blocked' => $user->is_blocked], $user->is_blocked ? 'User blocked' : 'User unblocked');
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        return $this->updateMember($request, $id, 'user');
+    }
+
+    public function deleteUser($id)
+    {
+        return $this->deleteMember($id, 'user');
+    }
+
+    public function updateMemberNotes(Request $request, $id)
+    {
+        $data = $request->validate(['admin_notes' => ['nullable', 'string', 'max:5000']]);
+        $member = User::withTrashed()->find($id);
+        if (!$member || $member->role === 'admin') return $this->sendError('Member not found', [], 404);
+        $member->update($data);
+        return $this->sendSuccess($member, 'Member notes updated');
+    }
+
+    public function restoreMember($id)
+    {
+        $member = User::onlyTrashed()->find($id);
+        if (!$member || $member->role === 'admin') return $this->sendError('Deleted member not found', [], 404);
+        $member->restore();
+        return $this->sendSuccess($member->fresh(), 'Member restored');
     }
 
     /**
@@ -104,18 +139,55 @@ class AdminUserController extends BaseApiController
      */
     public function createOwner(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|max:20|unique:users,phone',
-        ]);
+        return $this->createMember($request, 'owner');
+    }
 
-        if ($validator->fails()) return $this->sendError('Validation failed', $validator->errors(), 422);
+    public function updateOwner(Request $request, $id)
+    {
+        return $this->updateMember($request, $id, 'owner');
+    }
 
-        $owner = User::create([
-            'name' => $request->name, 'email' => $request->email, 'phone' => $request->phone,
-            'role' => 'owner', 'email_verified_at' => now(),
+    public function deleteOwner($id)
+    {
+        return $this->deleteMember($id, 'owner');
+    }
+
+    private function createMember(Request $request, string $role)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
         ]);
-        return $this->sendSuccess($owner, 'Owner created', 201);
+        $member = User::create($data + [
+            'role' => $role,
+            'password' => Hash::make(Str::random(64)),
+            'email_verified_at' => now(),
+            'is_staff_active' => true,
+        ]);
+        return $this->sendSuccess($member, ucfirst($role) . ' created', 201);
+    }
+
+    private function updateMember(Request $request, int $id, string $role)
+    {
+        $member = User::where('role', $role)->find($id);
+        if (!$member) return $this->sendError(ucfirst($role) . ' not found', [], 404);
+        $data = $request->validate([
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($member->id)],
+            'phone' => ['nullable', 'string', 'max:20', Rule::unique('users', 'phone')->ignore($member->id)],
+            'is_verified' => ['nullable', 'boolean'],
+            'verification_status' => ['nullable', Rule::in(['pending', 'verified', 'rejected'])],
+        ]);
+        $member->update($data);
+        return $this->sendSuccess($member->fresh(), ucfirst($role) . ' updated');
+    }
+
+    private function deleteMember(int $id, string $role)
+    {
+        $member = User::where('role', $role)->find($id);
+        if (!$member) return $this->sendError(ucfirst($role) . ' not found', [], 404);
+        $member->delete();
+        return $this->sendSuccess([], ucfirst($role) . ' deleted');
     }
 }

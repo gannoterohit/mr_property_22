@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\City;
+use App\Models\User;
 use App\Services\CityOperations;
 use Illuminate\Cache\Cache;
 use Illuminate\Http\Request;
@@ -130,6 +131,7 @@ class LandingPageController extends Controller
         // DB-based stats for hero section
         $totalRooms  = Room::where('status', 'active')->where('listing_status', 'approved')->count();
         $totalOwners = Room::where('status', 'active')->where('listing_status', 'approved')->distinct('user_id')->count('user_id');
+        $totalUsers  = User::where('role', 'user')->count();
         $totalAreas  = Room::where('status', 'active')->where('listing_status', 'approved')
             ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
             ->distinct('city')->count('city');
@@ -184,7 +186,7 @@ class LandingPageController extends Controller
 
         return view('home-marketplace', compact(
             'rooms', 'popularCities', 'roomCategories', 'latestBlogs',
-            'heroRoom', 'totalRooms', 'totalOwners', 'totalAreas', 'popularAreas',
+            'heroRoom', 'totalRooms', 'totalOwners', 'totalUsers', 'totalAreas', 'popularAreas',
             'cityContext'
         ));
     }

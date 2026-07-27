@@ -9,8 +9,13 @@ use App\Http\Controllers\Api\Admin\AdminContentController;
 use App\Http\Controllers\Api\Admin\AdminSupportController;
 use App\Http\Controllers\Api\Admin\AdminAccessController;
 use App\Http\Controllers\Api\Admin\AdminSystemController;
+use App\Http\Controllers\Api\Admin\AdminAuthController;
+use App\Http\Controllers\Api\Admin\AdminPlatformController;
 
+Route::post('/admin/auth/login', [AdminAuthController::class, 'login'])->middleware('throttle:strict_login');
 Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.activity'])->prefix('admin')->group(function () {
+    Route::get('/auth/me', [AdminAuthController::class, 'me']);
+    Route::post('/auth/logout', [AdminAuthController::class, 'logout']);
 
     // ── Dashboard & Analytics ────────────────
     Route::get('/dashboard',        [AdminDashboardController::class, 'index']);
@@ -19,13 +24,20 @@ Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.acti
 
     // ── User & Owner Management ─────────────
     Route::get('/users',                    [AdminUserController::class, 'users']);
+    Route::post('/users',                   [AdminUserController::class, 'createUser']);
     Route::get('/users/{id}',               [AdminUserController::class, 'userDetail']);
+    Route::put('/users/{id}',               [AdminUserController::class, 'updateUser']);
+    Route::delete('/users/{id}',            [AdminUserController::class, 'deleteUser']);
     Route::post('/users/{id}/toggle-block', [AdminUserController::class, 'toggleBlockUser']);
     
     Route::get('/owners',                   [AdminUserController::class, 'owners']);
     Route::post('/owners',                  [AdminUserController::class, 'createOwner']);
     Route::get('/owners/{id}',              [AdminUserController::class, 'ownerDetail']);
+    Route::put('/owners/{id}',              [AdminUserController::class, 'updateOwner']);
+    Route::delete('/owners/{id}',           [AdminUserController::class, 'deleteOwner']);
     Route::post('/owners/{id}/toggle-block', [AdminUserController::class, 'toggleBlockOwner']);
+    Route::put('/members/{id}/notes',        [AdminUserController::class, 'updateMemberNotes']);
+    Route::post('/members/{id}/restore',     [AdminUserController::class, 'restoreMember']);
 
     // ── Room Management ─────────────────────
     Route::get('/rooms',                    [AdminRoomController::class, 'index']);
@@ -53,6 +65,12 @@ Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.acti
     // ── Content & Settings ───────────────────
     Route::get('/settings',                 [AdminContentController::class, 'getSettings']);
     Route::post('/settings',                [AdminContentController::class, 'updateSettings']);
+    Route::get('/home-page',                [AdminPlatformController::class, 'homePage']);
+    Route::put('/home-page',                [AdminPlatformController::class, 'updateHomePage']);
+    Route::get('/cities',                   [AdminPlatformController::class, 'cities']);
+    Route::post('/cities',                  [AdminPlatformController::class, 'storeCity']);
+    Route::put('/cities/{city}',            [AdminPlatformController::class, 'updateCity']);
+    Route::delete('/cities/{city}',         [AdminPlatformController::class, 'destroyCity']);
     
     Route::get('/blogs',                    [AdminContentController::class, 'blogs']);
     Route::post('/blogs',                   [AdminContentController::class, 'storeBlog']);

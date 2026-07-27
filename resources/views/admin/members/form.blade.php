@@ -61,11 +61,11 @@
             <section class="rounded-2xl border bg-white p-5 shadow-sm">
                 <div class="flex items-center gap-3 border-b pb-4">
                     <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600"><i class="fas fa-key"></i></span>
-                    <div><h2 class="text-sm font-extrabold">Password</h2><p class="text-xs text-slate-500">{{ $editing ? 'Leave blank to keep the current password.' : 'Set the initial account password.' }}</p></div>
+                    <div><h2 class="text-sm font-extrabold">Passwordless login</h2><p class="text-xs text-slate-500">No password is required for this account.</p></div>
                 </div>
-                <div class="mt-5 grid gap-4 sm:grid-cols-2">
-                    <div><label class="text-xs font-bold text-slate-700">Password {{ $editing ? '' : '*' }}</label><input type="password" name="password" {{ $editing ? '' : 'required' }} class="member-field mt-1.5" autocomplete="new-password" placeholder="Minimum 8 characters"></div>
-                    <div><label class="text-xs font-bold text-slate-700">Confirm password</label><input type="password" name="password_confirmation" class="member-field mt-1.5" autocomplete="new-password" placeholder="Repeat password"></div>
+                <div class="mt-5 rounded-xl border border-violet-100 bg-violet-50 p-4">
+                    <p class="text-xs font-extrabold text-violet-800"><i class="fas fa-envelope-circle-check mr-2"></i>Email OTP authentication</p>
+                    <p class="mt-1 text-xs leading-5 text-violet-700">The {{ strtolower($label) }} will sign in with the email address above and a fresh one-time OTP.</p>
                 </div>
             </section>
 

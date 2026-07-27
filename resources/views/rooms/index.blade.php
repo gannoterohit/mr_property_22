@@ -129,6 +129,54 @@
         .room-listing-card, .room-listing-card img { transition: none !important; }
         .room-listing-card:hover { transform: none !important; }
     }
+    /* Reference-led rooms directory */
+    .rooms-search-shell{padding:1.5rem 0;background:#f8fafc}
+    .rooms-search-panel{padding:1.15rem 1.25rem!important;border-radius:1rem;box-shadow:0 12px 34px rgba(15,23,42,.07)}
+    .rooms-search-panel form{gap:1rem!important;flex-wrap:nowrap!important}
+    .rooms-search-panel form>div{min-width:0!important;border-right:0!important;padding-right:0!important}
+    .rooms-search-panel form>div:last-child{width:160px!important;min-width:160px!important}
+    .rooms-search-panel label{color:#64748b!important;font-size:.65rem!important;letter-spacing:.04em!important;text-transform:none!important}
+    .rooms-search-panel input,.rooms-search-panel select{height:46px;border-radius:.65rem!important;background:#fff!important}
+    .rooms-search-panel button[type="submit"]{height:46px;border-radius:.65rem!important}
+    .rooms-main{background:linear-gradient(180deg,#f8fafc 0%,#fff 100%)}
+    .rooms-main>.container{padding-top:1.4rem!important;padding-bottom:3rem!important}
+    .rooms-filter-panel{padding:1.25rem!important;border-radius:1rem!important;box-shadow:0 8px 25px rgba(15,23,42,.05)}
+    .rooms-filter-panel h3{font-size:1.1rem!important}
+    .rooms-filter-panel form{font-size:.78rem}
+    .rooms-filter-panel input[type="text"],.rooms-filter-panel input[type="number"],.rooms-filter-panel input[type="date"],.rooms-filter-panel select{min-height:40px;border-radius:.6rem!important}
+    .rooms-results-head{padding:.25rem 0 1rem;border:0;background:transparent;box-shadow:none}
+    .rooms-results-head h2{font-size:1.65rem!important}
+    .rooms-results-head h2+span{display:block;margin-top:.25rem;color:#2563eb!important}
+    .room-listing-card{border-radius:.9rem!important;box-shadow:0 8px 24px rgba(15,23,42,.07)}
+    .room-listing-card:hover{transform:translateY(-5px)!important;box-shadow:0 20px 42px rgba(15,23,42,.13)}
+    .room-listing-card .room-image{height:14.5rem}
+    .room-listing-card .room-card-body{padding:1rem}
+    .room-listing-card h3{min-height:2.7rem;font-size:1rem!important;color:#0f3fc5!important}
+    .room-price-tag{display:inline-flex;align-items:baseline;gap:.2rem;border:1px solid #dbeafe!important;background:#fff!important;color:#1d4ed8!important;box-shadow:0 8px 18px rgba(15,23,42,.13)!important}
+    .room-price-tag span:last-child{color:#64748b!important}
+    .room-owner-row{display:flex;align-items:center;gap:.55rem;margin:.15rem 0 .85rem;padding-top:.75rem;border-top:1px solid #eef2f7}
+    .room-owner-row img{width:1.65rem;height:1.65rem;border-radius:999px;object-fit:cover;background:#eef2ff}
+    .room-owner-row span{font-size:.7rem;color:#64748b}
+    .room-owner-row strong{color:#334155}
+    .rooms-trust-strip{margin-top:0!important;padding:2.4rem 0!important;border-top:1px solid #e8edf5!important;background:#f8fafc!important;color:#0f172a!important}
+    .rooms-trust-strip>.container{max-width:1320px}
+    .rooms-trust-strip .rooms-trust-grid{gap:1rem!important}
+    .rooms-trust-strip .rooms-trust-item{padding:1rem;border:1px solid #e2e8f0;border-radius:.85rem;background:#fff;box-shadow:0 5px 18px rgba(15,23,42,.035)}
+    .rooms-trust-strip .rooms-trust-item span:first-child{color:#0f172a!important;font-size:.78rem!important}
+    .rooms-trust-strip .rooms-trust-item span:last-child{color:#64748b!important;font-size:.68rem!important}
+    @media(max-width:1199px){
+        .rooms-search-panel form{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))}
+        .rooms-search-panel form>div:last-child{width:auto!important;grid-column:1/-1}
+        .room-listing-card .room-image{height:13.25rem}
+    }
+    @media(max-width:1023px){
+        .rooms-main>.container{padding-inline:1rem!important}
+    }
+    @media(max-width:767px){
+        .rooms-results-head{align-items:flex-start!important}
+        .rooms-results-head h2{font-size:1.35rem!important}
+        .rooms-trust-strip{display:none}
+    }
 </style>
 @endpush
 
@@ -186,7 +234,7 @@
 
                 <!-- Gender -->
                 <div class="flex-1 min-w-[150px] border-r border-slate-100 pr-4">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Gender</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Preferred For</label>
                     <div class="relative">
                         <i class="fas fa-users absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                         <select name="tenant_type[]" class="w-full py-2 pl-8 pr-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none appearance-none transition-all">
@@ -201,7 +249,7 @@
                 <!-- Search Button -->
                 <div class="w-[120px] pl-1">
                     <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 text-xs">
-                        <i class="fas fa-search text-[10px]"></i> Search Stays
+                        <i class="fas fa-search text-[10px]"></i> Search Rooms
                     </button>
                 </div>
             </form>
@@ -577,7 +625,7 @@
 
                                     <!-- Price tag overlay -->
                                     <div class="absolute bottom-2.5 left-2.5">
-                                        <div class="bg-indigo-600 text-white px-3 py-1 rounded-xl shadow-lg border border-white/20">
+                                        <div class="room-price-tag px-3 py-1 rounded-xl">
                                             <span class="text-sm font-black">₹{{ number_format($room->rent) }}</span>
                                             <span class="text-[8px] font-bold text-indigo-100">/mo</span>
                                         </div>
@@ -609,6 +657,14 @@
                                                 <i class="fas fa-users text-indigo-400"></i> {{ $room->tenantTypeLabel() }}
                                             </span>
                                         @endif
+                                    </div>
+
+                                    <div class="room-owner-row">
+                                        <img src="{{ $room->user?->avatar ? asset('storage/'.$room->user->avatar) : asset('assets/images/default-avatar.svg') }}"
+                                             alt="{{ $room->user?->name ?? 'Property owner' }}"
+                                             loading="lazy"
+                                             onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'">
+                                        <span>Owner: <strong>{{ $room->user?->name ?? 'Verified owner' }}</strong></span>
                                     </div>
 
                                     <!-- Bottom actions -->
@@ -683,10 +739,10 @@
 </div>
 
 <!-- ===== BOTTOM TRUST RIBBON ===== -->
-<div class="bg-[#0b0f19] text-white py-12 border-t border-slate-900 mt-12">
+<div class="rooms-trust-strip bg-[#0b0f19] text-white py-12 border-t border-slate-900 mt-12">
     <div class="container mx-auto px-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
-            <div class="flex flex-col md:flex-row items-center gap-4">
+        <div class="rooms-trust-grid grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
+            <div class="rooms-trust-item flex flex-col md:flex-row items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl shadow-inner">
                     <i class="fas fa-shield-halved"></i>
                 </div>
@@ -695,7 +751,7 @@
                     <span class="block text-xs text-slate-400 mt-0.5">Physical inspections done</span>
                 </div>
             </div>
-            <div class="flex flex-col md:flex-row items-center gap-4">
+            <div class="rooms-trust-item flex flex-col md:flex-row items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl shadow-inner">
                     <i class="fas fa-wallet"></i>
                 </div>
@@ -704,7 +760,7 @@
                     <span class="block text-xs text-slate-400 mt-0.5">Direct owner connections</span>
                 </div>
             </div>
-            <div class="flex flex-col md:flex-row items-center gap-4">
+            <div class="rooms-trust-item flex flex-col md:flex-row items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl shadow-inner">
                     <i class="fas fa-file-signature"></i>
                 </div>
@@ -713,7 +769,7 @@
                     <span class="block text-xs text-slate-400 mt-0.5">Safe online transactions</span>
                 </div>
             </div>
-            <div class="flex flex-col md:flex-row items-center gap-4">
+            <div class="rooms-trust-item flex flex-col md:flex-row items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl shadow-inner">
                     <i class="fas fa-headset"></i>
                 </div>

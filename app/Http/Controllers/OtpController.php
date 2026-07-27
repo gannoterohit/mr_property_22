@@ -9,6 +9,8 @@ use App\Models\Setting;
 use App\Mail\OtpMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class OtpController extends Controller
 {
@@ -195,6 +197,7 @@ class OtpController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'role' => $request->role ?? 'user',
+            'password' => Hash::make(Str::random(64)),
             'email_verified_at' => now(),
             'referred_by_id' => $referredBy,
             'wallet' => 0, // Points system ignored now

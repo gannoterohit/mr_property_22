@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\Otp;
 
 test('login screen can be rendered', function () {
     $response = $this->get('/login');
@@ -10,23 +11,24 @@ test('login screen can be rendered', function () {
 
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
+    $otp = Otp::generate($user->email);
 
-    $response = $this->post('/login', [
+    $response = $this->postJson('/verify-login-otp', [
         'email' => $user->email,
-        'password' => 'password',
+        'otp' => $otp,
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertOk()->assertJsonPath('success', true);
 });
 
-test('users can not authenticate with invalid password', function () {
+test('users can not authenticate with invalid otp', function () {
     $user = User::factory()->create();
 
-    $this->post('/login', [
+    $this->postJson('/verify-login-otp', [
         'email' => $user->email,
-        'password' => 'wrong-password',
-    ]);
+        'otp' => '000000',
+    ])->assertUnauthorized();
 
     $this->assertGuest();
 });

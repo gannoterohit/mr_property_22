@@ -39,6 +39,17 @@ class PlatformAvailability
             return $this->unavailable($request, 'payments');
         }
 
+        if (!$this->enabled('wallet_enabled', true) && ($request->routeIs('wallet', 'wallet.*')
+            || $request->is('api/v1/wallet', 'api/v1/wallet/*')
+            || $request->input('payment_method') === 'wallet')) {
+            return $this->unavailable($request, 'wallet');
+        }
+
+        if (!$this->enabled('referral_enabled', true) && ($request->routeIs('referral.*')
+            || $request->is('api/v1/referral-stats', 'api/v1/referral/*'))) {
+            return $this->unavailable($request, 'referral');
+        }
+
         if ($user?->role === 'owner' && !$this->enabled('owner_panel_enabled', true)
             && $this->isOwnerWorkspace($request)) {
             return $this->unavailable($request, 'owner_panel');
@@ -56,7 +67,14 @@ class PlatformAvailability
     {
         return $request->is('admin', 'admin/*', 'admin-login', 'login', 'logout', 'up', 'storage/*', 'build/*')
             || $request->routeIs('login', 'logout', 'razorpay.verify', 'razorpay.webhook')
-            || $request->is('webhook/razorpay', 'api/v1/webhook/razorpay');
+            || $request->is(
+                'webhook/razorpay',
+                'api/v1/webhook/razorpay',
+                'api/v1/settings',
+                'api/v1/auth/send-otp',
+                'api/v1/auth/login',
+                'api/v1/admin/auth/login'
+            );
     }
 
     private function enabled(string $key, bool $default = false): bool
@@ -92,6 +110,8 @@ class PlatformAvailability
             'registration' => ['Registration is temporarily unavailable', 'New registrations are paused for a short time. Existing members can still log in.'],
             'listings' => ['New listings are temporarily paused', 'Owners can manage existing properties, but new property submission is currently unavailable.'],
             'payments' => ['Payments are temporarily unavailable', 'Purchases and contact unlocks are paused. No amount has been charged for this attempt.'],
+            'wallet' => ['Wallet is temporarily unavailable', 'Wallet balance and wallet payments are currently disabled by the administrator.'],
+            'referral' => ['Referral system is temporarily unavailable', 'Referral rewards and referral statistics are currently disabled by the administrator.'],
             'owner_panel' => ['Owner panel is temporarily unavailable', 'Owner workspace access is paused while we complete essential maintenance.'],
             'user_panel' => ['User panel is temporarily unavailable', 'User workspace access is paused while we complete essential maintenance.'],
         ];

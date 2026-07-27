@@ -9,10 +9,29 @@
     footer, .mobile-bottom-nav, #fixed-footer {
         display: none !important;
     }
+    #settings-form {
+        display: block !important;
+        width: 100% !important;
+    }
+    #settings-form > [data-settings-panel] {
+        display: block;
+        width: 100% !important;
+        min-width: 0;
+    }
+    #settings-form > [data-settings-panel][hidden] {
+        display: none !important;
+    }
+    #settings-form > [data-settings-panel] > div {
+        width: 100%;
+    }
+    #settings-save-bar {
+        display: flex !important;
+        width: 100% !important;
+        clear: both;
+    }
 </style>
 @endpush
-<!-- Alpine Data for Tabs -->
-<div x-data="{ activeTab: 'general' }" class="flex flex-col min-h-0 bg-gray-50">
+<div id="business-settings-tabs" class="flex flex-col min-h-0 bg-gray-50">
     
     <!-- Header -->
     <div class="bg-white border-b border-gray-200 shadow-sm z-10 w-full">
@@ -45,7 +64,7 @@
                 ['mail', 'fa-envelope', 'Mail Server'],
                 ['referral', 'fa-toggle-on', 'Feature Toggles'],
             ] as [$tabKey, $tabIcon, $tabLabel])
-                <button type="button" @click="activeTab = '{{ $tabKey }}'" :class="activeTab === '{{ $tabKey }}' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900'" class="inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-4 text-xs font-bold transition" role="tab" :aria-selected="activeTab === '{{ $tabKey }}'">
+                <button type="button" data-settings-tab="{{ $tabKey }}" class="inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg bg-slate-50 px-4 text-xs font-bold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900" role="tab" aria-selected="false">
                     <i class="fas {{ $tabIcon }} text-[11px]"></i><span>{{ $tabLabel }}</span>
                 </button>
             @endforeach
@@ -62,7 +81,7 @@
                 @csrf
                 
                 <!-- General Section -->
-                <div x-show="activeTab === 'general'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+                <div data-settings-panel="general" class="space-y-6">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                         <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
                              <div class="h-10 w-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center mr-4">
@@ -109,11 +128,10 @@
                             </div>
                         </div>
                     </div>
-                    @include('admin.partials.settings-save-button', ['tab' => 'general'])
                 </div>
                 
                  <!-- Commission Section -->
-                <div x-show="activeTab === 'commission'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6" style="display: none;">
+                <div data-settings-panel="commission" class="space-y-6" hidden>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                         <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
                              <div class="h-10 w-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mr-4">
@@ -145,11 +163,10 @@
                             </div>
                         </div>
                     </div>
-                    @include('admin.partials.settings-save-button', ['tab' => 'commission'])
                 </div>
 
                 <!-- Appearance Section -->
-                <div x-show="activeTab === 'appearance'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6" style="display: none;">
+                <div data-settings-panel="appearance" class="space-y-6" hidden>
                     
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
@@ -310,11 +327,10 @@
                             </div>
                         </div>
                     </div>
-                    @include('admin.partials.settings-save-button', ['tab' => 'appearance'])
                 </div>
                 
                 <!-- Mail Section -->
-                 <div x-show="activeTab === 'mail'" class="space-y-6 w-full" style="display: none;">
+                 <div data-settings-panel="mail" class="space-y-6 w-full" hidden>
                      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
                              <div class="h-10 w-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mr-4">
@@ -351,11 +367,10 @@
                              <p class="text-sm text-indigo-800">You may need to clear cache after updating mail settings.</p>
                          </div>
                     </div>
-                    @include('admin.partials.settings-save-button', ['tab' => 'mail'])
                 </div>
 
                 <!-- Referral Section (Feature Toggles) -->
-                 <div x-show="activeTab === 'referral'" class="space-y-6 w-full" style="display: none;">
+                 <div data-settings-panel="referral" class="space-y-6 w-full" hidden>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full">
                         <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
                              <div class="h-10 w-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mr-4">
@@ -402,11 +417,10 @@
                             </div>
                         </div>
                     </div>
-                    @include('admin.partials.settings-save-button', ['tab' => 'referral'])
                 </div>
 
                 <!-- Payment Section -->
-                <div x-show="activeTab === 'payment'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6" style="display: none;">
+                <div data-settings-panel="payment" class="space-y-6" hidden>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
                              <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mr-4">
@@ -433,11 +447,10 @@
                             </div>
                         </div>
                     </div>
-                    @include('admin.partials.settings-save-button', ['tab' => 'payment'])
                 </div>
                 
                  <!-- Integrations (Maps) Section -->
-                <div x-show="activeTab === 'integrations'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6" style="display: none;">
+                <div data-settings-panel="integrations" class="space-y-6" hidden>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
                              <div class="h-10 w-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center mr-4">
@@ -453,11 +466,32 @@
                             <input type="text" name="google_maps_api_key" value="{{ \App\Models\Setting::get('google_maps_api_key') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono">
                         </div>
                     </div>
-                    @include('admin.partials.settings-save-button', ['tab' => 'integrations'])
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                        <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
+                            <div class="h-10 w-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mr-4">
+                                <i class="fas fa-mobile-screen-button text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800">Mobile App Links</h2>
+                                <p class="text-sm text-gray-500">Footer buttons appear only after a store link is saved</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Google Play Store Link</label>
+                                <input type="url" name="play_store_url" value="{{ \App\Models\Setting::get('play_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors focus:border-indigo-500 focus:bg-white focus:ring-0" placeholder="https://play.google.com/store/apps/details?id=...">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Apple App Store Link</label>
+                                <input type="url" name="app_store_url" value="{{ \App\Models\Setting::get('app_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors focus:border-indigo-500 focus:bg-white focus:ring-0" placeholder="https://apps.apple.com/app/...">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- SEO Section -->
-                 <div x-show="activeTab === 'seo'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6" style="display: none;">
+                 <div data-settings-panel="seo" class="space-y-6" hidden>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
                              <div class="h-10 w-10 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center mr-4">
@@ -518,7 +552,6 @@
                                     <input type="text" name="google_ads_tag_id" value="{{ \App\Models\Setting::get('google_ads_tag_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="AW-XXXXXXXXX">
                                     <p class="mt-1 text-xs text-gray-500">For Ads Tracking. Starts with <strong>AW-</strong></p>
                                 </div>
-                            </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -616,7 +649,12 @@
 
                         </div>
                     </div>
-                    @include('admin.partials.settings-save-button', ['tab' => 'seo'])
+                </div>
+
+                <div id="settings-save-bar" class="sticky bottom-4 z-20 mt-6 items-center justify-end border-t border-slate-200 bg-gray-50/95 py-4 backdrop-blur">
+                    <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-7 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700">
+                        <i class="fas fa-save mr-2"></i> Save Changes
+                    </button>
                 </div>
             </form>
         </div>
@@ -642,6 +680,42 @@ function syncColorInputs(colorId, textId) {
 }
 syncColorInputs('primary_color', 'primary_color_text');
 syncColorInputs('secondary_color', 'secondary_color_text');
+
+document.addEventListener('DOMContentLoaded', () => {
+    const root = document.getElementById('business-settings-tabs');
+    if (!root) return;
+
+    const tabs = [...root.querySelectorAll('[data-settings-tab]')];
+    const panels = [...root.querySelectorAll('[data-settings-panel]')];
+    const validTabs = tabs.map((tab) => tab.dataset.settingsTab);
+
+    const activateTab = (tabName, updateUrl = true) => {
+        const activeTab = validTabs.includes(tabName) ? tabName : 'general';
+
+        tabs.forEach((tab) => {
+            const selected = tab.dataset.settingsTab === activeTab;
+            tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+            tab.classList.toggle('bg-indigo-600', selected);
+            tab.classList.toggle('text-white', selected);
+            tab.classList.toggle('shadow-sm', selected);
+            tab.classList.toggle('bg-slate-50', !selected);
+            tab.classList.toggle('text-slate-600', !selected);
+        });
+
+        panels.forEach((panel) => {
+            panel.hidden = panel.dataset.settingsPanel !== activeTab;
+        });
+
+        if (updateUrl) {
+            history.replaceState(null, '', `${location.pathname}${location.search}#${activeTab}`);
+        }
+    };
+
+    tabs.forEach((tab) => {
+        tab.addEventListener('click', () => activateTab(tab.dataset.settingsTab));
+    });
+
+    activateTab(location.hash.replace('#', '') || 'general', false);
+});
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
 @endpush

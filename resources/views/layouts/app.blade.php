@@ -1084,8 +1084,30 @@
                     </ul>
                 </div>
 
+                @php
+                    $playStoreUrl = trim((string) \App\Models\Setting::get('play_store_url'));
+                    $appStoreUrl = trim((string) \App\Models\Setting::get('app_store_url'));
+                @endphp
+                @if($playStoreUrl || $appStoreUrl)
+                <div class="lg:col-span-3">
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Download Our App</h4>
+                    <p class="mb-4 text-xs font-medium leading-relaxed text-slate-400">Get the ApnaNest app for a better room-search experience.</p>
+                    <div class="flex flex-wrap gap-2">
+                        @if($playStoreUrl)
+                            <a href="{{ $playStoreUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-bold text-white transition hover:bg-white/10">
+                                <i class="fab fa-google-play text-base"></i><span>Google Play</span>
+                            </a>
+                        @endif
+                        @if($appStoreUrl)
+                            <a href="{{ $appStoreUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-bold text-white transition hover:bg-white/10">
+                                <i class="fab fa-apple text-lg"></i><span>App Store</span>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+                @else
                 <!-- Contact -->
-                <div class="lg:col-span-2">
+                <div class="lg:col-span-3">
                     <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Contact</h4>
                     <ul class="space-y-3 text-xs font-semibold">
                         <li class="flex items-center gap-2 text-white">
@@ -1102,6 +1124,7 @@
                         </li>
                     </ul>
                 </div>
+                @endif
             </div>
 
             <!-- Footer Bottom -->

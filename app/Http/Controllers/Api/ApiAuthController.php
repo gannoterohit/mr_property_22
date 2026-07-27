@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\Setting;
 use App\Mail\OtpMail;
+use Illuminate\Support\Str;
 
 class ApiAuthController extends BaseApiController
 {
@@ -82,6 +83,7 @@ class ApiAuthController extends BaseApiController
                 'name' => 'User', 
                 'email' => $request->email,
                 'role' => 'user', 
+                'password' => Hash::make(Str::random(64)),
                 'email_verified_at' => now(),
             ]);
         }
@@ -89,8 +91,8 @@ class ApiAuthController extends BaseApiController
         if ($user->is_blocked) {
             return $this->sendError('Your account is blocked.', [], 403);
         }
-        if ($user->role === 'admin' && !$user->is_staff_active) {
-            return $this->sendError('This admin account is inactive.', [], 403);
+        if ($user->role === 'admin') {
+            return $this->sendError('Administrators must use the admin email and password login.', [], 403);
         }
 
         $token = $user->createToken('flutter_app')->plainTextToken;
@@ -143,6 +145,7 @@ class ApiAuthController extends BaseApiController
             'email' => $request->email,
             'phone' => $request->phone,
             'role' => $request->input('role', 'user'),
+            'password' => Hash::make(Str::random(64)),
             'email_verified_at' => now(),
             'referred_by_id' => $referredBy,
             'wallet' => 0,

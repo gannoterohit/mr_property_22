@@ -20,6 +20,11 @@ class ApiSettingsController extends BaseApiController
             'contact_phone' => Setting::get('contact_phone', ''),
             'currency_symbol' => '₹',
             'razorpay_key' => Setting::get('razorpay_key', ''),
+            'app_download' => [
+                'play_store_url' => Setting::get('play_store_url', ''),
+                'app_store_url' => Setting::get('app_store_url', ''),
+                'is_available' => filled(Setting::get('play_store_url')) || filled(Setting::get('app_store_url')),
+            ],
             'social_links' => [
                 'facebook' => Setting::get('facebook_url', ''),
                 'instagram' => Setting::get('instagram_url', ''),
@@ -38,6 +43,10 @@ class ApiSettingsController extends BaseApiController
                 'payments_enabled' => filter_var(Setting::get('payments_enabled', '1'), FILTER_VALIDATE_BOOLEAN),
                 'owner_panel_enabled' => filter_var(Setting::get('owner_panel_enabled', '1'), FILTER_VALIDATE_BOOLEAN),
                 'user_panel_enabled' => filter_var(Setting::get('user_panel_enabled', '1'), FILTER_VALIDATE_BOOLEAN),
+                'wallet_enabled' => filter_var(Setting::get('wallet_enabled', '1'), FILTER_VALIDATE_BOOLEAN),
+                'referral_enabled' => filter_var(Setting::get('referral_enabled', '1'), FILTER_VALIDATE_BOOLEAN),
+                'promo_enabled' => filter_var(Setting::get('promo_enabled', '1'), FILTER_VALIDATE_BOOLEAN),
+                'subscriptions_enabled' => filter_var(Setting::get('payments_enabled', '1'), FILTER_VALIDATE_BOOLEAN),
             ],
             'maintenance' => [
                 'title' => Setting::get('maintenance_title', 'Website is currently under maintenance'),

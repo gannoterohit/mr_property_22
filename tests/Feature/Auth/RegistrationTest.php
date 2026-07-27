@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Otp;
+
 test('registration screen can be rendered', function () {
     $response = $this->get('/register');
 
@@ -7,13 +9,14 @@ test('registration screen can be rendered', function () {
 });
 
 test('new users can register', function () {
-    $response = $this->post('/register', [
+    $otp = Otp::generate('test@example.com');
+    $response = $this->postJson('/verify-registration-otp', [
         'name' => 'Test User',
         'email' => 'test@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'role' => 'user',
+        'otp' => $otp,
     ]);
 
+    $response->assertOk()->assertJsonPath('success', true);
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
 });

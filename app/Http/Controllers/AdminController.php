@@ -20,6 +20,7 @@ use App\Models\RejectionReason;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -525,8 +526,10 @@ class AdminController extends Controller
 
     private function createMember(Request $request, string $role): User
     {
-        $data = $this->validateMember($request, null, true);
-        $data['password'] = Hash::make($data['password']);
+        $data = $this->validateMember($request);
+        // Members authenticate with an email OTP. Keep an unusable random value only
+        // because the legacy users table still requires a non-null password column.
+        $data['password'] = Hash::make(Str::random(64));
         $data['role'] = $role;
         $data['is_verified'] = $data['verification_status'] === 'verified';
         $data['verified_at'] = $data['is_verified'] ? now() : null;
@@ -541,11 +544,6 @@ class AdminController extends Controller
     private function updateMember(Request $request, User $member): void
     {
         $data = $this->validateMember($request, $member);
-        if (!empty($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        } else {
-            unset($data['password']);
-        }
         $data['is_verified'] = $data['verification_status'] === 'verified';
         $data['verified_at'] = $data['is_verified'] ? ($member->verified_at ?: now()) : null;
         $data['email_verified_at'] = $request->boolean('email_verified') ? ($member->email_verified_at ?: now()) : null;
@@ -555,13 +553,12 @@ class AdminController extends Controller
         $member->update($data);
     }
 
-    private function validateMember(Request $request, ?User $member = null, bool $passwordRequired = false): array
+    private function validateMember(Request $request, ?User $member = null): array
     {
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($member?->id)],
             'phone' => ['nullable', 'string', 'max:20', Rule::unique('users', 'phone')->ignore($member?->id)],
-            'password' => [$passwordRequired ? 'required' : 'nullable', 'string', 'min:8', 'confirmed'],
             'verification_status' => ['required', Rule::in(['pending', 'under_review', 'verified', 'rejected'])],
             'wallet_balance' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
             'free_unlocks' => ['required', 'integer', 'min:0', 'max:100000'],

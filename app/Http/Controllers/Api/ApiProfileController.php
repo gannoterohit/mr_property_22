@@ -9,6 +9,9 @@ use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Setting;
+use App\Mail\AccountDeletionOtpMail;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 
 class ApiProfileController extends BaseApiController
 {
@@ -58,16 +61,14 @@ class ApiProfileController extends BaseApiController
     public function sendDeleteOtp()
     {
         $user = Auth::user();
-        $otp = rand(1000, 9999);
-        
-        $user->update(['verification_code' => $otp]);
-        
-        // Use existing mail logic if available or just return for integration
+        $otp = random_int(100000, 999999);
+        Cache::put('delete_otp_' . $user->id, (string) $otp, now()->addMinutes(10));
         Setting::setMailConfig();
 
         try {
-            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\OTPMail($otp));
+            Mail::to($user->email)->send(new AccountDeletionOtpMail($otp));
         } catch (\Exception $e) {
+            Cache::forget('delete_otp_' . $user->id);
             \Illuminate\Support\Facades\Log::error('Delete OTP mail failed: ' . $e->getMessage());
             return $this->sendError(
                 'Unable to send verification email. Please try again later.',
@@ -85,17 +86,18 @@ class ApiProfileController extends BaseApiController
     public function destroy(Request $request)
     {
         $user = Auth::user();
-        
-        if ($request->filled('otp')) {
-            if ($user->verification_code != $request->otp) {
-                return $this->sendError('Invalid OTP');
-            }
-        } else {
-             return $this->sendError('OTP is required for account deletion');
+
+        $request->validate([
+            'otp' => ['required', 'digits:6'],
+        ]);
+        $cachedOtp = Cache::get('delete_otp_' . $user->id);
+        if (!$cachedOtp || !hash_equals((string) $cachedOtp, (string) $request->otp)) {
+            return $this->sendError('Invalid or expired OTP', [], 422);
         }
 
         $user->tokens()->delete();
         $user->delete();
+        Cache::forget('delete_otp_' . $user->id);
 
         return $this->sendSuccess([], 'Account deleted successfully');
     }

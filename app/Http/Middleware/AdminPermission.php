@@ -11,6 +11,9 @@ class AdminPermission
     {
         $user = $request->user();
         if (!$user || $user->role !== 'admin' || !$user->is_staff_active) abort(403, 'This admin account is inactive.');
+        if ($user->currentAccessToken() && !$user->tokenCan('admin')) {
+            abort(403, 'This token is not authorized for the admin API.');
+        }
 
         $permission = $this->permissionFor($request);
         if ($permission && !$user->hasAdminPermission($permission)) abort(403, 'You do not have permission to access this admin module.');
@@ -26,11 +29,11 @@ class AdminPermission
             $path = ltrim((string) $request->path(), '/');
             if (str_contains($path, '/staff') || str_contains($path, '/roles') || str_contains($path, '/permission-catalog')) return 'staff.manage';
             if (str_contains($path, '/activity-logs')) return 'activity.view';
-            if (str_contains($path, '/rooms') || str_contains($path, '/rejection-reasons')) return $write ? 'listings.manage' : 'listings.view';
-            if (str_contains($path, '/users') || str_contains($path, '/owners')) return $write ? 'people.manage' : 'people.view';
+            if (str_contains($path, '/rooms') || str_contains($path, '/room-options') || str_contains($path, '/rejection-reasons')) return $write ? 'listings.manage' : 'listings.view';
+            if (str_contains($path, '/users') || str_contains($path, '/owners') || str_contains($path, '/members')) return $write ? 'people.manage' : 'people.view';
             if (str_contains($path, '/complaints') || str_contains($path, '/contact-messages') || str_contains($path, '/city-alerts') || str_contains($path, '/subscribers')) return $write ? 'support.manage' : 'support.view';
             if (str_contains($path, '/payments') || str_contains($path, '/payouts') || str_contains($path, '/plans')) return $write ? 'finance.manage' : 'finance.view';
-            if (str_contains($path, '/blogs') || str_contains($path, '/offers') || str_contains($path, '/pages')) return $write ? 'content.manage' : 'content.view';
+            if (str_contains($path, '/blogs') || str_contains($path, '/offers') || str_contains($path, '/pages') || str_contains($path, '/home-page')) return $write ? 'content.manage' : 'content.view';
             if (str_contains($path, '/reports') || str_contains($path, '/analytics') || str_contains($path, '/search-logs')) return 'reports.view';
             if (str_contains($path, '/settings') || str_contains($path, '/maintenance') || str_contains($path, '/cities')) return 'settings.manage';
             if (str_ends_with($path, '/dashboard')) return 'dashboard.view';
