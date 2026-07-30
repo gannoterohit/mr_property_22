@@ -886,6 +886,9 @@
                                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
                                         <i class="fas fa-user-circle text-indigo-400 w-4 text-sm"></i> My Profile
                                     </a>
+                                    <a href="{{ route('unlocks.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
+                                        <i class="fas fa-address-book text-emerald-500 w-4 text-sm"></i> My Unlocked Contacts
+                                    </a>
                                     @if(\App\Models\Setting::get('wallet_enabled', '1') === '1')
                                         <a href="{{ route('wallet') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
                                             <i class="fas fa-wallet text-indigo-400 w-4 text-sm"></i> My Wallet
@@ -981,7 +984,7 @@
     </main>
 
     <!-- Stay Updated Banner Section -->
-    @if(!Route::is('home') && !Route::is('pages.*') && !Route::is('cms-pages.show') && !Route::is('owner.*') && !Route::is('complaints.*') && !Route::is('rooms.create', 'rooms.edit') && !Route::is('dashboard', 'profile.edit', 'wallet', 'referral.index', 'plans', 'login', 'register'))
+    @if(!Route::is('home') && !Route::is('pages.*') && !Route::is('cms-pages.show') && !Route::is('owner.*') && !Route::is('complaints.*') && !Route::is('rooms.create', 'rooms.edit') && !Route::is('dashboard', 'profile.edit', 'wallet', 'referral.index', 'plans', 'unlocks.index', 'login', 'register'))
     <div class="hidden lg:block bg-indigo-50/70 border-t border-indigo-100 py-8">
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex items-center gap-4">
@@ -1006,7 +1009,7 @@
     @endif
 
     <!-- Redesigned Footer Section -->
-    <footer class="site-footer relative text-slate-400 pt-12 pb-6 hidden lg:block overflow-hidden border-t" @if(Route::is('owner.*') || Route::is('complaints.*') || Route::is('rooms.create', 'rooms.edit') || Route::is('dashboard', 'profile.edit', 'wallet', 'referral.index', 'plans', 'login', 'register')) style="display:none !important" @endif>
+    <footer class="site-footer relative text-slate-400 pt-12 pb-6 hidden lg:block overflow-hidden border-t" @if(Route::is('owner.*') || Route::is('complaints.*') || Route::is('rooms.create', 'rooms.edit') || Route::is('dashboard', 'profile.edit', 'wallet', 'referral.index', 'plans', 'unlocks.index', 'login', 'register')) style="display:none !important" @endif>
         <div class="container mx-auto px-6 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
                 <!-- Brand Info (Col span 3) -->

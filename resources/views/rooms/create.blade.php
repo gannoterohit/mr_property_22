@@ -45,8 +45,13 @@
                         <i class="fas fa-info-circle"></i>
                     </div>
                     <div>
-                        <p class="font-bold text-amber-900">Listing Fee: ₹{{ \App\Models\Setting::get('listing_fee', 199) }}</p>
-                        <p class="text-sm text-amber-700">Your room will be active after payment confirmation. Regular plans also available.</p>
+                        @if(filter_var(\App\Models\Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))
+                            <p class="font-bold text-amber-900">Listing Fee: &#8377;{{ \App\Models\Setting::get('listing_fee', 199) }}</p>
+                            <p class="text-sm text-amber-700">Your room will be submitted for admin approval after payment confirmation.</p>
+                        @else
+                            <p class="font-bold text-emerald-900">Room listing is currently free</p>
+                            <p class="text-sm text-emerald-700">No payment or listing-plan credit will be used. Admin approval is still required.</p>
+                        @endif
                     </div>
                 </div>
 

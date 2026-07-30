@@ -56,7 +56,6 @@
         <div class="mx-auto flex max-w-7xl gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Business settings sections">
             @foreach([
                 ['general', 'fa-sliders-h', 'General & Fees'],
-                ['commission', 'fa-percentage', 'Commission'],
                 ['appearance', 'fa-paint-brush', 'Appearance'],
                 ['payment', 'fa-credit-card', 'Payment'],
                 ['integrations', 'fa-plug', 'Integrations'],
@@ -94,7 +93,18 @@
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div>
+                            <div class="rounded-xl border border-gray-200 p-4">
+                                <label class="mb-4 flex items-start justify-between gap-4">
+                                    <span>
+                                        <span class="block text-sm font-bold text-gray-800">Enable Listing Fee</span>
+                                        <span class="mt-1 block text-xs text-gray-500">OFF = every new listing is free</span>
+                                    </span>
+                                    <span class="relative inline-flex shrink-0 items-center">
+                                        <input type="checkbox" name="listing_fee_enabled" value="1" class="peer sr-only" @checked(filter_var(\App\Models\Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))>
+                                        <span class="h-6 w-11 rounded-full bg-gray-300 transition peer-checked:bg-indigo-600"></span>
+                                        <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                    </span>
+                                </label>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Listing Fee</label>
                                 <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-indigo-500/20">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -102,7 +112,7 @@
                                     </div>
                                     <input type="number" name="listing_fee" value="{{ \App\Models\Setting::get('listing_fee', 199) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900" placeholder="0.00">
                                 </div>
-                                <p class="mt-2 text-xs text-gray-500">Charged per property listing</p>
+                                <p class="mt-2 text-xs text-gray-500">Amount is saved even while the fee toggle is OFF.</p>
                             </div>
                             
                              <div>
@@ -116,7 +126,18 @@
                                 <p class="mt-2 text-xs text-gray-500">To highlight a property</p>
                             </div>
                             
-                             <div>
+                             <div class="rounded-xl border border-gray-200 p-4">
+                                <label class="mb-4 flex items-start justify-between gap-4">
+                                    <span>
+                                        <span class="block text-sm font-bold text-gray-800">Enable Contact Unlock Fee</span>
+                                        <span class="mt-1 block text-xs text-gray-500">OFF = every contact unlock is free</span>
+                                    </span>
+                                    <span class="relative inline-flex shrink-0 items-center">
+                                        <input type="checkbox" name="unlock_fee_enabled" value="1" class="peer sr-only" @checked(filter_var(\App\Models\Setting::get('unlock_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))>
+                                        <span class="h-6 w-11 rounded-full bg-gray-300 transition peer-checked:bg-indigo-600"></span>
+                                        <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                    </span>
+                                </label>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Unlock Fee</label>
                                 <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-indigo-500/20">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -124,47 +145,12 @@
                                     </div>
                                     <input type="number" name="unlock_fee" value="{{ \App\Models\Setting::get('unlock_fee', 49) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900" placeholder="0.00">
                                 </div>
-                                <p class="mt-2 text-xs text-gray-500">To view contact details</p>
+                                <p class="mt-2 text-xs text-gray-500">Amount is saved even while the fee toggle is OFF.</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                 <!-- Commission Section -->
-                <div data-settings-panel="commission" class="space-y-6" hidden>
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                        <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
-                             <div class="h-10 w-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mr-4">
-                                <i class="fas fa-percentage text-xl"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-800">Platform Commission</h2>
-                                <p class="text-sm text-gray-500">Earnings from bookings</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Commission Percentage</label>
-                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-indigo-500/20">
-                                    <input type="number" name="commission_percent" value="{{ \App\Models\Setting::get('commission_percent', 10) }}" min="0" max="100" class="block w-full pl-4 pr-10 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900">
-                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 font-medium sm:text-sm">%</span>
-                                    </div>
-                                </div>
-                            </div>
-                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Fixed Service Charge</label>
-                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-indigo-500/20">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 font-medium sm:text-sm">₹</span>
-                                    </div>
-                                    <input type="number" name="service_charge" value="{{ \App\Models\Setting::get('service_charge', 200) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Appearance Section -->
                 <div data-settings-panel="appearance" class="space-y-6" hidden>
                     

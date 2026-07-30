@@ -33,22 +33,6 @@ class SettingsSeeder extends Seeder
                 'description' => 'Fee to unlock owner contact details'
             ],
 
-            // Commission Settings
-            [
-                'key' => 'commission_percent',
-                'value' => '10',
-                'type' => 'number',
-                'group' => 'business',
-                'description' => 'Admin commission percentage on bookings'
-            ],
-            [
-                'key' => 'service_charge',
-                'value' => '200',
-                'type' => 'number',
-                'group' => 'business',
-                'description' => 'Fixed service charge per booking'
-            ],
-
             // Website Appearance
             [
                 'key' => 'website_name',

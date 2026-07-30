@@ -45,7 +45,13 @@ class BusinessSettingsController extends Controller
     {
         $data = $request->except(['_token', '_method']);
 
-        foreach (['google_ads_enabled', 'adsense_enabled', 'meta_pixel_enabled'] as $booleanKey) {
+        foreach ([
+            'google_ads_enabled',
+            'adsense_enabled',
+            'meta_pixel_enabled',
+            'listing_fee_enabled',
+            'unlock_fee_enabled',
+        ] as $booleanKey) {
             $data[$booleanKey] = $request->boolean($booleanKey) ? '1' : '0';
         }
         

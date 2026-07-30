@@ -13,6 +13,28 @@ use Illuminate\Support\Facades\DB;
 
 class UnlockController extends Controller
 {
+    public function index()
+    {
+        $unlocks = Enquiry::where('user_id', Auth::id())
+            ->where('unlocked', true)
+            ->whereNotNull('unlocked_at')
+            ->whereHas('room.owner', function ($query) {
+                $query->where(function ($contactQuery) {
+                    $contactQuery->whereNotNull('phone')
+                        ->where('phone', '!=', '')
+                        ->orWhere(function ($emailQuery) {
+                            $emailQuery->whereNotNull('email')
+                                ->where('email', '!=', '');
+                        });
+                });
+            })
+            ->with(['room.owner', 'payment'])
+            ->latest('unlocked_at')
+            ->paginate(12);
+
+        return view('user.unlocked-contacts', compact('unlocks'));
+    }
+
     public function unlock(Request $request, Room $room)
     {
         if (!Auth::check()) {
@@ -52,6 +74,32 @@ class UnlockController extends Controller
 
         DB::beginTransaction();
         try {
+            // Free-launch mode must not consume a plan, referral credit or wallet.
+            $unlockFeeEnabled = filter_var(Setting::get('unlock_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+            if (!$unlockFeeEnabled) {
+                $payment = Payment::create([
+                    'user_id' => Auth::id(),
+                    'type' => 'unlock',
+                    'amount' => 0,
+                    'gateway' => 'free',
+                    'reference_id' => $room->id,
+                    'status' => 'completed',
+                ]);
+                Enquiry::updateOrCreate(
+                    ['user_id' => Auth::id(), 'room_id' => $room->id],
+                    ['payment_id' => $payment->id, 'unlocked' => true, 'unlocked_at' => now()]
+                );
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'already_unlocked' => true,
+                    'free_unlock' => true,
+                    'contact' => $room->owner->phone ?? $room->owner->email,
+                ]);
+            }
+
             // Check subscription first - count based, not date based
             $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())
                 ->where('status', 'active')
@@ -244,4 +292,3 @@ class UnlockController extends Controller
         }
     }
 }
-

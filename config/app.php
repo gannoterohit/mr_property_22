@@ -130,13 +130,4 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Room Rental Settings
-    |--------------------------------------------------------------------------
-    */
-
-    'commission_percent' => env('COMMISSION_PERCENT', 10), // Admin commission percentage
-    'service_charge' => env('SERVICE_CHARGE', 200), // Fixed service charge per booking
-
 ];

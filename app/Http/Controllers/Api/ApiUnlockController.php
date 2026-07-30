@@ -49,6 +49,28 @@ class ApiUnlockController extends BaseApiController
 
         DB::beginTransaction();
         try {
+            $unlockFeeEnabled = filter_var(Setting::get('unlock_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+            if (!$unlockFeeEnabled) {
+                $payment = Payment::create([
+                    'user_id' => Auth::id(),
+                    'type' => 'unlock',
+                    'amount' => 0,
+                    'gateway' => 'free',
+                    'reference_id' => $room->id,
+                    'status' => 'completed',
+                ]);
+                Enquiry::updateOrCreate(
+                    ['user_id' => Auth::id(), 'room_id' => $room->id],
+                    ['payment_id' => $payment->id, 'unlocked' => true, 'unlocked_at' => now()]
+                );
+                DB::commit();
+
+                return $this->sendSuccess([
+                    'contact' => $room->owner->phone ?? $room->owner->email,
+                    'free_unlock' => true,
+                ], 'Unlocked for free');
+            }
+
             // 1. Check Subscription
             $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())
                 ->where('status', 'active')

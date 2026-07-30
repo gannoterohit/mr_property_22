@@ -96,6 +96,8 @@ Route::post('/contact-us', [\App\Http\Controllers\ContactController::class, 'sto
 Route::post('/payment/razorpay/verify', [RazorpayController::class,'verifyPayment'])->middleware('throttle:10,1')->name('razorpay.verify');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/unlocked-contacts', [UnlockController::class, 'index'])->middleware('role:user')->name('unlocks.index');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

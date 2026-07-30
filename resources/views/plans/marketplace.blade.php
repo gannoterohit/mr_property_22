@@ -7,7 +7,11 @@
     $isOwner = Auth::user()->role === 'owner';
     $limitField = $isOwner ? 'listing_limit' : 'contacts_limit';
     $usageType = $isOwner ? 'listing' : 'contact';
-    $singleFee = (float) \App\Models\Setting::get($isOwner ? 'listing_fee' : 'unlock_fee', $isOwner ? 199 : 49);
+    $feeEnabledKey = $isOwner ? 'listing_fee_enabled' : 'unlock_fee_enabled';
+    $feeEnabled = filter_var(\App\Models\Setting::get($feeEnabledKey, '0'), FILTER_VALIDATE_BOOLEAN);
+    $singleFee = $feeEnabled
+        ? (float) \App\Models\Setting::get($isOwner ? 'listing_fee' : 'unlock_fee', $isOwner ? 199 : 49)
+        : 0;
     $usedCredits = $activeSubscription?->usages()->where('usage_type', $usageType)->count() ?? 0;
     $activeLimit = $activeSubscription?->plan?->{$limitField};
     $remainingCredits = $activeLimit === -1 ? 'Unlimited' : max(0, (int) $activeLimit - $usedCredits);
@@ -34,7 +38,10 @@
                     </div>
                     <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 min-w-[210px]">
                         <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Single {{ $isOwner ? 'listing' : 'unlock' }}</p>
-                        <div class="mt-1 flex items-baseline gap-2"><span class="text-xl font-extrabold text-slate-950">&#8377;{{ number_format($singleFee) }}</span><span class="text-xs text-slate-500">without a plan</span></div>
+                        <div class="mt-1 flex items-baseline gap-2">
+                            <span class="text-xl font-extrabold text-slate-950">{{ $feeEnabled ? '₹'.number_format($singleFee) : 'Free' }}</span>
+                            <span class="text-xs text-slate-500">{{ $feeEnabled ? 'without a plan' : 'during launch period' }}</span>
+                        </div>
                     </div>
                 </div>
             </div>

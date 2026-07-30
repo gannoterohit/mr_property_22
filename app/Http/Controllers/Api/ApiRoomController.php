@@ -267,6 +267,26 @@ class ApiRoomController extends BaseApiController
             $room = Room::create($data);
             \Illuminate\Support\Facades\Cache::forget('public_cities_list');
 
+            $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+            if (!$listingFeeEnabled) {
+                $payment = Payment::create([
+                    'user_id' => Auth::id(),
+                    'type' => 'listing',
+                    'amount' => 0,
+                    'gateway' => 'free',
+                    'reference_id' => $room->id,
+                    'status' => 'completed',
+                ]);
+                $room->update([
+                    'listing_payment_id' => $payment->id,
+                    'listing_fee_paid' => true,
+                    'status' => 'active',
+                ]);
+                DB::commit();
+
+                return $this->sendSuccess(new RoomResource($room->fresh()), 'Room submitted successfully. It will be visible after admin approval.');
+            }
+
             // Check Owner Subscription
             $activeSub = \App\Models\Subscription::where('user_id', Auth::id())
                 ->where('status', 'active')
@@ -481,6 +501,26 @@ class ApiRoomController extends BaseApiController
             
             DB::beginTransaction();
             try {
+                $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+                if (!$listingFeeEnabled) {
+                    $payment = Payment::create([
+                        'user_id' => Auth::id(),
+                        'type' => 'listing',
+                        'amount' => 0,
+                        'gateway' => 'free',
+                        'reference_id' => $room->id,
+                        'status' => 'completed',
+                    ]);
+                    $room->update([
+                        'status' => 'active',
+                        'listing_fee_paid' => true,
+                        'listing_payment_id' => $payment->id,
+                    ]);
+                    DB::commit();
+
+                    return $this->sendSuccess(['new_status' => 'active', 'free_listing' => true], 'Room marked as available');
+                }
+
                 // 1. Check Owner Subscription
                 $activeSub = \App\Models\Subscription::where('user_id', Auth::id())
                     ->where('status', 'active')

@@ -32,8 +32,14 @@ class ApiSettingsController extends BaseApiController
                 'youtube' => Setting::get('youtube_url', ''),
             ],
             'fees' => [
-                'unlock_fee' => (float) Setting::get('unlock_fee', 49),
-                'listing_fee' => (float) Setting::get('listing_fee', 199),
+                'unlock_fee_enabled' => filter_var(Setting::get('unlock_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN),
+                'listing_fee_enabled' => filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN),
+                'unlock_fee' => filter_var(Setting::get('unlock_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN)
+                    ? (float) Setting::get('unlock_fee', 49) : 0,
+                'listing_fee' => filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN)
+                    ? (float) Setting::get('listing_fee', 199) : 0,
+                'configured_unlock_fee' => (float) Setting::get('unlock_fee', 49),
+                'configured_listing_fee' => (float) Setting::get('listing_fee', 199),
                 'featured_fee' => (float) Setting::get('featured_fee', 99),
             ],
             'module_availability' => [

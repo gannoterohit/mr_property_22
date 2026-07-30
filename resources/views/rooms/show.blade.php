@@ -504,7 +504,17 @@
                                         </div>
                                     @endif
 
-                                    @if(auth()->user()->free_unlocks > 0)
+                                    @if(!filter_var(\App\Models\Setting::get('unlock_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))
+                                        <div class="bg-emerald-50 border border-emerald-100 p-2.5 rounded-xl mb-3 text-xs text-emerald-800 flex items-center gap-2">
+                                            <i class="fas fa-unlock text-emerald-600"></i>
+                                            <span>Contact unlock is currently <strong>free</strong>.</span>
+                                        </div>
+                                        <button onclick="unlockContact({{ $room->id }})"
+                                                class="w-full text-white font-bold py-2.5 px-4 rounded-lg hover:shadow-lg hover:opacity-90 transition text-sm"
+                                                style="background-color: var(--primary);">
+                                            <i class="fas fa-unlock mr-2"></i>Unlock Contact Free
+                                        </button>
+                                    @elseif(auth()->user()->free_unlocks > 0)
                                         <div class="bg-indigo-50 border border-indigo-100 p-2.5 rounded-xl mb-3 text-xs text-indigo-800 flex items-center gap-2">
                                             <i class="fas fa-gift text-indigo-600"></i>
                                             <span>You have <strong>{{ auth()->user()->free_unlocks }}</strong> free unlock credit{{ auth()->user()->free_unlocks > 1 ? 's' : '' }}!</span>
@@ -863,11 +873,15 @@ async function toggleWishlist(roomId) {
 }
 
 function unlockContact(roomId) {
-    // Show modal first
-    const fee = {{ \App\Models\Setting::get('unlock_fee', 49) }};
+    const feeEnabled = @json(filter_var(\App\Models\Setting::get('unlock_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN));
+    const fee = feeEnabled ? {{ \App\Models\Setting::get('unlock_fee', 49) }} : 0;
     // Check if free or logged in
     @if(Auth::check())
-        openPaymentSelectionModal(fee, 'unlock', roomId);
+        if (!feeEnabled) {
+            executeUnlock(roomId, 'free');
+        } else {
+            openPaymentSelectionModal(fee, 'unlock', roomId);
+        }
     @else
         window.location.href = '{{ route("login") }}';
     @endif

@@ -85,6 +85,9 @@
                         <a href="{{ route('profile.edit') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('profile.edit') ? 'bg-indigo-50 text-indigo-600' : '' }}">
                             <i class="fas fa-user-circle w-5 text-indigo-500"></i> My Profile
                         </a>
+                        <a href="{{ route('unlocks.index') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-emerald-50 transition text-gray-700 font-bold {{ request()->routeIs('unlocks.index') ? 'bg-emerald-50 text-emerald-700' : '' }}">
+                            <i class="fas fa-address-book w-5 text-emerald-500"></i> My Unlocked Contacts
+                        </a>
                         @if(\App\Models\Setting::get('wallet_enabled', '1') === '1')
                             <a href="{{ route('wallet') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('wallet') ? 'bg-indigo-50 text-indigo-600' : '' }}">
                                 <i class="fas fa-wallet w-5 text-indigo-500"></i> My Wallet

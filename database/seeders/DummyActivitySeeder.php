@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\Payment;
-use App\Models\Booking;
 use App\Models\Enquiry;
 use App\Models\SearchLog;
 use App\Models\Setting;
@@ -109,48 +108,6 @@ class DummyActivitySeeder extends Seeder
                 'payment_id' => $payment->id,
                 'unlocked' => true,
                 'unlocked_at' => $date,
-                'created_at' => $date,
-                'updated_at' => $date,
-            ]);
-        }
-
-        // 4. Bookings
-        $commissionPercent = Setting::get('commission_percent', 10);
-        $serviceCharge = Setting::get('service_charge', 200);
-
-        for ($i = 0; $i < 20; $i++) {
-            $user = $users->random();
-            $room = $rooms->random();
-            $date = Carbon::now()->subDays(rand(1, 90));
-            
-            $rent = $room->rent;
-            $adminCommission = ($rent * $commissionPercent) / 100;
-            $totalAmount = $rent + $serviceCharge;
-            $ownerPayout = $rent - $adminCommission;
-
-            $payment = Payment::create([
-                'user_id' => $user->id,
-                'type' => 'booking',
-                'amount' => $totalAmount,
-                'gateway' => 'razorpay',
-                'transaction_id' => 'pay_' . Str::random(14),
-                'reference_id' => $room->id,
-                'status' => 'completed',
-                'created_at' => $date,
-                'updated_at' => $date,
-            ]);
-
-            Booking::create([
-                'user_id' => $user->id,
-                'room_id' => $room->id,
-                'from_date' => $date->format('Y-m-d'),
-                'to_date' => $date->addMonth()->format('Y-m-d'),
-                'total_amount' => $totalAmount,
-                'admin_commission' => $adminCommission,
-                'service_charge' => $serviceCharge,
-                'owner_payout' => $ownerPayout,
-                'status' => 'confirmed',
-                'payment_id' => $payment->id,
                 'created_at' => $date,
                 'updated_at' => $date,
             ]);

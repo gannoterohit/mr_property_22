@@ -322,6 +322,34 @@ class RoomController extends Controller {
             \Illuminate\Support\Facades\Cache::forget('public_cities_list');
             \Illuminate\Support\Facades\Cache::forget('popular_cities_web');
 
+            // Free-launch mode: skip subscriptions, wallet and Razorpay while
+            // keeping the configured listing amount saved for future use.
+            $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+            if (!$listingFeeEnabled) {
+                $payment = Payment::create([
+                    'user_id' => Auth::id(),
+                    'type' => 'listing',
+                    'amount' => 0,
+                    'gateway' => 'free',
+                    'reference_id' => $room->id,
+                    'status' => 'completed',
+                ]);
+                $room->update([
+                    'listing_payment_id' => $payment->id,
+                    'listing_fee_paid' => true,
+                    'status' => 'active',
+                ]);
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'room_id' => $room->id,
+                    'free_listing' => true,
+                    'message' => 'Room submitted successfully. It will be visible after admin approval.',
+                ]);
+            }
+
             // Check owner subscription for room listing - count based, not date based
             $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())
                 ->where('status', 'active')
@@ -854,6 +882,30 @@ class RoomController extends Controller {
         if ($room->status === 'booked') {
             DB::beginTransaction();
             try {
+                $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+                if (!$listingFeeEnabled) {
+                    $payment = Payment::create([
+                        'user_id' => Auth::id(),
+                        'type' => 'listing',
+                        'amount' => 0,
+                        'gateway' => 'free',
+                        'reference_id' => $room->id,
+                        'status' => 'completed',
+                    ]);
+                    $room->update([
+                        'status' => 'active',
+                        'listing_fee_paid' => true,
+                        'listing_payment_id' => $payment->id,
+                    ]);
+                    DB::commit();
+
+                    return response()->json([
+                        'success' => true,
+                        'free_listing' => true,
+                        'message' => 'Room marked as available successfully.',
+                    ]);
+                }
+
                 // Check owner subscription for room listing - count based, not date based
                 $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())
                     ->where('status', 'active')

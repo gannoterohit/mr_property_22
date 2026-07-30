@@ -8,8 +8,7 @@
     $wishlistCount = \App\Models\Wishlist::where('user_id', $user->id)->count();
     $firstName = explode(' ', trim($user->name))[0] ?: 'there';
 @endphp
-<div class="user-workspace min-h-screen bg-slate-50">
-    @include('user.partials.sidebar', ['active' => 'dashboard'])
+<div class="min-h-screen bg-slate-50">
     <main class="user-dashboard-main pb-20 lg:pb-12">
         <header class="user-dashboard-header">
             <div class="dashboard-container">
