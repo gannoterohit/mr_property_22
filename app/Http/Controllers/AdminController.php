@@ -28,104 +28,90 @@ class AdminController extends Controller
     
     public function dashboard()
     {
-        // Counts
-        $rooms = Room::where('listing_fee_paid', true)->count();
-        $users = User::count();
-        $owners = User::where('role', 'owner')->count();
-    
-        $activeRooms = Room::where('status', 'active')
-            ->where('listing_fee_paid', true)
-            ->count();
-    
-        // Room status
-        $approvedRooms = Room::where('listing_status', 'approved')->count();
-        $pendingRooms  = Room::where('listing_status', 'pending')->count();
-        $rejectedRooms = Room::where('listing_status', 'rejected')->count();
-    
-        // Earnings
-        // Direct-contact platform revenue; legacy booking payments are intentionally excluded.
-        $totalEarnings = Payment::where('status', 'completed')
-            ->whereIn('type', ['listing', 'featured', 'unlock', 'subscription'])
-            ->sum('amount');
-        $todayEarnings = Payment::where('status', 'completed')
-            ->whereIn('type', ['listing', 'featured', 'unlock', 'subscription'])
-            ->whereDate('created_at', today())->sum('amount');
-    
-        $listingEarnings = Payment::where('status', 'completed')
-            ->where('type', 'listing')
-            ->sum('amount');
-            
-        $unlockEarnings = Payment::where('status', 'completed')
-            ->where('type', 'unlock')
-            ->sum('amount');
-
-        $featuredEarnings = Payment::where('status', 'completed')
-            ->where('type', 'featured')
-            ->sum('amount');
-
-        $bookingEarnings = Payment::where('status', 'completed')
-        ->where('type', 'booking')
-        ->sum('amount');
-
-    $subscriptionEarnings = Payment::where('status', 'completed')
-        ->where('type', 'subscription')
-        ->sum('amount');
-    
-        // Monthly revenue graph
-        $monthlyRevenue = Payment::selectRaw('MONTH(created_at) as month, SUM(amount) as total')
-            ->where('status', 'completed')
-            ->whereIn('type', ['listing', 'featured', 'unlock', 'subscription'])
-            ->whereYear('created_at', now()->year)
-            ->groupBy('month')
-            ->pluck('total', 'month');
-    
-        $revenueData = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $revenueData[] = $monthlyRevenue[$i] ?? 0;
-        }
-        
-        // Monthly comparison
-        $currentMonth = now()->month;
-        $lastMonth = now()->subMonth()->month;
-        
-        $currentMonthEarnings = Payment::where('status', 'completed')
-            ->whereIn('type', ['listing', 'featured', 'unlock', 'subscription'])
-            ->whereMonth('created_at', $currentMonth)
-            ->sum('amount');
-            
-        $lastMonthEarnings = Payment::where('status', 'completed')
-            ->whereIn('type', ['listing', 'featured', 'unlock', 'subscription'])
-            ->whereMonth('created_at', $lastMonth)
-            ->sum('amount');
-            
-        $percentageChange = $lastMonthEarnings > 0 
-            ? (($currentMonthEarnings - $lastMonthEarnings) / $lastMonthEarnings) * 100 
-            : 0;
-    
-        // Recents
-        $recentRooms = Room::with('owner')->latest()->limit(5)->get();
-        $recentPayments = Payment::with('user')->latest()->limit(5)->get();
-        $recentUsers = User::where('role', 'user')->latest()->limit(5)->get();
-        $recentOwners = User::where('role', 'owner')->withCount('rooms')->latest()->limit(5)->get();
-
-        $actionQueues = [
-            ['label'=>'Pending room approvals','count'=>Room::where('listing_status','pending')->count(),'route'=>route('admin.all-rooms',['listing_status'=>'pending']),'icon'=>'fa-house-circle-exclamation','tone'=>'amber'],
-            ['label'=>'Pending KYC','count'=>User::where('role','owner')->where('verification_status','pending')->count(),'route'=>route('admin.owners',['verification_status'=>'pending']),'icon'=>'fa-id-card','tone'=>'blue'],
-            ['label'=>'Unresolved complaints','count'=>\App\Models\Complaint::whereNotIn('status',['resolved','rejected','closed'])->count(),'route'=>route('admin.complaints.index',['status'=>'open']),'icon'=>'fa-shield-halved','tone'=>'red'],
-            ['label'=>'Failed / pending payments','count'=>Payment::whereIn('status',['failed','pending'])->count(),'route'=>route('admin.payments.index',['status'=>'pending']),'icon'=>'fa-credit-card','tone'=>'red'],
-            ['label'=>'Subscriptions expiring in 7 days','count'=>Subscription::where('status','active')->whereBetween('end_date',[today(),today()->addDays(7)])->count(),'route'=>route('admin.reports'),'icon'=>'fa-hourglass-half','tone'=>'amber'],
-            ['label'=>'Unread contact enquiries','count'=>\App\Models\ContactMessage::where('is_read',false)->count(),'route'=>route('admin.contact-messages.index'),'icon'=>'fa-envelope','tone'=>'blue'],
-            ['label'=>"Today's contact unlocks",'count'=>\App\Models\Enquiry::where('unlocked',true)->whereDate('unlocked_at',today())->count(),'route'=>route('admin.reports'),'icon'=>'fa-lock-open','tone'=>'green'],
+        $admin = request()->user();
+        $allowed = fn (string $permission) => $admin->hasAdminPermission($permission);
+        $access = [
+            'listings' => $allowed('listings.view'), 'people' => $allowed('people.view'),
+            'support' => $allowed('support.view'), 'finance' => $allowed('finance.view'),
+            'content' => $allowed('content.view'), 'reports' => $allowed('reports.view'),
+            'settings' => $allowed('settings.manage'), 'staff' => $allowed('staff.manage'),
+            'activity' => $allowed('activity.view'),
+            'listings_manage' => $allowed('listings.manage'), 'people_manage' => $allowed('people.manage'),
+            'support_manage' => $allowed('support.manage'), 'finance_manage' => $allowed('finance.manage'),
+            'content_manage' => $allowed('content.manage'), 'reports_manage' => $allowed('reports.manage'),
         ];
-    
-        return view('admin.dashboard', compact(
-            'rooms','users','owners','activeRooms',
-            'approvedRooms','pendingRooms','rejectedRooms',
-            'totalEarnings','todayEarnings','listingEarnings','unlockEarnings','featuredEarnings','bookingEarnings','subscriptionEarnings',
-            'revenueData',
-            'currentMonthEarnings','lastMonthEarnings','percentageChange',
-            'recentRooms','recentPayments','recentUsers','recentOwners','actionQueues'
-        ));
+        $data = ['access' => $access, 'actionQueues' => [], 'quickLinks' => [], 'revenueData' => array_fill(0, 12, 0)];
+
+        if ($access['listings']) {
+            $data += [
+                'rooms' => Room::where('listing_fee_paid', true)->count(),
+                'activeRooms' => Room::where('status', 'active')->where('listing_fee_paid', true)->count(),
+                'approvedRooms' => Room::where('listing_status', 'approved')->count(),
+                'pendingRooms' => Room::where('listing_status', 'pending')->count(),
+                'rejectedRooms' => Room::where('listing_status', 'rejected')->count(),
+                'recentRooms' => Room::with('owner')->latest()->limit(5)->get(),
+            ];
+            $data['actionQueues'][] = ['label'=>'Pending room approvals','count'=>$data['pendingRooms'],'route'=>route('admin.all-rooms',['listing_status'=>'pending']),'icon'=>'fa-house-circle-exclamation'];
+            $data['quickLinks'][] = ['label'=>'All listings','route'=>route('admin.all-rooms'),'icon'=>'fa-building'];
+            if ($access['listings_manage']) $data['quickLinks'][] = ['label'=>'Add room','route'=>route('admin.rooms.create'),'icon'=>'fa-plus'];
+        }
+        if ($access['people']) {
+            $data += [
+                'users' => User::where('role', 'user')->count(),
+                'owners' => User::where('role', 'owner')->count(),
+                'recentUsers' => User::where('role', 'user')->latest()->limit(5)->get(),
+                'recentOwners' => User::where('role', 'owner')->withCount('rooms')->latest()->limit(5)->get(),
+            ];
+            $data['actionQueues'][] = ['label'=>'Pending owner KYC','count'=>User::where('role','owner')->where('verification_status','pending')->count(),'route'=>route('admin.owners',['verification_status'=>'pending']),'icon'=>'fa-id-card'];
+            $data['quickLinks'][] = ['label'=>'Users & owners','route'=>route('admin.members.index'),'icon'=>'fa-users'];
+            if ($access['people_manage']) $data['quickLinks'][] = ['label'=>'Add owner','route'=>route('admin.owners.create'),'icon'=>'fa-user-plus'];
+        }
+        if ($access['support']) {
+            $data['openComplaints'] = \App\Models\Complaint::whereNotIn('status',['resolved','rejected','closed'])->count();
+            $data['unreadContacts'] = \App\Models\ContactMessage::where('is_read',false)->count();
+            $data['recentComplaints'] = \App\Models\Complaint::with('assignee:id,name')->latest()->limit(5)->get();
+            $data['actionQueues'][] = ['label'=>'Unresolved complaints','count'=>$data['openComplaints'],'route'=>route('admin.complaints.index',['status'=>'open']),'icon'=>'fa-shield-halved'];
+            $data['actionQueues'][] = ['label'=>'Unread contact enquiries','count'=>$data['unreadContacts'],'route'=>route('admin.contact-messages.index'),'icon'=>'fa-envelope'];
+            $data['quickLinks'][] = ['label'=>'Support tickets','route'=>route('admin.complaints.index'),'icon'=>'fa-headset'];
+            $data['quickLinks'][] = ['label'=>'Contact enquiries','route'=>route('admin.contact-messages.index'),'icon'=>'fa-envelope'];
+        }
+        if ($access['finance']) {
+            $types = ['listing', 'featured', 'unlock', 'subscription'];
+            $completed = Payment::where('status', 'completed')->whereIn('type', $types);
+            $data += [
+                'totalEarnings' => (clone $completed)->sum('amount'),
+                'todayEarnings' => (clone $completed)->whereDate('created_at', today())->sum('amount'),
+                'currentMonthEarnings' => (clone $completed)->whereYear('created_at',now()->year)->whereMonth('created_at',now()->month)->sum('amount'),
+                'lastMonthEarnings' => (clone $completed)->whereBetween('created_at',[now()->subMonth()->startOfMonth(),now()->subMonth()->endOfMonth()])->sum('amount'),
+                'recentPayments' => Payment::with('user')->latest()->limit(5)->get(),
+            ];
+            $monthSql = DB::getDriverName() === 'sqlite' ? "CAST(strftime('%m', created_at) AS INTEGER)" : 'MONTH(created_at)';
+            $monthly = (clone $completed)->selectRaw("{$monthSql} month, SUM(amount) total")->whereYear('created_at',now()->year)->groupByRaw($monthSql)->pluck('total','month');
+            $data['revenueData'] = collect(range(1,12))->map(fn($month)=>(float)($monthly[$month]??0))->all();
+            $data['percentageChange'] = $data['lastMonthEarnings'] > 0 ? (($data['currentMonthEarnings']-$data['lastMonthEarnings'])/$data['lastMonthEarnings'])*100 : 0;
+            $data['actionQueues'][] = ['label'=>'Failed / pending payments','count'=>Payment::whereIn('status',['failed','pending'])->count(),'route'=>route('admin.payments.index',['status'=>'pending']),'icon'=>'fa-credit-card'];
+            $data['quickLinks'][] = ['label'=>'Payments','route'=>route('admin.payments.index'),'icon'=>'fa-credit-card'];
+            $data['quickLinks'][] = ['label'=>'Plans','route'=>route('admin.plans.index'),'icon'=>'fa-tags'];
+            if ($access['finance_manage']) $data['quickLinks'][] = ['label'=>'Payouts','route'=>route('admin.payouts'),'icon'=>'fa-wallet'];
+        }
+        if ($access['content']) {
+            $data['contentStats'] = ['blogs'=>\App\Models\Blog::count(),'offers'=>\App\Models\Offer::count(),'pages'=>\App\Models\CmsPage::count()];
+            $data['quickLinks'][] = ['label'=>'Blogs','route'=>route('admin.blogs.index'),'icon'=>'fa-newspaper'];
+            $data['quickLinks'][] = ['label'=>'Offers','route'=>route('admin.offers.index'),'icon'=>'fa-bullhorn'];
+        }
+        if ($access['reports']) {
+            $data['reportStats'] = ['searches_today'=>\App\Models\SearchLog::whereDate('created_at',today())->count(),'unlocks_today'=>\App\Models\Enquiry::where('unlocked',true)->whereDate('unlocked_at',today())->count()];
+            $data['quickLinks'][] = ['label'=>'Business reports','route'=>route('admin.reports'),'icon'=>'fa-chart-pie'];
+            $data['quickLinks'][] = ['label'=>'Search analytics','route'=>route('admin.analytics'),'icon'=>'fa-chart-line'];
+        }
+        if ($access['settings']) {
+            $data['quickLinks'][] = ['label'=>'Business settings','route'=>route('admin.settings'),'icon'=>'fa-gear'];
+            $data['quickLinks'][] = ['label'=>'Data maintenance','route'=>route('admin.data-maintenance.index'),'icon'=>'fa-database'];
+        }
+        if ($access['staff']) $data['quickLinks'][] = ['label'=>'Staff & roles','route'=>route('admin.staff.index'),'icon'=>'fa-users-gear'];
+        if ($access['activity']) $data['quickLinks'][] = ['label'=>'Activity logs','route'=>route('admin.activity.index'),'icon'=>'fa-clock-rotate-left'];
+
+        return view('admin.dashboard', $data);
     }
     
     

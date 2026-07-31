@@ -17,81 +17,88 @@ class AdminDashboardController extends BaseApiController
     /**
      * Admin Dashboard Statistics
      */
-    public function index()
+    public function index(Request $request)
     {
-        $totalRooms        = Room::where('listing_fee_paid', true)->count();
-        $totalUsers        = User::where('role', 'user')->count();
-        $totalOwners       = User::where('role', 'owner')->count();
-        $activeRooms       = Room::where('status', 'active')->where('listing_fee_paid', true)->count();
-        $pendingRooms      = Room::where('listing_status', 'pending')->count();
-        $approvedRooms     = Room::where('listing_status', 'approved')->count();
-        $rejectedRooms     = Room::where('listing_status', 'rejected')->count();
+        $admin = $request->user();
+        $access = [
+            'listings' => $admin->hasAdminPermission('listings.view'),
+            'people' => $admin->hasAdminPermission('people.view'),
+            'support' => $admin->hasAdminPermission('support.view'),
+            'finance' => $admin->hasAdminPermission('finance.view'),
+            'content' => $admin->hasAdminPermission('content.view'),
+            'reports' => $admin->hasAdminPermission('reports.view'),
+            'settings' => $admin->hasAdminPermission('settings.manage'),
+            'staff' => $admin->hasAdminPermission('staff.manage'),
+            'activity' => $admin->hasAdminPermission('activity.view'),
+        ];
+        $data = ['access' => $access, 'modules' => [], 'available_actions' => []];
 
-        $totalEarnings        = Payment::where('status', 'completed')->sum('amount');
-        $listingEarnings      = Payment::where('status', 'completed')->where('type', 'listing')->sum('amount');
-        $unlockEarnings       = Payment::where('status', 'completed')->where('type', 'unlock')->sum('amount');
-        $featuredEarnings     = Payment::where('status', 'completed')->where('type', 'featured')->sum('amount');
-        $bookingEarnings      = Payment::where('status', 'completed')->where('type', 'booking')->sum('amount');
-        $subscriptionEarnings = Payment::where('status', 'completed')->where('type', 'subscription')->sum('amount');
-
-        // Monthly revenue (12 months)
-        $monthlyRevenue = Payment::selectRaw('MONTH(created_at) as month, SUM(amount) as total')
-            ->where('status', 'completed')
-            ->whereYear('created_at', now()->year)
-            ->groupBy('month')
-            ->pluck('total', 'month');
-
-        $revenueData = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $revenueData[] = (float) ($monthlyRevenue[$i] ?? 0);
+        if ($access['listings']) {
+            $data['modules']['listings'] = [
+                'total_paid' => Room::where('listing_fee_paid', true)->count(),
+                'active' => Room::where('status', 'active')->where('listing_fee_paid', true)->count(),
+                'pending' => Room::where('listing_status', 'pending')->count(),
+                'approved' => Room::where('listing_status', 'approved')->count(),
+                'rejected' => Room::where('listing_status', 'rejected')->count(),
+                'recent' => RoomResource::collection(Room::with('owner')->latest()->limit(5)->get()),
+            ];
+            $data['available_actions'][] = 'listings.open';
+            if ($admin->hasAdminPermission('listings.manage')) $data['available_actions'][] = 'listings.manage';
         }
+        if ($access['people']) {
+            $data['modules']['people'] = [
+                'users' => User::where('role', 'user')->count(),
+                'owners' => User::where('role', 'owner')->count(),
+                'recent_users' => User::where('role', 'user')->latest()->limit(5)->get(['id','name','email','created_at']),
+                'recent_owners' => User::where('role', 'owner')->withCount('rooms')->latest()->limit(5)->get(['id','name','email','created_at']),
+            ];
+            $data['available_actions'][] = 'people.open';
+            if ($admin->hasAdminPermission('people.manage')) $data['available_actions'][] = 'people.manage';
+        }
+        if ($access['support']) {
+            $data['modules']['support'] = [
+                'open_complaints' => \App\Models\Complaint::whereNotIn('status',['resolved','rejected','closed'])->count(),
+                'unread_contacts' => \App\Models\ContactMessage::where('is_read', false)->count(),
+                'recent_tickets' => \App\Models\Complaint::latest()->limit(5)->get(['id','ticket_number','subject','priority','status','created_at']),
+            ];
+            $data['available_actions'][] = 'support.open';
+            if ($admin->hasAdminPermission('support.manage')) $data['available_actions'][] = 'support.manage';
+        }
+        if ($access['finance']) {
+            $types = ['listing','featured','unlock','subscription'];
+            $completed = Payment::where('status','completed')->whereIn('type',$types);
+            $monthSql = DB::getDriverName() === 'sqlite' ? "CAST(strftime('%m', created_at) AS INTEGER)" : 'MONTH(created_at)';
+            $monthly = (clone $completed)->selectRaw("{$monthSql} month, SUM(amount) total")->whereYear('created_at',now()->year)->groupByRaw($monthSql)->pluck('total','month');
+            $data['modules']['finance'] = [
+                'total' => (float)(clone $completed)->sum('amount'),
+                'today' => (float)(clone $completed)->whereDate('created_at',today())->sum('amount'),
+                'monthly_revenue' => collect(range(1,12))->map(fn($month)=>(float)($monthly[$month]??0))->all(),
+                'recent_payments' => Payment::with('user')->latest()->limit(5)->get(),
+            ];
+            $data['available_actions'][] = 'finance.open';
+            if ($admin->hasAdminPermission('finance.manage')) $data['available_actions'][] = 'finance.manage';
+        }
+        if ($access['content']) {
+            $data['modules']['content'] = [
+                'blogs' => \App\Models\Blog::count(),
+                'offers' => \App\Models\Offer::count(),
+                'pages' => \App\Models\CmsPage::count(),
+            ];
+            $data['available_actions'][] = 'content.open';
+            if ($admin->hasAdminPermission('content.manage')) $data['available_actions'][] = 'content.manage';
+        }
+        if ($access['reports']) {
+            $data['modules']['reports'] = [
+                'searches_today' => SearchLog::whereDate('created_at',today())->count(),
+                'unlocks_today' => \App\Models\Enquiry::where('unlocked',true)->whereDate('unlocked_at',today())->count(),
+            ];
+            $data['available_actions'][] = 'reports.open';
+        }
+        if ($access['settings']) $data['available_actions'][] = 'settings.manage';
+        if ($access['staff']) $data['available_actions'][] = 'staff.manage';
+        if ($access['activity']) $data['available_actions'][] = 'activity.open';
 
-        $currentMonthEarnings = Payment::where('status', 'completed')
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->sum('amount');
-            
-        $lastMonthEarnings = Payment::where('status', 'completed')
-            ->whereMonth('created_at', now()->subMonth()->month)
-            ->whereYear('created_at', now()->subMonth()->year)
-            ->sum('amount');
-
-        $percentageChange = $lastMonthEarnings > 0
-            ? round((($currentMonthEarnings - $lastMonthEarnings) / $lastMonthEarnings) * 100, 2)
-            : 0;
-
-        $recentRooms    = RoomResource::collection(Room::with('owner')->latest()->limit(5)->get());
-        $recentPayments = Payment::with('user')->latest()->limit(5)->get();
-        $recentUsers    = User::where('role', 'user')->latest()->limit(5)->get(['id','name','email','created_at']);
-        $recentOwners   = User::where('role', 'owner')->withCount('rooms')->latest()->limit(5)->get(['id','name','email','created_at','rooms_count']);
-
-        return $this->sendSuccess([
-            'counts' => [
-                'total_rooms'    => $totalRooms,
-                'total_users'    => $totalUsers,
-                'total_owners'   => $totalOwners,
-                'active_rooms'   => $activeRooms,
-                'pending_rooms'  => $pendingRooms,
-                'approved_rooms' => $approvedRooms,
-                'rejected_rooms' => $rejectedRooms,
-            ],
-            'earnings' => [
-                'total'        => (float) $totalEarnings,
-                'listing'      => (float) $listingEarnings,
-                'unlock'       => (float) $unlockEarnings,
-                'featured'     => (float) $featuredEarnings,
-                'booking'      => (float) $bookingEarnings,
-                'subscription' => (float) $subscriptionEarnings,
-            ],
-            'monthly_revenue'          => $revenueData,
-            'current_month_earnings'   => (float) $currentMonthEarnings,
-            'last_month_earnings'      => (float) $lastMonthEarnings,
-            'percentage_change'        => $percentageChange,
-            'recent_rooms'    => $recentRooms,
-            'recent_payments' => $recentPayments,
-            'recent_users'    => $recentUsers,
-            'recent_owners'   => $recentOwners,
-        ]);
+        return $this->sendSuccess($data);
     }
 
     /**

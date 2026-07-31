@@ -26,11 +26,12 @@ class AdminRoleController extends Controller
     {
         $data=$request->validate(['name'=>'required|string|max:80','description'=>'nullable|string|max:255','permissions'=>'array','permissions.*'=>'in:'.implode(',',array_keys(config('admin_permissions.catalog')))]);
         $permissions = $data['permissions'] ?? [];
-        foreach (['listings','people','support','finance','content'] as $module) {
+        foreach (['listings','people','support','finance','content','reports'] as $module) {
             if (in_array($module.'.manage', $permissions, true) && !in_array($module.'.view', $permissions, true)) {
                 $permissions[] = $module.'.view';
             }
         }
+        if ($permissions && !in_array('dashboard.view', $permissions, true)) $permissions[] = 'dashboard.view';
         $data['permissions'] = array_values(array_unique($permissions));
         return $data;
     }

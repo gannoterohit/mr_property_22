@@ -14,16 +14,12 @@ return [
         'content.view' => ['Content: view', 'View blogs, offers, homepage and CMS pages'],
         'content.manage' => ['Content: manage', 'Create, edit or delete promotional and website content'],
         'reports.view' => ['Reports', 'View reports and search analytics'],
+        'reports.manage' => ['Reports: manage', 'Delete search analytics history'],
         'settings.manage' => ['Settings', 'Manage business, integration and maintenance settings'],
         'staff.manage' => ['Staff & roles', 'Create staff and manage role permissions'],
         'activity.view' => ['Activity logs', 'View administrative activity history'],
     ],
     'roles' => [
         'super_admin' => ['Super Admin', 'Full platform access', ['*']],
-        'listing_moderator' => ['Listing Moderator', 'Reviews and moderates property listings', ['dashboard.view','listings.view','listings.manage','people.view','support.view']],
-        'verification_executive' => ['Verification Executive', 'Handles owner and property verification workflows', ['dashboard.view','listings.view','listings.manage','people.view','people.manage','support.view']],
-        'support_executive' => ['Support Executive', 'Resolves complaints and customer enquiries', ['dashboard.view','people.view','listings.view','support.view','support.manage']],
-        'finance_manager' => ['Finance Manager', 'Manages payments, plans and finance reporting', ['dashboard.view','people.view','finance.view','finance.manage','reports.view']],
-        'content_manager' => ['Content Manager', 'Manages CMS, blogs and promotional content', ['dashboard.view','content.view','content.manage','reports.view']],
     ],
 ];

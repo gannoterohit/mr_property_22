@@ -10,7 +10,7 @@
         ['Support desk', 'Complaints, enquiries and alerts', 'fa-headset', 'support.view', 'support.manage'],
         ['Finance & plans', 'Payments, payouts and subscriptions', 'fa-wallet', 'finance.view', 'finance.manage'],
         ['Website content', 'CMS, blogs, homepage and offers', 'fa-pen-to-square', 'content.view', 'content.manage'],
-        ['Reports', 'Reports and search analytics', 'fa-chart-line', 'reports.view', null],
+        ['Reports', 'View reports or delete analytics history', 'fa-chart-line', 'reports.view', 'reports.manage'],
         ['Business settings', 'Configuration and maintenance', 'fa-gear', null, 'settings.manage'],
         ['Staff & roles', 'Staff accounts and role permissions', 'fa-user-shield', null, 'staff.manage'],
         ['Activity logs', 'Administrative audit history', 'fa-clock-rotate-left', 'activity.view', null],

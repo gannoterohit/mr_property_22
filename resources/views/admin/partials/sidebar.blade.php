@@ -73,10 +73,12 @@
         <p id="adminMenuSearchEmpty" class="hidden px-2 pt-3 text-center text-[10px] font-semibold text-slate-400">No menu found</p>
     </div>
     <nav class="flex-1 min-h-0 overflow-y-auto px-3 py-3 space-y-2 overscroll-contain">
-        <a href="{{ route('admin.dashboard') }}" class="group relative flex items-center gap-3 rounded-xl px-3 py-3 text-[13px] transition {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-100' : 'text-slate-700 font-semibold hover:bg-slate-100 hover:text-slate-950' }}">
-            <span class="flex h-8 w-8 items-center justify-center rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-white/15 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-indigo-600' }}"><i class="fas fa-th-large text-[12px]"></i></span>
-            <span>Dashboard</span>
-        </a>
+        @if(!Auth::user()?->admin_role_id || Auth::user()?->hasAdminPermission('dashboard.view'))
+            <a href="{{ route('admin.dashboard') }}" class="group relative flex items-center gap-3 rounded-xl px-3 py-3 text-[13px] transition {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-100' : 'text-slate-700 font-semibold hover:bg-slate-100 hover:text-slate-950' }}">
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-white/15 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-indigo-600' }}"><i class="fas fa-th-large text-[12px]"></i></span>
+                <span>Dashboard</span>
+            </a>
+        @endif
 
         <div class="my-2 border-t border-slate-100"></div>
 
