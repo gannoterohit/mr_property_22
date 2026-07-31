@@ -920,7 +920,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function markBooked(roomId) {
         const result = await Swal.fire({
-            title: 'Mark as Booked?',
+            title: 'Mark as Rented?',
             text: "This room will be hidden from users.",
             icon: 'warning',
             showCancelButton: true,
@@ -948,14 +948,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (data.success) {
                 Swal.fire(
-                    'Booked!',
-                    'Room has been marked as booked.',
+                    'Rented!',
+                    'Room has been marked as rented.',
                     'success'
                 ).then(() => {
                     location.reload();
                 });
             } else {
-                toastr.error(data.message || 'Failed to mark room as booked', 'Error');
+                toastr.error(data.message || 'Failed to mark room as rented', 'Error');
             }
         } catch (error) {
             console.error('Error:', error);

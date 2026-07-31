@@ -39,4 +39,23 @@ class OwnerController extends Controller
 
         return view('owner.rooms', compact('myRooms', 'roomCounts'));
     }
+
+    public function enquiries()
+    {
+        $roomIds = Room::where('user_id', Auth::id())->pluck('id');
+
+        $enquiries = \App\Models\Enquiry::whereIn('room_id', $roomIds)
+            ->where('unlocked', true)
+            ->with(['user:id,name', 'room:id,title,slug,city,photo,photos,status,user_id', 'payment:id,gateway,amount,status'])
+            ->latest('unlocked_at')
+            ->paginate(15);
+
+        $stats = [
+            'total' => \App\Models\Enquiry::whereIn('room_id', $roomIds)->where('unlocked', true)->count(),
+            'today' => \App\Models\Enquiry::whereIn('room_id', $roomIds)->where('unlocked', true)->whereDate('unlocked_at', today())->count(),
+            'rooms' => \App\Models\Enquiry::whereIn('room_id', $roomIds)->where('unlocked', true)->distinct('room_id')->count('room_id'),
+        ];
+
+        return view('owner.enquiries', compact('enquiries', 'stats'));
+    }
 }

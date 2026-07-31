@@ -866,7 +866,7 @@ class RoomController extends Controller {
 
         return response()->json([
             'success' => true,
-            'message' => 'Room marked as booked'
+            'message' => 'Room marked as rented'
         ]);
     }
 

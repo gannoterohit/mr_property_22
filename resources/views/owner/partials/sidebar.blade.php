@@ -5,6 +5,7 @@
         ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'fa-chart-pie', 'href' => route('owner.dashboard')],
         ['key' => 'create', 'label' => 'Add New Room', 'icon' => 'fa-square-plus', 'href' => route('rooms.create')],
         ['key' => 'rooms', 'label' => 'My Rooms', 'icon' => 'fa-building', 'href' => route('owner.rooms')],
+        ['key' => 'enquiries', 'label' => 'Enquiries', 'icon' => 'fa-address-card', 'href' => route('owner.enquiries')],
         ['key' => 'plans', 'label' => 'Plans & Pricing', 'icon' => 'fa-tags', 'href' => route('plans')],
     ];
 

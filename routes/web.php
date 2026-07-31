@@ -267,6 +267,7 @@ Route::get('/pages/{key}', [CmsPageController::class, 'legacy'])
 Route::middleware(['auth', 'role:owner'])->prefix('owner')->group(function () {
     Route::get('/dashboard', [OwnerController::class, 'dashboard'])->name('owner.dashboard');
     Route::get('/rooms', [OwnerController::class, 'rooms'])->name('owner.rooms');
+    Route::get('/enquiries', [OwnerController::class, 'enquiries'])->name('owner.enquiries');
 });
 
 

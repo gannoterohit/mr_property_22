@@ -748,9 +748,22 @@
     </style>
     
 
+    <style>
+        .page-scroll-progress {
+            position: fixed;
+            z-index: 1100;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: #2563eb;
+            pointer-events: none;
+        }
+    </style>
     @stack('styles')
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen mobile-app-view dynamic-theme-override">
+    <div id="page-scroll-progress" class="page-scroll-progress" role="progressbar" aria-label="Page scroll progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
     @php
         try {
             $publishedCmsSlugs = \App\Models\CmsPage::published()->pluck('slug')->flip();
@@ -1322,6 +1335,35 @@
         @if(Session::has('warning'))
             toastr.warning("{{ session('warning') }}");
         @endif
+    </script>
+    <script>
+        (() => {
+            const progress = document.getElementById('page-scroll-progress');
+            if (!progress) return;
+
+            let ticking = false;
+            const updateProgress = () => {
+                const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const value = documentHeight > 0
+                    ? Math.min(100, Math.max(0, (window.scrollY / documentHeight) * 100))
+                    : 0;
+
+                progress.style.width = value + '%';
+                progress.setAttribute('aria-valuenow', Math.round(value));
+                ticking = false;
+            };
+
+            const requestUpdate = () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateProgress);
+                    ticking = true;
+                }
+            };
+
+            document.addEventListener('scroll', requestUpdate, { passive: true });
+            window.addEventListener('resize', requestUpdate, { passive: true });
+            requestUpdate();
+        })();
     </script>
     @stack('scripts')
     @unless(request()->routeIs('admin.*', 'owner.*', 'dashboard', 'profile.*', 'wallet', 'referral.*', 'wishlist.*', 'complaints.*', 'plans'))

@@ -76,17 +76,17 @@
             @include('partials.offer-banner', ['placement' => 'dashboard'])
             <section class="owner-dashboard-stats" aria-label="Dashboard statistics">
                 @foreach([
-                    ['Total rooms', $rooms ?? 0, 'fa-building', 'bg-indigo-50 text-indigo-600'],
-                    ['Contact unlocks', $contactUnlocks ?? 0, 'fa-address-card', 'bg-emerald-50 text-emerald-600'],
-                    ['Featured', $featuredRooms ?? 0, 'fa-star', 'bg-amber-50 text-amber-600'],
-                    ['Wallet points', number_format($user->wallet ?? 0), 'fa-wallet', 'bg-sky-50 text-sky-600'],
+                    ['Total rooms', $rooms ?? 0, 'fa-building', 'bg-indigo-50 text-indigo-600', route('owner.rooms')],
+                    ['Contact unlocks', $contactUnlocks ?? 0, 'fa-address-card', 'bg-emerald-50 text-emerald-600', route('owner.enquiries')],
+                    ['Featured', $featuredRooms ?? 0, 'fa-star', 'bg-amber-50 text-amber-600', route('owner.rooms')],
+                    ['Wallet points', number_format($user->wallet ?? 0), 'fa-wallet', 'bg-sky-50 text-sky-600', route('wallet')],
                 ] as $stat)
-                    <article class="owner-dashboard-stat rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <a href="{{ $stat[4] }}" class="owner-dashboard-stat block rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
                         <div class="flex items-start justify-between gap-3">
                             <div><p class="text-xs font-semibold text-slate-500">{{ $stat[0] }}</p><p class="mt-2 text-2xl font-extrabold text-slate-950">{{ $stat[1] }}</p></div>
                             <span class="flex h-10 w-10 items-center justify-center rounded-xl {{ $stat[3] }}"><i class="fas {{ $stat[2] }}"></i></span>
                         </div>
-                    </article>
+                    </a>
                 @endforeach
             </section>
 
@@ -103,7 +103,7 @@
                                 @if($room->photo_url)<img src="{{ $room->photo_url }}" alt="" loading="lazy" onerror="this.style.display='none'">@endif
                             </div>
                             <div class="min-w-0 flex-1"><h3 class="truncate text-sm font-bold text-slate-900">{{ $room->title }}</h3><p class="mt-1 truncate text-xs text-slate-500"><i class="fas fa-location-dot mr-1 text-slate-400"></i>{{ $room->city }}</p><p class="mt-1 text-sm font-extrabold text-slate-900">&#8377;{{ number_format($room->rent) }}<span class="text-xs font-normal text-slate-400">/month</span></p></div>
-                            <span class="hidden sm:inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase {{ $room->status === 'active' ? 'bg-emerald-50 text-emerald-700' : ($room->status === 'pending' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600') }}">{{ $room->status }}</span>
+                            <span class="hidden sm:inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase {{ $room->status === 'active' ? 'bg-emerald-50 text-emerald-700' : ($room->status === 'pending' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600') }}">{{ $room->status === 'booked' ? 'Rented' : $room->status }}</span>
                         </div>
                     @empty
                         <div class="px-6 py-12 text-center"><i class="fas fa-house-circle-xmark text-3xl text-slate-300"></i><h3 class="mt-3 font-bold text-slate-900">No rooms listed yet</h3><p class="mt-1 text-sm text-slate-500">Create your first listing to get started.</p></div>
@@ -116,6 +116,7 @@
                         <h2 class="mt-4 font-bold">Quick actions</h2>
                         <div class="mt-4 space-y-2">
                             <a href="{{ route('rooms.create') }}" class="owner-quick-primary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold"><span><i class="fas fa-plus mr-2 text-indigo-600"></i>Add a room</span><i class="fas fa-arrow-right text-xs"></i></a>
+                            <a href="{{ route('owner.enquiries') }}" class="owner-quick-secondary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold"><span><i class="fas fa-address-card mr-2"></i>View enquiries</span><i class="fas fa-arrow-right text-xs"></i></a>
                             <a href="{{ route('plans') }}" class="owner-quick-secondary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold"><span><i class="fas fa-tags mr-2"></i>Listing plans</span><i class="fas fa-arrow-right text-xs"></i></a>
                         </div>
                     </div>

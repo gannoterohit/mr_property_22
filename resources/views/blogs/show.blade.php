@@ -6,7 +6,6 @@
 
 @push('styles')
 <style>
-.article-progress{position:fixed;z-index:1100;top:0;left:0;width:0;height:3px;background:#2563eb}
 .article-page{min-height:100vh;background:#f8fafc;color:#0f172a}
 .article-wrap{width:min(1180px,calc(100% - 48px));margin-inline:auto}
 .article-breadcrumb{display:flex;align-items:center;gap:8px;padding:22px 0;color:#64748b;font-size:12px;font-weight:700}
@@ -66,8 +65,6 @@
 @endpush
 
 @section('content')
-<div id="article-progress" class="article-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-
 <div class="article-mobile-bar">
     <a href="{{ route('blogs.index') }}" aria-label="Back to articles"><i class="fas fa-arrow-left"></i></a>
     <strong>{{ $blog->title }}</strong>
@@ -152,16 +149,3 @@
     </div>
 </main>
 @endsection
-
-@push('scripts')
-<script>
-document.addEventListener('scroll', function () {
-    const progress = document.getElementById('article-progress');
-    if (!progress) return;
-    const available = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const value = available > 0 ? Math.min(100, Math.max(0, (window.scrollY / available) * 100)) : 0;
-    progress.style.width = value + '%';
-    progress.setAttribute('aria-valuenow', Math.round(value));
-}, { passive: true });
-</script>
-@endpush

@@ -483,7 +483,7 @@ class ApiRoomController extends BaseApiController
     }
 
     /**
-     * Toggle room status (Booked/Available)
+     * Toggle room status (Rented/Available)
      */
     public function toggleStatus(Request $request, $id)
     {
@@ -495,7 +495,7 @@ class ApiRoomController extends BaseApiController
 
         if ($room->status === 'active') {
             $room->update(['status' => 'booked']);
-            return $this->sendSuccess(['new_status' => 'booked'], 'Room marked as booked');
+            return $this->sendSuccess(['new_status' => 'booked'], 'Room marked as rented');
         } else {
             // Making available again! In web, this charges listing fee again.
             

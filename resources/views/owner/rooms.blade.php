@@ -65,7 +65,7 @@
         </header>
         <div class="owner-rooms-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="owner-room-stats">
-                @foreach([['All rooms','all'],['Active','active'],['Pending','pending'],['Booked','booked']] as $item)
+                @foreach([['All rooms','all'],['Active','active'],['Pending','pending'],['Rented','booked']] as $item)
                     <div class="owner-room-stat"><p class="text-xs font-semibold text-slate-500">{{ $item[0] }}</p><p class="mt-2 text-2xl font-extrabold text-slate-950">{{ $roomCounts[$item[1]] }}</p></div>
                 @endforeach
             </div>
@@ -92,7 +92,7 @@
                                 </div>
                                 <div class="mt-5 grid grid-cols-2 gap-3"><a href="{{ route('rooms.show', $room) }}" class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50"><i class="fas fa-eye"></i>View</a><a href="{{ route('rooms.edit', $room) }}" class="flex items-center justify-center gap-2 rounded-xl bg-indigo-50 py-2.5 text-xs font-bold text-indigo-700 hover:bg-indigo-100"><i class="fas fa-pen"></i>Edit</a></div>
                                 @if($room->status === 'active')
-                                    <button type="button" onclick="markRoomBooked({{ $room->id }})" class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-rose-50 py-2.5 text-xs font-bold text-rose-700 hover:bg-rose-100"><i class="fas fa-lock"></i>Mark as Booked</button>
+                                    <button type="button" onclick="markRoomRented({{ $room->id }})" class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-rose-50 py-2.5 text-xs font-bold text-rose-700 hover:bg-rose-100"><i class="fas fa-key"></i>Mark as Rented</button>
                                 @elseif($room->status === 'booked')
                                     <button type="button" onclick="makeRoomAvailable({{ $room->id }})" class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-xs font-bold text-white hover:bg-emerald-700"><i class="fas fa-rotate"></i>Make Available</button>
                                 @endif
@@ -113,6 +113,7 @@
 <script>
 const ownerRoomCsrf = '{{ csrf_token() }}';
 const ownerRazorpayKey = '{{ \App\Models\Setting::get("razorpay_key", "") }}';
+const listingFeeEnabled = @json(filter_var(\App\Models\Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN));
 
 async function ownerRoomPost(url, payload = {}) {
     const response = await fetch(url, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': ownerRoomCsrf, 'Accept': 'application/json' }, body: JSON.stringify(payload) });
@@ -121,14 +122,25 @@ async function ownerRoomPost(url, payload = {}) {
     return data;
 }
 
-async function markRoomBooked(roomId) {
-    const result = await Swal.fire({ title: 'Mark room as booked?', text: 'This room will stop appearing to users.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, mark booked', confirmButtonColor: '#e11d48' });
+async function markRoomRented(roomId) {
+    const result = await Swal.fire({ title: 'Mark room as rented?', text: 'This room will stop appearing to room seekers.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, mark rented', confirmButtonColor: '#e11d48' });
     if (!result.isConfirmed) return;
-    try { const data = await ownerRoomPost(`{{ route('rooms.markBooked', ':room') }}`.replace(':room', roomId)); await Swal.fire('Room booked', data.message, 'success'); location.reload(); }
+    try { const data = await ownerRoomPost(`{{ route('rooms.markBooked', ':room') }}`.replace(':room', roomId)); await Swal.fire('Room rented', data.message, 'success'); location.reload(); }
     catch (error) { Swal.fire('Could not update room', error.message, 'error'); }
 }
 
 async function makeRoomAvailable(roomId) {
+    if (!listingFeeEnabled) {
+        const confirmation = await Swal.fire({ title: 'Make room available?', text: 'The listing fee is currently disabled, so no payment or plan credit will be used.', icon: 'question', showCancelButton: true, confirmButtonText: 'Make available', confirmButtonColor: '#059669' });
+        if (!confirmation.isConfirmed) return;
+        try {
+            const data = await ownerRoomPost(`{{ route('rooms.markAvailable', ':room') }}`.replace(':room', roomId), { payment_method: 'free' });
+            await Swal.fire('Room available', data.message || 'Your room is visible to room seekers again.', 'success');
+            location.reload();
+        } catch (error) { Swal.fire('Could not publish room', error.message, 'error'); }
+        return;
+    }
+
     const choice = await Swal.fire({ title: 'Make room available?', html: '<p class="text-sm text-slate-600">Your active listing plan will be checked first. If no listing credit is available, choose how to pay.</p>', icon: 'info', showCancelButton: true, showDenyButton: true, confirmButtonText: 'Online payment', denyButtonText: 'Use wallet', cancelButtonText: 'Cancel', confirmButtonColor: '#4f46e5', denyButtonColor: '#059669' });
     if (choice.isDismissed) return;
     const paymentMethod = choice.isDenied ? 'wallet' : 'online';
