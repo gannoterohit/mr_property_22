@@ -47,7 +47,7 @@ class AdminPermission
         if (str_starts_with($route, 'admin.payments') || str_starts_with($route, 'admin.payouts') || str_starts_with($route, 'admin.plans')) return $write ? 'finance.manage' : 'finance.view';
         if (str_starts_with($route, 'admin.blogs') || str_starts_with($route, 'admin.offers') || str_starts_with($route, 'admin.pages') || str_starts_with($route, 'admin.cms-pages') || str_starts_with($route, 'admin.home-page')) return $write ? 'content.manage' : 'content.view';
         if ($route === 'admin.reports' || str_starts_with($route, 'admin.analytics')) return 'reports.view';
-        if (str_starts_with($route, 'admin.settings') || str_starts_with($route, 'admin.maintenance') || str_starts_with($route, 'admin.cities')) return 'settings.manage';
+        if (str_starts_with($route, 'admin.settings') || str_starts_with($route, 'admin.maintenance') || str_starts_with($route, 'admin.data-maintenance') || str_starts_with($route, 'admin.cities')) return 'settings.manage';
         return null;
     }
 }

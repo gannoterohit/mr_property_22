@@ -159,6 +159,9 @@ Route::middleware(['auth','role:admin','admin.permission','admin.activity'])->pr
     Route::get('/settings', [BusinessSettingsController::class, 'index'])->name('settings');
     Route::get('/maintenance', [BusinessSettingsController::class, 'maintenance'])->name('maintenance');
     Route::post('/maintenance', [BusinessSettingsController::class, 'updateMaintenance'])->name('maintenance.update');
+    Route::get('/data-maintenance', [\App\Http\Controllers\Admin\DataMaintenanceController::class, 'index'])->name('data-maintenance.index');
+    Route::put('/data-maintenance/retention', [\App\Http\Controllers\Admin\DataMaintenanceController::class, 'update'])->name('data-maintenance.update');
+    Route::post('/data-maintenance/cleanup', [\App\Http\Controllers\Admin\DataMaintenanceController::class, 'cleanup'])->name('data-maintenance.cleanup');
     Route::get('/cities', [CityController::class, 'index'])->name('cities.index');
     Route::get('/cities/create', [CityController::class, 'create'])->name('cities.create');
     Route::post('/cities', [CityController::class, 'store'])->name('cities.store');
