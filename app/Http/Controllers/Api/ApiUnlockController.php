@@ -105,6 +105,33 @@ class ApiUnlockController extends BaseApiController
             $unlockFee = Setting::get('unlock_fee', 49);
             $user = Auth::user();
 
+            // Match the website flow: use an earned referral credit before
+            // offering wallet or Razorpay payment.
+            if ($user->free_unlocks > 0) {
+                $user->decrement('free_unlocks', 1);
+
+                $payment = Payment::create([
+                    'user_id' => $user->id,
+                    'type' => 'unlock',
+                    'amount' => 0,
+                    'gateway' => 'free_credit',
+                    'reference_id' => $room->id,
+                    'status' => 'completed',
+                ]);
+                Enquiry::updateOrCreate(
+                    ['user_id' => $user->id, 'room_id' => $room->id],
+                    ['payment_id' => $payment->id, 'unlocked' => true, 'unlocked_at' => now()]
+                );
+
+                DB::commit();
+
+                return $this->sendSuccess([
+                    'contact' => $room->owner->phone ?? $room->owner->email,
+                    'free_credit_used' => true,
+                    'remaining_credits' => $user->free_unlocks,
+                ], 'Unlocked with free credit');
+            }
+
             if ($request->payment_method === 'wallet') {
                 if ($user->wallet_balance >= $unlockFee) {
                     $user->decrement('wallet_balance', $unlockFee);
@@ -140,12 +167,18 @@ class ApiUnlockController extends BaseApiController
 
             // 3. Initiate Online Payment
             if ($unlockFee <= 0) {
-                 Enquiry::create([
+                 $payment = Payment::create([
                      'user_id' => Auth::id(),
-                     'room_id' => $room->id,
-                     'unlocked' => true,
-                     'unlocked_at' => now()
+                     'type' => 'unlock',
+                     'amount' => 0,
+                     'gateway' => 'free',
+                     'reference_id' => $room->id,
+                     'status' => 'completed',
                  ]);
+                 Enquiry::updateOrCreate(
+                     ['user_id' => Auth::id(), 'room_id' => $room->id],
+                     ['payment_id' => $payment->id, 'unlocked' => true, 'unlocked_at' => now()]
+                 );
                  DB::commit();
                  return $this->sendSuccess([
                      'contact' => $room->owner->phone ?? $room->owner->email

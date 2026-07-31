@@ -341,13 +341,28 @@ class RazorpayController extends Controller
         }
 
         $data = json_decode($payload, true);
-        Log::info('Razorpay webhook received: '.json_encode($data));
+        if (!is_array($data) || empty($data['event'])) {
+            Log::warning('Razorpay webhook contained invalid JSON');
+            return response('invalid payload', 400);
+        }
+
+        $paymentEntity = $data['payload']['payment']['entity'] ?? [];
+        Log::info('Razorpay webhook received', [
+            'event' => $data['event'],
+            'payment_id' => $paymentEntity['id'] ?? null,
+            'order_id' => $paymentEntity['order_id'] ?? null,
+            'status' => $paymentEntity['status'] ?? null,
+        ]);
 
         // Handle payment.captured event
         if ($data['event'] === 'payment.captured') {
-            $paymentId = $data['payload']['payment']['entity']['id'];
-            $amount = $data['payload']['payment']['entity']['amount'] / 100;
-            $orderId = $data['payload']['payment']['entity']['order_id'] ?? null;
+            $paymentId = $paymentEntity['id'] ?? null;
+            $orderId = $paymentEntity['order_id'] ?? null;
+
+            if (!$paymentId) {
+                Log::warning('Razorpay payment.captured webhook missing payment ID');
+                return response('invalid payload', 400);
+            }
 
             // Find existing payment record
             $payment = Payment::where('transaction_id', $paymentId)

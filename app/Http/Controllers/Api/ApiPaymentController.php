@@ -88,6 +88,10 @@ class ApiPaymentController extends BaseApiController
         $key = trim(Setting::get('razorpay_key', ''));
         $secret = trim(Setting::get('razorpay_secret', ''));
 
+        if ($key === '' || $secret === '') {
+            return $this->sendError('Payment gateway is not configured. Please contact support.', [], 503);
+        }
+
         try {
             $api = new Api($key, $secret);
             $attributes = [
@@ -105,11 +109,17 @@ class ApiPaymentController extends BaseApiController
         try {
             $payment = Payment::where('id', $request->payment_record_id)
                 ->where('user_id', Auth::id())
+                ->lockForUpdate()
                 ->firstOrFail();
 
             if ($payment->status === 'completed') {
                 DB::commit();
                 return $this->sendSuccess([], 'Payment already verified');
+            }
+
+            if ($payment->status !== 'pending') {
+                DB::rollBack();
+                return $this->sendError('Payment is no longer pending', [], 409);
             }
 
             if ($payment->gateway_order_id !== $request->razorpay_order_id

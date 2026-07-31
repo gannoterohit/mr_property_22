@@ -25,7 +25,10 @@ class ApiOwnerController extends BaseApiController
         $bookedRooms    = Room::where('user_id', $user->id)->where('status', 'booked')->count();
         $pendingRooms   = Room::where('user_id', $user->id)->where('listing_status', 'pending')->count();
         $featuredRooms  = Room::where('user_id', $user->id)->where('is_featured', true)->count();
-        $totalEnquiries = Enquiry::whereIn('room_id', Room::where('user_id', $user->id)->pluck('id'))->count();
+        $totalEnquiries = Enquiry::whereIn('room_id', Room::where('user_id', $user->id)->pluck('id'))
+            ->where('unlocked', true)
+            ->whereNotNull('unlocked_at')
+            ->count();
 
         // Recent rooms
         $recentRooms = Room::where('user_id', $user->id)->latest()->limit(5)->get();
@@ -76,8 +79,14 @@ class ApiOwnerController extends BaseApiController
         $roomIds = Room::where('user_id', Auth::id())->pluck('id');
 
         $enquiries = Enquiry::whereIn('room_id', $roomIds)
-            ->with(['user', 'room'])
-            ->latest()
+            ->where('unlocked', true)
+            ->whereNotNull('unlocked_at')
+            ->with([
+                'user:id,name',
+                'room:id,title,slug,city,status,user_id',
+                'payment:id,amount,gateway,status',
+            ])
+            ->latest('unlocked_at')
             ->paginate($request->get('limit', 15));
 
         return $this->sendSuccess($enquiries);

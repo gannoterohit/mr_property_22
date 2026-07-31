@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\BaseApiController;
-use App\Models\Room;
+use App\Http\Resources\RoomResource;
 use App\Models\Enquiry;
 use App\Models\Payment;
+use App\Models\Room;
 use App\Models\RoomOption;
 use App\Models\Setting;
 use App\Models\SubscriptionUsage;
-use App\Http\Resources\RoomResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +30,7 @@ class ApiRoomController extends BaseApiController
             ->where('listing_status', 'approved');
 
         if ($request->filled('city')) {
-            $query->where('city', 'like', '%' . $request->city . '%');
+            $query->where('city', 'like', '%'.$request->city.'%');
         }
 
         if ($request->filled('min_rent')) {
@@ -49,7 +48,7 @@ class ApiRoomController extends BaseApiController
         if ($roomTypeFilter !== null && $roomTypeFilter !== '') {
             $this->applyOptionFilter($query, 'room_type', $roomTypeFilter);
         }
-        
+
         if ($furnishingFilter !== null && $furnishingFilter !== '') {
             $this->applyOptionFilter($query, 'furnishing_type', $furnishingFilter);
         }
@@ -57,24 +56,24 @@ class ApiRoomController extends BaseApiController
         if ($tenantFilter !== null && $tenantFilter !== '') {
             $this->applyOptionFilter($query, 'tenant_type', $tenantFilter);
         }
-        
+
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%$search%")
-                  ->orWhere('description', 'like', "%$search%")
-                  ->orWhere('address', 'like', "%$search%");
+                    ->orWhere('description', 'like', "%$search%")
+                    ->orWhere('address', 'like', "%$search%");
             });
         }
 
         if ($request->filled('lat') && $request->filled('lng')) {
             $lat = $request->lat;
             $lng = $request->lng;
-            $query->selectRaw("*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance", [$lat, $lng, $lat])
-                  ->orderBy('distance', 'asc');
+            $query->selectRaw('*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$lat, $lng, $lat])
+                ->orderBy('distance', 'asc');
         } else {
             $query->orderBy('is_featured', 'desc')
-                  ->orderBy('created_at', 'desc');
+                ->orderBy('created_at', 'desc');
         }
 
         $rooms = $query->paginate(max(1, min(50, $request->integer('limit', 10))));
@@ -83,18 +82,18 @@ class ApiRoomController extends BaseApiController
         if ($request->filled('city') || $request->filled('min_rent') || $request->filled('max_rent') || $request->filled('search')) {
             try {
                 \App\Models\SearchLog::create([
-                    'city'        => $request->city ?? 'Unknown',
+                    'city' => $request->city ?? 'Unknown',
                     'search_term' => $request->search ?? $request->city ?? 'Filter Applied',
-                    'filters'     => [
+                    'filters' => [
                         'min_rent' => $request->min_rent,
                         'max_rent' => $request->max_rent,
                         'room_type_option_id' => $roomTypeFilter,
                         'furnishing_option_id' => $furnishingFilter,
                         'tenant_option_id' => $tenantFilter,
-                        'is_api'   => true
+                        'is_api' => true,
                     ],
-                    'user_id'     => Auth::id(),
-                    'ip_address'  => $request->ip(),
+                    'user_id' => Auth::id(),
+                    'ip_address' => $request->ip(),
                 ]);
             } catch (\Exception $e) {
                 // Fail silently
@@ -116,7 +115,7 @@ class ApiRoomController extends BaseApiController
             ->where(fn ($query) => $query->where('id', $id)->orWhere('slug', $id))
             ->first();
 
-        if (!$room) {
+        if (! $room) {
             return $this->sendError('Room not found');
         }
 
@@ -127,9 +126,12 @@ class ApiRoomController extends BaseApiController
                           Enquiry::where('user_id', $viewer->id)->where('room_id', $room->id)->where('unlocked', true)->exists();
         }
 
-        if ($room->listing_type === 'broker') $isUnlocked = true;
+        if ($room->listing_type === 'broker') {
+            $isUnlocked = true;
+        }
 
         $resource = new RoomResource($room);
+
         return $this->sendSuccess([
             'room' => $resource,
             'is_unlocked' => $isUnlocked,
@@ -139,15 +141,17 @@ class ApiRoomController extends BaseApiController
             ] : null,
         ]);
     }
-    
+
     /**
      * Get similar rooms
      */
     public function similar(Request $request, $id)
     {
         $room = Room::find($id);
-        if (!$room) return $this->sendError('Room not found');
-        
+        if (! $room) {
+            return $this->sendError('Room not found');
+        }
+
         $rooms = Room::where('id', '!=', $id)
             ->where('city', $room->city)
             ->where('status', 'active')
@@ -155,7 +159,7 @@ class ApiRoomController extends BaseApiController
             ->where('listing_status', 'approved')
             ->limit(4)
             ->get();
-            
+
         return $this->sendSuccess(RoomResource::collection($rooms));
     }
 
@@ -174,7 +178,7 @@ class ApiRoomController extends BaseApiController
         }
 
         // Logic to find closest city from our database
-        $closestRoom = Room::selectRaw("city, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance", [$request->lat, $request->lng, $request->lat])
+        $closestRoom = Room::selectRaw('city, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$request->lat, $request->lng, $request->lat])
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->orderBy('distance', 'asc')
@@ -216,13 +220,13 @@ class ApiRoomController extends BaseApiController
             'address' => 'nullable|string',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            'furnishing_type' => ['required', 'in:' . implode(',', RoomOption::validIdsFor('furnishing_type'))],
-            'tenant_type' => ['required', 'in:' . implode(',', RoomOption::validIdsFor('tenant_type'))],
-            'room_type' => ['required', 'in:' . implode(',', RoomOption::validIdsFor('room_type'))],
+            'furnishing_type' => ['required', 'in:'.implode(',', RoomOption::validIdsFor('furnishing_type'))],
+            'tenant_type' => ['required', 'in:'.implode(',', RoomOption::validIdsFor('tenant_type'))],
+            'room_type' => ['required', 'in:'.implode(',', RoomOption::validIdsFor('room_type'))],
             'amenities' => 'nullable|array',
             'landmarks' => 'nullable|array',
             'photos' => 'required|array|min:1|max:5',
-            'photos.*' => 'image|max:2048',
+            'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'video' => 'nullable|mimes:mp4,avi,mov|max:10240',
             'listing_type' => 'required|in:owner,broker',
             'broker_fee' => 'nullable|numeric',
@@ -243,11 +247,11 @@ class ApiRoomController extends BaseApiController
             if ($request->hasFile('photos')) {
                 $photos = [];
                 foreach ($request->file('photos') as $photo) {
-                    $filename = uniqid('room_') . '.jpg';
-                    $path = 'rooms/' . $filename;
-                    $fullPath = storage_path('app/public/' . $path);
-                    
-                    if (!file_exists(storage_path('app/public/rooms'))) {
+                    $filename = uniqid('room_').'.jpg';
+                    $path = 'rooms/'.$filename;
+                    $fullPath = storage_path('app/public/'.$path);
+
+                    if (! file_exists(storage_path('app/public/rooms'))) {
                         mkdir(storage_path('app/public/rooms'), 0755, true);
                     }
 
@@ -268,7 +272,7 @@ class ApiRoomController extends BaseApiController
             \Illuminate\Support\Facades\Cache::forget('public_cities_list');
 
             $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
-            if (!$listingFeeEnabled) {
+            if (! $listingFeeEnabled) {
                 $payment = Payment::create([
                     'user_id' => Auth::id(),
                     'type' => 'listing',
@@ -291,7 +295,7 @@ class ApiRoomController extends BaseApiController
             $activeSub = \App\Models\Subscription::where('user_id', Auth::id())
                 ->where('status', 'active')
                 ->whereDate('end_date', '>=', today())
-                ->whereHas('plan', fn($q) => $q->where('type', 'owner')->where('is_active', true))
+                ->whereHas('plan', fn ($q) => $q->where('type', 'owner')->where('is_active', true))
                 ->lockForUpdate()
                 ->with('plan')
                 ->first();
@@ -306,6 +310,7 @@ class ApiRoomController extends BaseApiController
                         ['user_id' => Auth::id(), 'used_at' => now()]
                     );
                     DB::commit();
+
                     return $this->sendSuccess(new RoomResource($room), 'Room listed successfully using subscription!');
                 }
             }
@@ -323,32 +328,36 @@ class ApiRoomController extends BaseApiController
                         'amount' => $listingFee,
                         'gateway' => 'wallet',
                         'reference_id' => $room->id,
-                        'status' => 'completed'
+                        'status' => 'completed',
                     ]);
                     $room->update(['listing_fee_paid' => true, 'status' => 'active']);
                     DB::commit();
+
                     return $this->sendSuccess(new RoomResource($room), 'Room listed successfully using wallet balance!');
                 } else {
                     DB::rollBack();
+
                     return $this->sendError('Insufficient wallet balance', [], 400);
                 }
             }
 
             $payment = Payment::create([
                 'user_id' => Auth::id(), 'type' => 'listing', 'amount' => $listingFee,
-                'gateway' => 'razorpay', 'reference_id' => $room->id, 'status' => 'pending'
+                'gateway' => 'razorpay', 'reference_id' => $room->id, 'status' => 'pending',
             ]);
             $room->update(['listing_payment_id' => $payment->id]);
             DB::commit();
+
             return $this->sendSuccess([
                 'room' => new RoomResource($room),
                 'payment_record_id' => $payment->id,
                 'amount' => $listingFee,
-                'type' => 'listing'
+                'type' => 'listing',
             ], 'Room created. Please complete payment to activate.');
 
         } catch (\Exception $e) {
             DB::rollBack();
+
             return $this->sendError($this->safeErrorMessage($e, 'Unable to save room. Please try again.'), [], 500);
         }
     }
@@ -360,7 +369,7 @@ class ApiRoomController extends BaseApiController
     {
         $room = Room::find($id);
 
-        if (!$room || $room->user_id !== Auth::id()) {
+        if (! $room || $room->user_id !== Auth::id()) {
             return $this->sendError('Unauthorized or room not found', [], 403);
         }
 
@@ -382,7 +391,7 @@ class ApiRoomController extends BaseApiController
             'landmarks' => 'nullable|array',
             'landmarks.*' => 'string',
             'photos' => 'nullable|array|max:5',
-            'photos.*' => 'image|max:2048',
+            'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'video' => 'nullable|mimes:mp4,avi,mov|max:10240',
             'video_url' => 'nullable|url|max:255',
             'listing_type' => 'required|in:owner,broker',
@@ -402,14 +411,14 @@ class ApiRoomController extends BaseApiController
                     \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPhoto);
                 }
             }
-            
+
             $photos = [];
             foreach ($request->file('photos') as $photo) {
-                $filename = uniqid('room_') . '.jpg';
-                $path = 'rooms/' . $filename;
-                $fullPath = storage_path('app/public/' . $path);
-                
-                if (!file_exists(storage_path('app/public/rooms'))) {
+                $filename = uniqid('room_').'.jpg';
+                $path = 'rooms/'.$filename;
+                $fullPath = storage_path('app/public/'.$path);
+
+                if (! file_exists(storage_path('app/public/rooms'))) {
                     mkdir(storage_path('app/public/rooms'), 0755, true);
                 }
 
@@ -473,7 +482,7 @@ class ApiRoomController extends BaseApiController
     {
         $room = Room::find($id);
 
-        if (!$room || $room->user_id !== Auth::id()) {
+        if (! $room || $room->user_id !== Auth::id()) {
             return $this->sendError('Unauthorized or room not found', [], 403);
         }
 
@@ -489,20 +498,21 @@ class ApiRoomController extends BaseApiController
     {
         $room = Room::find($id);
 
-        if (!$room || $room->user_id !== Auth::id()) {
+        if (! $room || $room->user_id !== Auth::id()) {
             return $this->sendError('Unauthorized or room not found', [], 403);
         }
 
         if ($room->status === 'active') {
             $room->update(['status' => 'booked']);
+
             return $this->sendSuccess(['new_status' => 'booked'], 'Room marked as rented');
         } else {
             // Making available again! In web, this charges listing fee again.
-            
+
             DB::beginTransaction();
             try {
                 $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
-                if (!$listingFeeEnabled) {
+                if (! $listingFeeEnabled) {
                     $payment = Payment::create([
                         'user_id' => Auth::id(),
                         'type' => 'listing',
@@ -524,7 +534,7 @@ class ApiRoomController extends BaseApiController
                 // 1. Check Owner Subscription
                 $activeSub = \App\Models\Subscription::where('user_id', Auth::id())
                     ->where('status', 'active')
-                    ->whereHas('plan', fn($q) => $q->where('type', 'owner'))
+                    ->whereHas('plan', fn ($q) => $q->where('type', 'owner'))
                     ->with('plan')
                     ->first();
 
@@ -533,6 +543,7 @@ class ApiRoomController extends BaseApiController
                     if ($activeSub->plan->listing_limit === -1 || $used < $activeSub->plan->listing_limit) {
                         $room->update(['status' => 'active', 'listing_fee_paid' => true]);
                         DB::commit();
+
                         return $this->sendSuccess(['new_status' => 'active'], 'Room marked as available using subscription');
                     }
                 }
@@ -550,10 +561,11 @@ class ApiRoomController extends BaseApiController
                             'amount' => $listingFee,
                             'gateway' => 'wallet',
                             'reference_id' => $room->id,
-                            'status' => 'completed'
+                            'status' => 'completed',
                         ]);
                         $room->update(['status' => 'active', 'listing_fee_paid' => true]);
                         DB::commit();
+
                         return $this->sendSuccess(['new_status' => 'active', 'new_balance' => $user->wallet_balance], 'Room marked as available using wallet balance');
                     } else {
                         return $this->sendError('Insufficient wallet balance', [], 400);
@@ -562,14 +574,16 @@ class ApiRoomController extends BaseApiController
 
                 // 3. Return Payment requirement
                 DB::commit();
+
                 return $this->sendSuccess([
                     'amount' => $listingFee,
                     'type' => 'listing',
-                    'action' => 'mark_available'
+                    'action' => 'mark_available',
                 ], 'Payment required to make room available again');
 
             } catch (\Exception $e) {
                 DB::rollBack();
+
                 return $this->sendError($this->safeErrorMessage($e, 'Unable to complete this action. Please try again.'), [], 500);
             }
         }
@@ -582,7 +596,7 @@ class ApiRoomController extends BaseApiController
     {
         $room = Room::find($id);
 
-        if (!$room || $room->user_id !== Auth::id()) {
+        if (! $room || $room->user_id !== Auth::id()) {
             return $this->sendError('Unauthorized or room not found', [], 403);
         }
 
@@ -596,20 +610,20 @@ class ApiRoomController extends BaseApiController
         if ($request->payment_method === 'wallet') {
             if ($user->wallet_balance >= $featuredFee) {
                 $user->decrement('wallet_balance', $featuredFee);
-                
+
                 Payment::create([
                     'user_id' => $user->id,
                     'type' => 'featured',
                     'amount' => $featuredFee,
                     'gateway' => 'wallet',
                     'reference_id' => $room->id,
-                    'status' => 'completed'
+                    'status' => 'completed',
                 ]);
 
                 $room->update(['is_featured' => true]);
 
                 return $this->sendSuccess([
-                    'new_balance' => $user->wallet_balance
+                    'new_balance' => $user->wallet_balance,
                 ], 'Room featured successfully using wallet balance');
             } else {
                 return $this->sendError('Insufficient wallet balance', [], 400);
@@ -618,9 +632,9 @@ class ApiRoomController extends BaseApiController
 
         // Return payment details for Flutter to handle Razorpay
         return $this->sendSuccess([
-            'amount'       => (float) $featuredFee,
+            'amount' => (float) $featuredFee,
             'reference_id' => $room->id,
-            'type'         => 'featured'
+            'type' => 'featured',
         ], 'Proceed to payment to feature this room');
     }
 
