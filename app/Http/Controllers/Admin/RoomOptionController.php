@@ -8,9 +8,16 @@ use Illuminate\Http\Request;
 
 class RoomOptionController extends Controller
 {
+    private const GROUPS = [
+        'room_type' => 'Room Type',
+        'furnishing_type' => 'Furnishing',
+        'tenant_type' => 'Preferred Tenant',
+        'amenity' => 'Amenities',
+    ];
+
     public function index()
     {
-        $groups = ['room_type' => 'Room Type', 'furnishing_type' => 'Furnishing', 'tenant_type' => 'Preferred Tenant'];
+        $groups = self::GROUPS;
         $options = RoomOption::orderBy('group')->orderBy('sort_order')->orderBy('label')->get()->groupBy('group');
 
         return view('admin.room-options.index', compact('options', 'groups'));
@@ -18,14 +25,14 @@ class RoomOptionController extends Controller
 
     public function create()
     {
-        $groups = ['room_type' => 'Room Type', 'furnishing_type' => 'Furnishing', 'tenant_type' => 'Preferred Tenant'];
+        $groups = self::GROUPS;
 
         return view('admin.room-options.create', compact('groups'));
     }
 
     public function edit(RoomOption $roomOption)
     {
-        $groups = ['room_type' => 'Room Type', 'furnishing_type' => 'Furnishing', 'tenant_type' => 'Preferred Tenant'];
+        $groups = self::GROUPS;
 
         return view('admin.room-options.edit', compact('roomOption', 'groups'));
     }
@@ -33,7 +40,7 @@ class RoomOptionController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'group' => 'required|in:room_type,furnishing_type,tenant_type',
+            'group' => 'required|in:room_type,furnishing_type,tenant_type,amenity',
             'key' => 'required|string|max:100|regex:/^[a-z0-9_\-]+$/|unique:room_options,key',
             'label' => 'required|string|max:100',
             'sort_order' => 'nullable|integer',
@@ -47,7 +54,7 @@ class RoomOptionController extends Controller
     public function update(Request $request, RoomOption $roomOption)
     {
         $data = $request->validate([
-            'group' => 'required|in:room_type,furnishing_type,tenant_type',
+            'group' => 'required|in:room_type,furnishing_type,tenant_type,amenity',
             'key' => 'required|string|max:100|regex:/^[a-z0-9_\-]+$/|unique:room_options,key,' . $roomOption->id,
             'label' => 'required|string|max:100',
             'sort_order' => 'nullable|integer',

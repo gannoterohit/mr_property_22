@@ -181,7 +181,8 @@
                     <div class="owner-form-wide bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
                         <h3 class="text-xl font-black text-gray-900 border-b pb-4 mb-6">Common Amenities</h3>
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                            @foreach(['Wifi', 'AC', 'TV', 'Geyser', 'Cooler', 'Parking', 'Kitchen', 'Cleaning', 'Laundry', 'Power Backup', 'CCTV', 'Lift', 'Security', 'Water Supply', 'Gym', 'Swimming Pool', 'Clubhouse'] as $amenity)
+                            @foreach(\App\Models\RoomOption::optionsFor('amenity') as $amenityOption)
+                                @php $amenity = $amenityOption->label; @endphp
                             <label class="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl cursor-pointer hover:bg-indigo-50 transition border border-transparent hover:border-indigo-100">
                                 <input type="checkbox" name="amenities[]" value="{{ $amenity }}" class="w-5 h-5 rounded-lg text-indigo-600 focus:ring-indigo-500 border-gray-300">
                                 <span class="font-bold text-gray-700 text-sm">{{ $amenity }}</span>

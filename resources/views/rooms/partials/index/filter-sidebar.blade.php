@@ -145,14 +145,9 @@
                         <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Amenities</label>
                         <div class="space-y-2">
                             @php
-                                $amenityOpts = [
-                                    'wifi' => 'Wi-Fi',
-                                    'ac' => 'AC',
-                                    'parking' => 'Parking',
-                                    'kitchen' => 'Kitchen',
-                                    'power_backup' => 'Power Backup',
-                                    'washing_machine' => 'Washing Machine'
-                                ];
+                                $amenityOpts = \App\Models\RoomOption::optionsFor('amenity')
+                                    ->pluck('label', 'label')
+                                    ->all();
                             @endphp
                             @foreach($amenityOpts as $key => $lbl)
                                 <label class="flex items-center gap-2 text-xs text-slate-600 font-semibold cursor-pointer hover:text-indigo-600">

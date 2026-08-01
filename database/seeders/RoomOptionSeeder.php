@@ -34,6 +34,11 @@ class RoomOptionSeeder extends Seeder
             ['group' => 'tenant_type', 'key' => 'boys', 'label' => 'Boys Only', 'sort_order' => 5],
         ];
 
+        $amenityOrder = 0;
+        foreach (\App\Models\RoomOption::fallbackOptionsFor('amenity') as $key => $label) {
+            $defaults[] = ['group' => 'amenity', 'key' => $key, 'label' => $label, 'sort_order' => ++$amenityOrder];
+        }
+
         foreach ($defaults as $option) {
             DB::table('room_options')->updateOrInsert(
                 ['group' => $option['group'], 'key' => $option['key']],

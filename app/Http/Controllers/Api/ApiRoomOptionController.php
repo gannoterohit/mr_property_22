@@ -15,6 +15,7 @@ class ApiRoomOptionController extends BaseApiController
             'room_type',
             'furnishing_type',
             'tenant_type',
+            'amenity',
         ])->mapWithKeys(fn (string $group) => [
             $group => RoomOption::optionsFor($group)
                 ->map(fn ($option) => [

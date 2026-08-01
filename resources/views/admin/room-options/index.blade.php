@@ -17,6 +17,7 @@
         'room_type' => ['label' => 'Room Type', 'icon' => 'fa-door-open', 'badge' => 'admin-theme-soft border-slate-200'],
         'furnishing_type' => ['label' => 'Furnishing', 'icon' => 'fa-couch', 'badge' => 'bg-amber-50 text-amber-700 border-amber-100'],
         'tenant_type' => ['label' => 'Preferred Tenant', 'icon' => 'fa-user-friends', 'badge' => 'bg-emerald-50 text-emerald-700 border-emerald-100'],
+        'amenity' => ['label' => 'Amenities', 'icon' => 'fa-bell-concierge', 'badge' => 'bg-sky-50 text-sky-700 border-sky-100'],
     ];
 @endphp
 
@@ -24,7 +25,7 @@
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
             <h2 class="text-xl font-bold text-slate-900">Room option manager</h2>
-            <p class="text-sm text-slate-500 mt-1">Manage room type, furnishing and tenant options from one place.</p>
+            <p class="text-sm text-slate-500 mt-1">Manage room type, furnishing, tenant and amenity options from one place.</p>
         </div>
         <div class="flex items-center gap-2">
             <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 shadow-sm">
@@ -87,7 +88,7 @@
                                     <form action="{{ route('admin.room-options.toggle-status', $option) }}" method="POST" onsubmit="return confirm('{{ $option->is_active ? 'Deactivate' : 'Activate' }} this option?')">
                                         @csrf @method('PATCH')
                                         <button type="submit" class="h-8 px-2.5 rounded-lg border text-[10px] font-bold transition {{ $option->is_active ? 'bg-red-50 border-red-100 text-red-600 hover:bg-red-600 hover:text-white' : 'bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white' }}">
-                                            <i class="fas {{ $option->is_active ? 'fa-ban' : 'fa-check' }} mr-1"></i>{{ $option->is_active ? 'Deactivate' : 'Activate' }}
+                                            <i class="fas {{ $option->is_active ? 'fa-trash-can' : 'fa-rotate-left' }} mr-1"></i>{{ $option->is_active ? 'Remove' : 'Restore' }}
                                         </button>
                                     </form>
                                 </div>
