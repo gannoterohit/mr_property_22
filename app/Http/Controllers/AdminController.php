@@ -191,7 +191,7 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             \Log::error('Room approval error: '.$e->getMessage());
 
-            return response()->json(['success' => false, 'message' => 'Error approving room: '.$e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Unable to approve the room. Please try again.'], 500);
         }
     }
 
@@ -240,7 +240,7 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             \Log::error('Room rejection error: '.$e->getMessage());
 
-            return response()->json(['success' => false, 'message' => 'Error rejecting room: '.$e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Unable to reject the room. Please try again.'], 500);
         }
     }
 
@@ -264,7 +264,7 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             \Log::error('Room deletion error: '.$e->getMessage());
 
-            return response()->json(['success' => false, 'message' => 'Error deleting room: '.$e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Unable to delete the room. Please try again.'], 500);
         }
     }
 

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class Otp extends Model
 {
@@ -26,7 +28,7 @@ class Otp extends Model
         // Create new OTP that expires in 10 minutes
         self::create([
             'email' => $email,
-            'code' => $code,
+            'code' => Hash::make((string) $code),
             'expires_at' => now()->addMinutes(10),
         ]);
         
@@ -38,17 +40,29 @@ class Otp extends Model
      */
     public static function verify(string $email, string $code): bool
     {
-        $otp = self::where('email', $email)
-                  ->where('code', $code)
-                  ->where('expires_at', '>', now())
-                  ->where('used', false)
-                  ->first();
-                  
-        if ($otp) {
+        return DB::transaction(function () use ($email, $code): bool {
+            $otp = self::where('email', $email)
+                ->where('expires_at', '>', now())
+                ->where('used', false)
+                ->latest('id')
+                ->lockForUpdate()
+                ->first();
+
+            if (! $otp) {
+                return false;
+            }
+
+            $valid = str_starts_with($otp->code, '$')
+                ? Hash::check($code, $otp->code)
+                : hash_equals((string) $otp->code, $code);
+
+            if (! $valid) {
+                return false;
+            }
+
             $otp->update(['used' => true]);
+
             return true;
-        }
-        
-        return false;
+        });
     }
 }

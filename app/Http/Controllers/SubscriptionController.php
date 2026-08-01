@@ -129,9 +129,10 @@ class SubscriptionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            report($e);
             return response()->json([
                 'success' => false,
-                'message' => 'Subscription failed: ' . $e->getMessage()
+                'message' => 'Unable to start the subscription. Please try again.'
             ], 500);
         }
     }

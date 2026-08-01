@@ -77,8 +77,9 @@ class BookingController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+            report($e);
 
-            return back()->with('error', 'Booking failed: '.$e->getMessage());
+            return back()->withInput()->with('error', 'Unable to create the booking. Please try again.');
         }
     }
 }

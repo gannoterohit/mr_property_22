@@ -31,7 +31,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         
         $middleware->validateCsrfTokens(except: [
-            'payment/razorpay/verify',
             'webhook/razorpay',
             'api/v1/webhook/razorpay',
         ]);

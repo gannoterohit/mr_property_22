@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CmsPage;
+use App\Services\HtmlSanitizer;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -106,11 +107,13 @@ class CmsPageController extends Controller
                 ->filter(fn ($faq) => !empty($faq['question']))
                 ->map(fn ($faq) => [
                     'question' => $faq['question'],
-                    'answer' => $faq['answer'] ?? '',
+                    'answer' => app(HtmlSanitizer::class)->clean($faq['answer'] ?? ''),
                 ])
                 ->values()
                 ->all();
             $data['content'] = json_encode($faqs);
+        } else {
+            $data['content'] = app(HtmlSanitizer::class)->clean($data['content'] ?? '');
         }
 
         unset($data['faqs']);

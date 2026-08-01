@@ -66,8 +66,7 @@ class OtpController extends Controller
             
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send OTP. Error: ' . $e->getMessage(),
-                'error' => config('app.debug') ? $e->getMessage() : null
+                'message' => 'Unable to send OTP right now. Please try again shortly.',
             ], 500);
         }
 

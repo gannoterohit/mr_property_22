@@ -100,8 +100,9 @@ Every paginated response exposes the same Flutter-facing keys:
 }
 ```
 
-Legacy Laravel pagination fields remain in the response for backward
-compatibility. New Flutter code should read `items` and `pagination`.
+Flutter code should always read paginated records from `data.items` and page
+information from `data.pagination`. Laravel's duplicate `links`, `meta` and
+`current_page` response shapes are not exposed.
 
 ## Renter APIs
 

@@ -285,9 +285,10 @@ class UnlockController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            report($e);
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to unlock: ' . $e->getMessage()
+                'message' => 'Unable to unlock the contact. Please try again.'
             ], 500);
         }
     }

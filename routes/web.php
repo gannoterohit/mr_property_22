@@ -89,9 +89,6 @@ Route::controller(\App\Http\Controllers\PageController::class)->group(function (
 });
 Route::post('/contact-us', [\App\Http\Controllers\ContactController::class, 'store'])->middleware('throttle:public_form')->name('pages.contact.store');
 
-// Public Payment Verification (Must be outside auth middleware for callbacks)
-Route::post('/payment/razorpay/verify', [RazorpayController::class, 'verifyPayment'])->middleware('throttle:10,1')->name('razorpay.verify');
-
 Route::middleware('auth')->group(function () {
     Route::get('/unlocked-contacts', [UnlockController::class, 'index'])->middleware('role:user')->name('unlocks.index');
 
@@ -110,6 +107,7 @@ Route::middleware('auth')->group(function () {
 
     // Payment routes
     Route::post('/payment/razorpay/order', [RazorpayController::class, 'createOrder'])->middleware('throttle:10,1')->name('razorpay.createOrder');
+    Route::post('/payment/razorpay/verify', [RazorpayController::class, 'verifyPayment'])->middleware('throttle:10,1')->name('razorpay.verify');
 
     // Other routes
     // Phase 1 is listing + room-contact unlock only. Rent booking/payment is intentionally disabled.

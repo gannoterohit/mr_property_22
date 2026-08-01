@@ -670,13 +670,19 @@ if (landmarkInput) {
 function addLandmarkTag(text) {
     const tag = document.createElement('div');
     tag.className = 'bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-xl flex items-center gap-2 text-sm shadow-sm border border-indigo-200 animate-in fade-in zoom-in duration-300';
-    tag.innerHTML = `
-        <span>${text}</span>
-        <button type="button" onclick="this.parentElement.remove()" class="hover:text-red-500 transition-colors">
-            <i class="fas fa-times"></i>
-        </button>
-        <input type="hidden" name="landmarks[]" value="${text}">
-    `;
+    const label = document.createElement('span');
+    label.textContent = text;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'hover:text-red-500 transition-colors';
+    remove.setAttribute('aria-label', 'Remove landmark');
+    remove.innerHTML = '<i class="fas fa-times"></i>';
+    remove.addEventListener('click', () => tag.remove());
+    const hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.name = 'landmarks[]';
+    hidden.value = text;
+    tag.append(label, remove, hidden);
     landmarkContainer.insertBefore(tag, landmarkInput);
 }
 
@@ -749,10 +755,7 @@ document.getElementById('editRoomForm').addEventListener('submit', async functio
     const lInput = document.getElementById('landmark-input');
     if (lInput && lInput.value.trim()) {
         const val = lInput.value.trim();
-        const tag = document.createElement('div');
-        tag.className = 'bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-xl flex items-center gap-2 text-sm';
-        tag.innerHTML = `<span>${val}</span><button type="button" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button><input type="hidden" name="landmarks[]" value="${val}">`;
-        landmarkContainer.insertBefore(tag, lInput);
+        addLandmarkTag(val);
         lInput.value = '';
     }
 

@@ -23,6 +23,10 @@ class SecurityHeaders
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
+        $response->headers->set(
+            'Content-Security-Policy',
+            "object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self' https://api.razorpay.com https://checkout.razorpay.com"
+        );
         
         // Final guard against cross-site script inclusion
         if ($request->isSecure()) {

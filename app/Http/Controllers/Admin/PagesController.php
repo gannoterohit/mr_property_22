@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Services\HtmlSanitizer;
 use Illuminate\Http\Request;
 
 class PagesController extends Controller
@@ -139,11 +140,20 @@ class PagesController extends Controller
      */
     public function updateFaq(Request $request)
     {
-        $faqs = $request->input('faqs', []);
+        $data = $request->validate([
+            'faqs' => ['nullable', 'array', 'max:100'],
+            'faqs.*.question' => ['nullable', 'string', 'max:500'],
+            'faqs.*.answer' => ['nullable', 'string', 'max:10000'],
+        ]);
+        $faqs = $data['faqs'] ?? [];
         // Filter out empty questions
-        $faqs = array_filter($faqs, function($faq) {
+        $faqs = array_filter($faqs, function ($faq) {
             return !empty($faq['question']);
         });
+        $faqs = array_map(fn ($faq) => [
+            'question' => $faq['question'],
+            'answer' => app(HtmlSanitizer::class)->clean($faq['answer'] ?? ''),
+        ], $faqs);
         
         $json = json_encode(array_values($faqs));
         
@@ -183,8 +193,8 @@ class PagesController extends Controller
 
     private function saveEditor(Request $request, string $key, string $pageTitle)
     {
-        $request->validate(['content' => 'nullable|string']);
-        $this->updatePageContent($key, $request->input('content', ''));
+        $data = $request->validate(['content' => 'nullable|string|max:500000']);
+        $this->updatePageContent($key, app(HtmlSanitizer::class)->clean($data['content'] ?? ''));
 
         return back()->with('success', $pageTitle . ' page updated successfully!');
     }

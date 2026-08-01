@@ -10,18 +10,32 @@ use App\Models\Subscriber;
 use App\Models\CityAlert;
 use App\Models\RoomOption;
 use App\Http\Resources\BlogResource;
+use App\Services\HtmlSanitizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class AdminContentController extends BaseApiController
 {
     /**
      * Settings
      */
-    public function getSettings() { return $this->sendSuccess(Setting::all()->pluck('value', 'key')); }
+    public function getSettings() { return $this->sendSuccess(Setting::whereNotIn('key', Setting::SECRET_KEYS)->get()->pluck('value', 'key')); }
     public function updateSettings(Request $request) {
-        foreach ($request->all() as $key => $value) { Setting::set($key, $value); }
+        $data = collect($request->except(['_token', '_method']));
+        if ($data->count() > 100) return $this->sendError('Too many settings were submitted.', [], 422);
+        $existing = Setting::whereIn('key', $data->keys())->pluck('key');
+        $unknown = $data->keys()->diff($existing);
+        if ($unknown->isNotEmpty()) return $this->sendError('Unknown setting key: '.$unknown->first(), [], 422);
+        if ($data->keys()->contains(fn ($key) => str_ends_with($key, '_content'))) {
+            return $this->sendError('Page content must be updated through the page endpoint.', [], 422);
+        }
+        foreach ($data as $key => $value) {
+            if (! is_scalar($value) && $value !== null) return $this->sendError("Invalid setting value: {$key}", [], 422);
+            if (mb_strlen((string) $value) > 10000) return $this->sendError("Setting value is too long: {$key}", [], 422);
+            Setting::set($key, $value);
+        }
         return $this->sendSuccess([], 'Settings updated');
     }
 
@@ -34,9 +48,19 @@ class AdminContentController extends BaseApiController
         return BlogResource::collection($query->paginate($request->get('limit', 15)))->additional(['status' => 'success']);
     }
     public function storeBlog(Request $request) {
-        $validator = Validator::make($request->all(), ['title' => 'required', 'slug' => 'required|unique:blogs,slug', 'content' => 'required']);
-        if ($validator->fails()) return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
-        $data = $request->all();
+        $data = $request->validate([
+            'title' => ['required','string','max:255'],
+            'slug' => ['nullable','string','max:255','unique:blogs,slug'],
+            'content' => ['required','string','max:500000'],
+            'meta_title' => ['nullable','string','max:255'],
+            'meta_description' => ['nullable','string','max:500'],
+            'meta_keywords' => ['nullable','string','max:500'],
+            'is_published' => ['nullable','boolean'],
+            'image' => ['nullable','image','mimes:jpg,jpeg,png,webp,gif','max:2048'],
+        ]);
+        unset($data['image']);
+        $data['content'] = app(HtmlSanitizer::class)->clean($data['content']);
+        $data['is_published'] = $request->boolean('is_published');
         if ($request->hasFile('image')) $data['image'] = $request->file('image')->store('blogs', 'public');
         $blog = Blog::create($data);
         return $this->sendSuccess(new BlogResource($blog), 'Blog created', 201);
@@ -44,7 +68,19 @@ class AdminContentController extends BaseApiController
     public function updateBlog(Request $request, $id) {
         $blog = Blog::find($id);
         if (!$blog) return $this->sendError('Blog not found');
-        $data = $request->all();
+        $data = $request->validate([
+            'title' => ['sometimes','required','string','max:255'],
+            'slug' => ['sometimes','nullable','string','max:255',Rule::unique('blogs','slug')->ignore($blog->id)],
+            'content' => ['sometimes','required','string','max:500000'],
+            'meta_title' => ['sometimes','nullable','string','max:255'],
+            'meta_description' => ['sometimes','nullable','string','max:500'],
+            'meta_keywords' => ['sometimes','nullable','string','max:500'],
+            'is_published' => ['sometimes','boolean'],
+            'image' => ['nullable','image','mimes:jpg,jpeg,png,webp,gif','max:2048'],
+        ]);
+        unset($data['image']);
+        if (isset($data['content'])) $data['content'] = app(HtmlSanitizer::class)->clean($data['content']);
+        if ($request->has('is_published')) $data['is_published'] = $request->boolean('is_published');
         if ($request->hasFile('image')) $data['image'] = $request->file('image')->store('blogs', 'public');
         $blog->update($data);
         return $this->sendSuccess(new BlogResource($blog), 'Blog updated');
@@ -65,9 +101,7 @@ class AdminContentController extends BaseApiController
         return $this->sendSuccess($query->get());
     }
     public function storeOffer(Request $request) {
-        $validator = Validator::make($request->all(), ['title' => 'required', 'description' => 'required']);
-        if ($validator->fails()) return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
-        $data = $request->all();
+        $data = $this->offerData($request);
         if ($request->hasFile('image')) $data['image_path'] = $request->file('image')->store('offers', 'public');
         $offer = Offer::create($data);
         return $this->sendSuccess($offer, 'Offer created', 201);
@@ -75,7 +109,7 @@ class AdminContentController extends BaseApiController
     public function updateOffer(Request $request, $id) {
         $offer = Offer::find($id);
         if (!$offer) return $this->sendError('Offer not found');
-        $data = $request->all();
+        $data = $this->offerData($request, true);
         if ($request->hasFile('image')) {
             if ($offer->image_path) Storage::disk('public')->delete($offer->image_path);
             $data['image_path'] = $request->file('image')->store('offers', 'public');
@@ -119,7 +153,13 @@ class AdminContentController extends BaseApiController
         $keyMap = ['about-us'=>'about_content','careers'=>'careers_content','how-it-works'=>'how_it_works_content','safety-tips'=>'safety_tips_content','owner-guidelines'=>'owner_guidelines_content','user-guidelines'=>'user_guidelines_content','terms-and-conditions'=>'terms_content','privacy-policy'=>'privacy_content','condition-policy'=>'condition_content','contact-us'=>'contact_content','faq'=>'faq_content'];
         if (!isset($keyMap[$slug])) return $this->sendError('Invalid slug', [], 422);
         $data=$request->validate(['content'=>'required']);
-        Setting::set($keyMap[$slug], is_array($data['content']) ? json_encode($data['content']) : $data['content']);
+        $content = is_array($data['content'])
+            ? json_encode(collect($data['content'])->map(fn ($item) => is_array($item) ? [
+                'question' => mb_substr((string) ($item['question'] ?? ''), 0, 500),
+                'answer' => app(HtmlSanitizer::class)->clean((string) ($item['answer'] ?? '')),
+            ] : $item)->all())
+            : app(HtmlSanitizer::class)->clean($data['content']);
+        Setting::set($keyMap[$slug], $content);
         return $this->sendSuccess([], 'Page updated');
     }
 
@@ -144,4 +184,27 @@ class AdminContentController extends BaseApiController
     }
     public function toggleRoomOption(RoomOption $option) {$option->update(['is_active'=>!$option->is_active]);return $this->sendSuccess($option,'Room option status updated');}
     public function destroyRoomOption(RoomOption $option) {$option->delete();return $this->sendSuccess([],'Room option deleted');}
+
+    private function offerData(Request $request, bool $partial = false): array
+    {
+        $sometimes = $partial ? 'sometimes|' : '';
+        $data = $request->validate([
+            'title' => [$sometimes.'required','string','max:255'],
+            'description' => [$sometimes.'required','string','max:2000'],
+            'link_url' => ['nullable','url','max:500'],
+            'placement' => ['nullable',Rule::in(array_keys(Offer::PLACEMENTS))],
+            'type' => ['nullable','string','max:50'],
+            'discount_text' => ['nullable','string','max:100'],
+            'target_audience' => ['nullable','in:all,user,owner'],
+            'banner_color' => ['nullable','regex:/^#[0-9A-Fa-f]{6}$/'],
+            'is_active' => ['nullable','boolean'],
+            'start_date' => ['nullable','date'],
+            'end_date' => ['nullable','date','after_or_equal:start_date'],
+            'image' => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
+        ]);
+        unset($data['image']);
+        if ($request->has('is_active')) $data['is_active'] = $request->boolean('is_active');
+
+        return $data;
+    }
 }

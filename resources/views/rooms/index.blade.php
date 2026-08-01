@@ -542,11 +542,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 description: 'Make Room Available - Listing Fee',
                 order_id: orderData.order_id,
                 handler: async function(response) {
-                    console.log('Razorpay Response:', response);
-                    
                     if (!response.razorpay_order_id || !response.razorpay_signature) {
                         alert('Payment failed: Missing order ID or signature. Please try again.');
-                        console.error('Missing properties in response', response);
                         return;
                     }
 

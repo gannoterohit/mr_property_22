@@ -3,10 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Schema;
 
 class Setting extends Model
 {
+    public const SECRET_KEYS = [
+        'mail_password',
+        'razorpay_secret',
+        'razorpay_webhook_secret',
+        'google_maps_api_key',
+    ];
+
     protected $fillable = [
         'key',
         'value',
@@ -14,6 +23,36 @@ class Setting extends Model
         'group',
         'description',
     ];
+
+    public function getValueAttribute($value)
+    {
+        if (! in_array($this->key, self::SECRET_KEYS, true) || $value === null || $value === '') {
+            return $value;
+        }
+
+        try {
+            return Crypt::decryptString($value);
+        } catch (DecryptException) {
+            // Existing installations may still contain legacy plaintext. It is
+            // encrypted automatically the next time the setting is saved.
+            return $value;
+        }
+    }
+
+    public function setValueAttribute($value): void
+    {
+        if (! in_array($this->key, self::SECRET_KEYS, true) || $value === null || $value === '') {
+            $this->attributes['value'] = $value;
+            return;
+        }
+
+        try {
+            Crypt::decryptString((string) $value);
+            $this->attributes['value'] = $value;
+        } catch (DecryptException) {
+            $this->attributes['value'] = Crypt::encryptString((string) $value);
+        }
+    }
 
     /**
      * Get setting value by key

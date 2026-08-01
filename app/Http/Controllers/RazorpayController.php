@@ -100,8 +100,6 @@ class RazorpayController extends Controller
             'razorpay_signature' => 'required|string',
             'payment_id' => 'required|integer|exists:payments,id',
         ]);
-        Log::info('Hit verifyPayment: ' . $request->razorpay_payment_id);
-        
         $key = trim(Setting::get('razorpay_key', ''));
         $secret = trim(Setting::get('razorpay_secret', ''));
         
@@ -122,7 +120,9 @@ class RazorpayController extends Controller
         
         // Use request inputs (from POST body OR Query Params for callback flow)
         $dbPaymentId = $request->input('payment_id');
-        $payment = Payment::whereKey($dbPaymentId)->firstOrFail();
+        $payment = Payment::whereKey($dbPaymentId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
         $paymentType = $payment->type;
         $referenceId = $payment->reference_id;
 
@@ -147,8 +147,6 @@ class RazorpayController extends Controller
             }
         } catch (\Exception $e) {
             Log::error("Razorpay signature verification failed: " . $e->getMessage());
-            Log::error("Data: " . json_encode($attributes ?? []));
-
             $message = config('app.debug')
                 ? 'Signature verification failed: ' . $e->getMessage()
                 : 'Signature verification failed';
@@ -156,21 +154,13 @@ class RazorpayController extends Controller
             return response()->json(['status' => 'fail', 'message' => $message], 400);
         }
 
-        // Session restoration for mobile callback flow (only after signature is valid)
-        if (!Auth::check() && $dbPaymentId) {
-            $payment = Payment::find($dbPaymentId);
-            if ($payment) {
-                Log::info("Restoring session for user ID: " . $payment->user_id);
-                Auth::loginUsingId($payment->user_id);
-            } else {
-                Log::warning("Could not find payment for session restoration: $dbPaymentId");
-            }
-        }
-
         \DB::beginTransaction();
         try {
             // Update payment record — order ID must match the pending record
-            $payment = Payment::where('id', $dbPaymentId)->lockForUpdate()->firstOrFail();
+            $payment = Payment::where('id', $dbPaymentId)
+                ->where('user_id', Auth::id())
+                ->lockForUpdate()
+                ->firstOrFail();
 
             if ($payment->status === 'completed') {
                 DB::commit();
@@ -178,10 +168,6 @@ class RazorpayController extends Controller
             }
             if ($payment->status !== 'pending') {
                 throw new \RuntimeException('Payment is not pending');
-            }
-
-            if (Auth::check() && $payment->user_id !== Auth::id()) {
-                throw new \RuntimeException('Payment does not belong to this user');
             }
 
             $payment->update([

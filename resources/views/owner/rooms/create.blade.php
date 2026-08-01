@@ -509,15 +509,30 @@ window.initMap = initMap;
 const landmarkInput = document.getElementById('landmark-input');
 const landmarkContainer = document.getElementById('landmark-container');
 
+function addLandmarkTag(value) {
+    const tag = document.createElement('div');
+    tag.className = 'bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-xl flex items-center gap-2 text-sm';
+    const label = document.createElement('span');
+    label.textContent = value;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.setAttribute('aria-label', 'Remove landmark');
+    remove.innerHTML = '<i class="fas fa-times"></i>';
+    remove.addEventListener('click', () => tag.remove());
+    const hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.name = 'landmarks[]';
+    hidden.value = value;
+    tag.append(label, remove, hidden);
+    landmarkContainer.insertBefore(tag, landmarkInput);
+}
+
 landmarkInput?.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         const val = this.value.trim();
         if (val) {
-            const tag = document.createElement('div');
-            tag.className = 'bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-xl flex items-center gap-2 text-sm';
-            tag.innerHTML = `<span>${val}</span><button type="button" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button><input type="hidden" name="landmarks[]" value="${val}">`;
-            landmarkContainer.insertBefore(tag, landmarkInput);
+            addLandmarkTag(val);
             this.value = '';
         }
     }
@@ -573,10 +588,7 @@ document.getElementById('roomForm').addEventListener('submit', async function(e)
     const lInput = document.getElementById('landmark-input');
     if (lInput && lInput.value.trim()) {
         const val = lInput.value.trim();
-        const tag = document.createElement('div');
-        tag.className = 'bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-xl flex items-center gap-2 text-sm';
-        tag.innerHTML = `<span>${val}</span><button type="button" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button><input type="hidden" name="landmarks[]" value="${val}">`;
-        landmarkContainer.insertBefore(tag, lInput);
+        addLandmarkTag(val);
         lInput.value = '';
     }
 

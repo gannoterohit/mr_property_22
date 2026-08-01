@@ -80,8 +80,8 @@ it('returns only real unlocked enquiries in the owner API without seeker contact
 
     $this->getJson('/api/v1/owner/enquiries')
         ->assertOk()
-        ->assertJsonCount(1, 'data.data')
-        ->assertJsonPath('data.data.0.room.title', 'Visible API Enquiry')
+        ->assertJsonCount(1, 'data.items')
+        ->assertJsonPath('data.items.0.room.title', 'Visible API Enquiry')
         ->assertJsonMissing(['phone' => '5555555555'])
-        ->assertJsonMissingPath('data.data.0.user.email');
+        ->assertJsonMissingPath('data.items.0.user.email');
 });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class BusinessSettingsController extends Controller
@@ -42,7 +43,53 @@ class BusinessSettingsController extends Controller
 
     public function update(Request $request)
     {
-        $data = $request->except(['_token', '_method']);
+        $data = $request->validate([
+            'listing_fee' => ['nullable', 'numeric', 'min:0'],
+            'featured_fee' => ['nullable', 'numeric', 'min:0'],
+            'unlock_fee' => ['nullable', 'numeric', 'min:0'],
+            'website_name' => ['nullable', 'string', 'max:120'],
+            'contact_phone' => ['nullable', 'string', 'max:30'],
+            'contact_email' => ['nullable', 'email', 'max:255'],
+            'company_address' => ['nullable', 'string', 'max:1000'],
+            'primary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'secondary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'facebook_url' => ['nullable', 'url', 'max:500'],
+            'twitter_url' => ['nullable', 'url', 'max:500'],
+            'instagram_url' => ['nullable', 'url', 'max:500'],
+            'linkedin_url' => ['nullable', 'url', 'max:500'],
+            'mail_host' => ['nullable', 'string', 'max:255'],
+            'mail_port' => ['nullable', 'integer', 'between:1,65535'],
+            'mail_username' => ['nullable', 'string', 'max:255'],
+            'mail_password' => ['nullable', 'string', 'max:500'],
+            'referral_enabled' => ['nullable', 'boolean'],
+            'wallet_enabled' => ['nullable', 'boolean'],
+            'promo_enabled' => ['nullable', 'boolean'],
+            'razorpay_key' => ['nullable', 'string', 'max:255'],
+            'razorpay_secret' => ['nullable', 'string', 'max:500'],
+            'razorpay_webhook_secret' => ['nullable', 'string', 'max:500'],
+            'google_maps_api_key' => ['nullable', 'string', 'max:500'],
+            'play_store_url' => ['nullable', 'url', 'max:500'],
+            'app_store_url' => ['nullable', 'url', 'max:500'],
+            'ga4_measurement_id' => ['nullable', 'string', 'max:100'],
+            'google_search_console_code' => ['nullable', 'string', 'max:500'],
+            'website_url' => ['nullable', 'url', 'max:500'],
+            'seo_meta_description' => ['nullable', 'string', 'max:1000'],
+            'seo_meta_keywords' => ['nullable', 'string', 'max:1000'],
+            'google_ads_tag_id' => ['nullable', 'string', 'max:100'],
+            'google_ads_conversion_label' => ['nullable', 'string', 'max:100'],
+            'google_ads_signup_label' => ['nullable', 'string', 'max:100'],
+            'google_ads_room_view_label' => ['nullable', 'string', 'max:100'],
+            'meta_pixel_id' => ['nullable', 'string', 'max:100'],
+            'adsense_client_id' => ['nullable', 'string', 'max:100'],
+            'adsense_home_top_id' => ['nullable', 'string', 'max:100'],
+            'adsense_home_bottom_id' => ['nullable', 'string', 'max:100'],
+            'adsense_room_content_id' => ['nullable', 'string', 'max:100'],
+            'adsense_room_sidebar_id' => ['nullable', 'string', 'max:100'],
+            'navbar_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'footer_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'website_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'website_favicon' => ['nullable', 'file', 'mimes:ico,png', 'max:1024'],
+        ]);
 
         foreach ([
             'google_ads_enabled',
@@ -54,46 +101,62 @@ class BusinessSettingsController extends Controller
             $data[$booleanKey] = $request->boolean($booleanKey) ? '1' : '0';
         }
 
-        // Remove helper text inputs (suffix _text) to avoid duplicate settings
-        $data = array_filter($data, function ($key) {
-            return ! str_ends_with($key, '_text');
-        }, ARRAY_FILTER_USE_KEY);
+        foreach (['mail_password', 'razorpay_secret', 'razorpay_webhook_secret'] as $secretKey) {
+            if (($data[$secretKey] ?? '') === '') {
+                unset($data[$secretKey]);
+            }
+        }
 
-        foreach ($data as $key => $value) {
-            $setting = Setting::where('key', $key)->first();
+        $newFiles = [];
+        $oldFiles = [];
 
-            // Handle file uploads (logo)
-            if ($request->hasFile($key)) {
-                // Delete old file if exists
-                if ($setting && $setting->value) {
-                    Storage::disk('public')->delete($setting->value);
-                    // Also remove from public/storage folder
-                    @unlink(public_path('storage/'.$setting->value));
+        try {
+            foreach (['navbar_logo', 'footer_logo', 'website_logo', 'website_favicon'] as $fileKey) {
+                if (! $request->hasFile($fileKey)) {
+                    continue;
                 }
 
-                // Store new file
-                $path = $request->file($key)->store('settings', 'public');
-                $value = $path;
+                $path = $request->file($fileKey)->store('settings', 'public');
+                $newFiles[] = $path;
+                $data[$fileKey] = $path;
 
-                // XAMPP Windows fix: Copy file to public/storage (symlink may not work)
                 $destDir = public_path('storage/'.dirname($path));
                 if (! is_dir($destDir)) {
                     mkdir($destDir, 0755, true);
                 }
-                copy(storage_path('app/public/'.$path), public_path('storage/'.$path));
+                if (! copy(storage_path('app/public/'.$path), public_path('storage/'.$path))) {
+                    throw new \RuntimeException('Unable to publish the uploaded settings image.');
+                }
             }
 
-            if ($setting) {
-                $setting->update(['value' => $value]);
-            } else {
-                // Create new setting if doesn't exist
-                Setting::create([
-                    'key' => $key,
-                    'value' => $value,
-                    'type' => $request->hasFile($key) ? 'image' : 'text',
-                    'group' => 'general',
-                ]);
+            DB::transaction(function () use ($data, $request, &$oldFiles): void {
+                foreach ($data as $key => $value) {
+                    $setting = Setting::where('key', $key)->first();
+                    if ($request->hasFile($key) && $setting?->value) {
+                        $oldFiles[] = $setting->value;
+                    }
+
+                    Setting::updateOrCreate(
+                        ['key' => $key],
+                        [
+                            'value' => $value,
+                            'type' => $request->hasFile($key) ? 'image' : ($setting?->type ?? 'text'),
+                            'group' => $setting?->group ?? 'general',
+                        ]
+                    );
+                }
+            });
+
+            foreach (array_unique($oldFiles) as $oldFile) {
+                Storage::disk('public')->delete($oldFile);
             }
+        } catch (\Throwable $e) {
+            foreach ($newFiles as $newFile) {
+                Storage::disk('public')->delete($newFile);
+            }
+            report($e);
+
+            return back()->withInput()->with('error', 'Unable to update settings. Please try again.');
         }
 
         return back()->with('success', 'Settings updated successfully!');

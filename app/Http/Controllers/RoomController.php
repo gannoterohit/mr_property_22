@@ -763,9 +763,10 @@ class RoomController extends Controller {
 
         } catch (\Exception $e) {
             DB::rollBack();
+            report($e);
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete room: ' . $e->getMessage()
+                'message' => 'Unable to delete the room. Please try again.'
             ], 500);
         }
     }
@@ -857,7 +858,8 @@ class RoomController extends Controller {
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Failed: ' . $e->getMessage());
+            report($e);
+            return back()->withInput()->with('error', 'Unable to feature the room. Please try again.');
         }
     }
 
@@ -1061,9 +1063,10 @@ class RoomController extends Controller {
 
             } catch (\Exception $e) {
                 DB::rollBack();
+                report($e);
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed: ' . $e->getMessage()
+                    'message' => 'Unable to make the room available. Please try again.'
                 ], 500);
             }
         } else {

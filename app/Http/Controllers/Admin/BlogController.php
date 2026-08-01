@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Services\HtmlSanitizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -43,6 +44,7 @@ class BlogController extends Controller
         ]);
 
         unset($data['image']);
+        $data['content'] = app(HtmlSanitizer::class)->clean($data['content']);
         $data['is_published'] = $request->has('is_published');
 
         if ($request->hasFile('image')) {
@@ -79,6 +81,7 @@ class BlogController extends Controller
         ]);
 
         unset($data['image']);
+        $data['content'] = app(HtmlSanitizer::class)->clean($data['content']);
         $data['is_published'] = $request->has('is_published');
 
         if ($request->hasFile('image')) {

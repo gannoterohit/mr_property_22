@@ -342,7 +342,7 @@
                                     <div class="flex-1">
                                          <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
                                             <i class="fas fa-upload mr-2"></i> Upload Favicon
-                                            <input type="file" name="website_favicon" class="hidden" accept="image/x-icon,image/png,image/svg+xml">
+                                            <input type="file" name="website_favicon" class="hidden" accept="image/x-icon,image/png">
                                         </label>
                                         <p class="mt-2 text-xs text-gray-500">Recommended: 32x32px or 64x64px. Formats: ICO, PNG, SVG. Max: 1MB.</p>
                                         <p class="mt-1 text-xs admin-theme-text"><i class="fas fa-info-circle mr-1"></i>Shows in browser tab next to page title</p>
@@ -447,7 +447,7 @@
                             </div>
                              <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                                <input type="password" name="mail_password" value="{{ \App\Models\Setting::get('mail_password') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
+                                <input type="password" name="mail_password" value="" autocomplete="new-password" placeholder="Leave blank to keep the current password" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
                             </div>
                         </div>
                         
@@ -527,11 +527,11 @@
                             </div>
                              <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Key Secret</label>
-                                <input type="password" name="razorpay_secret" value="{{ \App\Models\Setting::get('razorpay_secret') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono">
+                                <input type="password" name="razorpay_secret" value="" autocomplete="new-password" placeholder="Leave blank to keep the current secret" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Webhook Secret</label>
-                                <input type="password" name="razorpay_webhook_secret" value="{{ \App\Models\Setting::get('razorpay_webhook_secret') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="whsec_...">
+                                <input type="password" name="razorpay_webhook_secret" value="" autocomplete="new-password" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="Leave blank to keep the current secret">
                                 <p class="mt-2 text-xs text-gray-500">Razorpay Dashboard - Webhooks - create secret. Webhook URL: <code class="bg-gray-100 px-1 rounded">{{ url('/api/v1/webhook/razorpay') }}</code></p>
                             </div>
                         </div>
