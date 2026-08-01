@@ -610,6 +610,11 @@
                                     <input type="text" name="google_search_console_code" value="{{ \App\Models\Setting::get('google_search_console_code') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="Ex: Zxsdf-Asw3... (Only the content code)">
                                     <p class="mt-1 text-xs text-gray-500">Paste the <strong>content</strong> value from the meta tag.</p>
                                 </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Website URL</label>
+                                    <input type="url" name="website_url" value="{{ \App\Models\Setting::get('website_url') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="https://yourwebsite.com">
+                                    <p class="mt-1 text-xs text-gray-500">Used for canonical URLs, Open Graph URLs, robots.txt and sitemap.xml on production.</p>
+                                </div>
                             </div>
                             
                             <div>

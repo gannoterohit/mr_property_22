@@ -210,6 +210,34 @@ class SettingsSeeder extends Seeder
                 'group' => 'seo',
                 'description' => 'Google AdSense Client ID (ca-pub-XXXXXXXXXXXXXXXX)'
             ],
+            [
+                'key' => 'adsense_home_top_id',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'seo',
+                'description' => 'Google AdSense slot ID for home page top placement'
+            ],
+            [
+                'key' => 'adsense_home_bottom_id',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'seo',
+                'description' => 'Google AdSense slot ID for home page bottom placement'
+            ],
+            [
+                'key' => 'adsense_room_content_id',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'seo',
+                'description' => 'Google AdSense slot ID for room detail content placement'
+            ],
+            [
+                'key' => 'adsense_room_sidebar_id',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'seo',
+                'description' => 'Google AdSense slot ID for room detail sidebar placement'
+            ],
             // Legal & Static Pages
             [
                 'key' => 'terms_content',

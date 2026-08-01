@@ -222,6 +222,7 @@
             </form>
         </div>
         @include('partials.offer-banner', ['placement' => 'home_hero'])
+        @include('partials.adsense-slot', ['placement' => 'home_top'])
 
         <div class="landing-stats mt-5">
             @foreach([['fa-house-circle-check',number_format($totalRooms).'+','Verified rooms','bg-indigo-50 text-indigo-600'],['fa-user-check',number_format($totalOwners).'+','Property owners','bg-orange-50 text-orange-600'],['fa-location-dot',number_format($totalAreas).'+','Cities & areas','bg-emerald-50 text-emerald-600'],['fa-star','4.8/5','Average rating','bg-amber-50 text-amber-600']] as $stat)
@@ -230,6 +231,8 @@
         </div>
     </div>
 </section>
+
+@include('partials.adsense-slot', ['placement' => 'home_bottom'])
 
 <!-- ===== DESKTOP HERO ===== -->
 <div class="hidden hero-mesh-bg pt-8 pb-16 overflow-hidden relative">

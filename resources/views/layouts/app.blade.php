@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}">
-    <meta name="description" content="Find the best rooms for rent in Bhopal, Bangalore, and Indore. Easy booking, verified listings, and great amenities.">
-    <meta name="robots" content="index, follow">
     <meta name="format-detection" content="telephone=no">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -15,7 +12,7 @@
     <meta name="description" content="@yield('description', \App\Models\Setting::get('seo_meta_description', 'Find your perfect room in your city. Browse verified room listings.'))">
     <meta name="keywords" content="@yield('keywords', \App\Models\Setting::get('seo_meta_keywords', 'room rental, apartment, house, property'))">
     <meta name="author" content="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="{{ request()->routeIs('admin.*', 'owner.*', 'dashboard', 'profile.*', 'wallet', 'referral.*', 'wishlist.*', 'complaints.*') ? 'noindex, nofollow' : 'index, follow' }}">
     <meta name="theme-color" content="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}">
     
     
@@ -66,9 +63,10 @@
 
                 // Helper function for conversion tracking
                 window.trackAdsConversion = function(label, value, currency = 'INR') {
-                    @if($gaEnabled && $adsId && \App\Models\Setting::get('google_ads_conversion_label'))
+                    @if($gaEnabled && $adsId)
+                    if (!label) return;
                     gtag('event', 'conversion', {
-                        'send_to': '{{ $adsId }}/{{ \App\Models\Setting::get('google_ads_conversion_label') }}',
+                        'send_to': '{{ $adsId }}/' + label,
                         'value': value || 1.0,
                         'currency': currency
                      });
@@ -87,7 +85,7 @@
         $metaPixelEnabled = \App\Models\Setting::get('meta_pixel_enabled', '0') == '1';
         $metaPixelId = trim((string) \App\Models\Setting::get('meta_pixel_id', ''));
     @endphp
-    @if($metaPixelEnabled && $metaPixelId !== '')
+    @if(app()->environment('production') && $metaPixelEnabled && $metaPixelId !== '' && !request()->routeIs('admin.*', 'owner.*', 'dashboard', 'profile.*', 'wallet', 'referral.*', 'wishlist.*', 'complaints.*'))
         <script>
             !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
             n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;

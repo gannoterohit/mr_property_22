@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\CmsPage;
+use App\Models\Blog;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class SitemapController extends Controller
@@ -11,10 +13,12 @@ class SitemapController extends Controller
     public function index()
     {
         $rooms = Room::where('status', 'active')->orderBy('updated_at', 'desc')->get();
+        $baseUrl = $this->baseUrl();
+        $publicUrl = fn (string $path) => $baseUrl . '/' . ltrim($path, '/');
 
         $urls = [];
         $urls[] = [
-            'loc' => url('/'),
+            'loc' => $baseUrl,
             'lastmod' => now()->toAtomString(),
             'changefreq' => 'daily',
             'priority' => '1.0'
@@ -22,7 +26,7 @@ class SitemapController extends Controller
 
         foreach (CmsPage::where('status', 'published')->orderBy('sort_order')->get() as $page) {
             $urls[] = [
-                'loc' => $page->public_url,
+                'loc' => $publicUrl($page->slug),
                 'lastmod' => optional($page->updated_at)->toAtomString() ?? now()->toAtomString(),
                 'changefreq' => 'monthly',
                 'priority' => '0.5',
@@ -30,22 +34,40 @@ class SitemapController extends Controller
         }
 
         $urls[] = [
-            'loc' => route('rooms.index'),
+            'loc' => $publicUrl('rooms'),
             'lastmod' => now()->toAtomString(),
             'changefreq' => 'daily',
             'priority' => '0.9'
         ];
 
         $urls[] = [
-            'loc' => route('plans'),
+            'loc' => $publicUrl('plans'),
             'lastmod' => now()->toAtomString(),
             'changefreq' => 'weekly',
             'priority' => '0.7'
         ];
 
+        $latestBlog = Blog::where('is_published', true)->latest('updated_at')->first();
+
+        $urls[] = [
+            'loc' => $publicUrl('blog'),
+            'lastmod' => optional($latestBlog?->updated_at)->toAtomString() ?? now()->toAtomString(),
+            'changefreq' => 'weekly',
+            'priority' => '0.7',
+        ];
+
+        foreach (Blog::where('is_published', true)->orderBy('updated_at', 'desc')->get() as $blog) {
+            $urls[] = [
+                'loc' => $publicUrl('blog/' . $blog->slug),
+                'lastmod' => optional($blog->updated_at)->toAtomString() ?? now()->toAtomString(),
+                'changefreq' => 'monthly',
+                'priority' => '0.6',
+            ];
+        }
+
         foreach ($rooms as $room) {
             $urls[] = [
-                'loc' => route('rooms.show', $room->id),
+                'loc' => $publicUrl('rooms/' . $room->id),
                 'lastmod' => optional($room->updated_at)->toAtomString() ?? now()->toAtomString(),
                 'changefreq' => 'weekly',
                 'priority' => '0.7'
@@ -65,13 +87,17 @@ class SitemapController extends Controller
         $content .= "Disallow: /profile/\n";
         $content .= "Disallow: /complaints\n";
         $content .= "Disallow: /api/\n\n";
-        $content .= "Sitemap: " . route('sitemap') . "\n";
+        $content .= "Sitemap: " . $this->baseUrl() . "/sitemap.xml\n";
 
         return response($content)->header('Content-Type', 'text/plain');
     }
+
+    private function baseUrl(): string
+    {
+        $configuredUrl = trim((string) Setting::get('website_url', ''));
+        return rtrim($configuredUrl !== '' ? $configuredUrl : url('/'), '/');
+    }
 }
-
-
 
 
 

@@ -476,6 +476,7 @@ body>nav .desktop-navbar-menu a:first-child {
                 </form>
             </div>
             @include('partials.offer-banner', ['placement' => 'home_hero'])
+            @include('partials.adsense-slot', ['placement' => 'home_top'])
             <div class="market-stats">
                 @foreach([['fa-house-circle-check',number_format($totalRooms).'+','Verified rooms'],['fa-user-check',number_format($totalOwners).'+','Verified owners'],['fa-location-dot',number_format($totalAreas).'+','Popular areas'],['fa-clock','24/7','Customer support']] as $stat)
                     <div class="market-stat"><span><i class="fas {{ $stat[0] }}"></i></span><div><strong>{{ $stat[1] }}</strong><small>{{ $stat[2] }}</small></div></div>
@@ -545,6 +546,8 @@ body>nav .desktop-navbar-menu a:first-child {
             </div>
         </div>
     </section>
+
+    @include('partials.adsense-slot', ['placement' => 'home_bottom'])
 
     <section class="market-section soft">
         <div class="market-wrap market-editorial">
