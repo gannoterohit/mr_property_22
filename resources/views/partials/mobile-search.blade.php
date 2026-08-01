@@ -116,7 +116,7 @@
                                 {{ substr($city->name, 0, 3) }}
                              </div>
                         </div>
-                        <span class="text-[10px] font-medium text-gray-600 truncate max-w-[60px]">{{ $city->name }}{{ $city->is_active ? '' : ' Soon' }}</span>
+                        <span class="text-[10px] font-medium text-gray-600 truncate max-w-[60px]">{{ $city->name }}</span>
                     </a>
                 @endforeach
             @endif

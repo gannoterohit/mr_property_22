@@ -22,7 +22,7 @@
                             <option value="">Select City</option>
                             @foreach($popularCities as $pCity)
                                 <option value="{{ $pCity->name }}" {{ $displayCity === $pCity->name ? 'selected' : '' }}>
-                                    {{ $pCity->name }} {{ $pCity->is_active ? '' : '(Coming Soon)' }}
+                                    {{ $pCity->name }}
                                 </option>
                             @endforeach
                         </select>

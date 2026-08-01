@@ -61,7 +61,7 @@ class CityOperations
             return collect();
         }
 
-        return City::orderByDesc('is_active')
+        return City::where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();

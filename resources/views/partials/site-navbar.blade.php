@@ -6,23 +6,66 @@
     }
     $cmsPageLive = fn (string $slug): bool => $publishedCmsSlugs->has($slug);
 @endphp
+<style>
+@media (max-width:1023px) {
+    .mobile-app-header {
+        width:100%!important;
+        height:70px!important;
+        min-height:70px!important;
+        padding:9px 14px!important;
+        align-items:center!important;
+        background:#fff!important;
+        box-sizing:border-box!important;
+    }
+    .mobile-app-header .header-left {
+        display:flex!important;
+        min-width:0!important;
+        height:52px!important;
+        align-items:center!important;
+    }
+    .mobile-app-header .mobile-brand-logo-link {
+        display:flex!important;
+        width:150px!important;
+        max-width:45vw!important;
+        height:50px!important;
+        flex:0 0 150px!important;
+        align-items:center!important;
+        overflow:hidden!important;
+        border:0!important;
+        background:transparent!important;
+    }
+    .mobile-app-header .mobile-brand-logo {
+        display:block!important;
+        width:150px!important;
+        max-width:100%!important;
+        height:50px!important;
+        padding:0!important;
+        object-fit:contain!important;
+        object-position:left center!important;
+    }
+    .mobile-app-header .header-right { margin-left:auto!important; }
+    .mobile-app-header .menu-toggle {
+        display:flex!important;
+        width:42px!important;
+        height:42px!important;
+        align-items:center!important;
+        justify-content:center!important;
+    }
+}
+</style>
     <!-- Mobile App Header - Enhanced App Style -->
     <div class="mobile-app-header lg:hidden">
         <div class="header-left">
                     @php $mobileLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo'); @endphp
                     @if($mobileLogo)
-                        <a href="{{ route('home') }}">
-                            <img src="{{ asset('storage/' . $mobileLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="h-9 w-9 object-contain rounded-lg border border-slate-200 p-1 bg-white">
+                        <a href="{{ route('home') }}" class="mobile-brand-logo-link" aria-label="{{ \App\Models\Setting::get('website_name', 'RoomRental') }} home">
+                            <img src="{{ asset('storage/' . $mobileLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="mobile-brand-logo">
                         </a>
                     @else
                         <div class="app-icon">
                             <i class="fas fa-home text-white text-xl"></i>
                         </div>
                     @endif
-                <div class="header-content">
-                <h1 class="text-lg font-bold text-gray-900 leading-none">{{ \App\Models\Setting::get('website_name', 'RoomRental') }}</h1>
-                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Find your perfect stay</p>
-                </div>
         </div>
         <div class="header-right">
             <button id="mobile-menu-toggle-app"

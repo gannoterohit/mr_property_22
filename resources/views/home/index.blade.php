@@ -449,6 +449,92 @@ body>nav .desktop-navbar-menu a:first-child {
 .market-trust {
  background:linear-gradient(140deg,rgba(var(--primary-rgb),.92),#0f172a)!important;
 }
+
+/* Final mobile/tablet layout pass. Desktop rules above remain unchanged. */
+.market-field-icon{display:none}
+.market-search-grid>button[type=submit] i{margin-right:8px}
+@media (min-width:600px) and (max-width:899px) {
+ .market-wrap{width:calc(100% - 36px)}
+ .market-hero-copy{width:calc(100% - 48px);padding:42px 0 30px}
+ .market-hero h1{max-width:620px;font-size:clamp(38px,6vw,48px);line-height:1.08}
+ .market-hero-copy>p{max-width:620px;font-size:15px}
+ .market-hero-image{height:260px;background-position:center 55%}
+ .market-search{width:calc(100% - 36px);margin:-34px auto 20px;padding:18px;border-radius:18px}
+ .market-search-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .market-search-grid>button[type=submit]{grid-column:1/-1;height:54px}
+ .market-stats{width:calc(100% - 48px)}
+ .market-section{padding:44px 0}
+ .market-types{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .market-room-grid,.market-areas{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .market-trust-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+@media (max-width:599px) {
+ .market-home{overflow-x:hidden;padding-bottom:12px}
+ .market-wrap{width:calc(100% - 28px)}
+ .market-hero{padding:0 0 12px}
+ .market-hero .market-wrap{width:100%}
+ .market-hero-box{display:block;position:relative;height:auto;min-height:0;overflow:hidden;background:#f8fafc}
+ .market-hero-image{position:absolute;z-index:0;inset:0 0 auto;width:100%;height:338px;opacity:1;background-position:center 54%;animation:none}
+ .market-hero-image:after{background:linear-gradient(180deg,rgba(5,15,35,.72) 0%,rgba(5,15,35,.82) 68%,rgba(5,15,35,.9) 100%)}
+ .market-hero-copy{position:relative;z-index:1;width:calc(100% - 32px);min-height:338px;padding:27px 0 22px;color:#fff;background:transparent}
+ .market-eyebrow{margin-bottom:13px;padding:6px 9px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.12)!important;color:#fff!important;font-size:9px;backdrop-filter:blur(5px)}
+ .market-hero h1{max-width:340px;margin-bottom:12px;color:#fff;font-size:clamp(31px,9.2vw,38px);line-height:1.08;letter-spacing:-1.25px}
+ .market-hero h1 span{color:#93c5fd!important}
+ .market-hero-copy>p{max-width:340px;color:#e2e8f0;font-size:13px;line-height:1.55}
+ .market-benefits{display:grid;grid-template-columns:1fr;gap:8px;margin-top:16px;color:#fff;font-size:10px}
+ .market-benefits span{display:flex;align-items:center}
+ .market-benefits i{width:20px;height:20px;background:rgba(255,255,255,.14);color:#86efac}
+ .market-search{position:relative;z-index:2;width:calc(100% - 24px);margin:-18px auto 16px;padding:13px;border:1px solid #e2e8f0;border-radius:15px;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.14);animation:none}
+ .market-search-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .market-search-grid>.market-field{grid-column:auto!important;min-width:0}
+ .market-field{position:relative;height:62px;padding:9px 25px 8px 37px;border:1px solid #e2e8f0;border-radius:11px;background:#fff}
+ .market-field-icon{display:grid;position:absolute;left:9px;top:50%;width:20px;height:20px;place-items:center;color:#94a3b8;font-size:14px;transform:translateY(-50%)}
+ .market-field label{height:16px;margin:0;overflow:hidden;color:#475569;font-size:9px;line-height:16px;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+ .market-field input,.market-field select,.market-custom-trigger{height:25px!important;color:#334155!important;font-size:11.5px!important;line-height:25px!important;font-weight:700!important}
+ .market-field:has(select):after{right:10px;bottom:25px}
+ .market-custom-trigger{padding-right:15px!important}
+ .market-custom-trigger:after{right:1px}
+ .market-search-grid>button[type=submit]{grid-column:1/-1;height:50px;border-radius:10px}
+ .market-custom-menu{left:-12px;max-width:calc(100vw - 52px)}
+ .market-stats{width:calc(100% - 28px);grid-template-columns:repeat(2,minmax(0,1fr));margin:4px auto 0;border:1px solid #e7ecf3;border-radius:14px;overflow:hidden}
+ .market-stat{min-height:72px;padding:10px;gap:9px}
+ .market-stat>span{width:35px;height:35px}
+ .market-stat strong{font-size:16px}.market-stat small{font-size:9px}
+ .market-section{padding:32px 0}.market-home>.market-section:last-child{padding-bottom:86px}
+ .market-section-head{gap:5px;margin-bottom:18px}
+ .market-kicker{font-size:9px}.market-section h2{margin-top:3px;font-size:24px;line-height:1.2}
+ .market-section-head p{font-size:12px;line-height:1.5}.market-section-head>a{font-size:11px}
+ .market-types{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .market-type{min-height:102px;padding:12px 8px;border-radius:13px}
+ .market-type>span{width:42px;height:42px}.market-type strong{font-size:12px}.market-type small{font-size:9px}
+ .market-room-grid{grid-template-columns:1fr;gap:14px}
+ .market-room-photo{height:195px}.market-room-copy{padding:14px}.market-room-copy h3{font-size:14px}
+ .market-areas{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .market-area{min-height:72px;padding:11px;border-radius:11px}.market-area strong{font-size:12px}.market-area small{font-size:9px}
+ .market-trust-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;padding-bottom:26px}
+ .market-trust-row>div{gap:8px}.market-trust-row>div>span{width:36px;height:36px}
+ .market-trust-row strong{font-size:11px}.market-trust-row small{font-size:8px}
+ .market-how,.market-editorial{grid-template-columns:1fr;gap:14px}
+ .market-process,.market-owner,.market-blogs,.market-faq{min-height:0;padding:20px;border-radius:14px}
+ .market-process-list{grid-template-columns:1fr;gap:8px}
+ .market-step{align-items:center;flex-direction:row;text-align:left;padding:9px}
+ .market-owner{align-items:flex-start;flex-direction:column}.market-owner>div{max-width:100%}.market-owner-art{display:none}
+ .market-owner h2{font-size:23px}.market-owner a{width:100%;text-align:center}
+ .market-blog-list{grid-template-columns:1fr;gap:14px}.market-blog img{height:150px}
+ .launch-banner{align-items:flex-start;flex-direction:column;padding:12px}.launch-banner a{font-size:11px}
+}
+
+@media (max-width:374px) {
+ .market-benefits{grid-template-columns:1fr}
+ .market-types,.market-areas,.market-trust-row{grid-template-columns:1fr}
+ .market-search{width:calc(100% - 16px);padding:10px}
+ .market-search-grid{gap:7px}
+ .market-field{padding-left:33px;padding-right:20px}
+ .market-field-icon{left:7px;font-size:13px}
+ .market-field input,.market-field select,.market-custom-trigger{font-size:10.5px!important}
+ .market-hero h1{font-size:30px}
+}
 </style>
 @endpush
 
@@ -467,11 +553,11 @@ body>nav .desktop-navbar-menu a:first-child {
                 <div class="market-city-card"><small><i class="fas fa-location-arrow"></i> Currently available in</small><strong>{{ $displayCity ?: 'Your city' }}</strong><span>More cities coming soon!</span></div>
                 <form action="{{ route('rooms.index') }}" method="GET" class="market-search">
                     <div class="market-search-grid">
-                        <div class="market-field market-field-location"><label>Location</label><input name="city" value="{{ $displayCity }}" placeholder="City or locality"></div>
-                        <div class="market-field"><label>Property Type</label><select name="room_type[]"><option value="">Any type</option>@foreach(\App\Models\RoomOption::optionsFor('room_type') as $option)<option value="{{ $option->id }}">{{ $option->label }}</option>@endforeach</select></div>
-                        <div class="market-field"><label>Budget</label><input type="number" min="0" name="max_rent" placeholder="Any budget"></div>
-                        <div class="market-field"><label>Preferred For</label><select name="tenant_type[]"><option value="">Anyone</option>@foreach(\App\Models\RoomOption::optionsFor('tenant_type') as $option)<option value="{{ $option->id }}">{{ $option->label }}</option>@endforeach</select></div>
-                        <button type="submit">{{ $text('home_search_button','Search Rooms') }}</button>
+                        <div class="market-field market-field-location"><i class="market-field-icon fas fa-location-dot"></i><label>Location</label><input name="city" value="{{ $displayCity }}" placeholder="City or locality"></div>
+                        <div class="market-field"><i class="market-field-icon fas fa-house"></i><label>Property Type</label><select name="room_type[]"><option value="">Any type</option>@foreach(\App\Models\RoomOption::optionsFor('room_type') as $option)<option value="{{ $option->id }}">{{ $option->label }}</option>@endforeach</select></div>
+                        <div class="market-field"><i class="market-field-icon fas fa-indian-rupee-sign"></i><label>Budget</label><input type="number" min="0" name="max_rent" placeholder="Any budget"></div>
+                        <div class="market-field"><i class="market-field-icon fas fa-user"></i><label>Preferred For</label><select name="tenant_type[]"><option value="">Anyone</option>@foreach(\App\Models\RoomOption::optionsFor('tenant_type') as $option)<option value="{{ $option->id }}">{{ $option->label }}</option>@endforeach</select></div>
+                        <button type="submit"><i class="fas fa-magnifying-glass"></i>{{ $text('home_search_button','Search Rooms') }}</button>
                     </div>
                 </form>
             </div>
