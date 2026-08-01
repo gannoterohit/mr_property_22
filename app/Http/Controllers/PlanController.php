@@ -15,7 +15,7 @@ class PlanController extends Controller
             $plans = Plan::all();
             $contactPlans = Plan::where('type', 'user')->where(fn ($q) => $q->where('contacts_limit', '>', 0)->orWhere('contacts_limit', -1))->get();
             $listingPlans = Plan::where('type', 'owner')->where(fn ($q) => $q->where('listing_limit', '>', 0)->orWhere('listing_limit', -1))->get();
-            return view('plans.admin-index', compact('plans', 'contactPlans', 'listingPlans'));
+            return view('admin.plans.index', compact('plans', 'contactPlans', 'listingPlans'));
         }
         
         // Show contact subscription plans ONLY to users (ACTIVE ONLY)
@@ -46,7 +46,7 @@ class PlanController extends Controller
 
     public function create()
     {
-        return view('plans.create');
+        return view('admin.plans.create');
     }
 
     public function store(Request $request)
@@ -68,7 +68,7 @@ class PlanController extends Controller
 
     public function edit(Plan $plan)
     {
-        return view('plans.edit', compact('plan'));
+        return view('admin.plans.edit', compact('plan'));
     }
 
     public function update(Request $request, Plan $plan)

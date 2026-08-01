@@ -2,6 +2,15 @@
 
 @section('title', 'Subscription Plans')
 
+@push('styles')
+<style>
+    .admin-plans-primary { color: var(--admin-primary); }
+    .admin-plans-primary-bg { background: var(--admin-primary); color: #fff; }
+    .admin-plans-primary-bg:hover { filter: brightness(.94); }
+    .admin-plans-user { background: rgba(var(--admin-primary-rgb), .08); color: var(--admin-primary); }
+</style>
+@endpush
+
 @section('admin-content')
 @php
     $activeCount = $plans->where('is_active', true)->count();
@@ -12,11 +21,11 @@
 <div x-data="{ filter: 'all', query: '' }" class="space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-indigo-600">Finance & Growth</p>
+            <p class="admin-plans-primary text-xs font-bold uppercase tracking-wider">Finance & Growth</p>
             <h2 class="mt-1 text-2xl font-bold text-slate-950">Subscription Plans</h2>
             <p class="mt-1 text-sm text-slate-500">Control room-listing credits and room-contact unlock credits.</p>
         </div>
-        <a href="{{ route('admin.plans.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-700 shadow-sm">
+        <a href="{{ route('admin.plans.create') }}" class="admin-plans-primary-bg inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold shadow-sm">
             <i class="fas fa-plus text-xs"></i> Create plan
         </a>
     </div>
@@ -55,7 +64,7 @@
                         @php $limit = $plan->type === 'owner' ? $plan->listing_limit : $plan->contacts_limit; @endphp
                         <tr x-show="(filter === 'all' || filter === '{{ $plan->type }}') && '{{ strtolower(addslashes($plan->name)) }}'.includes(query.toLowerCase())" class="hover:bg-slate-50/70">
                             <td class="px-5"><div class="font-bold text-slate-900">{{ $plan->name }}</div><div class="mt-0.5 text-xs text-slate-400">ID #{{ $plan->id }}</div></td>
-                            <td class="px-5"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-bold {{ $plan->type === 'owner' ? 'bg-amber-50 text-amber-700' : 'bg-blue-50 text-blue-700' }}">{{ $plan->type === 'owner' ? 'Owner' : 'User' }}</span></td>
+                            <td class="px-5"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-bold {{ $plan->type === 'owner' ? 'bg-amber-50 text-amber-700' : 'admin-plans-user' }}">{{ $plan->type === 'owner' ? 'Owner' : 'User' }}</span></td>
                             <td class="px-5 font-bold text-slate-900">&#8377;{{ number_format($plan->price) }}</td>
                             <td class="px-5 text-slate-600">{{ $limit == -1 ? 'Unlimited' : number_format($limit) }} {{ $plan->type === 'owner' ? 'listings' : 'unlocks' }}</td>
                             <td class="px-5 text-slate-600">{{ $plan->duration_days }} days</td>
@@ -79,7 +88,7 @@
                 <article x-show="(filter === 'all' || filter === '{{ $plan->type }}') && '{{ strtolower(addslashes($plan->name)) }}'.includes(query.toLowerCase())" class="p-4">
                     <div class="flex items-start justify-between gap-3"><div><h3 class="font-bold text-slate-900">{{ $plan->name }}</h3><p class="mt-1 text-xs text-slate-500">{{ ucfirst($plan->type) }} · {{ $plan->duration_days }} days</p></div><span class="text-lg font-bold text-slate-950">&#8377;{{ number_format($plan->price) }}</span></div>
                     <div class="my-4 flex items-center justify-between rounded-lg bg-slate-50 p-3 text-sm"><span class="text-slate-500">Credits</span><strong class="text-slate-900">{{ $limit == -1 ? 'Unlimited' : $limit }} {{ $plan->type === 'owner' ? 'listings' : 'unlocks' }}</strong></div>
-                    <div class="flex gap-2"><form class="flex-1" action="{{ route('admin.plans.toggleActive', $plan) }}" method="POST">@csrf<button class="w-full rounded-lg border border-slate-200 py-2 text-xs font-bold">{{ $plan->is_active ? 'Deactivate' : 'Activate' }}</button></form><a href="{{ route('admin.plans.edit', $plan) }}" class="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white">Edit</a></div>
+                    <div class="flex gap-2"><form class="flex-1" action="{{ route('admin.plans.toggleActive', $plan) }}" method="POST">@csrf<button class="w-full rounded-lg border border-slate-200 py-2 text-xs font-bold">{{ $plan->is_active ? 'Deactivate' : 'Activate' }}</button></form><a href="{{ route('admin.plans.edit', $plan) }}" class="admin-plans-primary-bg rounded-lg px-4 py-2 text-xs font-bold">Edit</a></div>
                 </article>
             @empty
                 <div class="p-12 text-center text-sm text-slate-500">No plans created yet.</div>

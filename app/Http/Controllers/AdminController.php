@@ -177,9 +177,9 @@ class AdminController extends Controller
     {
         try {
             $request->validate([
-                'reasons' => 'required|array|min:1',
+                'reasons' => 'required_without:customReason|array|min:1',
                 'reasons.*' => 'exists:rejection_reasons,id',
-                'customReason' => 'nullable|string|max:500'
+                'customReason' => 'nullable|string|max:500|required_without:reasons'
             ]);
 
             // Update room status
@@ -713,9 +713,10 @@ class AdminController extends Controller
         $isUnlocked = true; 
         $isOwner = true; 
         $subscriptionRemaining = 0;
-        $room->load('owner');
+        $room->load(['owner', 'rejectionReasons']);
+        $rejectionReasons = RejectionReason::where('is_active', true)->orderBy('reason')->get();
         
-        return view('rooms.show', compact('room', 'isUnlocked', 'isOwner', 'subscriptionRemaining'));
+        return view('admin.rooms.show', compact('room', 'isUnlocked', 'isOwner', 'subscriptionRemaining', 'rejectionReasons'));
     }
 
     public function paymentsindex(Request $request)
