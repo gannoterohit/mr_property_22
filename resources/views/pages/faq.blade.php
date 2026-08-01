@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('title', $title)
 @section('description', $metaDescription ?? 'Answers to common RoomNest questions about owner contact, brokerage, payments and safety.')

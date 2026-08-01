@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
 
 @section('title', 'Profile Settings - ' . \App\Models\Setting::get('website_name', 'RoomRental'))
 
@@ -51,7 +51,7 @@
                             <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"><i class="fas fa-user"></i></span>
                             <div><h2 class="font-bold text-slate-950">Personal Information</h2><p class="text-xs text-slate-500">Update your photo, name and email address.</p></div>
                         </div>
-                        @include('profile.partials.update-profile-information-form')
+                        @include('account.profile.partials.update-profile-information-form')
                     </section>
 
                     <section class="profile-card">
@@ -59,7 +59,7 @@
                             <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-600"><i class="fas fa-lock"></i></span>
                             <div><h2 class="font-bold text-slate-950">Password & Security</h2><p class="text-xs text-slate-500">Use a strong password to protect your account.</p></div>
                         </div>
-                        @include('profile.partials.update-password-form')
+                        @include('account.profile.partials.update-password-form')
                     </section>
                 </div>
 
@@ -78,7 +78,7 @@
 
                     <section class="profile-card profile-danger">
                         <div class="mb-4 flex items-center gap-3"><span class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600"><i class="fas fa-triangle-exclamation"></i></span><div><h2 class="font-bold text-slate-950">Danger Zone</h2><p class="text-xs text-slate-500">Permanent account actions.</p></div></div>
-                        @include('profile.partials.delete-user-form')
+                        @include('account.profile.partials.delete-user-form')
                     </section>
                 </aside>
             </div>

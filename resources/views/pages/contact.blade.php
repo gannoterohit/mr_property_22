@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @php
     $siteName = \App\Models\Setting::get('website_name', 'RoomNest');

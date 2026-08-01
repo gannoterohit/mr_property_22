@@ -12,7 +12,7 @@ class WalletController extends Controller
             return redirect()->route('home')->with('error', 'Wallet system is currently inactive.');
         }
         $user=Auth::user();
-        return view('user.wallet',compact('user'));
+        return view('account.wallet',compact('user'));
     }
     
     public function convertPoints(Request $request)

@@ -246,7 +246,7 @@ class RoomController extends Controller {
     
 
     public function create() {
-        return view('rooms.create');
+        return view('owner.rooms.create');
     }
 
     public function store(Request $req) {
@@ -604,7 +604,7 @@ class RoomController extends Controller {
         if ($room->user_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
-        return view('rooms.edit', compact('room'));
+        return view('owner.rooms.edit', compact('room'));
     }
 
     public function update(Request $req, Room $room) {

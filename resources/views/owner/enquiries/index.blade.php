@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.owner')
 
 @section('title', 'Room Enquiries - ' . \App\Models\Setting::get('website_name', 'ApnaNest'))
 

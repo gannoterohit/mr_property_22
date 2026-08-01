@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('title', 'RoomRental Blog - The Rental Journal')
 @section('description', 'Discover the latest trends in rental living, property management issues, and city guides.')

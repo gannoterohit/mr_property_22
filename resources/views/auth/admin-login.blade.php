@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section('title', 'Admin Login | ApnaNest')
 @section('description', 'Secure admin and staff login for ApnaNest.')

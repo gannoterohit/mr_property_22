@@ -184,7 +184,7 @@ class LandingPageController extends Controller
                 ->values();
         });
 
-        return view('home-marketplace', compact(
+        return view('home.index', compact(
             'rooms', 'popularCities', 'roomCategories', 'latestBlogs',
             'heroRoom', 'totalRooms', 'totalOwners', 'totalUsers', 'totalAreas', 'popularAreas',
             'cityContext'

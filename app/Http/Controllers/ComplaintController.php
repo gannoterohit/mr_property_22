@@ -16,13 +16,13 @@ class ComplaintController extends Controller
     public function index(Request $request)
     {
         $complaints = $request->user()->complaints()->with('room')->latest()->paginate(12);
-        return view('complaints.index', compact('complaints'));
+        return view('account.complaints.index', compact('complaints'));
     }
 
     public function create(Request $request)
     {
         $room = $request->filled('room') ? Room::find($request->integer('room')) : null;
-        return view('complaints.create', compact('room'));
+        return view('account.complaints.create', compact('room'));
     }
 
     public function store(Request $request)
@@ -66,7 +66,7 @@ class ComplaintController extends Controller
     {
         abort_unless($complaint->user_id === $request->user()->id, 403);
         $complaint->load(['room', 'replies' => fn ($query) => $query->where('is_internal', false)->with('user'), 'activities' => fn ($query) => $query->where('is_internal', false)->with('actor')]);
-        return view('complaints.show', compact('complaint'));
+        return view('account.complaints.show', compact('complaint'));
     }
 
     public function reply(Request $request, Complaint $complaint)

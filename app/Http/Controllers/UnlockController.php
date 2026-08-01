@@ -32,7 +32,7 @@ class UnlockController extends Controller
             ->latest('unlocked_at')
             ->paginate(12);
 
-        return view('user.unlocked-contacts', compact('unlocks'));
+        return view('account.unlocked-contacts', compact('unlocks'));
     }
 
     public function unlock(Request $request, Room $room)

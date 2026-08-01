@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
 @section('title', $complaint->ticket_number)
 @section('content')
 @php $isOwner = Auth::user()->role === 'owner'; @endphp

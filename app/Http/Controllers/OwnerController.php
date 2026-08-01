@@ -37,7 +37,7 @@ class OwnerController extends Controller
             'booked' => Room::where('user_id', Auth::id())->where('status', 'booked')->count(),
         ];
 
-        return view('owner.rooms', compact('myRooms', 'roomCounts'));
+        return view('owner.rooms.index', compact('myRooms', 'roomCounts'));
     }
 
     public function enquiries()
@@ -56,6 +56,6 @@ class OwnerController extends Controller
             'rooms' => \App\Models\Enquiry::whereIn('room_id', $roomIds)->where('unlocked', true)->distinct('room_id')->count('room_id'),
         ];
 
-        return view('owner.enquiries', compact('enquiries', 'stats'));
+        return view('owner.enquiries.index', compact('enquiries', 'stats'));
     }
 }

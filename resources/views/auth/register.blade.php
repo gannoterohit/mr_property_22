@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 @section('title', 'Create Account | ApnaNest')
 @section('description', 'Create an ApnaNest account to find a room or list your property and connect directly.')
 

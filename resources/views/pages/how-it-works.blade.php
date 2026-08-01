@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('title', 'How It Works - ' . \App\Models\Setting::get('website_name', 'ApnaNest'))
 @section('description', 'Learn how users find rooms and unlock owner contacts, and how property owners list rooms on ApnaNest.')

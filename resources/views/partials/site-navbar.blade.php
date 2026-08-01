@@ -1,3 +1,11 @@
+@php
+    try {
+        $publishedCmsSlugs = \App\Models\CmsPage::published()->pluck('slug')->flip();
+    } catch (\Throwable $exception) {
+        $publishedCmsSlugs = collect();
+    }
+    $cmsPageLive = fn (string $slug): bool => $publishedCmsSlugs->has($slug);
+@endphp
     <!-- Mobile App Header - Enhanced App Style -->
     <div class="mobile-app-header lg:hidden">
         <div class="header-left">

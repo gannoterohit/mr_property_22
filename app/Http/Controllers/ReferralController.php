@@ -37,6 +37,6 @@ class ReferralController extends Controller
         $referrals = User::where('referred_by_id', $user->id)->latest()->get();
         $referralLink = route('referral.track', ['code' => $user->referral_code]);
 
-        return view('user.referral', compact('user', 'referrals', 'referralLink'));
+        return view('account.referral', compact('user', 'referrals', 'referralLink'));
     }
 }

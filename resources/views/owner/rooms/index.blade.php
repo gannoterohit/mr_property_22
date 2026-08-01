@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.owner')
 
 @section('title', 'My Rooms - ' . \App\Models\Setting::get('website_name', 'RoomRental'))
 

@@ -131,7 +131,7 @@ class AdminController extends Controller
         $allrooms = $query->latest()->paginate($perPage)->withQueryString();
         $rejectionReasons = RejectionReason::where('is_active', true)->get();
         $cities=Room::whereNotNull('city')->distinct()->orderBy('city')->pluck('city');
-        return view('admin.all-room', compact('allrooms', 'rejectionReasons','cities'));
+        return view('admin.rooms.index', compact('allrooms', 'rejectionReasons','cities'));
     }
 
     public function bulkRooms(Request $request)
@@ -251,7 +251,7 @@ class AdminController extends Controller
         $ownerGrowth=User::where('role','owner')->whereBetween('created_at',[$from,$to])->count();
         $listingGrowth=Room::whereBetween('created_at',[$from,$to])->count();
         $resolutionHours=\App\Models\Complaint::whereNotNull('closed_at')->whereBetween('closed_at',[$from,$to])->selectRaw('AVG(TIMESTAMPDIFF(HOUR, created_at, closed_at)) avg_hours')->value('avg_hours');
-        return view('admin.reports',compact('from','to','revenueByType','dailyCollections','failedPayments','totalUsers','unlocks','cityDemand','ownerGrowth','listingGrowth','resolutionHours'));
+        return view('admin.analytics.reports',compact('from','to','revenueByType','dailyCollections','failedPayments','totalUsers','unlocks','cityDemand','ownerGrowth','listingGrowth','resolutionHours'));
     }
 
     public function payouts()
@@ -260,7 +260,7 @@ class AdminController extends Controller
             ->latest()
             ->paginate(20);
 
-        return view('admin.payouts', compact('payouts'));
+        return view('admin.payments.payouts', compact('payouts'));
     }
 
     public function processPayout(Request $request, $id)
@@ -305,7 +305,7 @@ class AdminController extends Controller
             'blocked' => User::where('role', 'user')->where('is_blocked', true)->count(),
             'deleted' => User::onlyTrashed()->where('role', 'user')->count(),
         ];
-        return view('admin.users', compact('users', 'memberStats'));
+        return view('admin.members.users', compact('users', 'memberStats'));
     }
 
     public function member360(Request $request)
@@ -383,14 +383,14 @@ class AdminController extends Controller
             'blocked' => User::where('role', 'owner')->where('is_blocked', true)->count(),
             'deleted' => User::onlyTrashed()->where('role', 'owner')->count(),
         ];
-        return view('admin.owners', compact('owners', 'memberStats'));
+        return view('admin.members.owners', compact('owners', 'memberStats'));
     }
 
     public function userDetail(User $user)
     {
         abort_unless($user->role === 'user', 404);
         $user->load(['payments','subscriptions.plan','complaints','enquiries.room','adminActivities.actor']);
-        return view('admin.user-detail', compact('user'));
+        return view('admin.members.user-detail', compact('user'));
     }
 
     public function ownerDetail(User $owner)
@@ -398,7 +398,7 @@ class AdminController extends Controller
         abort_unless($owner->role === 'owner', 404);
         $owner->load(['rooms','payments','subscriptions.plan','complaints','adminActivities.actor']);
         $rooms = $owner->rooms()->latest()->paginate(10);
-        return view('admin.owner-detail', compact('owner', 'rooms'));
+        return view('admin.members.owner-detail', compact('owner', 'rooms'));
     }
 
     public function toggleBlock(Request $request, User $user)

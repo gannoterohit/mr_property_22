@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.owner')
 
 @section('title', 'List Your Room - RoomRental')
 
@@ -296,7 +296,7 @@
     </div>
 </div>
 
-@include('rooms.partials.owner-editor-styles')
+@include('owner.rooms.partials.editor-styles')
 @push('scripts')
 <script>
 const ROOM_PRIMARY_COLOR = '{{ \App\Models\Setting::get("primary_color", "#4F46E5") }}';

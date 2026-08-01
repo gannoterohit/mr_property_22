@@ -27,12 +27,9 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     @endif
     
-    @include('partials.seo')
-    @if(Route::currentRouteName() === 'home')
-        @include('partials.home-ld')
-    @endif
-    
-    @include('partials.tracking-head')
+    @yield('layout-seo')
+    @yield('layout-structured-data')
+    @yield('layout-tracking')
 
     <!-- Preconnect to external domains - Mobile Optimized -->
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
@@ -578,33 +575,17 @@
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen mobile-app-view {{ request()->routeIs('admin.*') ? 'admin-page' : '' }}">
     <div id="page-scroll-progress" class="page-scroll-progress" role="progressbar" aria-label="Page scroll progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-    @php
-        try {
-            $publishedCmsSlugs = \App\Models\CmsPage::published()->pluck('slug')->flip();
-        } catch (\Throwable $exception) {
-            $publishedCmsSlugs = collect();
-        }
-        $cmsPageLive = fn (string $slug): bool => $publishedCmsSlugs->has($slug);
-    @endphp
-    @unless(request()->routeIs('admin.*', 'owner.*', 'dashboard', 'profile.*', 'wallet', 'referral.*', 'wishlist.*', 'complaints.*', 'plans', 'login', 'register'))
-        @include('partials.offer-banner', ['placement' => 'top_nav'])
-    @endunless
-    
-    @include('partials.site-navbar')
-
-    <!-- Mobile App Loading Indicator -->
-    @include('partials.mobile-loading')
+    @yield('layout-top-banner')
+    @yield('layout-navigation')
+    @yield('layout-loading')
 
     <!-- Main Content -->
     <main class="pt-16 md:pt-0 {{ Route::is('pages.*', 'cms-pages.show') ? 'cms-content-main' : '' }}">
         @yield('content')
     </main>
 
-    @include('partials.site-footer')
-
-    <!-- App Bottom Navigation - Enhanced Design -->
-    <!-- App Bottom Navigation -->
-    @include('partials.mobile-bottom-nav')
+    @yield('layout-footer')
+    @yield('layout-bottom-navigation')
 
 
     <!-- Google Ads Conversion Tracking (Fire after successful payment) -->
@@ -808,9 +789,7 @@
         })();
     </script>
     @stack('scripts')
-    @unless(request()->routeIs('admin.*', 'owner.*', 'dashboard', 'profile.*', 'wallet', 'referral.*', 'wishlist.*', 'complaints.*', 'plans'))
-        @include('partials.offer-banner', ['placement' => 'popup'])
-    @endunless
+    @yield('layout-popup')
     {{-- Google Ads Signup Conversion --}}
     @if(session('signup_success') && app()->environment('production') && \App\Models\Setting::get('google_ads_enabled') == '1')
         @php
@@ -829,4 +808,3 @@
     @endif
 </body>
 </html>
-

@@ -46,7 +46,15 @@
                         India's most trusted platform for room rentals. Connect directly with verified owners. Find your stay with zero brokerage.
                     </p>
                     <div class="flex gap-3">
-                        @php
+@php
+    if (!isset($cmsPageLive)) {
+        try {
+            $publishedCmsSlugs = \App\Models\CmsPage::published()->pluck('slug')->flip();
+        } catch (\Throwable $exception) {
+            $publishedCmsSlugs = collect();
+        }
+        $cmsPageLive = fn (string $slug): bool => $publishedCmsSlugs->has($slug);
+    }
                             $socialLinks = [
                                 'facebook-f' => \App\Models\Setting::get('facebook_url', '#'),
                                 'twitter' => \App\Models\Setting::get('twitter_url', '#'),

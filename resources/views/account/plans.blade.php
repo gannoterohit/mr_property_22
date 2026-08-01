@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
 
 @section('title', (Auth::user()->role === 'owner' ? 'Room Listing Plans' : 'Contact Unlock Plans') . ' - ' . \App\Models\Setting::get('website_name', 'RoomRental'))
 

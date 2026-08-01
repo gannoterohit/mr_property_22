@@ -26,7 +26,7 @@ class PlanController extends Controller
                 ->get();
             $activeSubscription = Auth::user()->subscriptions()->where('status', 'active')->whereDate('end_date', '>=', today())
                 ->whereHas('plan', fn ($q) => $q->where('type', 'user'))->with('plan')->latest()->first();
-            return view('plans.marketplace', ['plans' => $contactPlans, 'activeSubscription' => $activeSubscription]);
+            return view('account.plans', ['plans' => $contactPlans, 'activeSubscription' => $activeSubscription]);
         }
         
         // Show room listing plans ONLY to owners (ACTIVE ONLY)
@@ -37,7 +37,7 @@ class PlanController extends Controller
                 ->get();
             $activeSubscription = Auth::user()->subscriptions()->where('status', 'active')->whereDate('end_date', '>=', today())
                 ->whereHas('plan', fn ($q) => $q->where('type', 'owner'))->with('plan')->latest()->first();
-            return view('plans.marketplace', ['plans' => $listingPlans, 'activeSubscription' => $activeSubscription]);
+            return view('account.plans', ['plans' => $listingPlans, 'activeSubscription' => $activeSubscription]);
         }
         
         // Plans are role-specific, so guests must sign in first.

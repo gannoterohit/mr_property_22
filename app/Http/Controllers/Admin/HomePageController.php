@@ -10,7 +10,7 @@ class HomePageController extends Controller
 {
     public function index()
     {
-        return view('admin.home-page', ['sections' => $this->sections()]);
+        return view('admin.content.home', ['sections' => $this->sections()]);
     }
 
     public function update(Request $request)

@@ -14,12 +14,12 @@ class BusinessSettingsController extends Controller
     public function index()
     {
         $settings = Setting::orderBy('group')->orderBy('key')->get()->groupBy('group');
-        return view('admin.business-settings', compact('settings'));
+        return view('admin.settings.business', compact('settings'));
     }
 
     public function maintenance()
     {
-        return view('admin.maintenance-settings');
+        return view('admin.settings.maintenance');
     }
 
     public function updateMaintenance(Request $request)

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
 @section('title','Refer & Earn | ApnaNest')
 @section('content')
 <div class="{{ $user->role==='owner'?'owner-workspace flex':'' }} min-h-screen">
@@ -135,7 +135,7 @@
         </div>
     </main>
 </div>
-@include('user.partials.page-styles')
+@include('account.partials.page-styles')
 <style>
 .referral-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.15fr .85fr;gap:35px;padding:32px;border-radius:20px;background:linear-gradient(135deg,#0f172a,var(--primary));color:#fff}.referral-hero:after{content:"";position:absolute;width:280px;height:280px;border:60px solid rgba(var(--primary-rgb),.09);border-radius:50%;right:-150px;top:-150px}.referral-copy,.share-box{position:relative;z-index:1}.referral-copy>span{display:inline-block;padding:6px 9px;border-radius:999px;background:rgba(var(--primary-rgb),.18);color:rgba(255,255,255,.78);font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.referral-copy h2{margin:14px 0 9px;font-size:27px;line-height:1.18;letter-spacing:-.8px}.referral-copy>p{max-width:520px;margin:0;color:#cbd5e1;font-size:10px;line-height:1.65}.reward-pair{display:flex;align-items:center;gap:10px;margin-top:23px}.reward-pair>div{display:grid;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.08)}.reward-pair small{color:#94a3b8;font-size:8px}.reward-pair strong{font-size:14px}.reward-pair>i{color:rgba(255,255,255,.72)}.share-box{align-self:center;padding:20px;border:1px solid rgba(255,255,255,.13);border-radius:15px;background:rgba(255,255,255,.07)}.share-box>label{display:block;color:#cbd5e1;font-size:9px;font-weight:800;margin-bottom:8px}.share-input{display:flex;padding:5px;border-radius:10px;background:#fff}.share-input input{min-width:0;flex:1;border:0;outline:none;padding:0 9px;color:#475569;font-size:9px}.share-input button{border:0;border-radius:8px;padding:10px 12px;background:var(--primary);color:#fff;font-size:9px;font-weight:800;cursor:pointer}.share-input button i{margin-right:5px}.share-box>p{height:13px;margin:6px 0 2px;color:#86efac;font-size:8px}.share-box>a{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px;border-radius:9px;background:#16a34a;color:#fff;text-decoration:none;font-size:10px;font-weight:800}.referral-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:17px}.referral-stats article{display:flex;align-items:center;gap:12px;padding:16px}.referral-stats article>span{width:39px;height:39px;display:grid;place-items:center;border-radius:11px}.referral-stats article>span.indigo { background: rgba(var(--primary-rgb),.1); color: var(--primary); }
 .referral-stats article>span.green { background: #dcfce7; color: #16a34a; }
