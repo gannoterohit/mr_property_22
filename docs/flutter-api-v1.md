@@ -11,13 +11,23 @@ Authorization: Bearer YOUR_SANCTUM_TOKEN
 Successful JSON responses use:
 
 ```json
-{"status":"success","message":"...","data":{}}
+{"status":"success","success":true,"message":"...","data":{}}
 ```
+
+Failed requests consistently use:
+
+```json
+{"status":"error","success":false,"message":"Readable error message","data":null,"errors":{}}
+```
+
+For HTTP `422`, `errors` contains field-wise message arrays. For other errors
+it is an empty object. Display `message` as the general error and map `errors`
+beside individual Flutter form fields.
 
 Business modules paused by admin return HTTP `503`:
 
 ```json
-{"status":"unavailable","message":"...","reason":"payments"}
+{"status":"unavailable","success":false,"message":"...","reason":"payments","data":null,"errors":{}}
 ```
 
 Possible reasons: `maintenance`, `registration`, `listings`, `payments`, `owner_panel`, `user_panel`.
@@ -33,7 +43,7 @@ Possible reasons: `maintenance`, `registration`, `listings`, `payments`, `owner_
 | GET | `/rooms` | Filtered, paginated public listings |
 | GET | `/rooms/{id-or-slug}` | Room details |
 | GET | `/rooms/{id}/similar` | Similar rooms |
-| GET | `/cities` | Available cities |
+| GET | `/cities` | Admin-enabled cities, in configured display order |
 | GET | `/room-options` | Room, furnishing and tenant options |
 | GET | `/offers` | Active mobile/public offers |
 | GET | `/blogs`, `/blogs/{slug}` | Blog listing and detail |
@@ -67,6 +77,32 @@ Possible reasons: `maintenance`, `registration`, `listings`, `payments`, `owner_
 
 All paginated endpoints accept `page` and `limit` (`limit` maximum 50 where supported).
 
+Every paginated response exposes the same Flutter-facing keys:
+
+```json
+{
+  "status": "success",
+  "success": true,
+  "message": "...",
+  "data": {
+    "items": [],
+    "pagination": {
+      "current_page": 1,
+      "last_page": 1,
+      "per_page": 15,
+      "total": 0,
+      "from": null,
+      "to": null,
+      "next_page_url": null,
+      "prev_page_url": null
+    }
+  }
+}
+```
+
+Legacy Laravel pagination fields remain in the response for backward
+compatibility. New Flutter code should read `items` and `pagination`.
+
 ## Renter APIs
 
 | Method | Endpoint | Purpose |
@@ -94,6 +130,10 @@ All owner endpoints require an authenticated account with `role=owner`.
 | POST | `/owner/rooms/{room}/toggle-status` | Change availability |
 | POST | `/owner/rooms/{room}/feature` | Purchase/activate featured listing |
 | GET | `/owner/enquiries` | People who unlocked owner listings |
+
+When an owner marks a room as rented, its previous listing entitlement is released. Making it available again follows the same free-listing, active subscription, wallet, or pending Razorpay payment flow as the website. A paid relisting response includes `payment_id`, `amount`, `type=listing`, and `action=mark_available`.
+
+Every owner edit sets `listing_status` back to `pending`; the app should show that the updated listing is awaiting admin approval. Photo/video replacement is atomic: existing media remains available if any new upload cannot be processed.
 
 Room creation/update field choices must come from `/room-options`; do not hard-code database IDs in Flutter.
 

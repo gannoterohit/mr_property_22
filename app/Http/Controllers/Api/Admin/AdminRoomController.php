@@ -66,7 +66,7 @@ class AdminRoomController extends BaseApiController
             'reasons.*' => 'integer|exists:rejection_reasons,id',
             'custom_reason' => 'nullable|string|max:500',
         ]);
-        if ($validator->fails()) return $this->sendError('Validation failed', $validator->errors(), 422);
+        if ($validator->fails()) return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
 
         $room->update(['listing_status' => 'rejected']);
         if (!empty($request->reasons)) $room->rejectionReasons()->sync($request->reasons);
@@ -98,7 +98,7 @@ class AdminRoomController extends BaseApiController
 
     public function storeReason(Request $request) {
         $validator = Validator::make($request->all(), ['reason' => 'required|string|max:255']);
-        if ($validator->fails()) return $this->sendError('Val fail', $validator->errors(), 422);
+        if ($validator->fails()) return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         $reason = RejectionReason::create(['reason' => $request->reason, 'is_active' => true]);
         return $this->sendSuccess($reason, 'Reason added', 201);
     }

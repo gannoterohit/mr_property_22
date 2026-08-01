@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
         $middleware->append(\App\Http\Middleware\PlatformAvailability::class);
+        $middleware->api(append: [
+            \App\Http\Middleware\NormalizeApiResponse::class,
+        ]);
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'admin.permission' => \App\Http\Middleware\AdminPermission::class,
@@ -38,7 +41,9 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
+                    'success' => false,
                     'message' => 'Please check your input and try again.',
+                    'data' => null,
                     'errors' => $e->errors(),
                 ], 422);
             }
@@ -48,7 +53,10 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
+                    'success' => false,
                     'message' => 'Please login to continue.',
+                    'data' => null,
+                    'errors' => (object) [],
                 ], 401);
             }
         });
@@ -57,7 +65,10 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
+                    'success' => false,
                     'message' => 'Too many requests. Please wait a moment and try again.',
+                    'data' => null,
+                    'errors' => (object) [],
                 ], 429);
             }
         });
@@ -66,7 +77,10 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
+                    'success' => false,
                     'message' => 'The requested resource was not found.',
+                    'data' => null,
+                    'errors' => (object) [],
                 ], 404);
             }
         });
@@ -75,7 +89,10 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
+                    'success' => false,
                     'message' => 'You do not have permission to perform this action.',
+                    'data' => null,
+                    'errors' => (object) [],
                 ], 403);
             }
         });
@@ -106,7 +123,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 };
             }
 
-            $payload = ['status' => 'error', 'message' => $message];
+            $payload = [
+                'status' => 'error',
+                'success' => false,
+                'message' => $message,
+                'data' => null,
+                'errors' => (object) [],
+            ];
             if (is_array($existing) && !empty($existing['errors'])) {
                 $payload['errors'] = $existing['errors'];
             }

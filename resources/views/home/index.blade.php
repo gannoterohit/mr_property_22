@@ -540,107 +540,13 @@ body>nav .desktop-navbar-menu a:first-child {
 
 @section('content')
 <main class="market-home">
-    <section class="market-hero">
-        <div class="market-wrap">
-            <div class="market-hero-box">
-                <div class="market-hero-image" style="background-image:url('{{ $heroImage }}')"></div>
-                <div class="market-hero-copy">
-                    <span class="market-eyebrow"><i class="fas fa-shield-halved"></i>100% verified rooms · zero brokerage</span>
-                    <h1>Find your perfect room <span>@if($displayCity)in {{ $displayCity }}@else near you @endif</span></h1>
-                    <p>{{ $heroDescription }}</p>
-                    <div class="market-benefits">@foreach([1,2,3] as $benefit)<span><i class="fas {{ $text('home_why_'.$benefit.'_icon',['fa-shield-halved','fa-ban','fa-user-check'][$benefit-1]) }}"></i>{{ $text('home_why_'.$benefit.'_title',['Verified Listings','No Brokerage','Direct Owner Contact'][$benefit-1]) }}</span>@endforeach</div>
-                </div>
-                <div class="market-city-card"><small><i class="fas fa-location-arrow"></i> Currently available in</small><strong>{{ $displayCity ?: 'Your city' }}</strong><span>More cities coming soon!</span></div>
-                <form action="{{ route('rooms.index') }}" method="GET" class="market-search">
-                    <div class="market-search-grid">
-                        <div class="market-field market-field-location"><i class="market-field-icon fas fa-location-dot"></i><label>Location</label><input name="city" value="{{ $displayCity }}" placeholder="City or locality"></div>
-                        <div class="market-field"><i class="market-field-icon fas fa-house"></i><label>Property Type</label><select name="room_type[]"><option value="">Any type</option>@foreach(\App\Models\RoomOption::optionsFor('room_type') as $option)<option value="{{ $option->id }}">{{ $option->label }}</option>@endforeach</select></div>
-                        <div class="market-field"><i class="market-field-icon fas fa-indian-rupee-sign"></i><label>Budget</label><input type="number" min="0" name="max_rent" placeholder="Any budget"></div>
-                        <div class="market-field"><i class="market-field-icon fas fa-user"></i><label>Preferred For</label><select name="tenant_type[]"><option value="">Anyone</option>@foreach(\App\Models\RoomOption::optionsFor('tenant_type') as $option)<option value="{{ $option->id }}">{{ $option->label }}</option>@endforeach</select></div>
-                        <button type="submit"><i class="fas fa-magnifying-glass"></i>{{ $text('home_search_button','Search Rooms') }}</button>
-                    </div>
-                </form>
-            </div>
-            @include('partials.offer-banner', ['placement' => 'home_hero'])
-            @include('partials.adsense-slot', ['placement' => 'home_top'])
-            <div class="market-stats">
-                @foreach([['fa-house-circle-check',number_format($totalRooms).'+','Verified rooms'],['fa-user-check',number_format($totalOwners).'+','Verified owners'],['fa-location-dot',number_format($totalAreas).'+','Popular areas'],['fa-clock','24/7','Customer support']] as $stat)
-                    <div class="market-stat"><span><i class="fas {{ $stat[0] }}"></i></span><div><strong>{{ $stat[1] }}</strong><small>{{ $stat[2] }}</small></div></div>
-                @endforeach
-            </div>
-            @if($cityContext['isFallback'])
-                <div class="launch-banner">
-                    <div><strong>Launching soon in {{ $cityContext['launchingSoonCityName'] }}</strong><span>We're currently active in {{ $cityContext['activeCityName'] }}. Showing verified {{ $cityContext['activeCityName'] }} properties for now.</span></div>
-                    <a href="{{ route('rooms.index', ['city' => $cityContext['activeCityName']]) }}">View {{ $cityContext['activeCityName'] }}</a>
-                </div>
-            @endif
-        </div>
-    </section>
+    @include('home.partials.hero')
 
-    <section class="market-section">
-        <div class="market-wrap">
-            <div class="market-section-head"><div><span class="market-kicker">{{ $text('home_category_eyebrow','Explore your options') }}</span><h2>{{ $text('home_category_title','Find the right kind of home') }}</h2><p>{{ $text('home_category_description','Start with a property type that matches your lifestyle and budget.') }}</p></div><a href="{{ route('rooms.index') }}">Browse all rooms <i class="fas fa-arrow-right"></i></a></div>
-            <div class="market-types">
-                @forelse($roomCategories->take(6) as $category)
-                    <a href="{{ route('rooms.index',['room_type'=>[$category->room_type_option_id]]) }}" class="market-type"><span><i class="fas fa-building"></i></span><div><strong>{{ $category->label }}</strong><small>{{ $category->total ?? 0 }} available</small></div></a>
-                @empty
-                    <div class="market-empty"><i class="fas fa-building"></i><p>Property categories will appear here.</p></div>
-                @endforelse
-            </div>
-        </div>
-    </section>
+    @include('home.partials.categories')
+    @include('home.partials.latest-rooms')
 
-    <section class="market-section soft">
-        <div class="market-wrap">
-            <div class="market-section-head"><div><span class="market-kicker">Freshly added</span><h2>{{ $text('home_latest_title','Latest verified rooms') }}</h2><p>{{ $text('home_latest_description','Genuine listings with clear rent, photos and property details.') }}</p></div><a href="{{ route('rooms.index') }}">View every listing <i class="fas fa-arrow-right"></i></a></div>
-            <div class="market-room-grid">
-                @forelse($rooms->take(4) as $room)
-                    <a href="{{ route('rooms.show',$room) }}" class="market-room">
-                        <div class="market-room-photo">
-                            @if($room->photo_url)
-                                <img src="{{ $room->photo_url }}" alt="{{ $room->title }}" loading="lazy">
-                            @endif
-                            @if($room->is_featured)
-                                <span class="market-room-badge">Featured</span>
-                            @endif
-                        </div>
-                        <div class="market-room-copy"><h3>{{ $room->title }}</h3><p><i class="fas fa-location-dot"></i>{{ $room->city }}</p><span class="market-room-price">₹{{ number_format($room->rent) }} <small>/month</small></span><div class="market-room-meta"><span>{{ $room->roomTypeLabel() }}</span><span>{{ $room->furnishingTypeLabel() }}</span><span>{{ $room->tenantTypeLabel() }}</span></div></div>
-                    </a>
-                @empty
-                    <div class="market-empty"><i class="fas fa-house"></i><p>No verified listings are available yet.</p><a href="{{ route('rooms.index') }}">Browse rooms</a></div>
-                @endforelse
-            </div>
-        </div>
-    </section>
-
-    @if($popularAreas->count())
-    <section class="market-section">
-        <div class="market-wrap">
-            <div class="market-section-head"><div><span class="market-kicker">{{ $text('home_areas_eyebrow','Popular neighbourhoods') }}</span><h2>{{ $text('home_areas_title','Explore places renters search most') }}</h2><p>{{ $text('home_areas_description','Compare local options before choosing your next area.') }}</p></div></div>
-            <div class="market-areas">@foreach($popularAreas->take(8) as $area)<a href="{{ route('rooms.index',['city'=>$homeCity,'area'=>$area->area_name]) }}" class="market-area"><div><strong>{{ $area->area_name }}</strong><small>{{ $area->total }} rooms · from ₹{{ number_format($area->min_rent) }}</small></div><i class="fas fa-arrow-right"></i></a>@endforeach</div>
-        </div>
-    </section>
-    @endif
-
-    <section class="market-section soft">
-        <div class="market-wrap">
-            <div class="market-section-head"><div><span class="market-kicker">Why choose {{ $siteName }}?</span><h2>Rent with confidence, every time</h2></div></div>
-            <div class="market-trust-row">@foreach([['fa-shield-halved','Verified owners','Every owner is verified'],['fa-ban','No brokerage','Deal directly with owners'],['fa-phone','Direct contact','Connect instantly'],['fa-calendar-check','Secure process','Safe and transparent'],['fa-users','Trusted platform','Growing renter community'],['fa-headset','Customer support','We are here to help']] as $trust)<div><span><i class="fas {{ $trust[0] }}"></i></span><p><strong>{{ $trust[1] }}</strong><small>{{ $trust[2] }}</small></p></div>@endforeach</div>
-            <div class="market-how">
-                <div class="market-process"><span class="market-kicker">How it works</span><h2>Simple steps to find your next home</h2><div class="market-process-list">@foreach([['Search','Filter rooms by location, type and budget.'],['Connect','Contact owners directly.'],['Visit & Decide','Visit the place, verify and decide.']] as $i=>$step)<div class="market-step"><b>{{ $i+1 }}</b><div><strong>{{ $step[0] }}</strong><small>{{ $step[1] }}</small></div></div>@endforeach</div></div>
-                <div class="market-owner"><div><span class="market-kicker">For property owners</span><h2>Have a room{{ $displayCity ? ' in '.$displayCity : '' }}?</h2><p>List your property and connect with thousands of genuine seekers.</p><ul><li><i class="fas fa-check-circle"></i> Reach genuine tenants</li><li><i class="fas fa-check-circle"></i> Simple listing process</li><li><i class="fas fa-check-circle"></i> No hidden charges</li></ul><a href="{{ route('register',['role'=>'owner']) }}">{{ $text('home_owner_button','List your property') }}</a></div><i class="fas fa-couch market-owner-art"></i></div>
-            </div>
-        </div>
-    </section>
-
-    @include('partials.adsense-slot', ['placement' => 'home_bottom'])
-
-    <section class="market-section soft">
-        <div class="market-wrap market-editorial">
-            <div class="market-blogs"><span class="market-kicker">Rental knowledge</span><h2>{{ $text('home_blog_title','Helpful guides and updates') }}</h2><div class="market-blog-list">@forelse($latestBlogs->take(3) as $blog)<a href="{{ route('blogs.show',$blog->slug) }}" class="market-blog">@if($blog->featured_image)<img src="{{ $blog->featured_image }}" alt="{{ $blog->title }}" loading="lazy">@else<div style="height:110px;border-radius:10px;background:#eef2ff;display:grid;place-items:center;color:#818cf8"><i class="fas fa-newspaper"></i></div>@endif<h3>{{ $blog->title }}</h3><small>{{ optional($blog->published_at ?? $blog->created_at)->format('d M Y') }}</small></a>@empty<div class="market-empty"><p>Helpful rental guides will appear here.</p></div>@endforelse</div></div>
-            <div class="market-faq"><span class="market-kicker">Frequently asked questions</span><h2>Find answers to common questions</h2><div class="market-faq-list">@foreach([['Is there any brokerage on '.$siteName.'?','No. You can connect directly with property owners.'],['How can I contact the owner?','Open a verified listing and use the contact unlock option.'],['Is the property information verified?','Listings go through platform review before approval.'],['How do I list my property?','Create an owner account and submit your room details.'],['Is it safe to pay online?','Payments use the configured secure payment gateway.']] as $faq)<details><summary>{{ $faq[0] }}<i class="fas fa-plus"></i></summary><p>{{ $faq[1] }}</p></details>@endforeach</div></div>
-        </div>
-    </section>
+    @include('home.partials.areas-and-trust')
+    @include('home.partials.editorial')
 </main>
 @endsection
 

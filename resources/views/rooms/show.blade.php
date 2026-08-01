@@ -101,16 +101,7 @@
 <div class="room-detail-page bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen py-4">
     <div class="container mx-auto px-4 max-w-7xl">
         
-        {{-- Compact Breadcrumb --}}
-        <nav class="mb-4">
-            <ol class="flex items-center space-x-2 text-xs text-gray-500">
-                <li><a href="{{ route('home') }}" class="hover:text-blue-600"><i class="fas fa-home mr-1"></i>Home</a></li>
-                <li>›</li>
-                <li><a href="{{ route('rooms.index') }}" class="hover:text-blue-600">Rooms</a></li>
-                <li>›</li>
-                <li class="text-gray-900 font-semibold truncate max-w-xs">{{ $room->title }}</li>
-            </ol>
-        </nav>
+        @include('rooms.partials.show.breadcrumb')
 
         <div class="room-detail-grid grid grid-cols-1 lg:grid-cols-3 gap-6">
             
@@ -576,22 +567,7 @@
     </div>
 </div>
 
-@php($relatedRooms = $relatedRooms ?? collect())
-@if(!request()->routeIs('admin.*') && $relatedRooms->isNotEmpty())
-<section class="related-room-section">
-    <div class="related-room-container">
-        <div class="related-room-head"><div><span>More in {{ $room->city }}</span><h2>Similar rooms you may like</h2><p>Compare other active and approved properties in the same city.</p></div><a href="{{ route('rooms.index', ['city' => $room->city]) }}">View all rooms <i class="fas fa-arrow-right"></i></a></div>
-        <div class="related-room-grid">
-            @foreach($relatedRooms as $relatedRoom)
-            <a href="{{ route('rooms.show', $relatedRoom) }}" class="related-room-card">
-                <div class="related-room-image"><img src="{{ $relatedRoom->photo_url }}" alt="{{ $relatedRoom->title }} in {{ $relatedRoom->city }}" loading="lazy" onerror="this.src='{{ asset('storage/default-room.jpg') }}'">@if($relatedRoom->is_featured)<span>Featured</span>@endif</div>
-                <div class="related-room-copy"><div><small>{{ $relatedRoom->roomTypeLabel() }}</small><strong>&#8377;{{ number_format((float)$relatedRoom->rent) }}<em>/mo</em></strong></div><h3>{{ $relatedRoom->title }}</h3><p><i class="fas fa-location-dot"></i>{{ $relatedRoom->city }}</p><div class="related-room-meta"><span><i class="fas fa-couch"></i>{{ $relatedRoom->furnishingTypeLabel() }}</span><span><i class="fas fa-user"></i>{{ $relatedRoom->tenantTypeLabel() }}</span></div></div>
-            </a>
-            @endforeach
-        </div>
-    </div>
-</section>
-@endif
+@include('rooms.partials.show.related-rooms')
 
 <style>
 .room-detail-page{padding:22px 0 42px!important;background:#f5f7fb!important}.room-detail-page>.container{max-width:1180px!important}.room-detail-page nav{margin-bottom:14px!important}.room-detail-page nav ol{color:#64748b!important}.room-detail-grid{grid-template-columns:minmax(0,1.72fr) minmax(300px,.72fr)!important;gap:18px!important}.room-detail-page .lg\:col-span-2{min-width:0}.room-detail-page .space-y-4>:not([hidden])~:not([hidden]){margin-top:14px!important}.room-detail-page .bg-white.rounded-xl{border:1px solid #e2e8f0!important;border-radius:16px!important;box-shadow:0 4px 16px rgba(15,23,42,.045)!important}.room-detail-page #mainImage{max-height:470px}.room-detail-page .h-\[300px\].lg\:h-\[450px\]{height:440px!important}.room-detail-page .bg-white.rounded-xl>.p-4{padding:18px!important}.room-detail-page .grid.grid-cols-2.lg\:grid-cols-4>div{border:1px solid #e2e8f0!important;background:#f8fafc!important;border-radius:11px!important;text-align:left!important}.room-detail-page .grid.grid-cols-2.lg\:grid-cols-4>div>div:first-child{color:#64748b!important;font-size:10px!important;font-weight:700}.room-detail-page .grid.grid-cols-2.lg\:grid-cols-4>div>div:last-child{color:#0f172a!important;font-size:14px!important}.room-detail-page h2{color:#0f172a}.room-detail-page .sticky{top:82px!important}.room-detail-page #unlock-card-mobile{border:1px solid #dbe4f0!important;border-radius:16px!important;box-shadow:0 12px 32px rgba(15,23,42,.09)!important}.room-detail-page #unlock-card-mobile>.p-4:first-child{padding:16px 18px!important;background:#0f172a!important}.room-detail-page #unlock-card-mobile>.p-4:first-child h2{color:#fff!important;font-size:13px!important}.room-detail-page #unlock-card-mobile>.p-4:last-child{padding:18px!important}.room-detail-page [class*="shadow-xl"],.room-detail-page [class*="shadow-2xl"]{box-shadow:0 4px 16px rgba(15,23,42,.05)!important}.room-detail-page .rounded-2xl{border-radius:14px!important}.room-detail-page #roomMap{border-radius:12px!important;box-shadow:none!important;border:1px solid #e2e8f0}.related-room-section{padding:0 20px 58px;background:#f5f7fb}.related-room-container{width:min(1180px,100%);margin:auto;padding-top:28px;border-top:1px solid #dbe4f0}.related-room-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:17px}.related-room-head span{color:#2563eb;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.12em}.related-room-head h2{margin:5px 0 4px;color:#0f172a;font-size:22px;font-weight:850;letter-spacing:-.5px}.related-room-head p{margin:0;color:#64748b;font-size:10px}.related-room-head>a{color:#2563eb;text-decoration:none;font-size:10px;font-weight:800}.related-room-head>a i{margin-left:5px}.related-room-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.related-room-card{overflow:hidden;border:1px solid #e2e8f0;border-radius:15px;background:#fff;text-decoration:none;box-shadow:0 3px 12px rgba(15,23,42,.035);transition:.2s}.related-room-card:hover{transform:translateY(-3px);border-color:#bfdbfe;box-shadow:0 12px 26px rgba(15,23,42,.08)}.related-room-image{position:relative;height:150px;background:#f1f5f9}.related-room-image img{width:100%;height:100%;object-fit:cover}.related-room-image span{position:absolute;top:9px;left:9px;padding:4px 6px;border-radius:6px;background:#2563eb;color:#fff;font-size:7px;font-weight:900;text-transform:uppercase}.related-room-copy{padding:13px}.related-room-copy>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:8px}.related-room-copy small{color:#64748b;font-size:8px;font-weight:700}.related-room-copy strong{color:#0f172a;font-size:14px}.related-room-copy em{color:#94a3b8;font-size:8px;font-style:normal;font-weight:500}.related-room-copy h3{margin:8px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#0f172a;font-size:11px;font-weight:850}.related-room-copy>p{margin:0;color:#64748b;font-size:9px}.related-room-copy>p i{margin-right:4px;color:#f43f5e}.related-room-meta{display:flex!important;justify-content:flex-start!important;gap:6px!important;margin-top:10px}.related-room-meta span{padding:5px 6px;border-radius:6px;background:#f8fafc;color:#64748b;font-size:7px;font-weight:700}.related-room-meta i{margin-right:3px;color:#2563eb}
@@ -600,79 +576,7 @@
 @media(max-width:1023px){.related-room-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:767px){.room-detail-grid{grid-template-columns:1fr!important}.room-detail-page .sticky{position:static!important}}@media(max-width:640px){.room-detail-page{padding-top:10px!important}.room-detail-page>.container{padding-left:12px!important;padding-right:12px!important}.room-detail-page .h-\[300px\].lg\:h-\[450px\]{height:300px!important}.room-detail-page #mainImage{height:300px}.related-room-section{padding:0 12px 42px}.related-room-head{align-items:flex-start;flex-direction:column}.related-room-grid{grid-template-columns:1fr 1fr;gap:9px}.related-room-image{height:118px}.related-room-copy{padding:10px}.related-room-meta{display:none!important}}
 </style>
 
-{{-- Payment Selection Modal --}}
-<div id="paymentSelectionModal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-    <div class="bg-white rounded-[2rem] p-6 max-w-sm w-full shadow-2xl transform transition-all scale-100">
-        <div class="text-center mb-6">
-            <div class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-600">
-                <i class="fas fa-coins text-2xl"></i>
-            </div>
-            <h3 class="text-xl font-black text-gray-900">Select Payment Method</h3>
-            <p class="text-gray-500 text-sm mt-1">Amount to Pay: <span id="payAmount" class="font-bold text-gray-900">₹0</span></p>
-        </div>
-
-        <div class="space-y-3">
-            <button onclick="confirmPaymentSelection('wallet')" class="w-full group relative flex items-center p-4 border-2 border-gray-100 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 transition-all">
-                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 mr-3 text-lg group-hover:scale-110 transition-transform">
-                    <i class="fas fa-wallet"></i>
-                </div>
-                <div class="text-left">
-                    <p class="font-bold text-gray-900 group-hover:text-indigo-700">Wallet Balance</p>
-                    <p class="text-xs text-gray-500">Available: ₹{{ number_format(auth()->user()->wallet_balance ?? 0, 2) }}</p>
-                </div>
-                <i class="fas fa-arrow-right ml-auto text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-            </button>
-
-            <button onclick="confirmPaymentSelection('online')" class="w-full group relative flex items-center p-4 border-2 border-gray-100 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 transition-all">
-                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3 text-lg group-hover:scale-110 transition-transform">
-                    <i class="fas fa-credit-card"></i>
-                </div>
-                <div class="text-left">
-                    <p class="font-bold text-gray-900 group-hover:text-indigo-700">Pay Online</p>
-                    <p class="text-xs text-gray-500">UPI, Cards, Netbanking</p>
-                </div>
-                <i class="fas fa-arrow-right ml-auto text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-            </button>
-        </div>
-
-        <button onclick="closePaymentSelectionModal()" class="mt-6 w-full text-gray-400 font-bold text-sm hover:text-gray-600 transition">
-            Cancel
-        </button>
-    </div>
-</div>
-
-{{-- Image Lightbox Modal --}}
-<div id="lightboxModal" class="hidden fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4 backdrop-blur-sm cursor-zoom-out" onclick="closeLightbox()">
-    <button class="absolute top-6 right-6 text-white text-3xl hover:text-gray-300 transition-colors" onclick="closeLightbox()">
-        <i class="fas fa-times"></i>
-    </button>
-    <div class="relative max-w-5xl w-full h-full flex items-center justify-center" onclick="event.stopPropagation()">
-        <img id="lightboxImage" src="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl transition-all duration-300 transform scale-95" alt="Room Photo">
-        
-        <button class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors" onclick="navigateLightbox(-1)">
-            <i class="fas fa-chevron-left text-xl"></i>
-        </button>
-        <button class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors" onclick="navigateLightbox(1)">
-            <i class="fas fa-chevron-right text-xl"></i>
-        </button>
-    </div>
-</div>
-
-{{-- Payment Modal --}}
-<div id="paymentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center backdrop-blur-sm">
-    <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
-        <h3 class="text-xl font-black mb-4 flex items-center gap-2">
-            <i class="fas fa-shield-alt text-indigo-600"></i>
-            Complete Payment
-        </h3>
-        <div id="razorpay-container" class="mb-4 min-h-[100px] flex items-center justify-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
-            <p class="text-slate-400 text-sm italic">Loading secure payment gateway...</p>
-        </div>
-        <button onclick="closePaymentModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-colors">
-            Cancel Transaction
-        </button>
-    </div>
-</div>
+@include('rooms.partials.show.modals')
 
 @push('scripts')
 <script>

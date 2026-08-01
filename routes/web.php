@@ -1,24 +1,22 @@
 <?php
 
-use App\Http\Controllers\LandingPageController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RoomController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\PlanController;
-use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\OwnerController;
-use App\Http\Controllers\RazorpayController;
-use App\Http\Controllers\UnlockController;
-use App\Http\Controllers\AnalyticsEventController;
 use App\Http\Controllers\Admin\BusinessSettingsController;
+use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CmsPageController;
 use App\Http\Controllers\Admin\PagesController;
 use App\Http\Controllers\Admin\RejectionReasonController;
 use App\Http\Controllers\Admin\RoomOptionController;
-use App\Http\Controllers\Admin\CityController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnalyticsEventController;
+use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RazorpayController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SitemapController;
-use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\UnlockController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,7 +26,7 @@ Route::post('/admin-login', [\App\Http\Controllers\Auth\AuthenticatedSessionCont
     ->middleware('throttle:strict_login')
     ->name('admin.login.submit');
 
-Route::get('/', [LandingPageController::class,'index'])->name('home');
+Route::get('/', [LandingPageController::class, 'index'])->name('home');
 Route::get('/set-city', [RoomController::class, 'setCity'])->name('set-city');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
@@ -39,10 +37,9 @@ Route::post('/analytics/events', [AnalyticsEventController::class, 'store'])
 // Referral Tracking
 Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'track'])->name('referral.track');
 
-
 Route::get('/dashboard', function () {
     $user = auth()->user();
-    
+
     // Redirect based on role
     if ($user->role === 'admin') {
         return redirect()->route('admin.dashboard');
@@ -93,7 +90,7 @@ Route::controller(\App\Http\Controllers\PageController::class)->group(function (
 Route::post('/contact-us', [\App\Http\Controllers\ContactController::class, 'store'])->middleware('throttle:public_form')->name('pages.contact.store');
 
 // Public Payment Verification (Must be outside auth middleware for callbacks)
-Route::post('/payment/razorpay/verify', [RazorpayController::class,'verifyPayment'])->middleware('throttle:10,1')->name('razorpay.verify');
+Route::post('/payment/razorpay/verify', [RazorpayController::class, 'verifyPayment'])->middleware('throttle:10,1')->name('razorpay.verify');
 
 Route::middleware('auth')->group(function () {
     Route::get('/unlocked-contacts', [UnlockController::class, 'index'])->middleware('role:user')->name('unlocks.index');
@@ -110,24 +107,22 @@ Route::middleware('auth')->group(function () {
     Route::post('/complaints/{complaint}/reply', [\App\Http\Controllers\ComplaintController::class, 'reply'])->middleware('throttle:public_form')->name('complaints.reply');
     Route::get('/complaints/{complaint}/evidence', [\App\Http\Controllers\ComplaintController::class, 'evidence'])->name('complaints.evidence');
     Route::get('/complaints/{complaint}/attachments/{reply}', [\App\Http\Controllers\ComplaintController::class, 'attachment'])->name('complaints.attachment');
-    
-    
+
     // Payment routes
-    Route::post('/payment/razorpay/order', [RazorpayController::class,'createOrder'])->middleware('throttle:10,1')->name('razorpay.createOrder');
-    
+    Route::post('/payment/razorpay/order', [RazorpayController::class, 'createOrder'])->middleware('throttle:10,1')->name('razorpay.createOrder');
+
     // Other routes
     // Phase 1 is listing + room-contact unlock only. Rent booking/payment is intentionally disabled.
-    Route::get('/plans', [PlanController::class,'index'])->name('plans');
+    Route::get('/plans', [PlanController::class, 'index'])->name('plans');
     Route::post('/subscription/purchase', [\App\Http\Controllers\SubscriptionController::class, 'store'])->name('subscription.purchase');
-    Route::post('/subscribe', [SubscriptionController::class,'store'])->name('subscribe');
-    
+    Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscribe');
+
     // Referral Dashboard
     Route::get('/refer-and-earn', [\App\Http\Controllers\ReferralController::class, 'index'])->name('referral.index');
 
     // Wishlist Routes
     Route::get('/wishlist', [App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/toggle/{roomId}', [App\Http\Controllers\WishlistController::class, 'toggle'])->name('wishlist.toggle');
-
 
     // City Alerts
     Route::post('/city-alerts', [App\Http\Controllers\CityAlertController::class, 'store'])->name('city-alerts.store');
@@ -138,10 +133,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/wallet/convert', [WalletController::class, 'convertPoints'])->name('wallet.convert');
 });
 
+Route::post('/webhook/razorpay', [RazorpayController::class, 'webhook'])->name('razorpay.webhook');
 
-Route::post('/webhook/razorpay', [RazorpayController::class,'webhook'])->name('razorpay.webhook');
-
-Route::middleware(['auth','role:admin','admin.permission','admin.activity'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/staff', [\App\Http\Controllers\Admin\AdminStaffController::class, 'index'])->name('staff.index');
     Route::post('/staff', [\App\Http\Controllers\Admin\AdminStaffController::class, 'store'])->name('staff.store');
@@ -152,7 +146,7 @@ Route::middleware(['auth','role:admin','admin.permission','admin.activity'])->pr
     Route::post('/roles', [\App\Http\Controllers\Admin\AdminRoleController::class, 'store'])->name('roles.store');
     Route::put('/roles/{role}', [\App\Http\Controllers\Admin\AdminRoleController::class, 'update'])->name('roles.update');
     Route::get('/activity-logs', [\App\Http\Controllers\Admin\AdminActivityController::class, 'index'])->name('activity.index');
-    
+
     // Blog Management
     Route::resource('blogs', \App\Http\Controllers\Admin\BlogController::class);
 
@@ -177,13 +171,13 @@ Route::middleware(['auth','role:admin','admin.permission','admin.activity'])->pr
     Route::patch('room-options/{roomOption}/toggle-status', [RoomOptionController::class, 'toggleStatus'])->name('room-options.toggle-status');
     Route::resource('plans', PlanController::class);
     Route::post('/plans/{plan}/toggle-active', [PlanController::class, 'toggleActive'])->name('plans.toggleActive');
-    
+
     // Offers Management
     Route::get('/offerses', fn () => redirect()->route('admin.offers.index'))->name('offers.legacy');
     Route::resource('offers', \App\Http\Controllers\Admin\OfferController::class);
     Route::post('/offers/{offer}/toggle-active', [\App\Http\Controllers\Admin\OfferController::class, 'toggleActive'])->name('offers.toggleActive');
     Route::post('/offers/display-settings', [\App\Http\Controllers\Admin\OfferController::class, 'updateDisplaySettings'])->name('offers.display-settings');
-    
+
     // Users Management
     Route::get('/members', [AdminController::class, 'member360'])->name('members.index');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
@@ -196,7 +190,7 @@ Route::middleware(['auth','role:admin','admin.permission','admin.activity'])->pr
     Route::post('/users/{user}/toggle-block', [AdminController::class, 'toggleBlock'])->name('users.toggleBlock');
     Route::put('/members/{user}/notes', [AdminController::class, 'updateMemberNotes'])->name('members.notes');
     Route::post('/members/{user}/restore', [AdminController::class, 'restoreMember'])->name('members.restore');
-    
+
     // Owners Management
     Route::get('/owners', [AdminController::class, 'owners'])->name('owners');
     Route::get('/owners/create', [AdminController::class, 'createOwner'])->name('owners.create');
@@ -208,13 +202,12 @@ Route::middleware(['auth','role:admin','admin.permission','admin.activity'])->pr
     Route::post('/owners/{user}/toggle-block', [AdminController::class, 'toggleBlock'])->name('owners.toggleBlock');
 
     Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
-    Route::get('/all-rooms', [AdminController::class, 'Rooms'])->name('all-rooms');
-    Route::get('/payments-index', [AdminController::class, 'paymentsindex'])->name('payments.index');
-    
+    Route::get('/all-rooms', [AdminController::class, 'rooms'])->name('all-rooms');
+    Route::get('/payments-index', [AdminController::class, 'paymentsIndex'])->name('payments.index');
+
     // Payout Management
     Route::get('/payouts', [AdminController::class, 'payouts'])->name('payouts');
     Route::post('/payouts/{id}/process', [AdminController::class, 'processPayout'])->name('payouts.process');
-    
 
     // City Alerts Management
     Route::get('/city-alerts', [AdminController::class, 'cityAlerts'])->name('city-alerts.index');
@@ -235,22 +228,21 @@ Route::middleware(['auth','role:admin','admin.permission','admin.activity'])->pr
     Route::post('/complaints/{complaint}/reply', [\App\Http\Controllers\Admin\ComplaintController::class, 'reply'])->name('complaints.reply');
     Route::post('/complaints/{complaint}/reopen', [\App\Http\Controllers\Admin\ComplaintController::class, 'reopen'])->name('complaints.reopen');
 
+    Route::get('rejection-reasons', [RejectionReasonController::class, 'index'])->name('rejection-reasons.index');
+    Route::post('rejection-reasons', [RejectionReasonController::class, 'store'])->name('rejection-reasons.store');
+    Route::put('rejection-reasons/{rejectionReason}', [RejectionReasonController::class, 'update'])->name('rejection-reasons.update');
+    Route::delete('rejection-reasons/{rejectionReason}', [RejectionReasonController::class, 'destroy'])->name('rejection-reasons.destroy');
 
-Route::get('rejection-reasons', [RejectionReasonController::class, 'index'])->name('rejection-reasons.index');
-Route::post('rejection-reasons', [RejectionReasonController::class, 'store'])->name('rejection-reasons.store');
-Route::put('rejection-reasons/{rejectionReason}', [RejectionReasonController::class, 'update'])->name('rejection-reasons.update');
-Route::delete('rejection-reasons/{rejectionReason}', [RejectionReasonController::class, 'destroy'])->name('rejection-reasons.destroy');
-
-    Route::get('rooms', [AdminController::class, 'Rooms'])->name('rooms.list');
-Route::get('rooms/create', [AdminController::class, 'createRoom'])->name('rooms.create');
-Route::post('rooms/store', [AdminController::class, 'storeRoom'])->name('rooms.store');
-Route::get('rooms/{room}', [AdminController::class, 'showRoom'])->name('rooms.show');
-Route::get('rooms/{room}/edit', [AdminController::class, 'editRoom'])->name('rooms.edit');
-Route::put('rooms/{room}/update', [AdminController::class, 'updateRoom'])->name('rooms.update');
-Route::post('rooms/{room}/approve', [AdminController::class, 'approveRoom'])->name('rooms.approve');
+    Route::get('rooms', [AdminController::class, 'rooms'])->name('rooms.list');
+    Route::get('rooms/create', [AdminController::class, 'createRoom'])->name('rooms.create');
+    Route::post('rooms/store', [AdminController::class, 'storeRoom'])->name('rooms.store');
+    Route::get('rooms/{room}', [AdminController::class, 'showRoom'])->name('rooms.show');
+    Route::get('rooms/{room}/edit', [AdminController::class, 'editRoom'])->name('rooms.edit');
+    Route::put('rooms/{room}/update', [AdminController::class, 'updateRoom'])->name('rooms.update');
+    Route::post('rooms/{room}/approve', [AdminController::class, 'approveRoom'])->name('rooms.approve');
     Route::post('rooms/{room}/reject', [AdminController::class, 'rejectRoom'])->name('rooms.reject');
-Route::post('rooms/bulk-action', [AdminController::class, 'bulkRooms'])->name('rooms.bulk');
-Route::delete('rooms/{room}', [AdminController::class, 'deleteRoom'])->name('rooms.destroy');
+    Route::post('rooms/bulk-action', [AdminController::class, 'bulkRooms'])->name('rooms.bulk');
+    Route::delete('rooms/{room}', [AdminController::class, 'deleteRoom'])->name('rooms.destroy');
 
     // Search Analytics
     Route::get('/analytics', [\App\Http\Controllers\Admin\SearchAnalyticsController::class, 'index'])->name('analytics');
@@ -258,13 +250,12 @@ Route::delete('rooms/{room}', [AdminController::class, 'deleteRoom'])->name('roo
     Route::delete('/analytics/logs/range', [\App\Http\Controllers\Admin\SearchAnalyticsController::class, 'destroyRange'])->name('analytics.logs.range');
     Route::delete('/analytics/logs/{searchLog}', [\App\Http\Controllers\Admin\SearchAnalyticsController::class, 'destroy'])->name('analytics.logs.destroy');
 
-
-Route::controller(PagesController::class)->group(function () {
-    Route::post('/pages/upload-image', 'uploadImage')->name('pages.upload-image');
-});
-Route::get('/pages/{key}', [CmsPageController::class, 'legacy'])
-    ->where('key', 'about|careers|how-it-works|safety-tips|owner-guidelines|user-guidelines|terms|condition|privacy|contact|faq')
-    ->name('pages.legacy');
+    Route::controller(PagesController::class)->group(function () {
+        Route::post('/pages/upload-image', 'uploadImage')->name('pages.upload-image');
+    });
+    Route::get('/pages/{key}', [CmsPageController::class, 'legacy'])
+        ->where('key', 'about|careers|how-it-works|safety-tips|owner-guidelines|user-guidelines|terms|condition|privacy|contact|faq')
+        ->name('pages.legacy');
 });
 
 Route::middleware(['auth', 'role:owner'])->prefix('owner')->group(function () {
@@ -273,20 +264,15 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->group(function () {
     Route::get('/enquiries', [OwnerController::class, 'enquiries'])->name('owner.enquiries');
 });
 
-
-
-
-
-
 require __DIR__.'/auth.php';
 
 // YouTube Proxy Route
 Route::get('/youtube-proxy/{videoId}', function ($videoId) {
     $thumbnailUrl = "https://img.youtube.com/vi/{$videoId}/hqdefault.jpg";
-    
+
     // Fetch the thumbnail from YouTube
     $response = Http::get($thumbnailUrl);
-    
+
     if ($response->successful()) {
         return response($response->body())
             ->header('Content-Type', $response->header('Content-Type'))

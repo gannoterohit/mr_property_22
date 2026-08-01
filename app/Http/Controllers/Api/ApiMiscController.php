@@ -79,7 +79,7 @@ class ApiMiscController extends BaseApiController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation failed', $validator->errors(), 422);
+            return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         }
 
         $alert = CityAlert::create([
@@ -109,7 +109,7 @@ class ApiMiscController extends BaseApiController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation failed', $validator->errors(), 422);
+            return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         }
 
         \App\Models\Subscriber::updateOrCreate(['email' => $request->email]);
@@ -130,7 +130,7 @@ class ApiMiscController extends BaseApiController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation failed', $validator->errors(), 422);
+            return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         }
 
         // Save to database for Admin Panel visibility

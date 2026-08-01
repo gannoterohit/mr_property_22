@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
@@ -16,6 +15,7 @@ class BlogController extends Controller
     public function index()
     {
         $blogs = Blog::latest()->paginate(10);
+
         return view('admin.blogs.index', compact('blogs'));
     }
 
@@ -32,15 +32,19 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:blogs,slug',
+            'content' => 'required|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
+            'meta_keywords' => 'nullable|string|max:500',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $data = $request->all();
+        unset($data['image']);
         $data['is_published'] = $request->has('is_published');
-        
+
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('blogs', 'public');
             $data['image'] = $path;
@@ -64,13 +68,17 @@ class BlogController extends Controller
      */
     public function update(Request $request, Blog $blog)
     {
-        $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:blogs,slug,'.$blog->id,
+            'content' => 'required|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
+            'meta_keywords' => 'nullable|string|max:500',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $data = $request->all();
+        unset($data['image']);
         $data['is_published'] = $request->has('is_published');
 
         if ($request->hasFile('image')) {

@@ -102,7 +102,7 @@ class ApiPaymentController extends BaseApiController
             $api->utility->verifyPaymentSignature($attributes);
             $gatewayPayment = $api->payment->fetch($request->razorpay_payment_id);
         } catch (\Exception $e) {
-            return $this->sendError('Invalid signature');
+            return $this->sendError('Payment signature verification failed.', [], 400);
         }
 
         DB::beginTransaction();

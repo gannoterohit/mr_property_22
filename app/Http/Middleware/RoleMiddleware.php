@@ -13,7 +13,10 @@ class RoleMiddleware
             if ($request->expectsJson()) {
                 return response()->json([
                     'status'  => 'error',
-                    'message' => 'Unauthenticated. Please login first.'
+                    'success' => false,
+                    'message' => 'Please login to continue.',
+                    'data' => null,
+                    'errors' => (object) [],
                 ], 401);
             }
             return redirect('/login');
@@ -23,7 +26,10 @@ class RoleMiddleware
             if ($request->expectsJson()) {
                 return response()->json([
                     'status'  => 'error',
-                    'message' => 'Forbidden. You do not have ' . $role . ' access.'
+                    'success' => false,
+                    'message' => 'You do not have '.$role.' access.',
+                    'data' => null,
+                    'errors' => (object) [],
                 ], 403);
             }
             abort(403, 'Unauthorized action.');

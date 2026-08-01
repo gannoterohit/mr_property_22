@@ -37,7 +37,7 @@ class ApiProfileController extends BaseApiController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation failed', $validator->errors(), 422);
+            return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         }
 
         $user->name = $request->name;

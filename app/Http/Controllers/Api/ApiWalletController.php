@@ -38,13 +38,13 @@ class ApiWalletController extends BaseApiController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation failed', $validator->errors(), 422);
+            return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         }
 
         $user = Auth::user();
 
         if ($user->wallet < $request->points) {
-            return $this->sendError('Insufficient points');
+            return $this->sendError('Insufficient points', [], 422);
         }
 
         // Conversion Rate: 100 Points = ₹1

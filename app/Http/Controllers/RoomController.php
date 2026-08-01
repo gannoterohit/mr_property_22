@@ -276,6 +276,8 @@ class RoomController extends Controller {
             'broker_fee' => 'nullable|numeric|min:0',
         ]);
 
+        $newPhotoPaths = [];
+        $newVideoPath = null;
         DB::beginTransaction();
         try {
             $data['user_id'] = Auth::id();
@@ -304,8 +306,11 @@ class RoomController extends Controller {
                     }
 
                     // Compress and save
-                    \App\Helpers\ImageHelper::compressImage($photo->getRealPath(), $fullPath, 70);
+                    if (! \App\Helpers\ImageHelper::compressImage($photo->getRealPath(), $fullPath, 70)) {
+                        throw new \RuntimeException('One of the selected images could not be processed. Please use JPG, PNG or WebP files.');
+                    }
                     $photos[] = $path;
+                    $newPhotoPaths[] = $path;
                 }
                 $data['photos'] = $photos;
                 $data['photo'] = $photos[0]; // First photo as main photo
@@ -313,7 +318,8 @@ class RoomController extends Controller {
 
             // Handle video upload
             if ($req->hasFile('video')) {
-                $data['video'] = $req->file('video')->store('rooms/videos', 'public');
+                $newVideoPath = $req->file('video')->store('rooms/videos', 'public');
+                $data['video'] = $newVideoPath;
             }
 
             $data = $this->mapRoomOptionData($data);
@@ -497,9 +503,17 @@ class RoomController extends Controller {
 
         } catch (\Exception $e) {
             DB::rollBack();
+            foreach ($newPhotoPaths as $newPhotoPath) {
+                Storage::disk('public')->delete($newPhotoPath);
+            }
+            if ($newVideoPath) {
+                Storage::disk('public')->delete($newVideoPath);
+            }
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create room: ' . $e->getMessage()
+                'message' => $e instanceof \RuntimeException
+                    ? $e->getMessage()
+                    : 'The room could not be created. Please try again.'
             ], 500);
         }
     }

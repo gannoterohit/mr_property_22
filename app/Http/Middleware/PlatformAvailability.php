@@ -124,7 +124,14 @@ class PlatformAvailability
             : $messages[$reason][1];
 
         if ($request->expectsJson() || $request->is('api/*')) {
-            return response()->json(['status' => 'unavailable', 'message' => $message, 'reason' => $reason], 503);
+            return response()->json([
+                'status' => 'unavailable',
+                'success' => false,
+                'message' => $message,
+                'reason' => $reason,
+                'data' => null,
+                'errors' => (object) [],
+            ], 503);
         }
 
         return response()->view('maintenance', [

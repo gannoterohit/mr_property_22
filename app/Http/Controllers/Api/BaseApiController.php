@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class BaseApiController extends Controller
 {
@@ -14,8 +15,9 @@ class BaseApiController extends Controller
     {
         return response()->json([
             'status' => 'success',
+            'success' => true,
             'message' => $message,
-            'data' => $data
+            'data' => $data,
         ], $code);
     }
 
@@ -26,14 +28,39 @@ class BaseApiController extends Controller
     {
         $response = [
             'status' => 'error',
+            'success' => false,
             'message' => $message,
+            'data' => null,
+            'errors' => empty($errors) ? (object) [] : $errors,
         ];
 
-        if (!empty($errors)) {
-            $response['errors'] = $errors;
-        }
-
         return response()->json($response, $code);
+    }
+
+    /**
+     * Send a resource paginator without duplicating data, links or metadata.
+     */
+    protected function sendPaginated(
+        AnonymousResourceCollection $collection,
+        string $message = 'Records fetched successfully.'
+    ): JsonResponse {
+        $resource = $collection->response()->getData(true);
+        $meta = $resource['meta'] ?? [];
+        $links = $resource['links'] ?? [];
+
+        return $this->sendSuccess([
+            'items' => $resource['data'] ?? [],
+            'pagination' => [
+                'current_page' => (int) ($meta['current_page'] ?? 1),
+                'last_page' => (int) ($meta['last_page'] ?? 1),
+                'per_page' => (int) ($meta['per_page'] ?? 0),
+                'total' => (int) ($meta['total'] ?? 0),
+                'from' => $meta['from'] ?? null,
+                'to' => $meta['to'] ?? null,
+                'next_page_url' => $links['next'] ?? null,
+                'prev_page_url' => $links['prev'] ?? null,
+            ],
+        ], $message);
     }
 
     /**

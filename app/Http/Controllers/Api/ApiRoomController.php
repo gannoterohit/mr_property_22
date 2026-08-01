@@ -9,6 +9,7 @@ use App\Models\Room;
 use App\Models\RoomOption;
 use App\Models\Setting;
 use App\Models\SubscriptionUsage;
+use App\Services\CityOperations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -100,7 +101,10 @@ class ApiRoomController extends BaseApiController
             }
         }
 
-        return RoomResource::collection($rooms)->additional(['status' => 'success']);
+        return $this->sendPaginated(
+            RoomResource::collection($rooms),
+            'Rooms fetched successfully.'
+        );
     }
 
     /**
@@ -217,6 +221,7 @@ class ApiRoomController extends BaseApiController
             'deposit' => 'nullable|numeric|min:0',
             'city' => 'required|string',
             'state' => 'nullable|string',
+            'country' => 'nullable|string',
             'address' => 'nullable|string',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
@@ -224,21 +229,28 @@ class ApiRoomController extends BaseApiController
             'tenant_type' => ['required', 'in:'.implode(',', RoomOption::validIdsFor('tenant_type'))],
             'room_type' => ['required', 'in:'.implode(',', RoomOption::validIdsFor('room_type'))],
             'amenities' => 'nullable|array',
+            'amenities.*' => 'string',
             'landmarks' => 'nullable|array',
+            'landmarks.*' => 'string',
             'photos' => 'required|array|min:1|max:5',
             'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
-            'video' => 'nullable|mimes:mp4,avi,mov|max:10240',
+            'video' => 'nullable|mimes:mp4,avi,mov,wmv|max:10240',
+            'video_url' => 'nullable|url|max:255',
             'listing_type' => 'required|in:owner,broker',
-            'broker_fee' => 'nullable|numeric',
+            'broker_fee' => 'nullable|numeric|min:0',
+            'payment_method' => 'nullable|in:wallet,online',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation failed', $validator->errors(), 422);
+            return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         }
 
+        $newPhotoPaths = [];
+        $newVideoPath = null;
         DB::beginTransaction();
         try {
-            $data = $request->except('photos', 'video');
+            $data = $validator->validated();
+            unset($data['photos'], $data['video'], $data['payment_method']);
             $data['user_id'] = Auth::id();
             $data['status'] = 'active';
             $data['listing_status'] = 'pending';
@@ -255,15 +267,19 @@ class ApiRoomController extends BaseApiController
                         mkdir(storage_path('app/public/rooms'), 0755, true);
                     }
 
-                    \App\Helpers\ImageHelper::compressImage($photo->getRealPath(), $fullPath, 70);
+                    if (! \App\Helpers\ImageHelper::compressImage($photo->getRealPath(), $fullPath, 70)) {
+                        throw new \RuntimeException('One of the selected images could not be processed. Please use JPG, PNG or WebP files.');
+                    }
                     $photos[] = $path;
+                    $newPhotoPaths[] = $path;
                 }
                 $data['photos'] = $photos;
                 $data['photo'] = $photos[0];
             }
 
             if ($request->hasFile('video')) {
-                $data['video'] = $request->file('video')->store('rooms/videos', 'public');
+                $newVideoPath = $request->file('video')->store('rooms/videos', 'public');
+                $data['video'] = $newVideoPath;
             }
 
             $data = $this->mapRoomOptionData($data);
@@ -322,7 +338,7 @@ class ApiRoomController extends BaseApiController
                 $user = Auth::user();
                 if ($user->wallet_balance >= $listingFee) {
                     $user->decrement('wallet_balance', $listingFee);
-                    Payment::create([
+                    $payment = Payment::create([
                         'user_id' => $user->id,
                         'type' => 'listing',
                         'amount' => $listingFee,
@@ -330,7 +346,11 @@ class ApiRoomController extends BaseApiController
                         'reference_id' => $room->id,
                         'status' => 'completed',
                     ]);
-                    $room->update(['listing_fee_paid' => true, 'status' => 'active']);
+                    $room->update([
+                        'listing_payment_id' => $payment->id,
+                        'listing_fee_paid' => true,
+                        'status' => 'active',
+                    ]);
                     DB::commit();
 
                     return $this->sendSuccess(new RoomResource($room), 'Room listed successfully using wallet balance!');
@@ -358,6 +378,13 @@ class ApiRoomController extends BaseApiController
         } catch (\Exception $e) {
             DB::rollBack();
 
+            foreach ($newPhotoPaths as $newPhotoPath) {
+                Storage::disk('public')->delete($newPhotoPath);
+            }
+            if ($newVideoPath) {
+                Storage::disk('public')->delete($newVideoPath);
+            }
+
             return $this->sendError($this->safeErrorMessage($e, 'Unable to save room. Please try again.'), [], 500);
         }
     }
@@ -373,6 +400,8 @@ class ApiRoomController extends BaseApiController
             return $this->sendError('Unauthorized or room not found', [], 403);
         }
 
+        $this->normalizeRoomOptionInput($request);
+
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -380,6 +409,7 @@ class ApiRoomController extends BaseApiController
             'deposit' => 'nullable|numeric|min:0',
             'city' => 'required|string',
             'state' => 'nullable|string',
+            'country' => 'nullable|string',
             'address' => 'nullable|string',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
@@ -392,59 +422,80 @@ class ApiRoomController extends BaseApiController
             'landmarks.*' => 'string',
             'photos' => 'nullable|array|max:5',
             'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
-            'video' => 'nullable|mimes:mp4,avi,mov|max:10240',
+            'video' => 'nullable|mimes:mp4,avi,mov,wmv|max:10240',
             'video_url' => 'nullable|url|max:255',
             'listing_type' => 'required|in:owner,broker',
             'broker_fee' => 'nullable|numeric|min:0',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation failed', $validator->errors(), 422);
+            return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         }
 
         $data = $validator->validated();
         unset($data['photos'], $data['video']);
 
-        if ($request->hasFile('photos')) {
-            if ($room->photos) {
-                foreach ($room->photos as $oldPhoto) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPhoto);
+        $newPhotoPaths = [];
+        $oldPhotoPaths = [];
+        $newVideoPath = null;
+        $oldVideoPath = null;
+
+        DB::beginTransaction();
+        try {
+            if ($request->hasFile('photos')) {
+                $photos = [];
+                foreach ($request->file('photos') as $photo) {
+                    $filename = uniqid('room_').'.jpg';
+                    $path = 'rooms/'.$filename;
+                    $fullPath = storage_path('app/public/'.$path);
+
+                    if (! file_exists(storage_path('app/public/rooms'))) {
+                        mkdir(storage_path('app/public/rooms'), 0755, true);
+                    }
+
+                    if (! \App\Helpers\ImageHelper::compressImage($photo->getRealPath(), $fullPath, 70)) {
+                        throw new \RuntimeException('One of the selected images could not be processed. Please use JPG, PNG or WebP files.');
+                    }
+                    $photos[] = $path;
+                    $newPhotoPaths[] = $path;
                 }
+                $oldPhotoPaths = collect($room->photos ?: [])->filter(fn ($path) => is_string($path) && ! preg_match('/^https?:\/\//i', $path))->values()->all();
+                $data['photos'] = $photos;
+                $data['photo'] = $photos[0];
             }
 
-            $photos = [];
-            foreach ($request->file('photos') as $photo) {
-                $filename = uniqid('room_').'.jpg';
-                $path = 'rooms/'.$filename;
-                $fullPath = storage_path('app/public/'.$path);
-
-                if (! file_exists(storage_path('app/public/rooms'))) {
-                    mkdir(storage_path('app/public/rooms'), 0755, true);
-                }
-
-                \App\Helpers\ImageHelper::compressImage($photo->getRealPath(), $fullPath, 70);
-                $photos[] = $path;
+            if ($request->hasFile('video')) {
+                $oldVideoPath = $room->video;
+                $newVideoPath = $request->file('video')->store('rooms/videos', 'public');
+                $data['video'] = $newVideoPath;
             }
-            $data['photos'] = $photos;
-            $data['photo'] = $photos[0];
+
+            $data = $this->mapRoomOptionData($data);
+            $data['listing_status'] = 'pending';
+            $room->update($data);
+            DB::commit();
+
+            foreach ($oldPhotoPaths as $oldPhotoPath) {
+                Storage::disk('public')->delete($oldPhotoPath);
+            }
+            if ($oldVideoPath) {
+                Storage::disk('public')->delete($oldVideoPath);
+            }
+
+            \Illuminate\Support\Facades\Cache::forget('public_cities_list');
+
+            return $this->sendSuccess(new RoomResource($room->fresh()), 'Room updated successfully and submitted for approval');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            foreach ($newPhotoPaths as $newPhotoPath) {
+                Storage::disk('public')->delete($newPhotoPath);
+            }
+            if ($newVideoPath) {
+                Storage::disk('public')->delete($newVideoPath);
+            }
+
+            return $this->sendError($this->safeErrorMessage($e, 'Unable to update room. Please try again.'), [], 500);
         }
-
-        $this->normalizeRoomOptionInput($request);
-
-        if ($request->hasFile('video')) {
-            if ($room->video) {
-                Storage::disk('public')->delete($room->video);
-            }
-
-            $data['video'] = $request->file('video')->store('rooms/videos', 'public');
-        }
-
-        $data = $this->mapRoomOptionData($data);
-
-        $room->update($data);
-        \Illuminate\Support\Facades\Cache::forget('public_cities_list');
-
-        return $this->sendSuccess(new RoomResource($room), 'Room updated successfully');
     }
 
     public function ownerShow(Request $request, $id)
@@ -503,7 +554,11 @@ class ApiRoomController extends BaseApiController
         }
 
         if ($room->status === 'active') {
-            $room->update(['status' => 'booked']);
+            $room->update([
+                'status' => 'booked',
+                'listing_fee_paid' => false,
+                'listing_payment_id' => null,
+            ]);
 
             return $this->sendSuccess(['new_status' => 'booked'], 'Room marked as rented');
         } else {
@@ -534,14 +589,19 @@ class ApiRoomController extends BaseApiController
                 // 1. Check Owner Subscription
                 $activeSub = \App\Models\Subscription::where('user_id', Auth::id())
                     ->where('status', 'active')
-                    ->whereHas('plan', fn ($q) => $q->where('type', 'owner'))
+                    ->whereDate('end_date', '>=', today())
+                    ->whereHas('plan', fn ($q) => $q->where('type', 'owner')->where('is_active', true))
                     ->with('plan')
                     ->first();
 
                 if ($activeSub) {
                     $used = Room::where('user_id', Auth::id())->where('listing_fee_paid', true)->whereNull('listing_payment_id')->count();
                     if ($activeSub->plan->listing_limit === -1 || $used < $activeSub->plan->listing_limit) {
-                        $room->update(['status' => 'active', 'listing_fee_paid' => true]);
+                        $room->update([
+                            'status' => 'active',
+                            'listing_fee_paid' => true,
+                            'listing_payment_id' => null,
+                        ]);
                         DB::commit();
 
                         return $this->sendSuccess(['new_status' => 'active'], 'Room marked as available using subscription');
@@ -555,7 +615,7 @@ class ApiRoomController extends BaseApiController
                     $user = Auth::user();
                     if ($user->wallet_balance >= $listingFee) {
                         $user->decrement('wallet_balance', $listingFee);
-                        Payment::create([
+                        $payment = Payment::create([
                             'user_id' => $user->id,
                             'type' => 'listing',
                             'amount' => $listingFee,
@@ -563,19 +623,35 @@ class ApiRoomController extends BaseApiController
                             'reference_id' => $room->id,
                             'status' => 'completed',
                         ]);
-                        $room->update(['status' => 'active', 'listing_fee_paid' => true]);
+                        $room->update([
+                            'status' => 'active',
+                            'listing_fee_paid' => true,
+                            'listing_payment_id' => $payment->id,
+                        ]);
                         DB::commit();
 
                         return $this->sendSuccess(['new_status' => 'active', 'new_balance' => $user->wallet_balance], 'Room marked as available using wallet balance');
                     } else {
+                        DB::rollBack();
+
                         return $this->sendError('Insufficient wallet balance', [], 400);
                     }
                 }
 
-                // 3. Return Payment requirement
+                // 3. Create the same pending listing payment used by the web flow.
+                $payment = Payment::create([
+                    'user_id' => Auth::id(),
+                    'type' => 'listing',
+                    'amount' => $listingFee,
+                    'gateway' => 'razorpay',
+                    'reference_id' => $room->id,
+                    'status' => 'pending',
+                ]);
+                $room->update(['listing_payment_id' => $payment->id]);
                 DB::commit();
 
                 return $this->sendSuccess([
+                    'payment_id' => $payment->id,
                     'amount' => $listingFee,
                     'type' => 'listing',
                     'action' => 'mark_available',
@@ -643,13 +719,7 @@ class ApiRoomController extends BaseApiController
      */
     public function getCities()
     {
-        $cities = \Illuminate\Support\Facades\Cache::remember('public_cities_list', 86400, function () {
-            return Room::where('status', 'active')
-                ->where('listing_fee_paid', true)
-                ->where('listing_status', 'approved')
-                ->distinct()
-                ->pluck('city');
-        });
+        $cities = CityOperations::selectorCities()->pluck('name')->values();
 
         return $this->sendSuccess($cities);
     }

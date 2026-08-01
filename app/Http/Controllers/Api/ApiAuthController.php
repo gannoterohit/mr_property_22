@@ -68,7 +68,7 @@ class ApiAuthController extends BaseApiController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation failed', $validator->errors(), 422);
+            return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         }
 
         if (!Otp::verify($request->email, $request->otp)) {
@@ -118,7 +118,7 @@ class ApiAuthController extends BaseApiController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation failed', $validator->errors(), 422);
+            return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         }
 
         if (!Otp::verify($request->email, $request->otp)) {

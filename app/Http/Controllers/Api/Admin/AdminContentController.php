@@ -35,7 +35,7 @@ class AdminContentController extends BaseApiController
     }
     public function storeBlog(Request $request) {
         $validator = Validator::make($request->all(), ['title' => 'required', 'slug' => 'required|unique:blogs,slug', 'content' => 'required']);
-        if ($validator->fails()) return $this->sendError('Validation failed', $validator->errors(), 422);
+        if ($validator->fails()) return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         $data = $request->all();
         if ($request->hasFile('image')) $data['image'] = $request->file('image')->store('blogs', 'public');
         $blog = Blog::create($data);
@@ -66,7 +66,7 @@ class AdminContentController extends BaseApiController
     }
     public function storeOffer(Request $request) {
         $validator = Validator::make($request->all(), ['title' => 'required', 'description' => 'required']);
-        if ($validator->fails()) return $this->sendError('Validation failed', $validator->errors(), 422);
+        if ($validator->fails()) return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         $data = $request->all();
         if ($request->hasFile('image')) $data['image_path'] = $request->file('image')->store('offers', 'public');
         $offer = Offer::create($data);

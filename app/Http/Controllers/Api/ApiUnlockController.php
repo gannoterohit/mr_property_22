@@ -161,7 +161,7 @@ class ApiUnlockController extends BaseApiController
                     ], 'Unlocked via wallet');
                 } else {
                     DB::rollBack();
-                    return $this->sendError('Insufficient wallet balance');
+                    return $this->sendError('Insufficient wallet balance', [], 422);
                 }
             }
 
