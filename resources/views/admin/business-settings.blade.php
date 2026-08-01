@@ -101,6 +101,37 @@
             width: 72px;
         }
     }
+    .settings-subtabs {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        background: #fff;
+        padding: 8px;
+    }
+    .settings-subtabs button {
+        display: inline-flex;
+        height: 38px;
+        flex-shrink: 0;
+        align-items: center;
+        gap: 8px;
+        border-radius: 10px;
+        padding: 0 14px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #475569;
+        transition: .15s ease;
+    }
+    .settings-subtabs button[aria-selected="true"] {
+        background: var(--admin-primary);
+        color: #fff;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .08);
+    }
+    [data-seo-part][hidden],
+    [data-seo-subpanel][hidden] {
+        display: none !important;
+    }
 </style>
 @endpush
 <div id="business-settings-tabs" class="flex flex-col min-h-0 bg-gray-50">
@@ -550,7 +581,14 @@
 
                 <!-- SEO Section -->
                  <div data-settings-panel="seo" class="space-y-6" hidden>
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <div class="settings-subtabs" role="tablist" aria-label="SEO settings sections">
+                        <button type="button" data-seo-tab="basics" aria-selected="true"><i class="fas fa-search"></i>SEO Basics</button>
+                        <button type="button" data-seo-tab="google_ads" aria-selected="false"><i class="fas fa-bullseye"></i>Google Ads</button>
+                        <button type="button" data-seo-tab="meta_pixel" aria-selected="false"><i class="fab fa-meta"></i>Meta Pixel</button>
+                        <button type="button" data-seo-tab="adsense" aria-selected="false"><i class="fas fa-rectangle-ad"></i>AdSense</button>
+                    </div>
+
+                    <div data-seo-subpanel="basics" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
                              <div class="h-10 w-10 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center mr-4">
                                 <i class="fas fa-search text-xl"></i>
@@ -586,18 +624,18 @@
                     </div>
 
                     <!-- Google Ads Section -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mt-6">
+                    <div data-seo-subpanel="tracking" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mt-6">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
                              <div class="h-10 w-10 rounded-lg admin-theme-soft flex items-center justify-center mr-4">
-                                <i class="fas fa-ad text-xl"></i>
+                                <i id="seoTrackingIcon" class="fas fa-ad text-xl"></i>
                             </div>
                             <div>
-                                <h2 class="text-xl font-bold text-gray-800">Google Ads Integration</h2>
-                                <p class="text-sm text-gray-500">Track conversions and manage ad campaigns</p>
+                                <h2 id="seoTrackingTitle" class="text-xl font-bold text-gray-800">Google Ads Integration</h2>
+                                <p id="seoTrackingSubtitle" class="text-sm text-gray-500">Track conversions and manage ad campaigns</p>
                             </div>
                         </div>
                         <div class="space-y-6">
-                            <div class="flex items-center gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <div data-seo-part="google_ads" class="flex items-center gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                                 <input type="checkbox" name="google_ads_enabled" value="1" id="google_ads_enabled" {{ \App\Models\Setting::get('google_ads_enabled', '0') == '1' ? 'checked' : '' }} class="w-5 h-5 admin-theme-text rounded ">
                                 <label for="google_ads_enabled" class="text-sm font-semibold text-gray-700 cursor-pointer">
                                     Enable Google Ads Tracking
@@ -605,13 +643,13 @@
                                 </label>
                             </div>
 
-                                <div>
+                                <div data-seo-part="google_ads">
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Google Ads Tag ID</label>
                                     <input type="text" name="google_ads_tag_id" value="{{ \App\Models\Setting::get('google_ads_tag_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="AW-XXXXXXXXX">
                                     <p class="mt-1 text-xs text-gray-500">For Ads Tracking. Starts with <strong>AW-</strong></p>
                                 </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div data-seo-part="google_ads" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Payment Conversion Label</label>
                                     <input type="text" name="google_ads_conversion_label" value="{{ \App\Models\Setting::get('google_ads_conversion_label') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="abc123xyz">
@@ -624,14 +662,14 @@
                                 </div>
                             </div>
 
-                            <div>
+                            <div data-seo-part="google_ads">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Room View Conversion Label</label>
                                 <input type="text" name="google_ads_room_view_label" value="{{ \App\Models\Setting::get('google_ads_room_view_label') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="view_xyz123">
                                 <p class="mt-1 text-xs text-gray-500">Label for room detail page views</p>
                             </div>
 
-                            <div class="space-y-6 pt-6 border-t border-gray-100">
-                                <div class="flex items-center gap-3 mb-2">
+                            <div data-seo-part="meta_pixel" class="space-y-6">
+                                <div class="hidden">
                                     <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                                         <i class="fab fa-meta text-blue-600"></i>
                                     </div>
@@ -656,7 +694,7 @@
                                 </div>
                             </div>
 
-                            <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <div data-seo-part="google_ads" class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                                 <p class="text-xs text-blue-800 flex items-start gap-2">
                                     <i class="fas fa-info-circle mt-0.5"></i>
                                     <span><strong>Note:</strong> Google Ads tracking will only work when <code class="bg-blue-100 px-1 rounded">APP_ENV=production</code> in your <code class="bg-blue-100 px-1 rounded">.env</code> file. This prevents tracking during development.</span>
@@ -665,8 +703,8 @@
                         </div>
 
                         <!-- Google AdSense Section -->
-                        <div class="space-y-6 pt-6 border-t border-gray-100">
-                            <div class="flex items-center gap-3 mb-2">
+                        <div data-seo-part="adsense" class="space-y-6">
+                            <div class="hidden">
                                 <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-ad text-yellow-600"></i>
                                 </div>
@@ -746,6 +784,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabs = [...root.querySelectorAll('[data-settings-tab]')];
     const panels = [...root.querySelectorAll('[data-settings-panel]')];
     const validTabs = tabs.map((tab) => tab.dataset.settingsTab);
+    const seoTabs = [...root.querySelectorAll('[data-seo-tab]')];
+    const seoBasicPanel = root.querySelector('[data-seo-subpanel="basics"]');
+    const seoTrackingPanel = root.querySelector('[data-seo-subpanel="tracking"]');
+    const seoParts = [...root.querySelectorAll('[data-seo-part]')];
+    const validSeoTabs = seoTabs.map((tab) => tab.dataset.seoTab);
+    const seoTrackingTitle = document.getElementById('seoTrackingTitle');
+    const seoTrackingSubtitle = document.getElementById('seoTrackingSubtitle');
+    const seoTrackingIcon = document.getElementById('seoTrackingIcon');
+    const seoTrackingMeta = {
+        google_ads: ['Google Ads Integration', 'Track conversions and manage ad campaigns.', 'fas fa-ad text-xl'],
+        meta_pixel: ['Meta Pixel', 'Collect visitor, room-view, search and unlock conversion data.', 'fab fa-meta text-xl'],
+        adsense: ['Google AdSense', 'Configure publisher and ad slot IDs for public pages.', 'fas fa-rectangle-ad text-xl'],
+    };
+
+    const activateSeoTab = (tabName) => {
+        const activeSeoTab = validSeoTabs.includes(tabName) ? tabName : 'basics';
+
+        seoTabs.forEach((tab) => {
+            tab.setAttribute('aria-selected', tab.dataset.seoTab === activeSeoTab ? 'true' : 'false');
+        });
+
+        if (seoBasicPanel) {
+            seoBasicPanel.hidden = activeSeoTab !== 'basics';
+        }
+        if (seoTrackingPanel) {
+            seoTrackingPanel.hidden = activeSeoTab === 'basics';
+        }
+
+        seoParts.forEach((part) => {
+            part.hidden = part.dataset.seoPart !== activeSeoTab;
+        });
+
+        if (activeSeoTab !== 'basics' && seoTrackingMeta[activeSeoTab]) {
+            const [title, subtitle, iconClass] = seoTrackingMeta[activeSeoTab];
+            if (seoTrackingTitle) seoTrackingTitle.textContent = title;
+            if (seoTrackingSubtitle) seoTrackingSubtitle.textContent = subtitle;
+            if (seoTrackingIcon) seoTrackingIcon.className = iconClass;
+        }
+    };
 
     const activateTab = (tabName, updateUrl = true) => {
         const activeTab = validTabs.includes(tabName) ? tabName : 'general';
@@ -764,6 +841,10 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.hidden = panel.dataset.settingsPanel !== activeTab;
         });
 
+        if (activeTab === 'seo') {
+            activateSeoTab(seoTabs.find((tab) => tab.getAttribute('aria-selected') === 'true')?.dataset.seoTab || 'basics');
+        }
+
         if (updateUrl) {
             history.replaceState(null, '', `${location.pathname}${location.search}#${activeTab}`);
         }
@@ -772,6 +853,12 @@ document.addEventListener('DOMContentLoaded', () => {
     tabs.forEach((tab) => {
         tab.addEventListener('click', () => activateTab(tab.dataset.settingsTab));
     });
+
+    seoTabs.forEach((tab) => {
+        tab.addEventListener('click', () => activateSeoTab(tab.dataset.seoTab));
+    });
+
+    activateSeoTab('basics');
 
     activateTab(location.hash.replace('#', '') || 'general', false);
 });
