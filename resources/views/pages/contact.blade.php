@@ -68,25 +68,35 @@
 
                 <form action="{{ route('pages.contact.store') }}" method="POST" class="space-y-4">
                     @csrf
+                    @if($errors->any())
+                        <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
+                            <p class="font-extrabold">Please correct the following information:</p>
+                            <ul class="mt-2 list-disc space-y-1 pl-5">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                        </div>
+                    @endif
                     <div class="grid gap-4 md:grid-cols-2">
                         <div>
                             <label class="mb-1.5 block text-[10px] font-extrabold uppercase tracking-wide text-slate-400" for="name">Name</label>
-                            <input type="text" name="name" id="name" required placeholder="Your full name" class="h-11 w-full rounded-xl border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:bg-white focus:ring-indigo-100">
+                            <input type="text" name="name" id="name" required value="{{ old('name') }}" placeholder="Your full name" class="h-11 w-full rounded-xl border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:bg-white focus:ring-indigo-100">
+                            @error('name')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="mb-1.5 block text-[10px] font-extrabold uppercase tracking-wide text-slate-400" for="email">Email</label>
-                            <input type="email" name="email" id="email" required placeholder="you@example.com" class="h-11 w-full rounded-xl border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:bg-white focus:ring-indigo-100">
+                            <input type="email" name="email" id="email" required value="{{ old('email') }}" placeholder="you@example.com" class="h-11 w-full rounded-xl border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:bg-white focus:ring-indigo-100">
+                            @error('email')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
                         </div>
                     </div>
 
                     <div>
                         <label class="mb-1.5 block text-[10px] font-extrabold uppercase tracking-wide text-slate-400" for="subject">Subject</label>
-                        <input type="text" name="subject" id="subject" placeholder="Payment, listing, complaint, or general help" class="h-11 w-full rounded-xl border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:bg-white focus:ring-indigo-100">
+                        <input type="text" name="subject" id="subject" value="{{ old('subject') }}" placeholder="Payment, listing, complaint, or general help" class="h-11 w-full rounded-xl border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:bg-white focus:ring-indigo-100">
+                        @error('subject')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
                     </div>
 
                     <div>
                         <label class="mb-1.5 block text-[10px] font-extrabold uppercase tracking-wide text-slate-400" for="message">Message</label>
-                        <textarea name="message" id="message" rows="5" required placeholder="Tell us what happened. Include room title, city, payment/reference details or screenshots context if relevant." class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold leading-6 text-slate-800 focus:border-indigo-500 focus:bg-white focus:ring-indigo-100"></textarea>
+                        <textarea name="message" id="message" rows="5" required placeholder="Tell us what happened. Include room title, city, payment/reference details or screenshots context if relevant." class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold leading-6 text-slate-800 focus:border-indigo-500 focus:bg-white focus:ring-indigo-100">{{ old('message') }}</textarea>
+                        @error('message')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
                     </div>
 
                     <button type="submit" class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-extrabold text-white shadow-sm shadow-indigo-100 transition hover:bg-indigo-700 md:w-auto">

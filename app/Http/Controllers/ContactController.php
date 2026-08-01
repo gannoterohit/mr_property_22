@@ -11,30 +11,36 @@ class ContactController extends Controller
 {
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'subject' => 'nullable|string|max:255',
             'message' => 'required|string|min:10',
         ]);
 
-        $message = ContactMessage::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'subject' => $request->subject ?? 'New Inquiry from Contact Form',
-            'message' => $request->message,
-            'ip_address' => $request->ip(),
-            'is_read' => false,
-        ]);
+        try {
+            ContactMessage::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'subject' => $data['subject'] ?? 'New Inquiry from Contact Form',
+                'message' => $data['message'],
+                'ip_address' => $request->ip(),
+                'is_read' => false,
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->withInput()->with('error', 'We could not save your message. Please try again.');
+        }
 
         // Attempt to send email to admin
         try {
             $adminEmail = \App\Models\Setting::get('contact_email', config('mail.from.address'));
 
             Mail::to($adminEmail)->send(new BrandedMessageMail(
-                $request->subject ?: 'New website enquiry', 'A visitor contacted ApnaNest', $request->message,
+                ($data['subject'] ?? null) ?: 'New website enquiry', 'A visitor contacted ApnaNest', $data['message'],
                 'Contact enquiry', 'Open contact enquiries', route('admin.contact-messages.index'),
-                ['Name' => $request->name, 'Email' => $request->email], 'primary'
+                ['Name' => $data['name'], 'Email' => $data['email']], 'primary'
             ));
         } catch (\Exception $e) {
             // Log error but don't stop the user

@@ -83,9 +83,11 @@
                           class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                         @csrf
                         <h3 class="font-bold text-slate-900">Add information</h3>
+                        @error('message')<p class="mt-2 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
+                        @error('attachment')<p class="mt-2 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
                         <textarea name="message" rows="4" required
                                   class="mt-3 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none resize-none"
-                                  placeholder="Write a reply..."></textarea>
+                                  placeholder="Write a reply...">{{ old('message') }}</textarea>
                         <input type="file" name="attachment" accept=".jpg,.jpeg,.png,.webp,.pdf"
                                class="mt-3 block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-white hover:file:bg-indigo-700">
                         <button type="submit" class="mt-4 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 transition">

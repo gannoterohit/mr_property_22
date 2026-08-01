@@ -552,6 +552,20 @@ function handleVideoUpload(e) {
 }
 
 // Form Submission
+function showRoomFormErrors(form, payload, fallback) {
+    const messages = payload?.errors
+        ? Object.values(payload.errors).flat().filter(Boolean)
+        : [];
+
+    window.renderFormErrors?.(form, payload?.errors || {});
+
+    if (messages.length) {
+        messages.forEach(message => toastr.error(message, 'Please check the form'));
+    } else {
+        toastr.error(payload?.message || fallback);
+    }
+}
+
 document.getElementById('roomForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -595,7 +609,7 @@ document.getElementById('roomForm').addEventListener('submit', async function(e)
                 await initiatePayment(data.payment_id, data.amount, data.room_id);
             }
         } else {
-            toastr.error(data.message || 'Error creating listing');
+            showRoomFormErrors(this, data, 'Error creating listing');
             btn.disabled = false;
             btn.innerHTML = originalText;
         }

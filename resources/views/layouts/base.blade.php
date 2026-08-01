@@ -725,6 +725,80 @@
     <script src="{{ asset('assets/js/toastr.min.js') }}"></script>
 
     <script>
+        window.renderFormErrors = function (form, errors) {
+            if (!form || !errors || typeof errors !== 'object') return;
+
+            form.querySelectorAll('[data-validation-error]').forEach(node => node.remove());
+            form.querySelectorAll('[data-validation-invalid]').forEach(field => {
+                field.removeAttribute('data-validation-invalid');
+                field.classList.remove('border-red-500', 'ring-1', 'ring-red-200');
+                field.removeAttribute('aria-invalid');
+            });
+
+            Object.entries(errors).forEach(([errorKey, messages]) => {
+                const baseKey = errorKey.split('.')[0];
+                const fields = Array.from(form.elements).filter(field => {
+                    if (!field.name) return false;
+                    return field.name === errorKey ||
+                        field.name === baseKey ||
+                        field.name === `${baseKey}[]` ||
+                        field.name.startsWith(`${baseKey}[`);
+                });
+                const field = fields[0];
+                if (!field) return;
+
+                fields.forEach(item => {
+                    item.dataset.validationInvalid = 'true';
+                    item.classList.add('border-red-500', 'ring-1', 'ring-red-200');
+                    item.setAttribute('aria-invalid', 'true');
+                });
+
+                const message = document.createElement('p');
+                message.dataset.validationError = 'true';
+                message.className = 'mt-1 text-xs font-semibold text-red-600';
+                message.setAttribute('role', 'alert');
+                message.textContent = Array.isArray(messages) ? messages[0] : messages;
+
+                const anchor = field.closest('label') || field;
+                anchor.insertAdjacentElement('afterend', message);
+            });
+        };
+
+        window.restoreOldFormInput = function (oldInput) {
+            if (!oldInput || typeof oldInput !== 'object') return;
+
+            const flatten = (value, prefix = '', result = {}) => {
+                if (Array.isArray(value) && value.some(item => item !== null && typeof item === 'object')) {
+                    value.forEach((child, index) => flatten(child, `${prefix}[${index}]`, result));
+                } else if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+                    Object.entries(value).forEach(([key, child]) => flatten(child, prefix ? `${prefix}[${key}]` : key, result));
+                } else {
+                    result[prefix] = value;
+                }
+                return result;
+            };
+
+            const flattened = flatten(oldInput);
+            Object.entries(flattened).forEach(([name, value]) => {
+                const baseName = name.split('[')[0];
+                const fields = Array.from(document.querySelectorAll('[name]')).filter(field =>
+                    field.name === name || field.name === `${baseName}[]`
+                );
+
+                fields.forEach(field => {
+                    if (['file', 'password'].includes(field.type) || ['_token', '_method'].includes(field.name)) return;
+                    if (field.type === 'checkbox' || field.type === 'radio') {
+                        const values = Array.isArray(value) ? value.map(String) : [String(value)];
+                        field.checked = values.includes(String(field.value));
+                    } else if (field.multiple && Array.isArray(value)) {
+                        Array.from(field.options).forEach(option => option.selected = value.map(String).includes(option.value));
+                    } else if (!Array.isArray(value)) {
+                        field.value = value ?? '';
+                    }
+                });
+            });
+        };
+
         toastr.options = {
             "closeButton": true,
             "debug": false,
@@ -757,6 +831,29 @@
 
         @if(Session::has('warning'))
             toastr.warning(@json(session('warning')), 'Warning');
+        @endif
+
+        @if(isset($errors) && $errors->any())
+            @foreach($errors->all() as $validationError)
+                toastr.error(@json($validationError), 'Please check the form');
+            @endforeach
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const validationErrors = @json($errors->toArray());
+                const oldInput = @json(session()->getOldInput());
+                window.restoreOldFormInput(oldInput);
+
+                document.querySelectorAll('form').forEach(form => {
+                    const relevantErrors = {};
+                    Object.entries(validationErrors).forEach(([key, messages]) => {
+                        const baseKey = key.split('.')[0];
+                        if (Array.from(form.elements).some(field => field.name === key || field.name === baseKey || field.name === `${baseKey}[]` || field.name?.startsWith(`${baseKey}[`))) {
+                            relevantErrors[key] = messages;
+                        }
+                    });
+                    window.renderFormErrors(form, relevantErrors);
+                });
+            });
         @endif
     </script>
     <script>

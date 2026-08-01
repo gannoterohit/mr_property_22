@@ -726,6 +726,21 @@ function handleVideoUpload(event) {
 }
 
 // Form Submission
+function showRoomFormErrors(form, payload, fallback) {
+    const messages = payload?.errors
+        ? Object.values(payload.errors).flat().filter(Boolean)
+        : [];
+
+    window.renderFormErrors?.(form, payload?.errors || {});
+
+    if (messages.length) {
+        messages.forEach(message => toastr.error(message, 'Please check the form'));
+        return messages[0];
+    }
+
+    return payload?.message || fallback;
+}
+
 document.getElementById('editRoomForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const submitBtn = this.querySelector('button[type="submit"]');
@@ -766,7 +781,9 @@ document.getElementById('editRoomForm').addEventListener('submit', async functio
         
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ message: 'Failed to update room' }));
-            throw new Error(errorData.message || 'Failed to update room');
+            const requestError = new Error(showRoomFormErrors(this, errorData, 'Failed to update room'));
+            requestError.alreadyShown = Boolean(errorData?.errors && Object.keys(errorData.errors).length);
+            throw requestError;
         }
         
         const data = await response.json();
@@ -777,13 +794,15 @@ document.getElementById('editRoomForm').addEventListener('submit', async functio
                 window.location.href = '{{ route("owner.rooms") }}';
             }, 1500);
         } else {
-            toastr.error(data.message || 'Failed to update room');
+            showRoomFormErrors(this, data, 'Failed to update room');
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
         }
     } catch (error) {
         console.error('Error:', error);
-        toastr.error(error.message || 'Something went wrong. Please try again.');
+        if (!error.alreadyShown) {
+            toastr.error(error.message || 'Something went wrong. Please try again.');
+        }
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
     }
