@@ -11,7 +11,7 @@
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-800">
-                        <i class="fas fa-envelope text-blue-600 mr-2"></i>Contact Messages
+                        <i class="fas fa-envelope admin-theme-text mr-2"></i>Contact Messages
                     </h1>
                     <p class="text-gray-600 mt-1">Total: {{ $messages->total() }} enquiries</p>
                 </div>
@@ -35,7 +35,7 @@
                                 <tr class="hover:bg-gray-50/50 transition-colors {{ !$msg->is_read ? 'bg-blue-50/30' : '' }}">
                                     <td class="px-6 py-5">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold uppercase">
+                                            <div class="w-10 h-10 admin-theme-soft rounded-xl flex items-center justify-center font-bold uppercase">
                                                 {{ substr($msg->name, 0, 1) }}
                                             </div>
                                             <div>
@@ -72,7 +72,7 @@
                                                 </form>
                                             @endif
                                             <button onclick="showMessage('{{ addslashes($msg->name) }}', '{{ addslashes($msg->message) }}')" 
-                                                    class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center" title="View Full Message">
+                                                    class="w-8 h-8 bg-sky-50 text-sky-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center" title="View Full Message">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <form action="{{ route('admin.contact-messages.destroy', $msg->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this message?')">

@@ -9,7 +9,7 @@
     .cities-table th,.cities-table td{vertical-align:middle!important;text-align:left!important}
     .cities-table th:last-child,.cities-table td:last-child{text-align:right!important}
     .city-field{height:40px;width:100%;border:1px solid #e2e8f0!important;border-radius:10px!important;background:#fff;font-size:12px!important}
-    .city-field:focus{border-color:#818cf8!important;box-shadow:0 0 0 3px rgba(99,102,241,.1)!important}
+    .city-field:focus{border-color:var(--admin-primary)!important;box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1)!important}
     @media(max-width:1023px){.cities-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:639px){.cities-kpis{grid-template-columns:1fr}.cities-table{min-width:960px}}
 </style>
@@ -26,11 +26,11 @@
 <div class="space-y-5 p-5 lg:p-6">
     <header class="flex flex-wrap items-end justify-between gap-4">
         <div>
-            <p class="text-[10px] font-extrabold uppercase tracking-[.2em] text-indigo-600">Market operations</p>
+            <p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Market operations</p>
             <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Operational Cities</h1>
             <p class="mt-1 max-w-2xl text-sm text-slate-500">Manage launch status, map coordinates and the fallback city shown across the platform.</p>
         </div>
-        <a href="{{ route('admin.cities.create') }}" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-xs font-extrabold text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-700">
+        <a href="{{ route('admin.cities.create') }}" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl admin-theme-bg px-5 text-xs font-extrabold text-white shadow-sm  transition ">
             <i class="fas fa-plus"></i> Add New City
         </a>
     </header>
@@ -46,7 +46,7 @@
         <article class="rounded-2xl border bg-white p-4 shadow-sm">
             <div class="flex items-center justify-between">
                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Total cities</span>
-                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"><i class="fas fa-city"></i></span>
+                <span class="flex h-9 w-9 items-center justify-center rounded-xl admin-theme-soft"><i class="fas fa-city"></i></span>
             </div>
             <p class="mt-3 text-2xl font-extrabold text-slate-950">{{ $cities->count() }}</p>
             <p class="mt-1 text-[11px] text-slate-500">Configured markets</p>
@@ -112,7 +112,7 @@
                                     <input type="hidden" name="sort_order" value="{{ $city->sort_order }}">
                                 </form>
                                 <div class="flex items-center gap-3">
-                                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"><i class="fas fa-building"></i></span>
+                                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl admin-theme-soft"><i class="fas fa-building"></i></span>
                                     <input form="{{ $formId }}" name="name" value="{{ $city->name }}" required class="city-field min-w-[145px] font-bold text-slate-800">
                                 </div>
                             </td>
@@ -133,20 +133,20 @@
                             </td>
                             <td class="px-3 py-4">
                                 <label class="inline-flex min-w-max cursor-pointer items-center gap-2 rounded-full border px-3 py-2 text-[11px] font-extrabold {{ $city->is_active ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-amber-200 bg-amber-50 text-amber-700' }}">
-                                    <input form="{{ $formId }}" type="checkbox" name="is_active" value="1" @checked($city->is_active) class="rounded border-slate-300 text-indigo-600">
+                                    <input form="{{ $formId }}" type="checkbox" name="is_active" value="1" @checked($city->is_active) class="rounded border-slate-300 admin-theme-text">
                                     <span class="h-1.5 w-1.5 rounded-full {{ $city->is_active ? 'bg-emerald-500' : 'bg-amber-500' }}"></span>
                                     {{ $city->is_active ? 'Active' : 'Coming Soon' }}
                                 </label>
                             </td>
                             <td class="px-3 py-4">
-                                <label class="inline-flex min-w-max cursor-pointer items-center gap-2 text-xs font-bold {{ $city->is_default ? 'text-indigo-700' : 'text-slate-500' }}">
-                                    <input form="{{ $formId }}" type="checkbox" name="is_default" value="1" @checked($city->is_default) class="rounded border-slate-300 text-indigo-600">
+                                <label class="inline-flex min-w-max cursor-pointer items-center gap-2 text-xs font-bold {{ $city->is_default ? 'admin-theme-text' : 'text-slate-500' }}">
+                                    <input form="{{ $formId }}" type="checkbox" name="is_default" value="1" @checked($city->is_default) class="rounded border-slate-300 admin-theme-text">
                                     <i class="{{ $city->is_default ? 'fas' : 'far' }} fa-star text-amber-400"></i>
                                     {{ $city->is_default ? 'Default' : 'Set default' }}
                                 </label>
                             </td>
                             <td class="px-5 py-4 text-right">
-                                <button form="{{ $formId }}" class="inline-flex h-9 items-center gap-2 rounded-lg bg-slate-900 px-4 text-xs font-extrabold text-white transition hover:bg-indigo-600">
+                                <button form="{{ $formId }}" class="inline-flex h-9 items-center gap-2 rounded-lg bg-slate-900 px-4 text-xs font-extrabold text-white transition admin-theme-hover-bg">
                                     <i class="fas fa-floppy-disk"></i> Save
                                 </button>
                             </td>

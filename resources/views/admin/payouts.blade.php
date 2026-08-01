@@ -10,11 +10,11 @@
         <div class="flex-1 min-w-0 p-4 md:p-8">
             {{-- HEADER --}}
             <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 mb-8 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-indigo-100"></div>
+                <div class="absolute top-0 right-0 w-32 h-32 admin-theme-soft rounded-full blur-3xl -mr-16 -mt-16 transition-all"></div>
                 <div class="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <h1 class="text-3xl font-black text-slate-900 tracking-tight flex items-center">
-                            <i class="fas fa-hand-holding-usd text-indigo-600 mr-4 p-3 bg-indigo-50 rounded-2xl"></i>
+                            <i class="fas fa-hand-holding-usd admin-theme-text mr-4 p-3 admin-theme-soft rounded-2xl"></i>
                             Payout Requests
                         </h1>
                         <p class="text-slate-500 mt-2 font-medium">Manage and process transfers to property owners</p>
@@ -46,7 +46,7 @@
                                 </td>
                                 <td class="px-8 py-6">
                                     <div class="flex items-center">
-                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black mr-3">
+                                        <div class="w-10 h-10 rounded-xl admin-theme-soft flex items-center justify-center admin-theme-text font-black mr-3">
                                             {{ substr($payout->owner->name ?? 'N', 0, 1) }}
                                         </div>
                                         <div>
@@ -79,7 +79,7 @@
                                     <form action="{{ route('admin.payouts.process', $payout->id) }}" method="POST" class="inline">
                                         @csrf
                                         <button type="submit" 
-                                                class="px-6 py-2.5 bg-indigo-600 hover:bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md hover:shadow-xl transform hover:-translate-y-0.5"
+                                                class="px-6 py-2.5 admin-theme-bg hover:bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md hover:shadow-xl transform hover:-translate-y-0.5"
                                                 onclick="return confirm('Mark this payout as processed?')">
                                             Process Payout
                                         </button>

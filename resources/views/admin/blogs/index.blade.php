@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-bold text-gray-800">Manage Blogs</h1>
             <p class="text-gray-600 text-sm">Create and publish articles for your audience.</p>
         </div>
-        <a href="{{ route('admin.blogs.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow-sm transition flex items-center">
+        <a href="{{ route('admin.blogs.create') }}" class="admin-theme-bg px-4 py-2 rounded-lg shadow-sm transition flex items-center">
             <i class="fas fa-plus mr-2"></i> New Post
         </a>
     </div>
@@ -67,7 +67,7 @@
                                 </td>
                                 <td class="p-4 text-right">
                                     <div class="flex justify-end gap-2">
-                                        <a href="{{ route('admin.blogs.edit', $blog->id) }}" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition" title="Edit">
+                                        <a href="{{ route('admin.blogs.edit', $blog->id) }}" class="p-2 admin-theme-text hover:bg-slate-50 rounded-lg transition" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route('admin.blogs.destroy', $blog->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
@@ -94,7 +94,7 @@
                 </div>
                 <h3 class="text-lg font-medium text-gray-900 mb-1">No blog posts yet</h3>
                 <p class="mb-6">Get started by creating your first article.</p>
-                <a href="{{ route('admin.blogs.create') }}" class="text-indigo-600 font-medium hover:underline">Create Post</a>
+                <a href="{{ route('admin.blogs.create') }}" class="admin-theme-text font-medium hover:underline">Create Post</a>
             </div>
         @endif
     </div>

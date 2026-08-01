@@ -29,6 +29,78 @@
         width: 100% !important;
         clear: both;
     }
+    [data-settings-panel="appearance"] > .bg-white {
+        border-color: #e5e7eb;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    }
+    [data-settings-panel="appearance"] > .bg-white > .space-y-8 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+    [data-settings-panel="appearance"] > .bg-white > .space-y-8 > * {
+        margin-top: 0 !important;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        background: #fff;
+        padding: 18px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
+    }
+    [data-settings-panel="appearance"] > .bg-white > .space-y-8 > :nth-child(n+5) {
+        grid-column: 1 / -1;
+    }
+    [data-settings-panel="appearance"] > .bg-white > .space-y-8 > :nth-child(5),
+    [data-settings-panel="appearance"] > .bg-white > .space-y-8 > :nth-child(7) {
+        grid-column: auto;
+    }
+    [data-settings-panel="appearance"] .h-24.w-24 {
+        height: 88px;
+        width: 88px;
+        border-width: 1px;
+        border-color: #cbd5e1;
+        border-radius: 14px;
+        background: #f8fafc;
+        flex-shrink: 0;
+    }
+    [data-settings-panel="appearance"] label.inline-flex {
+        min-height: 38px;
+    }
+    [data-settings-panel="appearance"] input:not([type=checkbox]):not([type=radio]):not([type=color]),
+    [data-settings-panel="appearance"] textarea {
+        border-radius: 12px !important;
+        background: #f8fafc !important;
+        font-size: 13px !important;
+    }
+    [data-settings-panel="appearance"] input[type=color] {
+        border-radius: 12px;
+        border: 1px solid #dbe1ea;
+        background: #fff;
+        padding: 4px;
+    }
+    @media(max-width:1023px) {
+        [data-settings-panel="appearance"] > .bg-white > .space-y-8 {
+            grid-template-columns: 1fr;
+        }
+        [data-settings-panel="appearance"] > .bg-white > .space-y-8 > :nth-child(5),
+        [data-settings-panel="appearance"] > .bg-white > .space-y-8 > :nth-child(7) {
+            grid-column: 1 / -1;
+        }
+    }
+    @media(max-width:639px) {
+        [data-settings-panel="appearance"] > .bg-white {
+            padding: 16px;
+        }
+        [data-settings-panel="appearance"] .flex.items-start.gap-6 {
+            align-items: flex-start;
+            gap: 12px;
+        }
+        [data-settings-panel="appearance"] .h-24.w-24 {
+            height: 72px;
+            width: 72px;
+        }
+    }
 </style>
 @endpush
 <div id="business-settings-tabs" class="flex flex-col min-h-0 bg-gray-50">
@@ -43,7 +115,7 @@
              <div class="flex gap-3">
                  <form action="{{ route('admin.settings.ping') }}" method="POST">
                     @csrf
-                    <button type="submit" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm flex items-center px-4 py-2 rounded-lg hover:bg-indigo-50 transition border border-transparent hover:border-indigo-100" title="Notify Google/Bing about new content">
+                    <button type="submit" class="admin-theme-text admin-theme-hover-text font-medium text-sm flex items-center px-4 py-2 rounded-lg hover:bg-slate-50 transition border border-transparent hover:border-slate-200" title="Notify Google/Bing about new content">
                         <i class="fas fa-satellite-dish mr-2"></i> Ping Search Engines
                     </button>
                 </form>
@@ -101,27 +173,27 @@
                                     </span>
                                     <span class="relative inline-flex shrink-0 items-center">
                                         <input type="checkbox" name="listing_fee_enabled" value="1" class="peer sr-only" @checked(filter_var(\App\Models\Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))>
-                                        <span class="h-6 w-11 rounded-full bg-gray-300 transition peer-checked:bg-indigo-600"></span>
+                                        <span class="admin-switch-track h-6 w-11 rounded-full transition"></span>
                                         <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
                                     </span>
                                 </label>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Listing Fee</label>
-                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-indigo-500/20">
+                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-[rgba(var(--admin-primary-rgb),.2)]">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 font-medium sm:text-sm">₹</span>
+                                        <span class="text-gray-500 font-medium sm:text-sm">&#8377;</span>
                                     </div>
-                                    <input type="number" name="listing_fee" value="{{ \App\Models\Setting::get('listing_fee', 199) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900" placeholder="0.00">
+                                    <input type="number" name="listing_fee" value="{{ \App\Models\Setting::get('listing_fee', 199) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900" placeholder="0.00">
                                 </div>
                                 <p class="mt-2 text-xs text-gray-500">Amount is saved even while the fee toggle is OFF.</p>
                             </div>
                             
                              <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Featured Fee</label>
-                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-indigo-500/20">
+                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-[rgba(var(--admin-primary-rgb),.2)]">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 font-medium sm:text-sm">₹</span>
+                                        <span class="text-gray-500 font-medium sm:text-sm">&#8377;</span>
                                     </div>
-                                    <input type="number" name="featured_fee" value="{{ \App\Models\Setting::get('featured_fee', 99) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900" placeholder="0.00">
+                                    <input type="number" name="featured_fee" value="{{ \App\Models\Setting::get('featured_fee', 99) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900" placeholder="0.00">
                                 </div>
                                 <p class="mt-2 text-xs text-gray-500">To highlight a property</p>
                             </div>
@@ -134,16 +206,16 @@
                                     </span>
                                     <span class="relative inline-flex shrink-0 items-center">
                                         <input type="checkbox" name="unlock_fee_enabled" value="1" class="peer sr-only" @checked(filter_var(\App\Models\Setting::get('unlock_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))>
-                                        <span class="h-6 w-11 rounded-full bg-gray-300 transition peer-checked:bg-indigo-600"></span>
+                                        <span class="admin-switch-track h-6 w-11 rounded-full transition"></span>
                                         <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
                                     </span>
                                 </label>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Unlock Fee</label>
-                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-indigo-500/20">
+                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-[rgba(var(--admin-primary-rgb),.2)]">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 font-medium sm:text-sm">₹</span>
+                                        <span class="text-gray-500 font-medium sm:text-sm">&#8377;</span>
                                     </div>
-                                    <input type="number" name="unlock_fee" value="{{ \App\Models\Setting::get('unlock_fee', 49) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900" placeholder="0.00">
+                                    <input type="number" name="unlock_fee" value="{{ \App\Models\Setting::get('unlock_fee', 49) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900" placeholder="0.00">
                                 </div>
                                 <p class="mt-2 text-xs text-gray-500">Amount is saved even while the fee toggle is OFF.</p>
                             </div>
@@ -156,7 +228,7 @@
                     
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
-                             <div class="h-10 w-10 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center mr-4">
+                             <div class="h-10 w-10 rounded-lg admin-theme-soft flex items-center justify-center mr-4">
                                 <i class="fas fa-palette text-xl"></i>
                             </div>
                             <div>
@@ -177,7 +249,7 @@
                                         @endif
                                     </div>
                                     <div class="flex-1">
-                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm hover:border-indigo-300 hover:text-indigo-600">
+                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
                                             <i class="fas fa-upload mr-2"></i> Upload Navbar Logo
                                             <input type="file" name="navbar_logo" class="hidden">
                                         </label>
@@ -197,7 +269,7 @@
                                         @endif
                                     </div>
                                     <div class="flex-1">
-                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm hover:border-indigo-300 hover:text-indigo-600">
+                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
                                             <i class="fas fa-upload mr-2"></i> Upload Footer Logo
                                             <input type="file" name="footer_logo" class="hidden">
                                         </label>
@@ -217,7 +289,7 @@
                                         @endif
                                     </div>
                                     <div class="flex-1">
-                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm hover:border-indigo-300 hover:text-indigo-600">
+                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
                                             <i class="fas fa-upload mr-2"></i> Upload New Logo
                                             <input type="file" name="website_logo" class="hidden">
                                         </label>
@@ -237,12 +309,12 @@
                                         @endif
                                     </div>
                                     <div class="flex-1">
-                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm hover:border-indigo-300 hover:text-indigo-600">
+                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
                                             <i class="fas fa-upload mr-2"></i> Upload Favicon
                                             <input type="file" name="website_favicon" class="hidden" accept="image/x-icon,image/png,image/svg+xml">
                                         </label>
                                         <p class="mt-2 text-xs text-gray-500">Recommended: 32x32px or 64x64px. Formats: ICO, PNG, SVG. Max: 1MB.</p>
-                                        <p class="mt-1 text-xs text-indigo-600"><i class="fas fa-info-circle mr-1"></i>Shows in browser tab next to page title</p>
+                                        <p class="mt-1 text-xs admin-theme-text"><i class="fas fa-info-circle mr-1"></i>Shows in browser tab next to page title</p>
                                     </div>
                                 </div>
                             </div>
@@ -250,23 +322,23 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Website Name</label>
-                                    <input type="text" name="website_name" value="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm">
+                                    <input type="text" name="website_name" value="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
                                 </div>
                                  <div class="grid grid-cols-2 gap-4">
                                     <div>
                                          <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Phone</label>
-                                         <input type="text" name="contact_phone" value="{{ \App\Models\Setting::get('contact_phone') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="+91 9340058914">
+                                         <input type="text" name="contact_phone" value="{{ \App\Models\Setting::get('contact_phone') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="+91 9340058914">
                                     </div>
                                     <div>
                                          <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Email</label>
-                                         <input type="email" name="contact_email" value="{{ \App\Models\Setting::get('contact_email') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="support@roomrental.com">
+                                         <input type="email" name="contact_email" value="{{ \App\Models\Setting::get('contact_email') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="support@roomrental.com">
                                     </div>
                                 </div>
                             </div>
                             
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Company Address</label>
-                                <textarea name="company_address" rows="3" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="Enter your company address">{{ \App\Models\Setting::get('company_address') }}</textarea>
+                                <textarea name="company_address" rows="3" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="Enter your company address">{{ \App\Models\Setting::get('company_address') }}</textarea>
                                 <p class="mt-1 text-xs text-gray-500">This will be displayed on the Contact Us page and footer</p>
                             </div>
                             
@@ -275,7 +347,7 @@
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Primary Color</label>
                                     <div class="flex items-center gap-3">
                                         <input type="color" name="primary_color" value="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
-                                        <input type="text" name="primary_color_text" value="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#4F46E5" id="primary_color_text">
+                                        <input type="text" name="primary_color_text" value="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#4F46E5" id="primary_color_text">
                                     </div>
                                     <p class="mt-1 text-xs text-gray-500">Main brand color for headers, buttons, links</p>
                                 </div>
@@ -283,7 +355,7 @@
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Secondary Color</label>
                                     <div class="flex items-center gap-3">
                                         <input type="color" name="secondary_color" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
-                                        <input type="text" name="secondary_color_text" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#10B981" id="secondary_color_text">
+                                        <input type="text" name="secondary_color_text" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#10B981" id="secondary_color_text">
                                     </div>
                                     <p class="mt-1 text-xs text-gray-500">Accent color for success states, highlights</p>
                                 </div>
@@ -294,19 +366,19 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-xs text-gray-600 mb-1">Facebook URL</label>
-                                        <input type="url" name="facebook_url" value="{{ \App\Models\Setting::get('facebook_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://facebook.com/yourpage">
+                                        <input type="url" name="facebook_url" value="{{ \App\Models\Setting::get('facebook_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://facebook.com/yourpage">
                                     </div>
                                     <div>
                                         <label class="block text-xs text-gray-600 mb-1">Twitter URL</label>
-                                        <input type="url" name="twitter_url" value="{{ \App\Models\Setting::get('twitter_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://twitter.com/yourhandle">
+                                        <input type="url" name="twitter_url" value="{{ \App\Models\Setting::get('twitter_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://twitter.com/yourhandle">
                                     </div>
                                     <div>
                                         <label class="block text-xs text-gray-600 mb-1">Instagram URL</label>
-                                        <input type="url" name="instagram_url" value="{{ \App\Models\Setting::get('instagram_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://instagram.com/yourprofile">
+                                        <input type="url" name="instagram_url" value="{{ \App\Models\Setting::get('instagram_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://instagram.com/yourprofile">
                                     </div>
                                     <div>
                                         <label class="block text-xs text-gray-600 mb-1">LinkedIn URL</label>
-                                        <input type="url" name="linkedin_url" value="{{ \App\Models\Setting::get('linkedin_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://linkedin.com/company/yourcompany">
+                                        <input type="url" name="linkedin_url" value="{{ \App\Models\Setting::get('linkedin_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://linkedin.com/company/yourcompany">
                                     </div>
                                 </div>
                                 <p class="mt-2 text-xs text-gray-500">Social media links will appear in the footer. Leave blank to hide.</p>
@@ -319,7 +391,7 @@
                  <div data-settings-panel="mail" class="space-y-6 w-full" hidden>
                      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
-                             <div class="h-10 w-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mr-4">
+                             <div class="h-10 w-10 rounded-lg admin-theme-soft flex items-center justify-center mr-4">
                                 <i class="fas fa-envelope text-xl"></i>
                             </div>
                             <div>
@@ -331,26 +403,26 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Host</label>
-                                <input type="text" name="mail_host" value="{{ \App\Models\Setting::get('mail_host', 'smtp.gmail.com') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm">
+                                <input type="text" name="mail_host" value="{{ \App\Models\Setting::get('mail_host', 'smtp.gmail.com') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
                             </div>
                              <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Port</label>
-                                <input type="number" name="mail_port" value="{{ \App\Models\Setting::get('mail_port', '587') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm">
+                                <input type="number" name="mail_port" value="{{ \App\Models\Setting::get('mail_port', '587') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
                             </div>
                             
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
-                                <input type="text" name="mail_username" value="{{ \App\Models\Setting::get('mail_username') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm">
+                                <input type="text" name="mail_username" value="{{ \App\Models\Setting::get('mail_username') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
                             </div>
                              <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                                <input type="password" name="mail_password" value="{{ \App\Models\Setting::get('mail_password') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm">
+                                <input type="password" name="mail_password" value="{{ \App\Models\Setting::get('mail_password') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
                             </div>
                         </div>
                         
-                         <div class="mt-4 p-4 bg-indigo-50 rounded-lg flex items-start gap-3">
-                             <i class="fas fa-info-circle text-indigo-500 mt-1"></i>
-                             <p class="text-sm text-indigo-800">You may need to clear cache after updating mail settings.</p>
+                         <div class="mt-4 p-4 admin-theme-soft rounded-lg flex items-start gap-3">
+                             <i class="fas fa-info-circle admin-theme-text mt-1"></i>
+                             <p class="text-sm admin-theme-text">You may need to clear cache after updating mail settings.</p>
                          </div>
                     </div>
                 </div>
@@ -409,7 +481,7 @@
                 <div data-settings-panel="payment" class="space-y-6" hidden>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
-                             <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mr-4">
+                             <div class="h-10 w-10 rounded-lg admin-theme-soft flex items-center justify-center mr-4">
                                 <i class="fas fa-credit-card text-xl"></i>
                             </div>
                             <div>
@@ -420,16 +492,16 @@
                          <div class="grid grid-cols-1 gap-6">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Key ID</label>
-                                <input type="text" name="razorpay_key" value="{{ \App\Models\Setting::get('razorpay_key') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="rzp_test_...">
+                                <input type="text" name="razorpay_key" value="{{ \App\Models\Setting::get('razorpay_key') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="rzp_test_...">
                             </div>
                              <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Key Secret</label>
-                                <input type="password" name="razorpay_secret" value="{{ \App\Models\Setting::get('razorpay_secret') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono">
+                                <input type="password" name="razorpay_secret" value="{{ \App\Models\Setting::get('razorpay_secret') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Webhook Secret</label>
-                                <input type="password" name="razorpay_webhook_secret" value="{{ \App\Models\Setting::get('razorpay_webhook_secret') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="whsec_...">
-                                <p class="mt-2 text-xs text-gray-500">Razorpay Dashboard → Webhooks → create secret. Webhook URL: <code class="bg-gray-100 px-1 rounded">{{ url('/api/v1/webhook/razorpay') }}</code></p>
+                                <input type="password" name="razorpay_webhook_secret" value="{{ \App\Models\Setting::get('razorpay_webhook_secret') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="whsec_...">
+                                <p class="mt-2 text-xs text-gray-500">Razorpay Dashboard - Webhooks - create secret. Webhook URL: <code class="bg-gray-100 px-1 rounded">{{ url('/api/v1/webhook/razorpay') }}</code></p>
                             </div>
                         </div>
                     </div>
@@ -449,13 +521,13 @@
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">API Key</label>
-                            <input type="text" name="google_maps_api_key" value="{{ \App\Models\Setting::get('google_maps_api_key') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono">
+                            <input type="text" name="google_maps_api_key" value="{{ \App\Models\Setting::get('google_maps_api_key') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono">
                         </div>
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                         <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
-                            <div class="h-10 w-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mr-4">
+                            <div class="h-10 w-10 rounded-lg admin-theme-soft flex items-center justify-center mr-4">
                                 <i class="fas fa-mobile-screen-button text-xl"></i>
                             </div>
                             <div>
@@ -466,11 +538,11 @@
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Google Play Store Link</label>
-                                <input type="url" name="play_store_url" value="{{ \App\Models\Setting::get('play_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors focus:border-indigo-500 focus:bg-white focus:ring-0" placeholder="https://play.google.com/store/apps/details?id=...">
+                                <input type="url" name="play_store_url" value="{{ \App\Models\Setting::get('play_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors  focus:bg-white focus:ring-0" placeholder="https://play.google.com/store/apps/details?id=...">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Apple App Store Link</label>
-                                <input type="url" name="app_store_url" value="{{ \App\Models\Setting::get('app_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors focus:border-indigo-500 focus:bg-white focus:ring-0" placeholder="https://apps.apple.com/app/...">
+                                <input type="url" name="app_store_url" value="{{ \App\Models\Setting::get('app_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors  focus:bg-white focus:ring-0" placeholder="https://apps.apple.com/app/...">
                             </div>
                         </div>
                     </div>
@@ -492,23 +564,23 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">GA4 Measurement ID</label>
-                                    <input type="text" name="ga4_measurement_id" value="{{ \App\Models\Setting::get('ga4_measurement_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="G-XXXXXXXXXX">
+                                    <input type="text" name="ga4_measurement_id" value="{{ \App\Models\Setting::get('ga4_measurement_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="G-XXXXXXXXXX">
                                     <p class="mt-1 text-xs text-gray-500">For Traffic Analytics (G-XXXX or UA-XXXX)</p>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Search Console Code</label>
-                                    <input type="text" name="google_search_console_code" value="{{ \App\Models\Setting::get('google_search_console_code') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="Ex: Zxsdf-Asw3... (Only the content code)">
+                                    <input type="text" name="google_search_console_code" value="{{ \App\Models\Setting::get('google_search_console_code') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="Ex: Zxsdf-Asw3... (Only the content code)">
                                     <p class="mt-1 text-xs text-gray-500">Paste the <strong>content</strong> value from the meta tag.</p>
                                 </div>
                             </div>
                             
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Global Meta Description</label>
-                                <textarea name="seo_meta_description" rows="3" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm">{{ \App\Models\Setting::get('seo_meta_description') }}</textarea>
+                                <textarea name="seo_meta_description" rows="3" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">{{ \App\Models\Setting::get('seo_meta_description') }}</textarea>
                             </div>
                              <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Meta Keywords</label>
-                                <input type="text" name="seo_meta_keywords" value="{{ \App\Models\Setting::get('seo_meta_keywords') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="rental, rooms, apartment...">
+                                <input type="text" name="seo_meta_keywords" value="{{ \App\Models\Setting::get('seo_meta_keywords') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="rental, rooms, apartment...">
                             </div>
                         </div>
                     </div>
@@ -516,7 +588,7 @@
                     <!-- Google Ads Section -->
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mt-6">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
-                             <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mr-4">
+                             <div class="h-10 w-10 rounded-lg admin-theme-soft flex items-center justify-center mr-4">
                                 <i class="fas fa-ad text-xl"></i>
                             </div>
                             <div>
@@ -526,35 +598,35 @@
                         </div>
                         <div class="space-y-6">
                             <div class="flex items-center gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                <input type="checkbox" name="google_ads_enabled" value="1" id="google_ads_enabled" {{ \App\Models\Setting::get('google_ads_enabled', '0') == '1' ? 'checked' : '' }} class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500">
+                                <input type="checkbox" name="google_ads_enabled" value="1" id="google_ads_enabled" {{ \App\Models\Setting::get('google_ads_enabled', '0') == '1' ? 'checked' : '' }} class="w-5 h-5 admin-theme-text rounded ">
                                 <label for="google_ads_enabled" class="text-sm font-semibold text-gray-700 cursor-pointer">
                                     Enable Google Ads Tracking
-                                    <span class="text-xs text-gray-500 block font-normal mt-1">⚠️ Only works on production environment</span>
+                                    <span class="text-xs text-gray-500 block font-normal mt-1">Only works on production environment</span>
                                 </label>
                             </div>
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Google Ads Tag ID</label>
-                                    <input type="text" name="google_ads_tag_id" value="{{ \App\Models\Setting::get('google_ads_tag_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="AW-XXXXXXXXX">
+                                    <input type="text" name="google_ads_tag_id" value="{{ \App\Models\Setting::get('google_ads_tag_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="AW-XXXXXXXXX">
                                     <p class="mt-1 text-xs text-gray-500">For Ads Tracking. Starts with <strong>AW-</strong></p>
                                 </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Payment Conversion Label</label>
-                                    <input type="text" name="google_ads_conversion_label" value="{{ \App\Models\Setting::get('google_ads_conversion_label') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="abc123xyz">
+                                    <input type="text" name="google_ads_conversion_label" value="{{ \App\Models\Setting::get('google_ads_conversion_label') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="abc123xyz">
                                     <p class="mt-1 text-xs text-gray-500">Label for successful payments</p>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Signup Conversion Label</label>
-                                    <input type="text" name="google_ads_signup_label" value="{{ \App\Models\Setting::get('google_ads_signup_label') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="signup_xyz123">
+                                    <input type="text" name="google_ads_signup_label" value="{{ \App\Models\Setting::get('google_ads_signup_label') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="signup_xyz123">
                                     <p class="mt-1 text-xs text-gray-500">Label for new user registrations</p>
                                 </div>
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Room View Conversion Label</label>
-                                <input type="text" name="google_ads_room_view_label" value="{{ \App\Models\Setting::get('google_ads_room_view_label') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="view_xyz123">
+                                <input type="text" name="google_ads_room_view_label" value="{{ \App\Models\Setting::get('google_ads_room_view_label') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="view_xyz123">
                                 <p class="mt-1 text-xs text-gray-500">Label for room detail page views</p>
                             </div>
 
@@ -570,7 +642,7 @@
                                 </div>
 
                                 <div class="flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                                    <input type="checkbox" name="meta_pixel_enabled" value="1" id="meta_pixel_enabled" {{ \App\Models\Setting::get('meta_pixel_enabled', '0') == '1' ? 'checked' : '' }} class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500">
+                                    <input type="checkbox" name="meta_pixel_enabled" value="1" id="meta_pixel_enabled" {{ \App\Models\Setting::get('meta_pixel_enabled', '0') == '1' ? 'checked' : '' }} class="w-5 h-5 admin-theme-text rounded ">
                                     <label for="meta_pixel_enabled" class="text-sm font-semibold text-gray-700 cursor-pointer">
                                         Enable Meta Pixel Tracking
                                         <span class="text-xs text-gray-500 block font-normal mt-1">Paste your Pixel ID below after creating it in Meta Business Manager.</span>
@@ -579,7 +651,7 @@
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Meta Pixel ID</label>
-                                    <input type="text" name="meta_pixel_id" value="{{ \App\Models\Setting::get('meta_pixel_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="123456789012345">
+                                    <input type="text" name="meta_pixel_id" value="{{ \App\Models\Setting::get('meta_pixel_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="123456789012345">
                                     <p class="mt-1 text-xs text-gray-500">Events used: PageView, Search, ViewContent, InitiateCheckout and Purchase.</p>
                                 </div>
                             </div>
@@ -602,7 +674,7 @@
                             </div>
 
                             <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                                <input type="checkbox" name="adsense_enabled" value="1" id="adsense_enabled" {{ \App\Models\Setting::get('adsense_enabled', '0') == '1' ? 'checked' : '' }} class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500">
+                                <input type="checkbox" name="adsense_enabled" value="1" id="adsense_enabled" {{ \App\Models\Setting::get('adsense_enabled', '0') == '1' ? 'checked' : '' }} class="w-5 h-5 admin-theme-text rounded ">
                                 <label for="adsense_enabled" class="text-sm font-semibold text-gray-700 cursor-pointer">
                                     Enable Google AdSense (Production Only)
                                 </label>
@@ -610,26 +682,26 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">AdSense Client ID (Publisher ID)</label>
-                                <input type="text" name="adsense_client_id" value="{{ \App\Models\Setting::get('adsense_client_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="ca-pub-XXXXXXXXXXXXXXXX">
+                                <input type="text" name="adsense_client_id" value="{{ \App\Models\Setting::get('adsense_client_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="ca-pub-XXXXXXXXXXXXXXXX">
                                 <p class="mt-1 text-xs text-gray-500">Found in your AdSense account (e.g., ca-pub-1234567890123456)</p>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Home Page: Top Slot ID</label>
-                                    <input type="text" name="adsense_home_top_id" value="{{ \App\Models\Setting::get('adsense_home_top_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
+                                    <input type="text" name="adsense_home_top_id" value="{{ \App\Models\Setting::get('adsense_home_top_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Home Page: Bottom Slot ID</label>
-                                    <input type="text" name="adsense_home_bottom_id" value="{{ \App\Models\Setting::get('adsense_home_bottom_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
+                                    <input type="text" name="adsense_home_bottom_id" value="{{ \App\Models\Setting::get('adsense_home_bottom_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Room Detail: Content Slot ID</label>
-                                    <input type="text" name="adsense_room_content_id" value="{{ \App\Models\Setting::get('adsense_room_content_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
+                                    <input type="text" name="adsense_room_content_id" value="{{ \App\Models\Setting::get('adsense_room_content_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Room Detail: Sidebar Slot ID</label>
-                                    <input type="text" name="adsense_room_sidebar_id" value="{{ \App\Models\Setting::get('adsense_room_sidebar_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
+                                    <input type="text" name="adsense_room_sidebar_id" value="{{ \App\Models\Setting::get('adsense_room_sidebar_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
                                 </div>
                             </div>
 
@@ -638,7 +710,7 @@
                 </div>
 
                 <div id="settings-save-bar" class="sticky bottom-4 z-20 mt-6 items-center justify-end border-t border-slate-200 bg-gray-50/95 py-4 backdrop-blur">
-                    <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-7 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700">
+                    <button type="submit" class="inline-flex items-center justify-center rounded-xl admin-theme-bg px-7 py-3 text-sm font-bold text-white shadow-lg  transition ">
                         <i class="fas fa-save mr-2"></i> Save Changes
                     </button>
                 </div>
@@ -681,7 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tabs.forEach((tab) => {
             const selected = tab.dataset.settingsTab === activeTab;
             tab.setAttribute('aria-selected', selected ? 'true' : 'false');
-            tab.classList.toggle('bg-indigo-600', selected);
+            tab.classList.toggle('admin-theme-bg', selected);
             tab.classList.toggle('text-white', selected);
             tab.classList.toggle('shadow-sm', selected);
             tab.classList.toggle('bg-slate-50', !selected);

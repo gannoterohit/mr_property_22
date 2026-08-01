@@ -32,19 +32,19 @@
 <div class="space-y-5 p-5 lg:p-6">
     <header class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <p class="text-[10px] font-extrabold uppercase tracking-[.2em] text-indigo-600">Demand intelligence</p>
+            <p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Demand intelligence</p>
             <h1 class="mt-1 text-2xl font-extrabold">Search Analytics</h1>
             <p class="text-sm text-slate-500">Demand, listing supply, visitor events and raw search activity.</p>
         </div>
-        <div class="rounded-xl bg-indigo-600 px-5 py-3 text-white">
-            <p class="text-[9px] font-bold uppercase text-indigo-100">Tracked searches</p>
+        <div class="rounded-xl admin-theme-bg px-5 py-3 text-white">
+            <p class="text-[9px] font-bold uppercase text-white/70">Tracked searches</p>
             <p class="text-xl font-extrabold">{{ \App\Models\SearchLog::count() }}</p>
         </div>
     </header>
 
     <nav class="flex gap-2 overflow-x-auto rounded-2xl border bg-white p-2">
         @foreach($navItems as [$key,$label,$icon])
-            <a href="{{ route('admin.analytics',['tab'=>$key]) }}" class="inline-flex min-w-max items-center gap-2 rounded-xl px-5 py-3 text-xs font-bold {{ $tab===$key?'bg-indigo-600 text-white':'text-slate-600 hover:bg-slate-50' }}">
+            <a href="{{ route('admin.analytics',['tab'=>$key]) }}" class="inline-flex min-w-max items-center gap-2 rounded-xl px-5 py-3 text-xs font-bold {{ $tab===$key?'admin-theme-bg':'text-slate-600 hover:bg-slate-50' }}">
                 <i class="fas {{ $icon }}"></i>{{ $label }}
             </a>
         @endforeach
@@ -69,10 +69,10 @@
                                 <span class="text-[10px] font-bold text-slate-400">RANK {{ $index+1 }}</span>
                                 <p class="mt-1 text-sm font-extrabold">{{ $record->city }}</p>
                             </div>
-                            <strong class="text-xl {{ $tab==='demand'?'text-indigo-600':'text-emerald-600' }}">{{ $record->total }}</strong>
+                            <strong class="text-xl {{ $tab==='demand'?'admin-theme-text':'text-emerald-600' }}">{{ $record->total }}</strong>
                         </div>
                         <div class="mt-3 h-2 rounded-full bg-slate-100">
-                            <div class="h-2 rounded-full {{ $tab==='demand'?'bg-indigo-600':'bg-emerald-500' }}" style="width:{{ ($record->total/$maximum)*100 }}%"></div>
+                            <div class="h-2 rounded-full {{ $tab==='demand'?'admin-theme-bg':'bg-emerald-500' }}" style="width:{{ ($record->total/$maximum)*100 }}%"></div>
                         </div>
                         <p class="mt-2 text-[10px] text-slate-400">{{ $record->total }} {{ $unit }}</p>
                     </div>
@@ -114,11 +114,11 @@
 
             <div class="analytics-kpis">
                 @foreach([
-                    ['Page views',$visitorStats['page_views'],'fa-eye','text-indigo-600'],
+                    ['Page views',$visitorStats['page_views'],'fa-eye','admin-theme-text'],
                     ['Visitors',$visitorStats['unique_visitors'],'fa-users','text-sky-600'],
                     ['Room views',$visitorStats['room_views'],'fa-door-open','text-emerald-600'],
                     ['Searches',$visitorStats['searches'],'fa-magnifying-glass','text-amber-600'],
-                    ['Checkout starts',$visitorStats['checkout_starts'],'fa-cart-shopping','text-violet-600'],
+                    ['Checkout starts',$visitorStats['checkout_starts'],'fa-cart-shopping','admin-theme-text'],
                     ['Purchases',$visitorStats['purchases'],'fa-circle-check','text-green-600'],
                     ['Revenue','Rs '.number_format($visitorStats['revenue'],2),'fa-indian-rupee-sign','text-slate-900'],
                     ['Checkout conversion',$visitorStats['checkout_conversion'].'%','fa-percent','text-rose-600'],
@@ -143,7 +143,7 @@
                                     <p class="truncate text-xs font-extrabold">{{ $item->room?->title ?? 'Deleted room' }}</p>
                                     <p class="text-[10px] text-slate-400">{{ $item->room?->city ?? 'Unknown city' }}</p>
                                 </div>
-                                <strong class="text-sm text-indigo-600">{{ $item->total }}</strong>
+                                <strong class="text-sm admin-theme-text">{{ $item->total }}</strong>
                             </div>
                         @empty
                             <p class="py-8 text-sm text-slate-500">No room views tracked yet.</p>
@@ -182,7 +182,7 @@
                             @forelse($recentEvents as $event)
                                 <tr>
                                     <td class="px-5"><p class="text-xs font-bold">{{ $event->created_at->format('d M Y') }}</p><p class="text-[10px] text-slate-400">{{ $event->created_at->format('h:i A') }}</p></td>
-                                    <td class="px-5"><span class="rounded-lg bg-indigo-50 px-2 py-1 text-[10px] font-extrabold text-indigo-700">{{ $event->event_name }}</span></td>
+                                    <td class="px-5"><span class="rounded-lg admin-theme-soft px-2 py-1 text-[10px] font-extrabold admin-theme-text">{{ $event->event_name }}</span></td>
                                     <td class="px-5"><p class="max-w-xs truncate text-xs font-semibold">{{ $event->room?->title ?? 'No room linked' }}</p><p class="text-[10px] text-slate-400">{{ $event->city ?: $event->room?->city ?: 'Unknown city' }}</p></td>
                                     <td class="px-5"><p class="text-xs font-semibold">{{ $event->user?->name ?: 'Guest visitor' }}</p><p class="text-[10px] text-slate-400">{{ $event->ip_address }}</p></td>
                                     <td class="px-5"><p class="text-xs font-extrabold">{{ $event->amount ? 'Rs '.number_format((float)$event->amount,2) : '-' }}</p><p class="text-[10px] text-slate-400">{{ $event->currency }}</p></td>

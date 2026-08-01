@@ -2,28 +2,12 @@
 
 @section('title', 'Create Subscription Plan')
 
-@push('styles')
-<style>
-    .admin-plan-page { padding: 24px; }
-    .admin-plan-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
-    .admin-plan-card { border: 1px solid #e2e8f0; border-radius: 16px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); }
-    .admin-plan-primary { color: var(--admin-primary); }
-    .admin-plan-primary-bg { background: var(--admin-primary); color: #fff; }
-    .admin-plan-primary-bg:hover { filter: brightness(.94); }
-    .admin-plan-soft { background: rgba(var(--admin-primary-rgb), .08); color: var(--admin-primary); }
-    .admin-plan-field { height: 44px; width: 100%; border-radius: 12px; border-color: #cbd5e1; font-size: 14px; }
-    .admin-plan-field:focus { border-color: var(--admin-primary); box-shadow: 0 0 0 3px rgba(var(--admin-primary-rgb), .14); }
-    @media (max-width: 1023px) { .admin-plan-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 640px) { .admin-plan-page { padding: 16px; } }
-</style>
-@endpush
-
 @section('admin-content')
 <div class="admin-plan-page space-y-5">
     <header class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <a href="{{ route('admin.plans.index') }}" class="admin-plan-primary text-xs font-bold"><i class="fas fa-arrow-left mr-1"></i>Subscription plans</a>
-            <p class="admin-plan-primary mt-3 text-[10px] font-extrabold uppercase tracking-[.2em]">Finance & Plans</p>
+            <a href="{{ route('admin.plans.index') }}" class="admin-theme-text text-xs font-bold"><i class="fas fa-arrow-left mr-1"></i>Subscription plans</a>
+            <p class="admin-theme-text mt-3 text-[10px] font-extrabold uppercase tracking-[.2em]">Finance & Plans</p>
             <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Create Subscription Plan</h1>
             <p class="text-sm text-slate-500">Define credits, pricing and plan benefits for users or owners.</p>
         </div>
@@ -34,7 +18,7 @@
 
         <main class="admin-plan-card p-5">
             <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <span class="admin-plan-soft flex h-10 w-10 items-center justify-center rounded-xl"><i class="fas fa-tags"></i></span>
+                <span class="admin-theme-soft flex h-10 w-10 items-center justify-center rounded-xl"><i class="fas fa-tags"></i></span>
                 <div>
                     <h2 class="text-base font-extrabold text-slate-950">Plan details</h2>
                     <p class="text-xs text-slate-500">This information appears on the pricing card.</p>
@@ -97,7 +81,7 @@
                     <div id="benefits-container" class="mt-2 space-y-2">
                         <div class="flex items-center gap-2">
                             <input type="text" name="benefits[]" class="admin-plan-field h-10" placeholder="e.g. 24/7 Support">
-                            <button type="button" onclick="addBenefitField()" class="admin-plan-soft flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" title="Add benefit"><i class="fas fa-plus"></i></button>
+                            <button type="button" onclick="addBenefitField()" class="admin-theme-soft flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" title="Add benefit"><i class="fas fa-plus"></i></button>
                         </div>
                     </div>
                     <p class="mt-2 text-xs text-slate-500">Add key benefits to display on the plan card.</p>
@@ -109,7 +93,7 @@
             <section class="admin-plan-card p-5">
                 <h2 class="text-sm font-extrabold text-slate-950">Publishing</h2>
                 <p class="mt-1 text-xs leading-5 text-slate-500">Plan will be available after creation when active status is enabled from the plans list.</p>
-                <button type="submit" class="admin-plan-primary-bg mt-5 flex h-11 w-full items-center justify-center rounded-xl text-sm font-bold">
+                <button type="submit" class="admin-theme-bg mt-5 flex h-11 w-full items-center justify-center rounded-xl text-sm font-bold">
                     <i class="fas fa-plus mr-2"></i>Create Plan
                 </button>
                 <a href="{{ route('admin.plans.index') }}" class="mt-2 flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-sm font-bold text-slate-600">Cancel</a>

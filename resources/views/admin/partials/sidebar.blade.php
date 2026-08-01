@@ -8,7 +8,7 @@
             ['route' => 'admin.rejection-reasons.index', 'match' => 'admin.rejection-reasons*', 'icon' => 'fa-clipboard-list', 'label' => 'Rejection Reasons'],
         ]],
         'people' => ['label' => 'People Management', 'icon' => 'fa-users', 'items' => [
-            ['route' => 'admin.members.index', 'match' => 'admin.members.index', 'icon' => 'fa-magnifying-glass-chart', 'label' => 'Member 360°'],
+            ['route' => 'admin.members.index', 'match' => 'admin.members.index', 'icon' => 'fa-magnifying-glass-chart', 'label' => 'Member 360'],
             ['route' => 'admin.owners', 'match' => 'admin.owners*', 'icon' => 'fa-user-tie', 'label' => 'Owners'],
             ['route' => 'admin.users', 'match' => 'admin.users*', 'icon' => 'fa-users', 'label' => 'Users'],
         ]],

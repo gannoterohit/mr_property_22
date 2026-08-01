@@ -15,10 +15,6 @@
     .admin-room-kpi span { display:block; color:#64748b; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }
     .admin-room-kpi strong { display:block; margin-top:6px; color:#0f172a; font-size:15px; font-weight:900; }
     .admin-room-aside { position:sticky; top:86px; }
-    .admin-room-theme { color:var(--admin-primary); }
-    .admin-room-theme-soft { background:rgba(var(--admin-primary-rgb),.08); color:var(--admin-primary); }
-    .admin-room-theme-button { background:var(--admin-primary); color:#fff; }
-    .admin-room-theme-button:hover { filter:brightness(.94); }
     @media(max-width:1199px){ .admin-room-show-grid{grid-template-columns:1fr}.admin-room-aside{position:static} }
     @media(max-width:767px){ .admin-room-gallery,.admin-room-kpis{grid-template-columns:1fr}.admin-room-gallery-main{min-height:240px}.admin-room-gallery-side{grid-template-columns:1fr 1fr}.admin-room-gallery-side img{min-height:110px} }
 </style>
@@ -43,14 +39,14 @@
 <div class="space-y-5 p-5 lg:p-6">
     <header class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <a href="{{ route('admin.all-rooms') }}" class="admin-room-theme text-xs font-bold"><i class="fas fa-arrow-left mr-1"></i>All listings</a>
-            <p class="admin-room-theme mt-3 text-[10px] font-extrabold uppercase tracking-[.2em]">Property management</p>
+            <a href="{{ route('admin.all-rooms') }}" class="admin-theme-text text-xs font-bold"><i class="fas fa-arrow-left mr-1"></i>All listings</a>
+            <p class="admin-theme-text mt-3 text-[10px] font-extrabold uppercase tracking-[.2em]">Property management</p>
             <h1 class="mt-1 text-2xl font-extrabold text-slate-950">{{ $room->title }}</h1>
             <p class="text-sm text-slate-500">Internal room review, owner details and publishing controls.</p>
         </div>
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('rooms.show', $room) }}" target="_blank" class="rounded-xl border bg-white px-4 py-2.5 text-xs font-bold text-slate-700"><i class="fas fa-up-right-from-square mr-2"></i>Public preview</a>
-            <a href="{{ route('admin.rooms.edit', $room) }}" class="admin-room-theme-button rounded-xl px-4 py-2.5 text-xs font-bold"><i class="fas fa-pen mr-2"></i>Edit room</a>
+            <a href="{{ route('admin.rooms.edit', $room) }}" class="admin-theme-bg rounded-xl px-4 py-2.5 text-xs font-bold"><i class="fas fa-pen mr-2"></i>Edit room</a>
         </div>
     </header>
 
@@ -139,9 +135,9 @@
             <section class="rounded-2xl border bg-white p-5 shadow-sm">
                 <h2 class="text-sm font-extrabold text-slate-950">Owner</h2>
                 <div class="mt-4 flex items-center gap-3">
-                    <div class="admin-room-theme-soft flex h-11 w-11 items-center justify-center rounded-xl text-sm font-extrabold">{{ strtoupper(substr($room->owner?->name ?? 'O', 0, 1)) }}</div>
+                    <div class="admin-theme-soft flex h-11 w-11 items-center justify-center rounded-xl text-sm font-extrabold">{{ strtoupper(substr($room->owner?->name ?? 'O', 0, 1)) }}</div>
                     <div class="min-w-0">
-                        <a href="{{ $room->owner ? route('admin.owners.detail', $room->owner) : '#' }}" class="admin-room-theme block truncate text-sm font-extrabold">{{ $room->owner?->name ?? 'Unknown owner' }}</a>
+                        <a href="{{ $room->owner ? route('admin.owners.detail', $room->owner) : '#' }}" class="admin-theme-text block truncate text-sm font-extrabold">{{ $room->owner?->name ?? 'Unknown owner' }}</a>
                         <p class="truncate text-xs text-slate-500">{{ $room->owner?->email ?? 'Email unavailable' }}</p>
                     </div>
                 </div>

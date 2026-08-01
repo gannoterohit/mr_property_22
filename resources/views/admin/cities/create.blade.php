@@ -6,7 +6,7 @@
 <style>
     .city-create-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(340px,.65fr);gap:20px;align-items:start}
     .city-input{height:44px;width:100%;border:1px solid #e2e8f0!important;border-radius:12px!important;font-size:13px!important}
-    .city-input:focus{border-color:#818cf8!important;box-shadow:0 0 0 3px rgba(99,102,241,.1)!important}
+    .city-input:focus{border-color:var(--admin-primary)!important;box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1)!important}
     #cityMap{height:560px;background:#f1f5f9}
     .leaflet-control-container{font-size:11px}
     @media(max-width:1199px){.city-create-grid{grid-template-columns:1fr}#cityMap{height:460px}}
@@ -18,7 +18,7 @@
 <div class="space-y-5 p-5 lg:p-6">
     <header class="flex flex-wrap items-end justify-between gap-4">
         <div>
-            <p class="text-[10px] font-extrabold uppercase tracking-[.2em] text-indigo-600">Market operations</p>
+            <p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Market operations</p>
             <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Add Operational City</h1>
             <p class="mt-1 text-sm text-slate-500">Find the city on the map, verify its details and configure its launch status.</p>
         </div>
@@ -41,7 +41,7 @@
             ['3','Set availability','Choose launch and fallback status','fa-circle-check'],
         ] as [$number,$title,$description,$icon])
             <div class="flex items-center gap-3 rounded-2xl border bg-white p-3 shadow-sm">
-                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl {{ $number === '1' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500' }}">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl {{ $number === '1' ? 'admin-theme-bg' : 'bg-slate-100 text-slate-500' }}">
                     <i class="fas {{ $icon }}"></i>
                 </span>
                 <div class="min-w-0">
@@ -58,7 +58,7 @@
         <section class="overflow-hidden rounded-2xl border bg-white shadow-sm">
             <div class="border-b p-4 sm:p-5">
                 <div class="flex items-center gap-3">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"><i class="fas fa-map-location-dot"></i></span>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl admin-theme-soft"><i class="fas fa-map-location-dot"></i></span>
                     <div>
                         <h2 class="text-sm font-extrabold text-slate-900">Search & confirm map location</h2>
                         <p class="mt-0.5 text-xs text-slate-500">Search by city and state for the most accurate result.</p>
@@ -69,7 +69,7 @@
                         <i class="fas fa-location-dot absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400"></i>
                         <input id="citySearchInput" value="{{ old('name') }}" placeholder="Example: Indore, Madhya Pradesh" autocomplete="off" class="city-input pl-10">
                     </div>
-                    <button type="button" id="citySearchBtn" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-xs font-extrabold text-white transition hover:bg-indigo-600 disabled:cursor-wait disabled:opacity-60">
+                    <button type="button" id="citySearchBtn" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-xs font-extrabold text-white transition admin-theme-hover-bg disabled:cursor-wait disabled:opacity-60">
                         <i id="searchIcon" class="fas fa-search"></i> <span id="searchButtonText">Search City</span>
                     </button>
                 </div>
@@ -83,7 +83,7 @@
                 <div id="cityMap" class="w-full"></div>
                 <div id="mapEmptyState" class="pointer-events-none absolute inset-0 z-[400] flex items-center justify-center bg-slate-100/90">
                     <div class="text-center">
-                        <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-indigo-600 shadow-sm"><i class="fas fa-map"></i></span>
+                        <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white admin-theme-text shadow-sm"><i class="fas fa-map"></i></span>
                         <p class="mt-3 text-sm font-extrabold text-slate-700">Search to select a city</p>
                         <p class="mt-1 text-xs text-slate-500">The selected location will appear here.</p>
                     </div>
@@ -95,7 +95,7 @@
                     <p class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Selected location</p>
                     <p id="selectedLocationLabel" class="text-xs font-bold text-slate-700">No location selected</p>
                 </div>
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[10px] font-bold text-slate-500 shadow-sm"><i class="fas fa-hand-pointer text-indigo-500"></i> Click map to fine-tune</span>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[10px] font-bold text-slate-500 shadow-sm"><i class="fas fa-hand-pointer admin-theme-text"></i> Click map to fine-tune</span>
             </div>
         </section>
 
@@ -145,21 +145,21 @@
                             <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600"><i class="fas fa-bolt"></i></span>
                             <div><p class="text-xs font-extrabold text-slate-700">Active city</p><p class="mt-0.5 text-[10px] text-slate-500">Make listings available immediately.</p></div>
                         </div>
-                        <input type="checkbox" name="is_active" value="1" @checked(old('is_active')) class="mt-1 rounded border-slate-300 text-indigo-600">
+                        <input type="checkbox" name="is_active" value="1" @checked(old('is_active')) class="mt-1 rounded border-slate-300 admin-theme-text">
                     </label>
                     <label class="flex cursor-pointer items-start justify-between gap-3 rounded-xl border p-3 transition hover:bg-slate-50">
                         <div class="flex gap-3">
                             <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600"><i class="fas fa-star"></i></span>
                             <div><p class="text-xs font-extrabold text-slate-700">Default fallback</p><p class="mt-0.5 text-[10px] text-slate-500">Use when a searched city is unavailable.</p></div>
                         </div>
-                        <input type="checkbox" name="is_default" value="1" @checked(old('is_default')) class="mt-1 rounded border-slate-300 text-indigo-600">
+                        <input type="checkbox" name="is_default" value="1" @checked(old('is_default')) class="mt-1 rounded border-slate-300 admin-theme-text">
                     </label>
                 </div>
             </section>
 
             <div class="grid grid-cols-[auto_1fr] gap-2">
                 <a href="{{ route('admin.cities.index') }}" class="inline-flex h-12 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-xs font-extrabold text-slate-600">Cancel</a>
-                <button id="saveCityButton" class="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-extrabold text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-700">
+                <button id="saveCityButton" class="inline-flex h-12 items-center justify-center gap-2 rounded-xl admin-theme-bg px-5 text-sm font-extrabold text-white shadow-sm  transition ">
                     <i class="fas fa-check"></i> Save City
                 </button>
             </div>
@@ -212,7 +212,7 @@
     function setStatus(message, type) {
         var styles = {
             info: ['bg-slate-50', 'text-slate-500', 'fa-circle-info', 'text-slate-400'],
-            loading: ['bg-indigo-50', 'text-indigo-700', 'fa-spinner fa-spin', 'text-indigo-500'],
+            loading: ['admin-theme-soft', 'admin-theme-text', 'fa-spinner fa-spin', 'admin-theme-text'],
             success: ['bg-emerald-50', 'text-emerald-700', 'fa-circle-check', 'text-emerald-500'],
             error: ['bg-red-50', 'text-red-700', 'fa-circle-exclamation', 'text-red-500']
         };

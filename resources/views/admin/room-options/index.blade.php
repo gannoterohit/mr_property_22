@@ -14,7 +14,7 @@
 @php
     $allOptions = $options->flatten(1)->sortBy([['group', 'asc'], ['sort_order', 'asc'], ['label', 'asc']]);
     $groupMeta = [
-        'room_type' => ['label' => 'Room Type', 'icon' => 'fa-door-open', 'badge' => 'bg-indigo-50 text-indigo-700 border-indigo-100'],
+        'room_type' => ['label' => 'Room Type', 'icon' => 'fa-door-open', 'badge' => 'admin-theme-soft border-slate-200'],
         'furnishing_type' => ['label' => 'Furnishing', 'icon' => 'fa-couch', 'badge' => 'bg-amber-50 text-amber-700 border-amber-100'],
         'tenant_type' => ['label' => 'Preferred Tenant', 'icon' => 'fa-user-friends', 'badge' => 'bg-emerald-50 text-emerald-700 border-emerald-100'],
     ];
@@ -31,7 +31,7 @@
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                 <span class="text-xs font-bold text-slate-600">{{ $allOptions->where('is_active', true)->count() }} active</span>
             </div>
-            <a href="{{ route('admin.room-options.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition"><i class="fas fa-plus"></i>Add new option</a>
+            <a href="{{ route('admin.room-options.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl admin-theme-bg text-xs font-bold shadow-sm transition"><i class="fas fa-plus"></i>Add new option</a>
         </div>
     </div>
 

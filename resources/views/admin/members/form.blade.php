@@ -16,7 +16,7 @@
 <style>
     .member-form-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
     .member-field{height:44px;width:100%;border:1px solid #e2e8f0!important;border-radius:12px!important;font-size:13px!important}
-    .member-field:focus{border-color:#818cf8!important;box-shadow:0 0 0 3px rgba(99,102,241,.1)!important}
+    .member-field:focus{border-color:var(--admin-primary)!important;box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1)!important}
     @media(max-width:1023px){.member-form-grid{grid-template-columns:1fr}}
 </style>
 @endpush
@@ -25,8 +25,8 @@
 <div class="space-y-5 p-5 lg:p-6">
     <header class="flex flex-wrap items-end justify-between gap-4">
         <div>
-            <a href="{{ $indexRoute }}" class="text-xs font-bold text-indigo-600"><i class="fas fa-arrow-left mr-1"></i>{{ $label }} directory</a>
-            <p class="mt-3 text-[10px] font-extrabold uppercase tracking-[.2em] text-indigo-600">People management</p>
+            <a href="{{ $indexRoute }}" class="text-xs font-bold admin-theme-text"><i class="fas fa-arrow-left mr-1"></i>{{ $label }} directory</a>
+            <p class="mt-3 text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">People management</p>
             <h1 class="mt-1 text-2xl font-extrabold text-slate-950">{{ $editing ? 'Edit' : 'Add new' }} {{ strtolower($label) }}</h1>
             <p class="mt-1 text-sm text-slate-500">Manage identity, access, verification and account benefits.</p>
         </div>
@@ -48,7 +48,7 @@
         <main class="space-y-4">
             <section class="rounded-2xl border bg-white p-5 shadow-sm">
                 <div class="flex items-center gap-3 border-b pb-4">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"><i class="fas fa-address-card"></i></span>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl admin-theme-soft"><i class="fas fa-address-card"></i></span>
                     <div><h2 class="text-sm font-extrabold">Personal information</h2><p class="text-xs text-slate-500">Primary contact and login identity.</p></div>
                 </div>
                 <div class="mt-5 grid gap-4 sm:grid-cols-2">
@@ -60,12 +60,12 @@
 
             <section class="rounded-2xl border bg-white p-5 shadow-sm">
                 <div class="flex items-center gap-3 border-b pb-4">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600"><i class="fas fa-key"></i></span>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl admin-theme-soft"><i class="fas fa-key"></i></span>
                     <div><h2 class="text-sm font-extrabold">Passwordless login</h2><p class="text-xs text-slate-500">No password is required for this account.</p></div>
                 </div>
-                <div class="mt-5 rounded-xl border border-violet-100 bg-violet-50 p-4">
-                    <p class="text-xs font-extrabold text-violet-800"><i class="fas fa-envelope-circle-check mr-2"></i>Email OTP authentication</p>
-                    <p class="mt-1 text-xs leading-5 text-violet-700">The {{ strtolower($label) }} will sign in with the email address above and a fresh one-time OTP.</p>
+                <div class="mt-5 rounded-xl border border-slate-200 admin-theme-soft p-4">
+                    <p class="text-xs font-extrabold admin-theme-text"><i class="fas fa-envelope-circle-check mr-2"></i>Email OTP authentication</p>
+                    <p class="mt-1 text-xs leading-5 admin-theme-text">The {{ strtolower($label) }} will sign in with the email address above and a fresh one-time OTP.</p>
                 </div>
             </section>
 
@@ -75,7 +75,7 @@
                     <div><h2 class="text-sm font-extrabold">Account benefits</h2><p class="text-xs text-slate-500">Credits and complimentary contact unlocks.</p></div>
                 </div>
                 <div class="mt-5 grid gap-4 sm:grid-cols-2">
-                    <div><label class="text-xs font-bold text-slate-700">Wallet balance (₹)</label><input type="number" step="0.01" min="0" name="wallet_balance" value="{{ old('wallet_balance',$member->wallet_balance ?? 0) }}" required class="member-field mt-1.5"></div>
+                    <div><label class="text-xs font-bold text-slate-700">Wallet balance (&#8377;)</label><input type="number" step="0.01" min="0" name="wallet_balance" value="{{ old('wallet_balance',$member->wallet_balance ?? 0) }}" required class="member-field mt-1.5"></div>
                     <div><label class="text-xs font-bold text-slate-700">Free unlocks</label><input type="number" min="0" name="free_unlocks" value="{{ old('free_unlocks',$member->free_unlocks ?? 0) }}" required class="member-field mt-1.5"></div>
                 </div>
             </section>
@@ -93,7 +93,7 @@
                 <div class="mt-4 space-y-3">
                     <label class="flex cursor-pointer items-start justify-between gap-3 rounded-xl border p-3">
                         <div><p class="text-xs font-extrabold">Email verified</p><p class="mt-0.5 text-[10px] text-slate-500">Allow verified account features.</p></div>
-                        <input type="checkbox" name="email_verified" value="1" @checked(old('email_verified',$member->email_verified_at !== null || !$editing)) class="mt-1 rounded text-indigo-600">
+                        <input type="checkbox" name="email_verified" value="1" @checked(old('email_verified',$member->email_verified_at !== null || !$editing)) class="mt-1 rounded admin-theme-text">
                     </label>
                     <label class="flex cursor-pointer items-start justify-between gap-3 rounded-xl border border-red-100 bg-red-50/40 p-3">
                         <div><p class="text-xs font-extrabold text-red-700">Block account</p><p class="mt-0.5 text-[10px] text-red-500">Prevent login and account access.</p></div>
@@ -111,7 +111,7 @@
 
             <div class="grid grid-cols-[auto_1fr] gap-2">
                 <a href="{{ $indexRoute }}" class="inline-flex h-12 items-center justify-center rounded-xl border bg-white px-4 text-xs font-extrabold text-slate-600">Cancel</a>
-                <button class="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-extrabold text-white shadow-sm"><i class="fas fa-floppy-disk"></i>{{ $editing ? 'Save changes' : 'Create '.$label }}</button>
+                <button class="inline-flex h-12 items-center justify-center gap-2 rounded-xl admin-theme-bg px-5 text-sm font-extrabold text-white shadow-sm"><i class="fas fa-floppy-disk"></i>{{ $editing ? 'Save changes' : 'Create '.$label }}</button>
             </div>
         </aside>
     </form>

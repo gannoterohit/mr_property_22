@@ -78,42 +78,7 @@
     .admin-content input:not([type=checkbox]):not([type=radio]), .admin-content select, .admin-content textarea { border:1px solid #dbe1ea !important; box-shadow:none !important; }
     .admin-content input:focus, .admin-content select:focus, .admin-content textarea:focus { border-color:#4f46e5 !important; box-shadow:0 0 0 3px rgba(79,70,229,.1) !important; }
 
-    /* Admin design system: settings-driven solid colors, no gradients. */
-    .admin-shell [class*="bg-gradient-to-"],
-    .admin-shell [class*="bg-gradient-from-"],
-    .admin-shell [class*="bg-gradient"] {
-        background-image: none !important;
-        background-color: var(--admin-primary) !important;
-    }
-    .admin-shell .bg-indigo-500, .admin-shell .bg-indigo-600,
-    .admin-shell .bg-blue-500, .admin-shell .bg-blue-600,
-    .admin-shell .bg-violet-500, .admin-shell .bg-violet-600 {
-        background-color: var(--admin-primary) !important;
-    }
-    .admin-shell .bg-purple-500, .admin-shell .bg-purple-600 {
-        background-color: var(--admin-secondary) !important;
-    }
-    .admin-shell .text-indigo-500, .admin-shell .text-indigo-600, .admin-shell .text-indigo-700,
-    .admin-shell .text-blue-500, .admin-shell .text-blue-600, .admin-shell .text-violet-600 {
-        color: var(--admin-primary) !important;
-    }
-    .admin-shell .text-purple-500, .admin-shell .text-purple-600, .admin-shell .text-purple-700 {
-        color: var(--admin-secondary) !important;
-    }
-    .admin-shell .border-indigo-100, .admin-shell .border-indigo-200,
-    .admin-shell .border-indigo-500, .admin-shell .border-indigo-600 {
-        border-color: rgba(var(--admin-primary-rgb), .25) !important;
-    }
-    .admin-shell .bg-indigo-50 { background-color: rgba(var(--admin-primary-rgb), .07) !important; }
-    .admin-shell .bg-indigo-100 { background-color: rgba(var(--admin-primary-rgb), .12) !important; }
-    .admin-shell .bg-purple-50 { background-color: rgba(var(--admin-secondary-rgb), .07) !important; }
-    .admin-shell .bg-purple-100 { background-color: rgba(var(--admin-secondary-rgb), .12) !important; }
-    .admin-shell .hover\:bg-indigo-700:hover, .admin-shell .hover\:bg-indigo-600:hover {
-        background-color: var(--admin-primary) !important; filter:brightness(.92);
-    }
-    .admin-shell .hover\:bg-purple-700:hover, .admin-shell .hover\:bg-purple-600:hover {
-        background-color: var(--admin-secondary) !important; filter:brightness(.92);
-    }
+    /* Admin design system helpers use settings-driven colors at source level. */
     .admin-content input:focus, .admin-content select:focus, .admin-content textarea:focus {
         border-color:var(--admin-primary) !important;
         box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1) !important;
@@ -122,6 +87,55 @@
         top: 1rem;
         right: 1rem;
         left: auto;
+    }
+    .admin-theme-text { color: var(--admin-primary); }
+    .admin-theme-bg { background: var(--admin-primary); color: #fff; }
+    .admin-theme-bg:hover { filter: brightness(.94); }
+    .admin-theme-soft { background: rgba(var(--admin-primary-rgb), .08); color: var(--admin-primary); }
+    .admin-theme-hover-bg:hover { background: var(--admin-primary); color: #fff; }
+    .admin-theme-hover-text:hover { color: var(--admin-primary); }
+    .admin-switch-track { background: #d1d5db; }
+    .peer:checked ~ .admin-switch-track { background: var(--admin-primary); }
+    .admin-theme-hover-card:hover {
+        border-color: rgba(var(--admin-primary-rgb), .28);
+        background: rgba(var(--admin-primary-rgb), .04);
+    }
+    .admin-theme-hover-card:hover strong { color: var(--admin-primary); }
+    .admin-detail-stats {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 12px;
+    }
+    .admin-detail-workspace {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 360px !important;
+        gap: 20px;
+        align-items: start;
+    }
+    .admin-detail-workspace > aside { position: sticky; top: 86px; }
+    .admin-plan-page { padding: 24px; }
+    .admin-plan-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 20px;
+        align-items: start;
+    }
+    .admin-plan-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    }
+    .admin-plan-field {
+        height: 44px;
+        width: 100%;
+        border-radius: 12px;
+        border-color: #cbd5e1;
+        font-size: 14px;
+    }
+    .admin-plan-field:focus {
+        border-color: var(--admin-primary);
+        box-shadow: 0 0 0 3px rgba(var(--admin-primary-rgb), .14);
     }
     .admin-theme-link { color: var(--admin-primary); }
     .admin-theme-link:hover { background: rgba(var(--admin-primary-rgb), .07); color: var(--admin-primary); }
@@ -205,6 +219,19 @@
             right: 1rem;
             left: 1rem;
         }
+        .admin-detail-workspace,
+        .admin-plan-grid {
+            grid-template-columns: 1fr !important;
+        }
+        .admin-detail-workspace > aside { position: static; }
+    }
+    @media (max-width: 767px) {
+        .admin-detail-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+    }
+    @media (max-width: 640px) {
+        .admin-plan-page { padding: 16px; }
     }
 </style>
 @endpush

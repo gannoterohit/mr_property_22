@@ -47,11 +47,11 @@
 <div class="space-y-5 p-5 lg:p-6">
     <header class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <p class="text-[10px] font-extrabold uppercase tracking-[.2em] text-indigo-600">Content management</p>
+            <p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Content management</p>
             <h1 class="mt-1 text-2xl font-extrabold">CMS Pages</h1>
             <p class="text-sm text-slate-500">Manage static website pages without adding sidebar clutter.</p>
         </div>
-        <a href="{{ route('admin.cms-pages.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-xs font-bold text-white">
+        <a href="{{ route('admin.cms-pages.create') }}" class="inline-flex items-center gap-2 rounded-xl admin-theme-bg px-4 py-3 text-xs font-bold text-white">
             <i class="fas fa-plus"></i>Add Page
         </a>
     </header>
@@ -95,7 +95,7 @@
                                 <div class="flex flex-wrap items-center gap-1.5">
                                     <span class="rounded-lg px-2.5 py-1 text-[10px] font-extrabold {{ $page->isPublished() ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">{{ $page->isPublished() ? 'Published' : 'Draft' }}</span>
                                     @if($page->is_system)
-                                        <span class="rounded-lg bg-indigo-50 px-2.5 py-1 text-[10px] font-bold text-indigo-700">System</span>
+                                        <span class="rounded-lg admin-theme-soft px-2.5 py-1 text-[10px] font-bold admin-theme-text">System</span>
                                     @endif
                                 </div>
                             </td>
@@ -119,7 +119,7 @@
                                     @else
                                         <span class="rounded-lg bg-slate-50 px-3 py-2 text-xs font-bold text-slate-300" title="Draft pages are hidden from the public website"><i class="fas fa-eye-slash"></i></span>
                                     @endif
-                                    <a href="{{ route('admin.cms-pages.edit', $page) }}" class="rounded-lg bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700"><i class="fas fa-edit mr-1"></i>Edit</a>
+                                    <a href="{{ route('admin.cms-pages.edit', $page) }}" class="rounded-lg admin-theme-soft px-3 py-2 text-xs font-bold admin-theme-text"><i class="fas fa-edit mr-1"></i>Edit</a>
                                     @unless($page->is_system)
                                         <form method="POST" action="{{ route('admin.cms-pages.destroy', $page) }}" onsubmit="return confirm('Delete this page?')">@csrf @method('DELETE')<button class="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-700"><i class="fas fa-trash"></i></button></form>
                                     @endunless

@@ -19,12 +19,12 @@
 <div class="space-y-5 p-5 lg:p-6">
     <header class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <a href="{{ route('admin.cms-pages.index') }}" class="text-xs font-bold text-indigo-600"><i class="fas fa-arrow-left mr-1"></i>All CMS pages</a>
+            <a href="{{ route('admin.cms-pages.index') }}" class="text-xs font-bold admin-theme-text"><i class="fas fa-arrow-left mr-1"></i>All CMS pages</a>
             <h1 class="mt-3 text-2xl font-extrabold">{{ $page->exists ? 'Edit CMS Page' : 'Create CMS Page' }}</h1>
             <p class="text-sm text-slate-500">Create reusable static pages with SEO and publishing controls.</p>
         </div>
         @if($page->exists && $page->isPublished())
-            <a href="{{ $page->public_url }}" target="_blank" class="inline-flex items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-xs font-bold text-indigo-700"><i class="fas fa-eye"></i>Preview</a>
+            <a href="{{ $page->public_url }}" target="_blank" class="inline-flex items-center gap-2 rounded-xl border admin-theme-soft px-4 py-3 text-xs font-bold"><i class="fas fa-eye"></i>Preview</a>
         @elseif($page->exists)
             <span class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-bold text-slate-400"><i class="fas fa-eye-slash"></i>Draft hidden</span>
         @endif
@@ -88,7 +88,7 @@
                     <div><label class="text-xs font-bold">Template</label><select name="template" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm"><option value="default" @selected($currentTemplate==='default')>Default</option><option value="faq" @selected($currentTemplate==='faq')>FAQ</option><option value="contact" @selected($currentTemplate==='contact')>Contact</option></select><p class="mt-1 text-[10px] text-slate-400">Changing template reloads after save.</p></div>
                     <div><label class="text-xs font-bold">Sort order</label><input type="number" name="sort_order" min="0" value="{{ old('sort_order',$page->sort_order ?? 0) }}" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm"></div>
                 </div>
-                <button class="mt-5 w-full rounded-xl bg-indigo-600 py-3 text-sm font-bold text-white"><i class="fas fa-save mr-2"></i>{{ $page->exists ? 'Save Page' : 'Create Page' }}</button>
+                <button class="mt-5 w-full rounded-xl admin-theme-bg py-3 text-sm font-bold text-white"><i class="fas fa-save mr-2"></i>{{ $page->exists ? 'Save Page' : 'Create Page' }}</button>
                 <a href="{{ route('admin.cms-pages.index') }}" class="mt-2 flex h-11 items-center justify-center rounded-xl border text-sm font-bold">Cancel</a>
             </section>
         </aside>

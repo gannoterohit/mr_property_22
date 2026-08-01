@@ -8,16 +8,9 @@
     .member-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
     #memberSearchInput{padding-left:2.85rem!important;padding-right:1rem!important;line-height:1.25rem!important}
     #memberSearchButton{min-width:170px;white-space:nowrap}
-    .history-table{width:100%;min-width:720px}
-    .history-table th,.history-table td{text-align:left!important;vertical-align:middle!important}
     .history-panel{display:none}.history-panel.active{display:block}
-    .member-theme-text{color:var(--admin-primary)}
-    .member-theme-bg{background:var(--admin-primary);color:#fff}
-    .member-theme-bg:hover{filter:brightness(.94)}
-    .member-theme-soft{background:rgba(var(--admin-primary-rgb),.08);color:var(--admin-primary)}
     .member-search-panel{border:1px solid #e2e8f0;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.04)}
     .member-search-button{background:#0f172a;color:#fff}.member-search-button:hover{background:#1e293b}
-    .history-tab-active{background:var(--admin-primary);color:#fff}
     @media(max-width:1199px){.member-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
     @media(max-width:639px){.member-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.member-search-row{grid-template-columns:1fr}#memberSearchButton{width:100%;min-width:0}}
 </style>
@@ -26,7 +19,7 @@
 @section('admin-content')
 <div class="space-y-5 p-5 lg:p-6">
     <header>
-        <p class="member-theme-text text-[10px] font-extrabold uppercase tracking-[.2em]">People intelligence</p>
+        <p class="admin-theme-text text-[10px] font-extrabold uppercase tracking-[.2em]">People intelligence</p>
         <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Member 360 Search</h1>
         <p class="mt-1 text-sm text-slate-500">Search any user or owner and review their complete available account history.</p>
     </header>
@@ -54,7 +47,7 @@
                 @forelse($matches as $result)
                     <a href="{{ route('admin.members.index',['q'=>$term,'member_id'=>$result->id]) }}" class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 transition hover:bg-slate-50">
                         <div class="flex min-w-0 items-center gap-3">
-                            <span class="member-theme-soft flex h-11 w-11 shrink-0 items-center justify-center rounded-xl font-extrabold">{{ strtoupper(substr($result->name,0,1)) }}</span>
+                            <span class="admin-theme-soft flex h-11 w-11 shrink-0 items-center justify-center rounded-xl font-extrabold">{{ strtoupper(substr($result->name,0,1)) }}</span>
                             <div class="min-w-0"><p class="truncate text-sm font-extrabold text-slate-900">{{ $result->name }}</p><p class="truncate text-xs text-slate-500">#{{ $result->id }} - {{ $result->email }} - {{ $result->phone ?: 'No phone' }}</p></div>
                         </div>
                         <div class="flex items-center gap-2">
@@ -82,9 +75,9 @@
         <section class="rounded-2xl border bg-white p-5 shadow-sm">
             <div class="flex flex-wrap items-start justify-between gap-4">
                 <div class="flex min-w-0 items-center gap-4">
-                    <span class="member-theme-bg flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-xl font-extrabold">{{ strtoupper(substr($member->name,0,1)) }}</span>
+                    <span class="admin-theme-bg flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-xl font-extrabold">{{ strtoupper(substr($member->name,0,1)) }}</span>
                     <div class="min-w-0">
-                        <div class="flex flex-wrap items-center gap-2"><h2 class="text-xl font-extrabold text-slate-950">{{ $member->name }}</h2><span class="member-theme-soft rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase">{{ $member->role }}</span></div>
+                        <div class="flex flex-wrap items-center gap-2"><h2 class="text-xl font-extrabold text-slate-950">{{ $member->name }}</h2><span class="admin-theme-soft rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase">{{ $member->role }}</span></div>
                         <p class="mt-1 text-xs text-slate-500">Member #{{ $member->id }} - {{ $member->email }} - {{ $member->phone ?: 'No phone' }}</p>
                         <div class="mt-2 flex flex-wrap gap-2">
                             <span class="rounded-full px-2.5 py-1 text-[10px] font-bold {{ $isDeleted || $member->is_blocked ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700' }}">{{ $isDeleted ? 'Deleted' : ($member->is_blocked ? 'Blocked' : 'Active') }}</span>
@@ -107,10 +100,10 @@
 
         <section class="member-kpis">
             @foreach([
-                ['Listings',$member->rooms_count,'fa-building','member-theme-text'],
+                ['Listings',$member->rooms_count,'fa-building','admin-theme-text'],
                 ['Payments',$member->payments_count,'fa-credit-card','text-emerald-600'],
                 ['Subscriptions',$member->subscriptions_count,'fa-id-card','text-slate-600'],
-                ['Unlocks',$member->enquiries_count,'fa-lock-open','member-theme-text'],
+                ['Unlocks',$member->enquiries_count,'fa-lock-open','admin-theme-text'],
                 ['Complaints',$member->complaints_count,'fa-shield-halved','text-amber-600'],
                 ['Referrals',$member->referrals_count,'fa-user-plus','text-pink-600'],
             ] as [$label,$value,$icon,$tone])
@@ -126,7 +119,7 @@
                         'bookings'=>'Bookings','complaints'=>'Complaints','wishlists'=>'Wishlist','alerts'=>'City Alerts',
                         'referrals'=>'Referrals','activities'=>'Admin Log'
                     ] as $key=>$label)
-                        <button type="button" data-history-tab="{{ $key }}" class="history-tab min-w-max rounded-lg px-3 py-2 text-[11px] font-bold {{ $loop->first ? 'history-tab-active' : 'text-slate-600 hover:bg-white' }}">{{ $label }}</button>
+                        <button type="button" data-history-tab="{{ $key }}" class="history-tab min-w-max rounded-lg px-3 py-2 text-[11px] font-bold {{ $loop->first ? 'admin-theme-bg' : 'text-slate-600 hover:bg-white' }}">{{ $label }}</button>
                     @endforeach
                 </nav>
 
@@ -188,7 +181,7 @@
         </section>
     @elseif($term === '')
         <section class="rounded-2xl border border-dashed bg-white py-20 text-center">
-            <span class="member-theme-soft mx-auto flex h-16 w-16 items-center justify-center rounded-2xl text-2xl"><i class="fas fa-user-magnifying-glass"></i></span>
+            <span class="admin-theme-soft mx-auto flex h-16 w-16 items-center justify-center rounded-2xl text-2xl"><i class="fas fa-user-magnifying-glass"></i></span>
             <h2 class="mt-4 text-lg font-extrabold text-slate-800">Search a member to begin</h2>
             <p class="mt-1 text-sm text-slate-500">Their complete available activity will appear here.</p>
         </section>
@@ -200,7 +193,7 @@ document.querySelectorAll('[data-history-tab]').forEach(function(button){
     button.addEventListener('click',function(){
         document.querySelectorAll('[data-history-tab]').forEach(function(item){item.className='history-tab min-w-max rounded-lg px-3 py-2 text-[11px] font-bold text-slate-600 hover:bg-white';});
         document.querySelectorAll('[data-history-panel]').forEach(function(panel){panel.classList.remove('active');});
-        button.className='history-tab history-tab-active min-w-max rounded-lg px-3 py-2 text-[11px] font-bold';
+        button.className='history-tab admin-theme-bg min-w-max rounded-lg px-3 py-2 text-[11px] font-bold';
         document.querySelector('[data-history-panel="'+button.dataset.historyTab+'"]')?.classList.add('active');
     });
 });
