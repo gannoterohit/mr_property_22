@@ -384,6 +384,71 @@ body>nav{border-bottom:1px solid #edf1f6!important;box-shadow:none!important}.de
  .market-step strong{font-size:14px}.market-step small{font-size:12px}
  .market-faq summary{font-size:13px}.market-faq details p{font-size:12px}
 }
+.market-hero h1 span,
+.market-kicker,
+.market-section-head>a,
+.market-empty a,
+.launch-banner a,
+.market-owner a,
+.market-faq summary i,
+.market-eyebrow,
+.market-custom-option.is-selected:after,
+body>nav .desktop-navbar-menu a:first-child {
+ color:var(--primary)!important;
+}
+.market-benefits i,
+.market-stat>span,
+.market-type>span,
+.market-trust-row>div>span,
+.market-eyebrow i,
+.market-check i,
+.market-owner li i,
+.market-custom-option:hover,
+.market-custom-option:focus,
+.market-custom-option.is-selected {
+ color:var(--primary)!important;
+ background:rgba(var(--primary-rgb),.08)!important;
+}
+.market-eyebrow i,
+.market-check i,
+.market-owner li i {
+ color:var(--secondary)!important;
+ background:transparent!important;
+}
+.market-eyebrow,
+body>nav .desktop-navbar-menu a:first-child {
+ background:rgba(var(--primary-rgb),.08)!important;
+}
+.market-search button,
+.market-room-badge,
+.market-step>b {
+ background:var(--primary)!important;
+ box-shadow:0 9px 18px rgba(var(--primary-rgb),.22)!important;
+}
+.market-search button:hover {
+ background:rgba(var(--primary-rgb),.86)!important;
+}
+.market-field:focus-within,
+.market-field.has-open-dropdown,
+.market-field input:focus,
+.market-field select:focus {
+ border-color:var(--primary)!important;
+ box-shadow:0 0 0 3px rgba(var(--primary-rgb),.1)!important;
+}
+.market-type:hover,
+.market-room:hover,
+.market-area:hover {
+ border-color:rgba(var(--primary-rgb),.35)!important;
+}
+.market-trust:after {
+ background:var(--primary)!important;
+}
+.market-owner {
+ background:linear-gradient(115deg,var(--primary),rgba(var(--primary-rgb),.86) 58%,var(--secondary))!important;
+}
+.market-trust {
+ background:linear-gradient(140deg,rgba(var(--primary-rgb),.92),#0f172a)!important;
+}
 </style>
 @endpush
 

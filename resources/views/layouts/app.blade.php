@@ -854,6 +854,109 @@
         .dynamic-theme-override .hover\:shadow-\[0_20px_40px_rgba\(79\,70\,229\,0\.1\)\]:hover { --tw-shadow: 0 20px 40px rgba(var(--primary-rgb), 0.1) !important; }
         .dynamic-theme-override .hover\:shadow-\[0_20px_50px_rgba\(79\,70\,229\,0\.4\)\]:hover { --tw-shadow: 0 20px 50px rgba(var(--primary-rgb), 0.4) !important; }
         .dynamic-theme-override .shadow-\[0_20px_60px_-15px_rgba\(0\,0\,0\,0\.3\)\] { --tw-shadow: 0 20px 60px -15px rgb(0 0 0 / .3) !important; }
+
+        .dynamic-theme-override .bg-blue-50 { background-color: rgba(var(--primary-rgb), 0.08) !important; }
+        .dynamic-theme-override .bg-blue-100 { background-color: rgba(var(--primary-rgb), 0.15) !important; }
+        .dynamic-theme-override .bg-blue-200 { background-color: rgba(var(--primary-rgb), 0.3) !important; }
+        .dynamic-theme-override .bg-blue-500 { background-color: var(--primary) !important; }
+        .dynamic-theme-override .bg-blue-600 { background-color: var(--primary) !important; }
+        .dynamic-theme-override .bg-blue-700 { background-color: rgba(var(--primary-rgb), 0.85) !important; }
+        .dynamic-theme-override .text-blue-400 { color: rgba(var(--primary-rgb), 0.7) !important; }
+        .dynamic-theme-override .text-blue-500 { color: var(--primary) !important; }
+        .dynamic-theme-override .text-blue-600 { color: var(--primary) !important; }
+        .dynamic-theme-override .text-blue-700 { color: var(--primary) !important; }
+        .dynamic-theme-override .text-blue-800 { color: rgba(var(--primary-rgb), 0.85) !important; }
+        .dynamic-theme-override .border-blue-100 { border-color: rgba(var(--primary-rgb), 0.15) !important; }
+        .dynamic-theme-override .border-blue-200 { border-color: rgba(var(--primary-rgb), 0.3) !important; }
+        .dynamic-theme-override .border-blue-300 { border-color: rgba(var(--primary-rgb), 0.4) !important; }
+        .dynamic-theme-override .border-blue-500 { border-color: var(--primary) !important; }
+        .dynamic-theme-override .hover\:bg-blue-50:hover { background-color: rgba(var(--primary-rgb), 0.08) !important; }
+        .dynamic-theme-override .hover\:bg-blue-600:hover { background-color: var(--primary) !important; }
+        .dynamic-theme-override .hover\:bg-blue-700:hover { background-color: rgba(var(--primary-rgb), 0.85) !important; }
+        .dynamic-theme-override .hover\:text-blue-600:hover { color: var(--primary) !important; }
+        .dynamic-theme-override .hover\:text-blue-700:hover { color: var(--primary) !important; }
+        .dynamic-theme-override .hover\:border-blue-300:hover { border-color: rgba(var(--primary-rgb), 0.4) !important; }
+        .dynamic-theme-override .focus\:border-blue-500:focus { border-color: var(--primary) !important; }
+        .dynamic-theme-override .focus\:ring-blue-500:focus { --tw-ring-color: var(--primary) !important; }
+        .dynamic-theme-override .from-blue-500 { --tw-gradient-from: var(--primary) !important; }
+        .dynamic-theme-override .from-blue-600 { --tw-gradient-from: var(--primary) !important; }
+        .dynamic-theme-override .to-blue-500 { --tw-gradient-to: var(--primary) !important; }
+        .dynamic-theme-override .to-blue-600 { --tw-gradient-to: var(--primary) !important; }
+        .dynamic-theme-override .to-blue-700 { --tw-gradient-to: rgba(var(--primary-rgb), 0.85) !important; }
+
+        .dynamic-theme-override .bg-emerald-50,
+        .dynamic-theme-override .bg-green-50 { background-color: rgba(var(--secondary-rgb), 0.08) !important; }
+        .dynamic-theme-override .bg-emerald-100,
+        .dynamic-theme-override .bg-green-100 { background-color: rgba(var(--secondary-rgb), 0.15) !important; }
+        .dynamic-theme-override .bg-emerald-500,
+        .dynamic-theme-override .bg-green-500 { background-color: var(--secondary) !important; }
+        .dynamic-theme-override .bg-emerald-600,
+        .dynamic-theme-override .bg-green-600 { background-color: var(--secondary) !important; }
+        .dynamic-theme-override .bg-emerald-700,
+        .dynamic-theme-override .bg-green-700 { background-color: rgba(var(--secondary-rgb), 0.85) !important; }
+        .dynamic-theme-override .text-emerald-400,
+        .dynamic-theme-override .text-green-400 { color: rgba(var(--secondary-rgb), 0.7) !important; }
+        .dynamic-theme-override .text-emerald-500,
+        .dynamic-theme-override .text-green-500 { color: var(--secondary) !important; }
+        .dynamic-theme-override .text-emerald-600,
+        .dynamic-theme-override .text-green-600 { color: var(--secondary) !important; }
+        .dynamic-theme-override .text-emerald-700,
+        .dynamic-theme-override .text-green-700 { color: rgba(var(--secondary-rgb), 0.85) !important; }
+        .dynamic-theme-override .text-emerald-800,
+        .dynamic-theme-override .text-green-800 { color: rgba(var(--secondary-rgb), 0.9) !important; }
+        .dynamic-theme-override .border-emerald-100,
+        .dynamic-theme-override .border-green-100 { border-color: rgba(var(--secondary-rgb), 0.15) !important; }
+        .dynamic-theme-override .border-emerald-200,
+        .dynamic-theme-override .border-green-200 { border-color: rgba(var(--secondary-rgb), 0.3) !important; }
+        .dynamic-theme-override .border-emerald-500,
+        .dynamic-theme-override .border-green-500 { border-color: var(--secondary) !important; }
+        .dynamic-theme-override .hover\:bg-emerald-600:hover,
+        .dynamic-theme-override .hover\:bg-green-600:hover { background-color: var(--secondary) !important; }
+        .dynamic-theme-override .hover\:text-emerald-700:hover,
+        .dynamic-theme-override .hover\:text-green-700:hover { color: rgba(var(--secondary-rgb), 0.85) !important; }
+        .dynamic-theme-override .from-emerald-500,
+        .dynamic-theme-override .from-green-500 { --tw-gradient-from: var(--secondary) !important; }
+        .dynamic-theme-override .to-emerald-700,
+        .dynamic-theme-override .to-green-700 { --tw-gradient-to: rgba(var(--secondary-rgb), 0.85) !important; }
+
+        .dynamic-theme-override .bg-orange-50,
+        .dynamic-theme-override .bg-amber-50 { background-color: rgba(var(--secondary-rgb), 0.08) !important; }
+        .dynamic-theme-override .bg-orange-100,
+        .dynamic-theme-override .bg-amber-100 { background-color: rgba(var(--secondary-rgb), 0.15) !important; }
+        .dynamic-theme-override .bg-orange-500,
+        .dynamic-theme-override .bg-amber-500,
+        .dynamic-theme-override .bg-orange-600,
+        .dynamic-theme-override .bg-amber-600 { background-color: var(--secondary) !important; }
+        .dynamic-theme-override .bg-orange-700,
+        .dynamic-theme-override .bg-amber-700 { background-color: rgba(var(--secondary-rgb), 0.85) !important; }
+        .dynamic-theme-override .text-orange-400,
+        .dynamic-theme-override .text-amber-400 { color: rgba(var(--secondary-rgb), 0.7) !important; }
+        .dynamic-theme-override .text-orange-500,
+        .dynamic-theme-override .text-amber-500,
+        .dynamic-theme-override .text-orange-600,
+        .dynamic-theme-override .text-amber-600 { color: var(--secondary) !important; }
+        .dynamic-theme-override .text-orange-700,
+        .dynamic-theme-override .text-amber-700,
+        .dynamic-theme-override .text-orange-800,
+        .dynamic-theme-override .text-amber-800,
+        .dynamic-theme-override .text-amber-900 { color: rgba(var(--secondary-rgb), 0.88) !important; }
+        .dynamic-theme-override .border-orange-100,
+        .dynamic-theme-override .border-amber-100 { border-color: rgba(var(--secondary-rgb), 0.15) !important; }
+        .dynamic-theme-override .border-orange-200,
+        .dynamic-theme-override .border-amber-200 { border-color: rgba(var(--secondary-rgb), 0.3) !important; }
+        .dynamic-theme-override .hover\:bg-orange-600:hover,
+        .dynamic-theme-override .hover\:bg-amber-700:hover { background-color: rgba(var(--secondary-rgb), 0.85) !important; }
+        .dynamic-theme-override .hover\:text-orange-600:hover,
+        .dynamic-theme-override .hover\:text-amber-600:hover { color: var(--secondary) !important; }
+        .dynamic-theme-override .from-orange-500,
+        .dynamic-theme-override .from-amber-500 { --tw-gradient-from: var(--secondary) !important; }
+        .dynamic-theme-override .to-orange-600,
+        .dynamic-theme-override .to-amber-600 { --tw-gradient-to: rgba(var(--secondary-rgb), 0.85) !important; }
+
+        .dynamic-theme-override .bg-sky-50 { background-color: rgba(var(--primary-rgb), 0.08) !important; }
+        .dynamic-theme-override .text-sky-400,
+        .dynamic-theme-override .text-sky-600,
+        .dynamic-theme-override .text-sky-700 { color: var(--primary) !important; }
     </style>
     
 
@@ -865,7 +968,7 @@
             left: 0;
             width: 0;
             height: 3px;
-            background: #2563eb;
+            background: var(--primary);
             pointer-events: none;
         }
     </style>
