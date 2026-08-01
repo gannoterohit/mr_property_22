@@ -576,7 +576,8 @@
     </div>
 </div>
 
-@if($relatedRooms->isNotEmpty())
+@php($relatedRooms = $relatedRooms ?? collect())
+@if(!request()->routeIs('admin.*') && $relatedRooms->isNotEmpty())
 <section class="related-room-section">
     <div class="related-room-container">
         <div class="related-room-head"><div><span>More in {{ $room->city }}</span><h2>Similar rooms you may like</h2><p>Compare other active and approved properties in the same city.</p></div><a href="{{ route('rooms.index', ['city' => $room->city]) }}">View all rooms <i class="fas fa-arrow-right"></i></a></div>

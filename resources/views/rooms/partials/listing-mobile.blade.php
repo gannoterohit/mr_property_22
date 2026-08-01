@@ -41,9 +41,9 @@
                         @endif
                         <div class="absolute top-2 left-2 flex flex-col gap-1 z-10">
                             @if($room->listing_type === 'broker')
-                                <span style="background-color: #f97316 !important;" class="text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase tracking-wider border border-white/20">Broker</span>
+                                <span style="background-color: var(--secondary);" class="text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase tracking-wider border border-white/20">Broker</span>
                             @else
-                                <span class="bg-emerald-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase tracking-wider border border-emerald-400">Owner</span>
+                                <span style="background-color: var(--secondary); border-color: rgba(var(--secondary-rgb), 0.55);" class="text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase tracking-wider border">Owner</span>
                             @endif
                         </div>
                     </div>
@@ -51,11 +51,11 @@
                         <h2 class="font-bold text-gray-800 text-sm truncate">{{ $room->title }}</h2>
                         <p class="text-xs text-gray-500 truncate mb-1"><i class="fas fa-map-marker-alt mr-1"></i>{{ $room->city }}</p>
                         <div class="flex flex-wrap gap-1 mt-2">
-                            <span class="text-[9px] bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">{{ $room->roomTypeLabel() }}</span>
+                            <span style="background-color: rgba(var(--primary-rgb), 0.08); color: var(--primary);" class="text-[9px] dark:bg-slate-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">{{ $room->roomTypeLabel() }}</span>
                             @if($room->listing_type === 'broker')
-                                <span style="background-color: #f97316 !important;" class="text-[9px] text-white px-2 py-0.5 rounded-lg font-black uppercase tracking-tighter">B: ₹{{ $room->broker_fee }}</span>
+                                <span style="background-color: var(--secondary);" class="text-[9px] text-white px-2 py-0.5 rounded-lg font-black uppercase tracking-tighter">B: ₹{{ $room->broker_fee }}</span>
                             @else
-                                <span class="text-[9px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Owner</span>
+                                <span style="background-color: var(--secondary);" class="text-[9px] text-white px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Owner</span>
                             @endif
                         </div>
                     </div>
@@ -86,3 +86,4 @@
             @include('rooms.partials.skeleton')
         </div>
     </div>
+

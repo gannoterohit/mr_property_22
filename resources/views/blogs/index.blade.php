@@ -3,6 +3,25 @@
 @section('title', 'RoomRental Blog - The Rental Journal')
 @section('description', 'Discover the latest trends in rental living, property management issues, and city guides.')
 
+@push('styles')
+<style>
+    .blog-theme-primary { color: var(--primary); }
+    .blog-theme-primary-soft { background: rgba(var(--primary-rgb), .08); color: var(--primary); }
+    .blog-theme-primary-bg { background: var(--primary); color: #fff; }
+    .blog-theme-secondary { color: var(--secondary); }
+    .blog-theme-secondary-soft { background: rgba(var(--secondary-rgb), .08); color: var(--secondary); }
+    .blog-theme-secondary-bg { background: var(--secondary); color: #fff; }
+    .blog-theme-gradient { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+    .blog-card:hover .blog-card-title,
+    .blog-popular-link:hover .blog-popular-title { color: var(--primary); }
+    .blog-trending-card:hover .blog-trending-title { color: rgba(var(--secondary-rgb), .8); }
+    .blog-newsletter { background: var(--primary); }
+    .blog-newsletter p { color: rgba(255, 255, 255, .75); }
+    .blog-newsletter button { color: var(--primary); }
+    .blog-newsletter button:hover { background: rgba(var(--primary-rgb), .08); }
+</style>
+@endpush
+
 @section('content')
 <!-- App-like Blog Header -->
 <div class="bg-white border-b border-gray-100 sticky top-0 z-30 lg:relative">
@@ -31,7 +50,7 @@
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center text-amber-500" aria-hidden="true">
+                        <div class="w-8 h-8 blog-theme-secondary-soft rounded-lg flex items-center justify-center" aria-hidden="true">
                             <i class="fas fa-bolt text-sm"></i>
                         </div>
                         <h2 class="text-sm font-black text-gray-900 uppercase tracking-wider">Trending</h2>
@@ -40,16 +59,16 @@
                 
                 <div class="flex overflow-x-auto pb-4 gap-4 no-scrollbar -mx-4 px-4 md:grid md:grid-cols-4 md:mx-0 md:px-0">
                     @foreach($blogs->take(4) as $trending)
-                        <a href="{{ route('blogs.show', $trending->slug) }}" class="flex-shrink-0 w-64 md:w-full group relative block h-40 rounded-3xl overflow-hidden shadow-lg shadow-indigo-100 transition active:scale-95">
+                        <a href="{{ route('blogs.show', $trending->slug) }}" class="blog-trending-card flex-shrink-0 w-64 md:w-full group relative block h-40 rounded-3xl overflow-hidden shadow-lg transition active:scale-95">
                              @if($trending->image)
                                 <img src="{{ $trending->featured_image }}" alt="{{ $trending->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
                              @else
-                                <div class="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600" aria-hidden="true"></div>
+                                <div class="w-full h-full blog-theme-gradient" aria-hidden="true"></div>
                              @endif
                              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" aria-hidden="true"></div>
                              <div class="absolute bottom-4 left-4 right-4">
                                  <span class="inline-block bg-white/20 backdrop-blur-md text-[8px] text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-widest mb-2 border border-white/20">Featured</span>
-                                 <h3 class="text-white text-sm font-bold line-clamp-2 leading-tight group-hover:text-amber-300 transition">{{ $trending->title }}</h3>
+                                 <h3 class="blog-trending-title text-white text-sm font-bold line-clamp-2 leading-tight transition">{{ $trending->title }}</h3>
                              </div>
                         </a>
                     @endforeach
@@ -67,7 +86,7 @@
                 <div class="lg:w-3/4">
                     <div class="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center" aria-hidden="true">
+                            <div class="w-10 h-10 blog-theme-primary-soft rounded-xl flex items-center justify-center" aria-hidden="true">
                                 <i class="fas fa-layer-group"></i>
                             </div>
                             <div>
@@ -79,7 +98,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         @foreach($blogs as $blog)
-                            <article class="bg-white rounded-3xl shadow-sm border border-gray-50 overflow-hidden hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300 group">
+                            <article class="blog-card bg-white rounded-3xl shadow-sm border border-gray-50 overflow-hidden hover:shadow-xl transition-all duration-300 group">
                                 <!-- Image -->
                                 <a href="{{ route('blogs.show', $blog->slug) }}" class="block relative aspect-[16/10] overflow-hidden">
                                      @if($blog->image)
@@ -90,13 +109,13 @@
                                         </div>
                                      @endif
                                      <div class="absolute top-4 left-4">
-                                         <span class="bg-indigo-600/90 backdrop-blur-md text-white text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">Guide</span>
+                                         <span class="blog-theme-primary-bg backdrop-blur-md text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">Guide</span>
                                      </div>
                                 </a>
                                 
                                 <!-- Content -->
                                 <div class="p-6">
-                                    <h3 class="text-base font-bold text-gray-900 leading-tight mb-3 group-hover:text-indigo-600 transition duration-300 line-clamp-2">
+                                    <h3 class="blog-card-title text-base font-bold text-gray-900 leading-tight mb-3 transition duration-300 line-clamp-2">
                                         <a href="{{ route('blogs.show', $blog->slug) }}">
                                             {{ $blog->title }}
                                         </a>
@@ -108,7 +127,7 @@
                                     
                                     <div class="flex items-center justify-between pt-4 border-t border-gray-50">
                                         <span class="text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $blog->created_at->format('M d, Y') }}</span>
-                                        <div class="flex items-center gap-1.5 text-[9px] font-bold text-indigo-600 uppercase tracking-widest">
+                                        <div class="flex items-center gap-1.5 text-[9px] font-bold blog-theme-primary uppercase tracking-widest">
                                             <i class="far fa-clock" aria-hidden="true"></i>
                                             <span>{{ max(1, ceil(str_word_count(strip_tags($blog->content)) / 200)) }}m read</span>
                                         </div>
@@ -128,12 +147,12 @@
                     <!-- Trending Widget -->
                     <div class="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm">
                          <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider mb-6 flex items-center gap-2">
-                            <span class="w-1.5 h-4 bg-amber-500 rounded-full" aria-hidden="true"></span>
+                            <span class="w-1.5 h-4 blog-theme-secondary-bg rounded-full" aria-hidden="true"></span>
                             Trending
                          </h3>
                          <div class="space-y-6">
                             @foreach($blogs->take(3) as $pop)
-                                <a href="{{ route('blogs.show', $pop->slug) }}" class="flex gap-4 group">
+                                <a href="{{ route('blogs.show', $pop->slug) }}" class="blog-popular-link flex gap-4 group">
                                     <div class="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0">
                                         @if($pop->image)
                                             <img src="{{ $pop->featured_image }}" alt="{{ $pop->title }}" class="w-full h-full object-cover" loading="lazy">
@@ -144,7 +163,7 @@
                                         @endif
                                     </div>
                                     <div>
-                                        <h4 class="text-xs font-bold text-gray-900 line-clamp-2 group-hover:text-indigo-600 transition">{{ $pop->title }}</h4>
+                                        <h4 class="blog-popular-title text-xs font-bold text-gray-900 line-clamp-2 transition">{{ $pop->title }}</h4>
                                         <span class="text-[10px] text-gray-600 mt-1 block">{{ $pop->created_at->format('M d') }}</span>
                                     </div>
                                 </a>
@@ -156,17 +175,17 @@
                     @include('partials.offer-banner', ['placement' => 'sidebar'])
 
                     <!-- Newsletter Widget -->
-                    <div class="bg-indigo-600 rounded-[2rem] p-6 text-white relative overflow-hidden shadow-xl shadow-indigo-100">
+                    <div class="blog-newsletter rounded-[2rem] p-6 text-white relative overflow-hidden shadow-xl">
                         <div class="absolute -right-4 -bottom-4 opacity-20 transform rotate-12" aria-hidden="true">
                              <i class="fas fa-paper-plane text-6xl"></i>
                         </div>
                         <div class="relative z-10">
                             <h3 class="text-lg font-black mb-2">Subscribe</h3>
-                            <p class="text-indigo-100 text-xs mb-4">Get the best rental tips in your inbox.</p>
+                            <p class="text-xs mb-4">Get the best rental tips in your inbox.</p>
                             <form id="sidebar-newsletter" class="space-y-2">
                                 <label for="email-input" class="sr-only">Your email address</label>
                                 <input id="email-input" type="email" placeholder="Your email" class="w-full bg-white/10 border border-white/20 text-white placeholder-white/60 px-4 py-2 rounded-xl text-xs focus:ring-1 focus:ring-white/30 backdrop-blur-sm">
-                                <button type="submit" class="w-full bg-white text-indigo-600 font-bold py-2 rounded-xl text-xs hover:bg-indigo-50 transition shadow-lg">Join us</button>
+                                <button type="submit" class="w-full bg-white font-bold py-2 rounded-xl text-xs transition shadow-lg">Join us</button>
                             </form>
                         </div>
                     </div>

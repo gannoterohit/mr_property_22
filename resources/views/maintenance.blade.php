@@ -7,13 +7,13 @@
     <title>{{ $title }} - {{ \App\Models\Setting::get('website_name', 'ApnaNest') }}</title>
     <style>
         * { box-sizing:border-box; }
-        :root { --primary:{{ \App\Models\Setting::get('primary_color', '#4f46e5') }}; --ink:#0f172a; --muted:#64748b; }
+        :root { --primary:{{ \App\Models\Setting::get('primary_color', '#4f46e5') }}; --secondary:{{ \App\Models\Setting::get('secondary_color', '#10B981') }}; --ink:#0f172a; --muted:#64748b; }
         body { margin:0; min-height:100vh; color:var(--ink); background:#f8fafc; font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
         .page { position:relative; min-height:100vh; display:grid; place-items:center; overflow:hidden; padding:40px 20px; }
         .grid { position:absolute; inset:0; opacity:.42; background-image:linear-gradient(#e2e8f0 1px,transparent 1px),linear-gradient(90deg,#e2e8f0 1px,transparent 1px); background-size:42px 42px; mask-image:linear-gradient(to bottom,black,transparent 82%); }
         .glow { position:absolute; width:500px; height:500px; border-radius:999px; filter:blur(100px); opacity:.17; pointer-events:none; }
         .glow.one { top:-260px; left:calc(50% - 380px); background:var(--primary); }
-        .glow.two { right:-260px; bottom:-300px; background:#f97316; }
+        .glow.two { right:-260px; bottom:-300px; background:var(--secondary); }
         .shell { position:relative; width:min(100%,940px); overflow:hidden; border:1px solid #e2e8f0; border-radius:30px; background:rgba(255,255,255,.94); box-shadow:0 30px 80px -34px rgba(15,23,42,.35); backdrop-filter:blur(12px); }
         .top { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:22px 28px; border-bottom:1px solid #eef2f7; }
         .brand { display:flex; align-items:center; gap:12px; color:var(--ink); text-decoration:none; font-size:18px; font-weight:850; }
@@ -21,7 +21,7 @@
         .brand-mark img { width:100%; height:100%; padding:5px; object-fit:contain; }
         .brand-mark svg { width:21px; height:21px; color:var(--primary); }
         .secure { display:flex; align-items:center; gap:8px; color:#64748b; font-size:12px; font-weight:700; }
-        .secure svg { width:16px; height:16px; color:#10b981; }
+        .secure svg { width:16px; height:16px; color:var(--secondary); }
         .content { display:grid; grid-template-columns:minmax(0,1.18fr) minmax(300px,.82fr); align-items:center; gap:44px; padding:54px 58px 58px; }
         .eyebrow { display:inline-flex; align-items:center; gap:8px; padding:7px 11px; border:1px solid #fde68a; border-radius:999px; color:#a16207; background:#fffbeb; font-size:11px; line-height:1; font-weight:850; letter-spacing:.09em; text-transform:uppercase; }
         .eyebrow span { width:7px; height:7px; border-radius:99px; background:#f59e0b; box-shadow:0 0 0 5px rgba(245,158,11,.12); }
@@ -29,7 +29,7 @@
         .message { max-width:570px; margin:18px 0 0; color:var(--muted); font-size:16px; line-height:1.75; }
         .reopen { display:flex; align-items:center; gap:12px; width:fit-content; margin-top:23px; padding:12px 15px; border:1px solid #e0e7ff; border-radius:14px; background:#eef2ff; }
         .reopen svg { width:20px; height:20px; color:var(--primary); }
-        .reopen small { display:block; color:#6366f1; font-size:9px; font-weight:850; letter-spacing:.1em; text-transform:uppercase; }
+        .reopen small { display:block; color:var(--primary); font-size:9px; font-weight:850; letter-spacing:.1em; text-transform:uppercase; }
         .reopen strong { display:block; margin-top:2px; color:#312e81; font-size:13px; }
         .actions { display:flex; flex-wrap:wrap; gap:11px; margin-top:29px; }
         .actions form { margin:0; }
@@ -48,7 +48,7 @@
         .bar { height:9px; border-radius:99px; background:#e8edf4; overflow:hidden; }
         .bar:before { content:""; display:block; width:var(--w); height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--primary),#818cf8); }
         .bubble { position:absolute; display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid #e2e8f0; border-radius:13px; background:#fff; box-shadow:0 14px 30px -20px rgba(15,23,42,.35); color:#334155; font-size:10px; font-weight:800; }
-        .bubble svg { width:15px; height:15px; color:#10b981; }
+        .bubble svg { width:15px; height:15px; color:var(--secondary); }
         .bubble.one { top:43px; right:-19px; }
         .bubble.two { left:-25px; bottom:55px; }
         .footer { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:17px 28px; border-top:1px solid #eef2f7; color:#94a3b8; background:#fbfdff; font-size:11px; }

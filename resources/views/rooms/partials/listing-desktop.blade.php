@@ -18,13 +18,63 @@
             grid-template-columns: repeat(4, minmax(0, 1fr));
         }
     }
+
+    .theme-room-card:hover {
+        border-color: rgba(var(--primary-rgb), 0.3);
+    }
+
+    .theme-room-empty-image {
+        background: rgba(var(--primary-rgb), 0.06);
+    }
+
+    .theme-room-empty-image i {
+        color: rgba(var(--primary-rgb), 0.25);
+    }
+
+    .theme-room-empty-image span,
+    .theme-room-price-badge small {
+        color: rgba(255, 255, 255, 0.75);
+    }
+
+    .theme-room-empty-image span {
+        color: rgba(var(--primary-rgb), 0.42);
+    }
+
+    .theme-room-type-badge,
+    .theme-room-card:hover .theme-room-title {
+        color: var(--primary);
+    }
+
+    .theme-room-broker-badge,
+    .theme-room-owner-badge {
+        background: var(--secondary);
+        color: #fff;
+        border-color: rgba(var(--secondary-rgb), 0.55);
+    }
+
+    .theme-room-price-badge {
+        background: var(--primary);
+        color: #fff;
+    }
+
+    .theme-room-primary-icon {
+        color: rgba(var(--primary-rgb), 0.65);
+    }
+
+    .theme-room-secondary-dot {
+        background: var(--secondary);
+    }
+
+    .theme-room-secondary-text {
+        color: var(--secondary);
+    }
 </style>
 @endpush
 
 <!-- Desktop Grid (Visible on Desktop/Tablet) -->
 <div class="hidden md:grid grid-cols-1 gap-4 {{ ($homePage ?? false) ? 'home-page-grid-5' : 'default-page-grid' }}">
     @foreach($rooms as $room)
-        <div class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all transition-colors duration-300 overflow-hidden border border-slate-100 hover:border-indigo-200 transform hover:-translate-y-1 flex flex-col h-full">
+        <div class="theme-room-card group bg-white rounded-xl shadow-md hover:shadow-xl transition-all transition-colors duration-300 overflow-hidden border border-slate-100 transform hover:-translate-y-1 flex flex-col h-full">
             <!-- Image Container (Clickable) - Reduced Height -->
             <a href="{{ route('rooms.show', $room->id) }}" class="relative block h-44 overflow-hidden bg-slate-100">
                 @if($room->photo_url)
@@ -43,9 +93,9 @@
                          loading="lazy"
                          onerror="this.onerror=null; this.src='https://placehold.co/600x400?text=Room+Image+Coming+Soon';">
                 @else
-                    <div class="w-full h-full flex flex-col items-center justify-center bg-indigo-50/50">
-                        <i class="fas fa-house-chimney text-4xl text-indigo-200 mb-1"></i>
-                        <span class="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">Image Coming Soon</span>
+                    <div class="theme-room-empty-image w-full h-full flex flex-col items-center justify-center">
+                        <i class="fas fa-house-chimney text-4xl mb-1"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest">Image Coming Soon</span>
                     </div>
                 @endif
                 
@@ -54,16 +104,16 @@
                     @if($room->is_featured)
                         <span class="bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg shadow-lg">Featured</span>
                     @endif
-                    <span class="bg-white/90 backdrop-blur-md dark:bg-slate-800/90 text-indigo-700 dark:text-indigo-400 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg shadow-sm border border-white/50 dark:border-slate-700">
+                    <span class="theme-room-type-badge bg-white/90 backdrop-blur-md dark:bg-slate-800/90 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg shadow-sm border border-white/50 dark:border-slate-700">
                         {{ $room->roomTypeLabel() }}
                     </span>
                     
                     @if($room->listing_type === 'broker')
-                        <span style="background-color: #f97316 !important;" class="text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg shadow-lg border border-white/20">
+                        <span class="theme-room-broker-badge text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg shadow-lg border">
                             Broker: ₹{{ $room->broker_fee }}
                         </span>
                     @else
-                        <span class="bg-emerald-600 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg shadow-lg border border-emerald-400">
+                        <span class="theme-room-owner-badge text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg shadow-lg border">
                             No Broker Fee
                         </span>
                     @endif
@@ -78,9 +128,9 @@
                 
                 <!-- Price Floating Tag - Smaller -->
                 <div class="absolute bottom-2 left-2">
-                    <div class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg shadow-xl border border-white/20">
+                    <div class="theme-room-price-badge px-3 py-1.5 rounded-lg shadow-xl border border-white/20">
                         <span class="text-base font-black">₹{{ number_format($room->rent) }}</span>
-                        <span class="text-[8px] uppercase font-bold text-indigo-100 ml-1">/mo</span>
+                        <small class="text-[8px] uppercase font-bold ml-1">/mo</small>
                     </div>
                 </div>
             </a>
@@ -88,18 +138,18 @@
             <!-- Content - Reduced Padding -->
             <div class="p-3 flex flex-col flex-grow">
                 <div class="mb-2">
-                    <h3 class="font-bold text-sm mb-1 text-slate-900 line-clamp-1 group-hover:text-indigo-600 transition-colors font-heading">
+                    <h3 class="theme-room-title font-bold text-sm mb-1 text-slate-900 line-clamp-1 transition-colors font-heading">
                         <a href="{{ route('rooms.show', $room->id) }}">{{ $room->title }}</a>
                     </h3>
                     <div class="flex flex-col">
                         <div class="flex items-center text-slate-500 text-xs">
-                            <i class="fas fa-location-dot mr-1.5 text-indigo-500 text-[10px]"></i>
+                            <i class="theme-room-primary-icon fas fa-location-dot mr-1.5 text-[10px]"></i>
                             <span class="font-medium">{{ $room->city }}</span>
                         </div>
                         <!-- Distance Tag -->
                         <div class="distance-tag hidden mt-0.5 flex items-center gap-1" data-lat="{{ $room->latitude }}" data-lng="{{ $room->longitude }}">
-                            <div class="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></div>
-                            <span class="text-[8px] font-black text-emerald-600 uppercase tracking-widest"><span class="distance-km">0</span> km away</span>
+                            <div class="theme-room-secondary-dot w-1 h-1 rounded-full animate-pulse"></div>
+                            <span class="theme-room-secondary-text text-[8px] font-black uppercase tracking-widest"><span class="distance-km">0</span> km away</span>
                         </div>
                     </div>
                 </div>
@@ -107,12 +157,12 @@
                 <!-- Quick Tags - Smaller -->
                 <div class="flex flex-wrap gap-1.5 mb-3 mt-auto">
                     <div class="flex items-center bg-slate-50 border border-slate-100 px-2 py-1 rounded-lg">
-                        <i class="fas fa-couch text-indigo-400 text-[10px] mr-1.5"></i>
+                        <i class="theme-room-primary-icon fas fa-couch text-[10px] mr-1.5"></i>
                         <span class="text-[10px] font-bold text-slate-600 uppercase">{{ $room->furnishingTypeLabel() }}</span>
                     </div>
                     @if($room->tenantTypeLabel() !== 'N/A')
                     <div class="flex items-center bg-slate-50 border border-slate-100 px-2 py-1 rounded-lg">
-                        <i class="fas fa-users text-indigo-400 text-[10px] mr-1.5"></i>
+                        <i class="theme-room-primary-icon fas fa-users text-[10px] mr-1.5"></i>
                         <span class="text-[10px] font-bold text-slate-600 uppercase">{{ $room->tenantTypeLabel() }}</span>
                     </div>
                     @endif

@@ -48,7 +48,7 @@
     $pagesOpen = false;
 @endphp
 
-<button id="adminSidebarOpen" class="lg:hidden fixed top-3 left-3 z-[70] w-10 h-10 bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-200" aria-label="Open admin menu"><i class="fas fa-bars"></i></button>
+<button id="adminSidebarOpen" class="admin-theme-avatar lg:hidden fixed top-3 left-3 z-[70] w-10 h-10 rounded-xl shadow-lg" aria-label="Open admin menu"><i class="fas fa-bars"></i></button>
 <div id="adminSidebarBackdrop" class="hidden lg:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[55]"></div>
 <aside id="adminSidebar" class="fixed lg:sticky top-0 left-0 z-[60] h-screen w-[280px] bg-white text-slate-700 border-r border-slate-200 flex flex-col -translate-x-full lg:translate-x-0 transition-transform duration-200 shrink-0 shadow-[6px_0_24px_rgba(15,23,42,0.06)]">
     <div class="h-16 px-4 flex items-center justify-between border-b border-slate-200 bg-slate-50/70">
@@ -58,7 +58,7 @@
                     <img src="{{ asset('storage/' . $adminLogo) }}" alt="{{ $adminSiteName }}" class="w-full h-full object-contain">
                 </span>
             @else
-                <span class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200"><i class="fas fa-home text-xs"></i></span>
+                <span class="admin-theme-avatar w-9 h-9 rounded-lg flex items-center justify-center shadow-sm"><i class="fas fa-home text-xs"></i></span>
             @endif
             <span class="min-w-0"><strong class="block text-slate-900 text-[15px] leading-tight truncate max-w-[175px]">{{ $adminSiteName }}</strong><small class="block text-[9px] text-slate-500 tracking-[.14em] uppercase mt-1 font-bold">Admin Workspace</small></span>
         </a>
@@ -67,15 +67,15 @@
     <div class="shrink-0 border-b border-slate-100 bg-white px-3 py-3">
         <div class="relative">
             <span class="pointer-events-none absolute inset-y-0 left-0 z-10 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-magnifying-glass text-[11px]"></i></span>
-            <input id="adminMenuSearch" type="search" autocomplete="off" placeholder="Search admin menu..." class="h-10 w-full rounded-xl border-slate-200 bg-slate-50 text-xs font-semibold text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-indigo-100" style="padding-left:2.5rem!important;padding-right:2.5rem!important;-webkit-appearance:none;appearance:none">
+            <input id="adminMenuSearch" type="search" autocomplete="off" placeholder="Search admin menu..." class="h-10 w-full rounded-xl border-slate-200 bg-slate-50 text-xs font-semibold text-slate-700 placeholder:text-slate-400 focus:bg-white" style="padding-left:2.5rem!important;padding-right:2.5rem!important;-webkit-appearance:none;appearance:none">
             <button id="adminMenuSearchClear" type="button" class="hidden absolute right-2 top-1/2 h-6 w-6 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-200 hover:text-slate-700" aria-label="Clear menu search"><i class="fas fa-xmark text-[10px]"></i></button>
         </div>
         <p id="adminMenuSearchEmpty" class="hidden px-2 pt-3 text-center text-[10px] font-semibold text-slate-400">No menu found</p>
     </div>
     <nav class="flex-1 min-h-0 overflow-y-auto px-3 py-3 space-y-2 overscroll-contain">
         @if(!Auth::user()?->admin_role_id || Auth::user()?->hasAdminPermission('dashboard.view'))
-            <a href="{{ route('admin.dashboard') }}" class="group relative flex items-center gap-3 rounded-xl px-3 py-3 text-[13px] transition {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-100' : 'text-slate-700 font-semibold hover:bg-slate-100 hover:text-slate-950' }}">
-                <span class="flex h-8 w-8 items-center justify-center rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-white/15 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-indigo-600' }}"><i class="fas fa-th-large text-[12px]"></i></span>
+            <a href="{{ route('admin.dashboard') }}" class="admin-sidebar-idle-icon-hover group relative flex items-center gap-3 rounded-xl px-3 py-3 text-[13px] transition {{ request()->routeIs('admin.dashboard') ? 'admin-sidebar-active font-bold' : 'text-slate-700 font-semibold hover:bg-slate-100 hover:text-slate-950' }}">
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-white/15 text-white' : 'bg-slate-100 text-slate-500' }}"><i class="fas fa-th-large text-[12px]"></i></span>
                 <span>Dashboard</span>
             </a>
         @endif
@@ -108,15 +108,15 @@
             @endphp
             @continue($groupItems->isEmpty())
             <section class="admin-nav-group" data-group="{{ $groupKey }}">
-                <button type="button" class="admin-nav-group-toggle group flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-[13px] font-bold transition {{ $groupActive ? 'border-indigo-100 bg-indigo-50 text-indigo-700' : 'border-transparent bg-white text-slate-700 hover:bg-slate-50' }}" aria-expanded="{{ $groupOpen ? 'true' : 'false' }}">
-                    <span class="flex min-w-0 items-center gap-2.5"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg {{ $groupActive ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200' }}"><i class="fas {{ $group['icon'] }} text-[12px]"></i></span><span class="whitespace-nowrap text-[12px]">{{ $group['label'] }}</span></span>
+                <button type="button" class="admin-nav-group-toggle group flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-[13px] font-bold transition {{ $groupActive ? 'admin-sidebar-group-active' : 'border-transparent bg-white text-slate-700 hover:bg-slate-50' }}" aria-expanded="{{ $groupOpen ? 'true' : 'false' }}">
+                    <span class="flex min-w-0 items-center gap-2.5"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm {{ $groupActive ? 'admin-sidebar-icon-active' : 'admin-sidebar-icon-idle ring-1 ring-slate-200' }}"><i class="fas {{ $group['icon'] }} text-[12px]"></i></span><span class="whitespace-nowrap text-[12px]">{{ $group['label'] }}</span></span>
                     <i class="admin-nav-chevron fas fa-chevron-down text-[9px] text-slate-400 transition-transform {{ $groupOpen ? 'rotate-180' : '' }}"></i>
                 </button>
-                <div class="admin-nav-group-menu {{ $groupOpen ? '' : 'hidden' }} ml-6 mt-2 space-y-1.5 border-l-2 border-indigo-100 pl-3">
+                <div class="admin-sidebar-submenu admin-nav-group-menu {{ $groupOpen ? '' : 'hidden' }} ml-6 mt-2 space-y-1.5 border-l-2 pl-3">
                     @foreach($groupItems as $item)
                         @php $itemActive = request()->routeIs($item['match']); @endphp
-                        <a href="{{ route($item['route']) }}" class="relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[12px] transition {{ $itemActive ? 'bg-white text-indigo-700 font-extrabold shadow-sm ring-1 ring-indigo-100 before:absolute before:-left-[14px] before:h-6 before:w-[3px] before:rounded-full before:bg-indigo-600' : 'text-slate-600 font-semibold hover:bg-slate-50 hover:text-slate-900' }}">
-                            <i class="fas {{ $item['icon'] }} w-4 text-center text-[11px] {{ $itemActive ? 'text-indigo-600' : 'text-slate-400' }}"></i><span>{{ $item['label'] }}</span>
+                        <a href="{{ route($item['route']) }}" class="relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[12px] transition {{ $itemActive ? 'admin-sidebar-subitem-active font-extrabold' : 'text-slate-600 font-semibold hover:bg-slate-50 hover:text-slate-900' }}">
+                            <i class="fas {{ $item['icon'] }} w-4 text-center text-[11px] {{ $itemActive ? 'admin-sidebar-active-icon' : 'text-slate-400' }}"></i><span>{{ $item['label'] }}</span>
                         </a>
                     @endforeach
                 </div>
@@ -128,7 +128,7 @@
             @if(Auth::user()->avatar)
                 <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 rounded-lg object-cover ring-2 ring-white shadow-sm">
             @else
-                <div class="w-8 h-8 shrink-0 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+                <div class="admin-theme-avatar w-8 h-8 shrink-0 rounded-lg flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
             @endif
             <div class="min-w-0 flex-1"><p class="text-xs font-bold text-slate-800 truncate">{{ Auth::user()->name }}</p><p class="text-[8px] text-slate-400 font-semibold uppercase tracking-wider">Administrator</p></div>
         </div>

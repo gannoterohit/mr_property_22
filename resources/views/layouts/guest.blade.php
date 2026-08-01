@@ -31,12 +31,26 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>
+            :root {
+                --primary: {{ \App\Models\Setting::get('primary_color', '#4F46E5') }};
+                --secondary: {{ \App\Models\Setting::get('secondary_color', '#10B981') }};
+                --primary-rgb: {{ implode(',', sscanf(ltrim(\App\Models\Setting::get('primary_color', '#4F46E5'), '#'), '%02x%02x%02x')) }};
+                --secondary-rgb: {{ implode(',', sscanf(ltrim(\App\Models\Setting::get('secondary_color', '#10B981'), '#'), '%02x%02x%02x')) }};
+            }
+            .guest-auth-shell {
+                background: linear-gradient(135deg, #f8fafc 0%, rgba(var(--primary-rgb), .08) 52%, rgba(var(--secondary-rgb), .08) 100%);
+            }
+            .guest-auth-logo {
+                color: var(--primary);
+            }
+        </style>
     </head>
     <body class="font-sans text-gray-900 antialiased bg-slate-50">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div class="guest-auth-shell min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
             <div>
                 <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-indigo-600" />
+                    <x-application-logo class="guest-auth-logo w-20 h-20 fill-current" />
                 </a>
             </div>
 

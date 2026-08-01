@@ -88,6 +88,31 @@
         min-height: 42px;
         font-size: .8125rem !important;
     }
+    .rooms-search-panel input:focus,
+    .rooms-search-panel select:focus,
+    .rooms-filter-panel input:focus,
+    .rooms-filter-panel select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(var(--primary-rgb), .14);
+    }
+    .rooms-search-panel button[type="submit"],
+    .rooms-filter-panel button[type="submit"] {
+        background: var(--primary);
+        color: #fff;
+    }
+    .rooms-search-panel button[type="submit"]:hover,
+    .rooms-filter-panel button[type="submit"]:hover {
+        background: var(--primary-dark);
+    }
+    .rooms-filter-panel input[type="checkbox"],
+    .rooms-filter-panel input[type="radio"] {
+        accent-color: var(--primary);
+    }
+    .rooms-filter-panel label:hover,
+    .rooms-breadcrumb-link:hover,
+    .rooms-theme-link {
+        color: var(--primary);
+    }
     .rooms-filter-panel form > div {
         padding-bottom: 1.15rem;
         border-bottom: 1px solid #f1f5f9;
@@ -151,14 +176,24 @@
     .rooms-filter-panel input[type="text"],.rooms-filter-panel input[type="number"],.rooms-filter-panel input[type="date"],.rooms-filter-panel select{min-height:40px;border-radius:.6rem!important}
     .rooms-results-head{padding:.25rem 0 1rem;border:0;background:transparent;box-shadow:none}
     .rooms-results-head h2{font-size:1.65rem!important}
-    .rooms-results-head h2+span{display:block;margin-top:.25rem;color:var(--primary)!important}
+    .rooms-results-head h2+span{display:block;margin-top:.25rem;color:var(--primary)}
     .room-listing-card{border-radius:.9rem!important;box-shadow:0 8px 24px rgba(15,23,42,.07)}
     .room-listing-card:hover{transform:translateY(-5px)!important;box-shadow:0 20px 42px rgba(15,23,42,.13)}
     .room-listing-card .room-image{height:14.5rem}
     .room-listing-card .room-card-body{padding:1rem}
-    .room-listing-card h3{min-height:2.7rem;font-size:1rem!important;color:var(--primary)!important}
-    .room-price-tag{display:inline-flex;align-items:baseline;gap:.2rem;border:1px solid rgba(var(--primary-rgb),.2)!important;background:#fff!important;color:var(--primary)!important;box-shadow:0 8px 18px rgba(15,23,42,.13)!important}
-    .room-price-tag span:last-child{color:#64748b!important}
+    .room-listing-card h3{min-height:2.7rem;font-size:1rem;color:var(--primary)}
+    .room-price-tag{display:inline-flex;align-items:baseline;gap:.2rem;border:1px solid rgba(var(--primary-rgb),.2);background:#fff;color:var(--primary);box-shadow:0 8px 18px rgba(15,23,42,.13)}
+    .room-price-tag span:last-child{color:#64748b}
+    .room-theme-type-badge{color:var(--primary)}
+    .room-theme-secondary-badge{background:var(--secondary);color:#fff}
+    .room-theme-primary-icon{color:rgba(var(--primary-rgb),.65)}
+    .room-theme-secondary-dot{background:var(--secondary)}
+    .room-theme-secondary-text{color:var(--secondary)}
+    .room-theme-primary-button{background:var(--primary);color:#fff}
+    .room-theme-primary-button:hover{background:var(--primary-dark)}
+    .room-theme-primary-soft{background:rgba(var(--primary-rgb),.1);color:var(--primary)}
+    .room-theme-secondary-soft{background:rgba(var(--secondary-rgb),.1);color:var(--secondary)}
+    .room-theme-alert-box{border-color:rgba(var(--primary-rgb),.12);background:rgba(var(--primary-rgb),.04)}
     .room-owner-row{display:flex;align-items:center;gap:.55rem;margin:.15rem 0 .85rem;padding-top:.75rem;border-top:1px solid #eef2f7}
     .room-owner-row img{width:1.65rem;height:1.65rem;border-radius:999px;object-fit:cover;background:#eef2ff}
     .room-owner-row span{font-size:.7rem;color:#64748b}
@@ -195,7 +230,7 @@
                 <div class="flex-1 min-w-[200px] border-r border-slate-100 pr-4">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-between mb-1">
                         <span>Location</span>
-                        <button type="button" onclick="detectLocation(true)" class="text-[9px] text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 font-bold">
+                        <button type="button" onclick="detectLocation(true)" class="rooms-theme-link text-[9px] flex items-center gap-0.5 font-bold">
                             <i class="fas fa-location-crosshairs"></i> Near Me
                         </button>
                     </label>
@@ -253,7 +288,7 @@
 
                 <!-- Search Button -->
                 <div class="w-[120px] pl-1">
-                    <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 text-xs">
+                    <button type="submit" class="room-theme-primary-button w-full py-2.5 font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 text-xs">
                         <i class="fas fa-search text-[10px]"></i> Search Rooms
                     </button>
                 </div>
@@ -277,13 +312,13 @@
                 <strong class="block text-sm">Launching soon in {{ $cityContext['launchingSoonCityName'] }}</strong>
                 <span class="text-xs">We're currently active in {{ $cityContext['activeCityName'] }}. Showing verified {{ $cityContext['activeCityName'] }} properties for now.</span>
             </div>
-            <a href="{{ route('rooms.index', ['city' => $cityContext['activeCityName']]) }}" class="text-xs font-black text-indigo-700">View {{ $cityContext['activeCityName'] }}</a>
+            <a href="{{ route('rooms.index', ['city' => $cityContext['activeCityName']]) }}" class="rooms-theme-link text-xs font-black">View {{ $cityContext['activeCityName'] }}</a>
         </div>
     @endif
 
     <!-- Breadcrumb -->
     <div class="flex items-center gap-1.5 text-xs text-slate-400 mb-4 font-semibold">
-        <a href="{{ url('/') }}" class="hover:text-indigo-600 transition-colors">Home</a>
+        <a href="{{ url('/') }}" class="rooms-breadcrumb-link transition-colors">Home</a>
         <i class="fas fa-chevron-right text-[8px]"></i>
         <span class="text-slate-600">Rooms in {{ $displayCity ?? 'India' }}</span>
     </div>
@@ -476,7 +511,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 text-xs shadow-indigo-600/10">
+                    <button type="submit" class="room-theme-primary-button w-full py-2.5 font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 text-xs">
                         Apply Filters
                     </button>
                 </form>
@@ -513,7 +548,7 @@
 
                     <!-- Layout Grid/List selectors -->
                     <div class="hidden sm:flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
-                        <button class="w-7 h-7 bg-white text-indigo-600 rounded-lg flex items-center justify-center text-xs shadow-sm" title="Grid view">
+                        <button class="rooms-theme-link w-7 h-7 bg-white rounded-lg flex items-center justify-center text-xs shadow-sm" title="Grid view">
                             <i class="fas fa-grip-vertical"></i>
                         </button>
                         <button class="w-7 h-7 text-slate-400 hover:text-slate-600 rounded-lg flex items-center justify-center text-xs transition-colors" title="List view">
@@ -612,13 +647,13 @@
                                         @if($room->is_featured)
                                             <span class="bg-amber-500 text-white text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg">Featured</span>
                                         @endif
-                                        <span class="bg-white/90 backdrop-blur-sm text-indigo-700 text-[8px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-lg border border-white/40 shadow-sm">
+                                        <span class="room-theme-type-badge bg-white/90 backdrop-blur-sm text-[8px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-lg border border-white/40 shadow-sm">
                                             {{ $room->roomTypeLabel() }}
                                         </span>
                                         @if($room->listing_type === 'broker')
-                                            <span class="bg-orange-500 text-white text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg">Broker Fee</span>
+                                            <span class="room-theme-secondary-badge text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg">Broker Fee</span>
                                         @else
-                                            <span class="bg-emerald-600 text-white text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg">No Broker Fee</span>
+                                            <span class="room-theme-secondary-badge text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg">No Broker Fee</span>
                                         @endif
                                     </div>
 
@@ -632,34 +667,34 @@
                                     <div class="absolute bottom-2.5 left-2.5">
                                         <div class="room-price-tag px-3 py-1 rounded-xl">
                                             <span class="text-sm font-black">₹{{ number_format($room->rent) }}</span>
-                                            <span class="text-[8px] font-bold text-indigo-100">/mo</span>
+                                            <span class="text-[8px] font-bold">/mo</span>
                                         </div>
                                     </div>
                                 </a>
 
                                 <!-- Card content -->
                                 <div class="room-card-body flex flex-col flex-grow">
-                                    <h3 class="font-bold text-sm text-slate-900 line-clamp-2 mb-2 group-hover:text-indigo-600 transition-colors">
+                                    <h3 class="font-bold text-sm text-slate-900 line-clamp-2 mb-2 transition-colors">
                                         <a href="{{ route('rooms.show', $room->id) }}">{{ $room->title }}</a>
                                     </h3>
 
                                     <div class="flex items-center text-slate-500 text-xs mb-3">
-                                        <i class="fas fa-location-dot mr-1.5 text-indigo-500"></i>
+                                        <i class="room-theme-primary-icon fas fa-location-dot mr-1.5"></i>
                                         <span>{{ $room->city }}</span>
                                         <div class="distance-tag hidden ml-2 flex items-center gap-1" data-lat="{{ $room->latitude }}" data-lng="{{ $room->longitude }}">
-                                            <div class="w-1 h-1 bg-emerald-500 rounded-full"></div>
-                                            <span class="text-[9px] font-extrabold text-emerald-600 uppercase tracking-widest"><span class="distance-km">0</span> km</span>
+                                            <div class="room-theme-secondary-dot w-1 h-1 rounded-full"></div>
+                                            <span class="room-theme-secondary-text text-[9px] font-extrabold uppercase tracking-widest"><span class="distance-km">0</span> km</span>
                                         </div>
                                     </div>
 
                                     <!-- Quick Specs -->
                                     <div class="flex flex-wrap gap-1.5 mb-4 mt-auto">
                                         <span class="bg-slate-50 border border-slate-100 text-slate-500 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1">
-                                            <i class="fas fa-couch text-indigo-400"></i> {{ $room->furnishingTypeLabel() }}
+                                            <i class="room-theme-primary-icon fas fa-couch"></i> {{ $room->furnishingTypeLabel() }}
                                         </span>
                                         @if($room->tenantTypeLabel() !== 'N/A')
                                             <span class="bg-slate-50 border border-slate-100 text-slate-500 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1">
-                                                <i class="fas fa-users text-indigo-400"></i> {{ $room->tenantTypeLabel() }}
+                                                <i class="room-theme-primary-icon fas fa-users"></i> {{ $room->tenantTypeLabel() }}
                                             </span>
                                         @endif
                                     </div>
@@ -687,12 +722,12 @@
                                                 </form>
                                             </div>
                                         @else
-                                            <a href="{{ route('rooms.show', $room->id) }}" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1 text-xs mt-auto">
+                                            <a href="{{ route('rooms.show', $room->id) }}" class="room-theme-primary-button w-full py-2 font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1 text-xs mt-auto">
                                                 View Details <i class="fas fa-arrow-right text-[10px]"></i>
                                             </a>
                                         @endif
                                     @else
-                                        <a href="{{ route('rooms.show', $room->id) }}" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1 text-xs mt-auto">
+                                        <a href="{{ route('rooms.show', $room->id) }}" class="room-theme-primary-button w-full py-2 font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1 text-xs mt-auto">
                                             View Details <i class="fas fa-arrow-right text-[10px]"></i>
                                         </a>
                                     @endauth
@@ -715,21 +750,21 @@
                 <!-- Empty state fallback -->
                 <div class="text-center py-16 bg-white border border-slate-200/80 rounded-2xl shadow-sm">
                     <div class="max-w-md mx-auto">
-                        <div class="inline-flex items-center justify-center w-20 h-20 bg-indigo-50 text-indigo-500 rounded-full mb-6 shadow-sm">
+                        <div class="room-theme-primary-soft inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 shadow-sm">
                             <i class="fas fa-house-circle-xmark text-4xl"></i>
                         </div>
                         <h3 class="text-xl font-black text-slate-800 mb-2">No Rooms Found</h3>
                         <p class="text-slate-500 mb-6 text-sm">We couldn't find any rooms matching your search criteria. Try modifying your filters or view all rooms.</p>
-                        <a href="{{ route('rooms.index', ['clear' => 1]) }}" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                        <a href="{{ route('rooms.index', ['clear' => 1]) }}" class="room-theme-primary-button inline-flex items-center justify-center font-extrabold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
                             <i class="fas fa-rotate-left mr-1.5"></i> Clear All Filters
                         </a>
                         
                         @if(request('city'))
-                            <div class="mt-8 p-5 border border-indigo-50 bg-indigo-50/20 rounded-2xl">
+                            <div class="room-theme-alert-box mt-8 p-5 border rounded-2xl">
                                 <h4 class="text-xs font-black text-slate-700 uppercase tracking-wider mb-1">Get Alerted</h4>
                                 <p class="text-slate-500 text-xs mb-3">Subscribe and we will email you when new rooms open up in <strong>{{ request('city') }}</strong>.</p>
                                 <button onclick="subscribeToAlerts('{{ request('city') }}')" id="notify-btn"
-                                        class="py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-xs transition-all shadow-sm">
+                                        class="room-theme-primary-button py-2 px-4 font-extrabold rounded-xl text-xs transition-all shadow-sm">
                                     <i class="fas fa-bell mr-1"></i> Notify Me
                                 </button>
                             </div>
@@ -748,7 +783,7 @@
     <div class="container mx-auto px-6">
         <div class="rooms-trust-grid grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
             <div class="rooms-trust-item flex flex-col md:flex-row items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl shadow-inner">
+                <div class="room-theme-primary-soft w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-inner">
                     <i class="fas fa-shield-halved"></i>
                 </div>
                 <div>
@@ -757,7 +792,7 @@
                 </div>
             </div>
             <div class="rooms-trust-item flex flex-col md:flex-row items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl shadow-inner">
+                <div class="room-theme-secondary-soft w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-inner">
                     <i class="fas fa-wallet"></i>
                 </div>
                 <div>
@@ -766,7 +801,7 @@
                 </div>
             </div>
             <div class="rooms-trust-item flex flex-col md:flex-row items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl shadow-inner">
+                <div class="room-theme-primary-soft w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-inner">
                     <i class="fas fa-file-signature"></i>
                 </div>
                 <div>

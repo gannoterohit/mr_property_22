@@ -123,6 +123,55 @@
         right: 1rem;
         left: auto;
     }
+    .admin-theme-link { color: var(--admin-primary); }
+    .admin-theme-link:hover { background: rgba(var(--admin-primary-rgb), .07); color: var(--admin-primary); }
+    .admin-theme-avatar {
+        background: var(--admin-primary);
+        color: #fff;
+    }
+    .admin-sidebar-active {
+        background: var(--admin-primary);
+        color: #fff;
+        box-shadow: 0 8px 18px rgba(var(--admin-primary-rgb), .16);
+    }
+    .admin-sidebar-icon-active {
+        background: var(--admin-primary);
+        color: #fff;
+    }
+    .admin-sidebar-icon-idle {
+        background: #fff;
+        color: var(--admin-primary);
+    }
+    .admin-sidebar-group-active {
+        border-color: rgba(var(--admin-primary-rgb), .18);
+        background: rgba(var(--admin-primary-rgb), .08);
+        color: var(--admin-primary);
+    }
+    .admin-sidebar-submenu {
+        border-color: rgba(var(--admin-primary-rgb), .18);
+    }
+    .admin-sidebar-subitem-active {
+        background: #fff;
+        color: var(--admin-primary);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .06);
+        border: 1px solid rgba(var(--admin-primary-rgb), .12);
+    }
+    .admin-sidebar-subitem-active::before {
+        content: "";
+        position: absolute;
+        left: -14px;
+        height: 1.5rem;
+        width: 3px;
+        border-radius: 999px;
+        background: var(--admin-primary);
+    }
+    .admin-sidebar-active-icon {
+        color: var(--admin-primary);
+    }
+    .admin-sidebar-idle-icon-hover:hover span {
+        background: #fff;
+        color: var(--admin-primary);
+    }
 
     /* Compact all legacy admin screens without removing their content. */
     .admin-content .text-6xl, .admin-content .text-5xl { font-size:2rem !important; line-height:2.35rem !important; }
@@ -170,14 +219,14 @@
                 <h1 class="text-base font-bold text-slate-800 truncate">@yield('title', 'Admin Panel')</h1>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('home') }}" target="_blank" class="hidden sm:flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
+                <a href="{{ route('home') }}" target="_blank" class="admin-theme-link hidden sm:flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-600 rounded-lg transition">
                     <i class="fas fa-external-link-alt"></i> View website
                 </a>
                 <div class="h-10 pl-1.5 pr-3 rounded-xl border border-slate-200 bg-white flex items-center gap-2.5 shadow-sm">
                     @if(Auth::user()->avatar)
                         <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="w-7 h-7 rounded-lg object-cover ring-1 ring-slate-200">
                     @else
-                        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+                        <div class="admin-theme-avatar w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shadow-sm">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
                     @endif
                     <div class="hidden sm:block leading-tight max-w-[140px]">
                         <p class="text-xs font-bold text-slate-800 truncate">{{ Auth::user()->name }}</p>
