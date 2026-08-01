@@ -10,7 +10,7 @@ class RejectionReasonController extends Controller
 {
     public function index()
     {
-        $reasons = RejectionReason::where('is_active', true)->get();
+        $reasons = RejectionReason::orderByDesc('is_active')->orderBy('reason')->get();
         return view('admin.rejection-reasons.index', compact('reasons'));
     }
     
@@ -49,5 +49,15 @@ class RejectionReasonController extends Controller
         ]);
         
         return redirect()->back()->with('success', 'Rejection reason deleted successfully');
+    }
+
+    public function toggleStatus(RejectionReason $rejectionReason)
+    {
+        $rejectionReason->update(['is_active' => !$rejectionReason->is_active]);
+
+        return redirect()->back()->with(
+            'success',
+            $rejectionReason->is_active ? 'Rejection reason activated successfully.' : 'Rejection reason deactivated successfully.'
+        );
     }
 }

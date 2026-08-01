@@ -167,6 +167,8 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::resource('cms-pages', CmsPageController::class)->except(['show']);
     Route::resource('room-options', RoomOptionController::class)->except(['show']);
     Route::patch('room-options/{roomOption}/toggle-status', [RoomOptionController::class, 'toggleStatus'])->name('room-options.toggle-status');
+    Route::patch('rejection-reasons/{rejectionReason}/toggle-status', [\App\Http\Controllers\Admin\RejectionReasonController::class, 'toggleStatus'])->name('rejection-reasons.toggle-status');
+    Route::patch('cities/{city}/toggle-status', [\App\Http\Controllers\Admin\CityController::class, 'toggleStatus'])->name('cities.toggle-status');
     Route::resource('plans', PlanController::class);
     Route::post('/plans/{plan}/toggle-active', [PlanController::class, 'toggleActive'])->name('plans.toggleActive');
 

@@ -1,6 +1,5 @@
 @extends('layouts.admin')
 @section('title','Newsletter Subscribers')
-@push('sweetalert')<script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>@endpush
 @push('styles')<style>.subscriber-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.subscriber-filter{display:grid!important;grid-template-columns:minmax(260px,1fr) 160px 160px auto!important;gap:8px}.subscriber-table{min-width:760px;width:100%;table-layout:fixed}.subscriber-table th,.subscriber-table td{text-align:left!important;vertical-align:middle!important}.subscriber-table th:last-child,.subscriber-table td:last-child{text-align:right!important}@media(max-width:767px){.subscriber-stats,.subscriber-filter{grid-template-columns:1fr!important}}</style>@endpush
 @section('admin-content')
 <div class="space-y-5 p-5 lg:p-6"><header class="flex items-end justify-between"><div><p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Audience growth</p><h1 class="mt-1 text-2xl font-extrabold">Newsletter Subscribers</h1><p class="text-sm text-slate-500">Manage people subscribed to room updates and blog content.</p></div><button onclick="window.print()" class="rounded-xl border bg-white px-4 py-2.5 text-xs font-bold"><i class="fas fa-print mr-2"></i>Print current list</button></header>

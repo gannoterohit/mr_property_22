@@ -23,7 +23,7 @@ class RoomOption extends Model
 
     protected static function booted(): void
     {
-        static::saved(function (self $option) {
+        $clearOptionCache = function (self $option): void {
             foreach (array_unique(array_filter([
                 $option->key,
                 $option->getOriginal('key'),
@@ -34,7 +34,10 @@ class RoomOption extends Model
                     Cache::forget("room_option_id:{$option->getOriginal('group')}:{$key}");
                 }
             }
-        });
+        };
+
+        static::saved($clearOptionCache);
+        static::deleted($clearOptionCache);
     }
 
     public function scopeActive($query)
@@ -49,16 +52,6 @@ class RoomOption extends Model
             ->orderBy('sort_order')
             ->orderBy('label')
             ->get(['id', 'key', 'label']);
-
-        if ($options->isEmpty()) {
-            $options = collect(static::fallbackOptionsFor($group))->map(function ($label, $key) {
-                return (object) [
-                    'id' => null,
-                    'key' => $key,
-                    'label' => $label,
-                ];
-            });
-        }
 
     if ($selectedValue !== null) {
         $matches = is_numeric($selectedValue)
@@ -161,55 +154,6 @@ class RoomOption extends Model
 
         $fallbackLabel = $fallback ?? (is_string($value) ? str_replace('_', ' ', $value) : (string) $value);
 
-        $customLabels = static::fallbackOptionsFor($group);
-        $lookupValue = is_string($value) ? $value : (string) $value;
-
-        return $customLabels[$lookupValue] ?? ucwords((string) $fallbackLabel);
-    }
-
-    public static function fallbackOptionsFor(string $group): array
-    {
-        return match ($group) {
-            'room_type' => [
-                'single_room' => 'Single Room',
-                'shared_room' => 'Shared Room',
-                '1bhk' => '1 BHK',
-                '2bhk' => '2 BHK',
-                '3bhk' => '3 BHK',
-                'flat' => 'Full Flat',
-            ],
-            'furnishing_type' => [
-                'furnished' => 'Fully Furnished',
-                'semi-furnished' => 'Semi Furnished',
-                'unfurnished' => 'Unfurnished',
-            ],
-            'tenant_type' => [
-                'any' => 'Any / All',
-                'family' => 'Family',
-                'bachelors' => 'Bachelors',
-                'girls' => 'Girls Only',
-                'boys' => 'Boys Only',
-            ],
-            'amenity' => [
-                'wifi' => 'Wifi',
-                'ac' => 'AC',
-                'tv' => 'TV',
-                'geyser' => 'Geyser',
-                'cooler' => 'Cooler',
-                'parking' => 'Parking',
-                'kitchen' => 'Kitchen',
-                'cleaning' => 'Cleaning',
-                'laundry' => 'Laundry',
-                'power_backup' => 'Power Backup',
-                'cctv' => 'CCTV',
-                'lift' => 'Lift',
-                'security' => 'Security',
-                'water_supply' => 'Water Supply',
-                'gym' => 'Gym',
-                'swimming_pool' => 'Swimming Pool',
-                'clubhouse' => 'Clubhouse',
-            ],
-            default => [],
-        };
+        return ucwords((string) $fallbackLabel);
     }
 }

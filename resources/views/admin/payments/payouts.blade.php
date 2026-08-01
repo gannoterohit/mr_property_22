@@ -76,11 +76,10 @@
                                 </td>
                                 <td class="px-8 py-6 text-right">
                                     @if($payout->status == 'pending')
-                                    <form action="{{ route('admin.payouts.process', $payout->id) }}" method="POST" class="inline">
+                                    <form action="{{ route('admin.payouts.process', $payout->id) }}" method="POST" class="admin-confirm inline" data-confirm-title="Process this payout?" data-confirm-text="The payout will be marked as processed and finalized." data-confirm-button="Yes, process payout" data-confirm-color="#059669">
                                         @csrf
                                         <button type="submit" 
-                                                class="px-6 py-2.5 admin-theme-bg hover:bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md hover:shadow-xl transform hover:-translate-y-0.5"
-                                                onclick="return confirm('Mark this payout as processed?')">
+                                                class="px-6 py-2.5 admin-theme-bg hover:bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md hover:shadow-xl transform hover:-translate-y-0.5">
                                             Process Payout
                                         </button>
                                     </form>

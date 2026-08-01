@@ -92,7 +92,7 @@
                     @else
                         <a href="{{ route($editRoute,$member) }}" class="rounded-xl border bg-white px-4 py-2.5 text-xs font-bold text-slate-700"><i class="fas fa-pen mr-1"></i>Edit account</a>
                         <form method="POST" action="{{ route($toggleRoute,$member) }}">@csrf<input type="hidden" name="block_reason" value="Blocked from Member 360 by administrator"><button class="rounded-xl px-4 py-2.5 text-xs font-bold {{ $member->is_blocked ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">{{ $member->is_blocked ? 'Unblock' : 'Block' }}</button></form>
-                        <form method="POST" action="{{ route($destroyRoute,$member) }}" onsubmit="return confirm('Delete this account? It can be restored later.');">@csrf @method('DELETE')<button class="rounded-xl bg-red-50 px-4 py-2.5 text-xs font-bold text-red-700"><i class="fas fa-trash mr-1"></i>Delete</button></form>
+                        <form method="POST" action="{{ route($destroyRoute,$member) }}" class="admin-confirm" data-confirm-title="Delete {{ $member->name }}?" data-confirm-text="This account can be restored later." data-confirm-button="Yes, delete account">@csrf @method('DELETE')<button class="rounded-xl bg-red-50 px-4 py-2.5 text-xs font-bold text-red-700"><i class="fas fa-trash mr-1"></i>Delete</button></form>
                     @endif
                 </div>
             </div>

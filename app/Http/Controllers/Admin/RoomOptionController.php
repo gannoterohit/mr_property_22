@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Room;
 use App\Models\RoomOption;
 use Illuminate\Http\Request;
 
@@ -44,9 +45,10 @@ class RoomOptionController extends Controller
             'key' => 'required|string|max:100|regex:/^[a-z0-9_\-]+$/|unique:room_options,key',
             'label' => 'required|string|max:100',
             'sort_order' => 'nullable|integer',
+            'is_active' => 'required|boolean',
         ]);
 
-        RoomOption::create(array_merge($data, ['is_active' => true]));
+        RoomOption::create($data);
 
         return redirect()->route('admin.room-options.index')->with('success', 'Room option added successfully.');
     }
@@ -58,6 +60,7 @@ class RoomOptionController extends Controller
             'key' => 'required|string|max:100|regex:/^[a-z0-9_\-]+$/|unique:room_options,key,' . $roomOption->id,
             'label' => 'required|string|max:100',
             'sort_order' => 'nullable|integer',
+            'is_active' => 'required|boolean',
         ]);
 
         $roomOption->update($data);
@@ -67,9 +70,25 @@ class RoomOptionController extends Controller
 
     public function destroy(RoomOption $roomOption)
     {
-        $roomOption->update(['is_active' => false]);
+        $isInUse = match ($roomOption->group) {
+            'room_type' => Room::where('room_type_option_id', $roomOption->id)->exists(),
+            'furnishing_type' => Room::where('furnishing_option_id', $roomOption->id)->exists(),
+            'tenant_type' => Room::where('tenant_option_id', $roomOption->id)->exists(),
+            'amenity' => Room::whereJsonContains('amenities', $roomOption->label)->exists(),
+            default => false,
+        };
 
-        return redirect()->back()->with('success', 'Room option removed successfully.');
+        if ($isInUse) {
+            return redirect()->back()->with(
+                'error',
+                "{$roomOption->label} is used by an existing room. Deactivate it instead of deleting it."
+            );
+        }
+
+        $label = $roomOption->label;
+        $roomOption->delete();
+
+        return redirect()->back()->with('success', "{$label} deleted permanently.");
     }
 
     public function toggleStatus(RoomOption $roomOption)

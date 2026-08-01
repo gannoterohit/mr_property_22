@@ -236,6 +236,37 @@
 </style>
 @endpush
 
+@push('sweetalert')
+<script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('submit', async (event) => {
+    const form = event.target.closest('form.admin-confirm');
+    if (!form || form.dataset.confirmed === '1') return;
+
+    event.preventDefault();
+    const result = await Swal.fire({
+        title: form.dataset.confirmTitle || 'Confirm this action?',
+        text: form.dataset.confirmText || 'Please confirm before continuing.',
+        icon: form.dataset.confirmIcon || 'warning',
+        showCancelButton: true,
+        confirmButtonText: form.dataset.confirmButton || 'Yes, continue',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: form.dataset.confirmColor || '#dc2626',
+        reverseButtons: true,
+        focusCancel: true,
+    });
+
+    if (result.isConfirmed) {
+        form.dataset.confirmed = '1';
+        form.submit();
+    }
+});
+</script>
+@endpush
+
 @section('content')
 <div class="admin-shell">
     @include('admin.partials.sidebar')

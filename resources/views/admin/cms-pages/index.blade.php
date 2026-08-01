@@ -121,7 +121,7 @@
                                     @endif
                                     <a href="{{ route('admin.cms-pages.edit', $page) }}" class="rounded-lg admin-theme-soft px-3 py-2 text-xs font-bold admin-theme-text"><i class="fas fa-edit mr-1"></i>Edit</a>
                                     @unless($page->is_system)
-                                        <form method="POST" action="{{ route('admin.cms-pages.destroy', $page) }}" onsubmit="return confirm('Delete this page?')">@csrf @method('DELETE')<button class="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-700"><i class="fas fa-trash"></i></button></form>
+                                        <form method="POST" action="{{ route('admin.cms-pages.destroy', $page) }}" class="admin-confirm" data-confirm-title="Delete {{ $page->title }}?" data-confirm-text="This CMS page will be permanently removed." data-confirm-button="Yes, delete page">@csrf @method('DELETE')<button class="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-700"><i class="fas fa-trash"></i></button></form>
                                     @endunless
                                 </div>
                             </td>

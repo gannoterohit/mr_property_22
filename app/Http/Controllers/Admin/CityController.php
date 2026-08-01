@@ -62,4 +62,15 @@ class CityController extends Controller
 
         return back()->with('success', 'City updated successfully.');
     }
+
+    public function toggleStatus(City $city)
+    {
+        if ($city->is_default && $city->is_active) {
+            return back()->with('error', 'Default city cannot be deactivated. Set another active city as default first.');
+        }
+
+        $city->update(['is_active' => !$city->is_active]);
+
+        return back()->with('success', $city->is_active ? 'City activated successfully.' : 'City deactivated successfully.');
+    }
 }

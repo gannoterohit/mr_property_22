@@ -63,7 +63,7 @@
                             <td class="px-5"><div class="flex justify-end gap-2">
                                 <form action="{{ route('admin.plans.toggleActive', $plan) }}" method="POST">@csrf<button class="h-9 rounded-lg border border-slate-200 px-3 text-xs font-bold {{ $plan->is_active ? 'text-amber-700 hover:bg-amber-50' : 'text-emerald-700 hover:bg-emerald-50' }}">{{ $plan->is_active ? 'Deactivate' : 'Activate' }}</button></form>
                                 <a href="{{ route('admin.plans.edit', $plan) }}" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100" title="Edit"><i class="fas fa-pen text-xs"></i></a>
-                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" onsubmit="return confirm('Delete this plan? Existing subscription history may be affected.')">@csrf @method('DELETE')<button class="h-9 w-9 rounded-lg border border-red-200 text-red-600 hover:bg-red-50" title="Delete"><i class="fas fa-trash text-xs"></i></button></form>
+                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="admin-confirm" data-confirm-title="Delete {{ $plan->name }}?" data-confirm-text="Existing subscription history may be affected." data-confirm-button="Yes, delete plan">@csrf @method('DELETE')<button class="h-9 w-9 rounded-lg border border-red-200 text-red-600 hover:bg-red-50" title="Delete"><i class="fas fa-trash text-xs"></i></button></form>
                             </div></td>
                         </tr>
                     @empty

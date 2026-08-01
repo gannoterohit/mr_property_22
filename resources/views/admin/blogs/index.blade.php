@@ -70,7 +70,7 @@
                                         <a href="{{ route('admin.blogs.edit', $blog->id) }}" class="p-2 admin-theme-text hover:bg-slate-50 rounded-lg transition" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('admin.blogs.destroy', $blog->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
+                                        <form action="{{ route('admin.blogs.destroy', $blog->id) }}" method="POST" class="admin-confirm" data-confirm-title="Delete {{ $blog->title }}?" data-confirm-text="This blog post will be permanently removed." data-confirm-button="Yes, delete post">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete">

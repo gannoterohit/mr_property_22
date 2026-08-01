@@ -1,6 +1,5 @@
 @extends('layouts.admin')
 @section('title','City Alerts')
-@push('sweetalert')<script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>@endpush
 @push('styles')<style>.city-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.city-filter{display:grid!important;grid-template-columns:minmax(240px,1fr) 180px 150px 150px auto!important;gap:8px}.city-table{min-width:850px;width:100%;table-layout:fixed}.city-table th,.city-table td{text-align:left!important;vertical-align:middle!important}.city-table th:last-child,.city-table td:last-child{text-align:right!important}@media(max-width:1023px){.city-stats{grid-template-columns:repeat(2,1fr)}.city-filter{grid-template-columns:1fr 1fr!important}}@media(max-width:639px){.city-stats,.city-filter{grid-template-columns:1fr!important}}</style>@endpush
 @section('admin-content')
 <div class="space-y-5 p-5 lg:p-6"><header><p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Audience notifications</p><h1 class="mt-1 text-2xl font-extrabold">City Alert Subscriptions</h1><p class="text-sm text-slate-500">Users waiting for new rooms in their preferred cities.</p></header>

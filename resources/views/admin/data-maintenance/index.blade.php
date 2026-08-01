@@ -66,7 +66,7 @@
         </div>
     </div>
 
-    <form action="{{ route('admin.data-maintenance.cleanup') }}" method="POST" onsubmit="return confirm('Run cleanup using the preview shown above? This cannot be undone.')" class="rounded-2xl border border-amber-200 bg-amber-50 p-5 lg:p-6">@csrf
+    <form action="{{ route('admin.data-maintenance.cleanup') }}" method="POST" class="admin-confirm rounded-2xl border border-amber-200 bg-amber-50 p-5 lg:p-6" data-confirm-title="Run data cleanup?" data-confirm-text="The previewed records will be removed and this action cannot be undone." data-confirm-button="Yes, run cleanup">@csrf
         <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between"><div><h2 class="font-extrabold text-amber-950"><i class="fas fa-triangle-exclamation mr-2"></i>Run cleanup now</h2><p class="mt-1 text-sm text-amber-800">Only eligible temporary records shown above will be removed. Successful payments, real unlocks, rooms and members remain safe.</p><label class="mt-4 flex items-center gap-2 text-xs font-bold text-amber-950"><input type="checkbox" name="delete_orphan_media" value="1" class="rounded border-amber-300 admin-theme-text">Also delete {{ count($orphanMedia) }} orphan room media files</label></div><div class="shrink-0"><label class="mb-3 flex items-center gap-2 text-xs font-bold text-amber-950"><input type="checkbox" name="confirm_cleanup" value="1" required class="rounded border-amber-300 admin-theme-text">I reviewed the cleanup preview</label><button class="w-full rounded-xl bg-amber-600 px-6 py-3 text-sm font-bold text-white hover:bg-amber-700"><i class="fas fa-broom mr-2"></i>Run Cleanup Now</button></div></div>
     </form>
 </div>

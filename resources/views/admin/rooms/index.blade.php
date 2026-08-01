@@ -2,9 +2,6 @@
 
 @section('title','Room Listings')
 
-@push('sweetalert')
-<script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>
-@endpush
 
 @push('styles')
 <style>

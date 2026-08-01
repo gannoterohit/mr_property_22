@@ -80,15 +80,23 @@
                             <td class="px-4"><code class="px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs">{{ $option->key }}</code></td>
                             <td class="px-4 text-center"><span class="inline-flex min-w-7 justify-center px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-bold">{{ $option->sort_order }}</span></td>
                             <td class="px-4 text-center">
-                                <span class="inline-flex items-center gap-1.5 text-[11px] font-bold {{ $option->is_active ? 'text-emerald-600' : 'text-slate-400' }}"><span class="w-2 h-2 rounded-full {{ $option->is_active ? 'bg-emerald-500' : 'bg-slate-300' }}"></span>{{ $option->is_active ? 'Active' : 'Inactive' }}</span>
+                                <form action="{{ route('admin.room-options.toggle-status', $option) }}" method="POST" class="toggle-room-option inline-flex" data-label="{{ $option->label }}" data-active="{{ $option->is_active ? '1' : '0' }}">
+                                    @csrf @method('PATCH')
+                                    <button type="submit" class="inline-flex h-8 w-[104px] items-center justify-start gap-2 rounded-full border px-2 text-[10px] font-bold transition-colors {{ $option->is_active ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700' }}" title="Click to {{ $option->is_active ? 'deactivate' : 'activate' }}">
+                                        <span class="relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors {{ $option->is_active ? 'bg-emerald-500' : 'bg-red-500' }}">
+                                            <span class="absolute left-0.5 top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition-transform duration-200 {{ $option->is_active ? 'translate-x-3' : 'translate-x-0' }}"></span>
+                                        </span>
+                                        <span class="inline-block w-12 text-left">{{ $option->is_active ? 'Active' : 'Inactive' }}</span>
+                                    </button>
+                                </form>
                             </td>
                             <td class="px-5">
                                 <div class="flex justify-end items-center gap-2">
                                     <a href="{{ route('admin.room-options.edit', $option) }}" class="h-8 px-2.5 inline-flex items-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-800 hover:text-white text-[10px] font-bold transition"><i class="fas fa-pen mr-1"></i>Edit</a>
-                                    <form action="{{ route('admin.room-options.toggle-status', $option) }}" method="POST" onsubmit="return confirm('{{ $option->is_active ? 'Deactivate' : 'Activate' }} this option?')">
-                                        @csrf @method('PATCH')
-                                        <button type="submit" class="h-8 px-2.5 rounded-lg border text-[10px] font-bold transition {{ $option->is_active ? 'bg-red-50 border-red-100 text-red-600 hover:bg-red-600 hover:text-white' : 'bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white' }}">
-                                            <i class="fas {{ $option->is_active ? 'fa-trash-can' : 'fa-rotate-left' }} mr-1"></i>{{ $option->is_active ? 'Remove' : 'Restore' }}
+                                    <form action="{{ route('admin.room-options.destroy', $option) }}" method="POST" class="delete-room-option" data-label="{{ $option->label }}">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="inline-flex h-8 items-center rounded-lg border border-red-100 bg-white px-2.5 text-[10px] font-bold text-red-600 transition hover:bg-red-600 hover:text-white">
+                                            <i class="fas fa-trash-can mr-1"></i>Delete
                                         </button>
                                     </form>
                                 </div>
@@ -103,3 +111,53 @@
     </section>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.querySelectorAll('.toggle-room-option').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const isActive = form.dataset.active === '1';
+        const action = isActive ? 'Deactivate' : 'Activate';
+        const result = await Swal.fire({
+            title: `${action} ${form.dataset.label}?`,
+            text: isActive
+                ? 'This option will be hidden from new room forms, filters and API.'
+                : 'This option will become available in room forms, filters and API.',
+            icon: isActive ? 'warning' : 'question',
+            showCancelButton: true,
+            confirmButtonText: `Yes, ${action.toLowerCase()}`,
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: isActive ? '#dc2626' : '#059669',
+            reverseButtons: true,
+        });
+
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+});
+
+document.querySelectorAll('.delete-room-option').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const result = await Swal.fire({
+            title: `Delete ${form.dataset.label}?`,
+            text: 'This permanently removes the option. Options used by existing rooms cannot be deleted.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete permanently',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#dc2626',
+            reverseButtons: true,
+        });
+
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+});
+</script>
+@endpush

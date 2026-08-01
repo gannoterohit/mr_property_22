@@ -34,8 +34,14 @@ class RoomOptionSeeder extends Seeder
             ['group' => 'tenant_type', 'key' => 'boys', 'label' => 'Boys Only', 'sort_order' => 5],
         ];
 
+        $amenities = [
+            'wifi' => 'Wifi', 'ac' => 'AC', 'tv' => 'TV', 'geyser' => 'Geyser', 'cooler' => 'Cooler',
+            'parking' => 'Parking', 'kitchen' => 'Kitchen', 'cleaning' => 'Cleaning', 'laundry' => 'Laundry',
+            'power_backup' => 'Power Backup', 'cctv' => 'CCTV', 'lift' => 'Lift', 'security' => 'Security',
+            'water_supply' => 'Water Supply', 'gym' => 'Gym', 'swimming_pool' => 'Swimming Pool', 'clubhouse' => 'Clubhouse',
+        ];
         $amenityOrder = 0;
-        foreach (\App\Models\RoomOption::fallbackOptionsFor('amenity') as $key => $label) {
+        foreach ($amenities as $key => $label) {
             $defaults[] = ['group' => 'amenity', 'key' => $key, 'label' => $label, 'sort_order' => ++$amenityOrder];
         }
 

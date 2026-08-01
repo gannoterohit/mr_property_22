@@ -75,7 +75,7 @@
                                                     class="w-8 h-8 bg-sky-50 text-sky-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center" title="View Full Message">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <form action="{{ route('admin.contact-messages.destroy', $msg->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this message?')">
+                                            <form action="{{ route('admin.contact-messages.destroy', $msg->id) }}" method="POST" class="admin-confirm" data-confirm-title="Delete contact message?" data-confirm-text="This message will be permanently removed." data-confirm-button="Yes, delete message">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="w-8 h-8 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all flex items-center justify-center" title="Delete">
                                                     <i class="fas fa-trash"></i>

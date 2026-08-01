@@ -1,6 +1,5 @@
 @extends('layouts.admin')
 @section('title','Rejection Reasons')
-@push('sweetalert')<script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>@endpush
 @section('admin-content')
 <div class="space-y-5 p-5 lg:p-6"><div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Property moderation</p><h1 class="mt-1 text-2xl font-extrabold">Rejection Reasons</h1><p class="text-sm text-slate-500">Reasons shown to admins while rejecting a room listing.</p></div><button type="button" id="addReason" class="rounded-xl admin-theme-bg px-5 py-3 text-sm font-bold text-white"><i class="fas fa-plus mr-2"></i>Add reason</button></div>
 <div class="grid gap-3 sm:grid-cols-3"><div class="rounded-2xl border bg-white p-4"><p class="text-[10px] font-bold uppercase text-slate-400">Active reasons</p><p class="mt-1 text-2xl font-extrabold admin-theme-text">{{ $reasons->count() }}</p></div><div class="rounded-2xl border bg-white p-4 sm:col-span-2"><p class="text-sm font-bold">How it works</p><p class="mt-1 text-xs text-slate-500">Admin selects one reason on the Room Listings page. The selected reason is saved against the room and can be included in the owner notification.</p></div></div>

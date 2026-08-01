@@ -159,7 +159,7 @@
                         </form>
                     @endif
                     <a href="{{ route('admin.rooms.edit', $room) }}" class="flex h-11 items-center justify-center rounded-xl border bg-white text-sm font-bold text-slate-700"><i class="fas fa-pen mr-2"></i>Edit listing</a>
-                    <form method="POST" action="{{ route('admin.rooms.destroy', $room) }}" onsubmit="return confirm('Delete this listing permanently?');">
+                    <form method="POST" action="{{ route('admin.rooms.destroy', $room) }}" class="admin-confirm" data-confirm-title="Delete this room listing?" data-confirm-text="This listing and its related data will be permanently removed." data-confirm-button="Yes, delete listing">
                         @csrf @method('DELETE')
                         <button class="w-full rounded-xl bg-red-50 py-3 text-sm font-bold text-red-700"><i class="fas fa-trash mr-2"></i>Delete listing</button>
                     </form>

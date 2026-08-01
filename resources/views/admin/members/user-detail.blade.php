@@ -20,7 +20,7 @@
         <div class="flex flex-wrap items-center gap-2">
             <span class="rounded-full px-3 py-2 text-xs font-bold {{ $user->is_blocked?'bg-red-50 text-red-700':'bg-emerald-50 text-emerald-700' }}">{{ $user->is_blocked?'Blocked account':'Active account' }}</span>
             <a href="{{ route('admin.users.edit',$user) }}" class="rounded-xl border bg-white px-4 py-2 text-xs font-bold text-slate-700"><i class="fas fa-pen mr-1"></i>Edit</a>
-            <form method="POST" action="{{ route('admin.users.destroy',$user) }}" onsubmit="return confirm('Delete this user account? You can restore it later.');">
+            <form method="POST" action="{{ route('admin.users.destroy',$user) }}" class="admin-confirm" data-confirm-title="Delete {{ $user->name }}?" data-confirm-text="The account will be removed but can be restored later." data-confirm-button="Yes, delete account">
                 @csrf @method('DELETE')
                 <button class="rounded-xl bg-red-50 px-4 py-2 text-xs font-bold text-red-700"><i class="fas fa-trash mr-1"></i>Delete</button>
             </form>
