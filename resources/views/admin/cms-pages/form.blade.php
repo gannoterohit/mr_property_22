@@ -30,9 +30,6 @@
         @endif
     </header>
 
-    @if(session('success'))
-        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold text-emerald-700">{{ session('success') }}</div>
-    @endif
     @if(isset($errors) && $errors->any())
         <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"><strong>Please correct the form.</strong><ul class="mt-2 list-disc pl-5 text-xs">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
     @endif

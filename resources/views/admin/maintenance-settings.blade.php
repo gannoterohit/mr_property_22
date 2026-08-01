@@ -58,7 +58,6 @@
     user_panel_enabled: {{ $on('user_panel_enabled', '1') ? 'true' : 'false' }}
 }">
     <div><p class="text-xs font-bold uppercase tracking-widest text-indigo-600">System settings</p><h1 class="mt-1 text-2xl font-extrabold text-slate-950">Maintenance & Availability</h1><p class="mt-1 text-sm text-slate-500">Safely pause the whole website or only affected modules. Admin access and payment webhooks always remain available.</p></div>
-    @if(session('success'))<div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700"><i class="fas fa-circle-check mr-2"></i>{{ session('success') }}</div>@endif
     @if($errors->any())<div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{{ $errors->first() }}</div>@endif
     <form action="{{ route('admin.maintenance.update') }}" method="POST" class="space-y-6">@csrf
         <section class="overflow-hidden rounded-2xl border {{ $on('maintenance_mode') ? 'border-red-200' : 'border-slate-200' }} bg-white shadow-sm">

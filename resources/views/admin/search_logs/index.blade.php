@@ -42,10 +42,6 @@
         </div>
     </header>
 
-    @if(session('success'))
-        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold text-emerald-700">{{ session('success') }}</div>
-    @endif
-
     <nav class="flex gap-2 overflow-x-auto rounded-2xl border bg-white p-2">
         @foreach($navItems as [$key,$label,$icon])
             <a href="{{ route('admin.analytics',['tab'=>$key]) }}" class="inline-flex min-w-max items-center gap-2 rounded-xl px-5 py-3 text-xs font-bold {{ $tab===$key?'bg-indigo-600 text-white':'text-slate-600 hover:bg-slate-50' }}">

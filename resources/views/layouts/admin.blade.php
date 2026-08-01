@@ -3,7 +3,7 @@
 @push('styles')
 <style>
     body > nav, body > footer, body > .mobile-app-header, body > .mobile-bottom-nav,
-    body > #mobile-app-menu, body > main + div { display: none !important; }
+    body > #mobile-app-menu { display: none !important; }
     body { background: #f4f6f9 !important; color: #1f2937; }
     .admin-shell {
         --admin-primary: var(--primary, #4f46e5);
@@ -16,6 +16,23 @@
     .admin-main { min-width: 0; flex: 1; min-height:100vh; overflow:visible; }
     #adminSidebar { display:flex; flex-direction:column; flex:0 0 280px; width:280px; overflow:hidden; min-height:100vh; max-height:100vh; }
     #adminSidebar > nav { padding-bottom:120px !important; }
+    #adminSidebar > nav {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(var(--admin-primary-rgb), .38) transparent;
+    }
+    #adminSidebar > nav::-webkit-scrollbar {
+        width: 4px;
+    }
+    #adminSidebar > nav::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    #adminSidebar > nav::-webkit-scrollbar-thumb {
+        background: rgba(var(--admin-primary-rgb), .34);
+        border-radius: 999px;
+    }
+    #adminSidebar > nav::-webkit-scrollbar-thumb:hover {
+        background: rgba(var(--admin-primary-rgb), .58);
+    }
     #adminSidebarFooter { position:absolute; left:0; right:0; bottom:0; z-index:5; padding-bottom:max(.625rem, env(safe-area-inset-bottom)); }
     .admin-topbar { height: 64px; background: rgba(255,255,255,.96); border-bottom: 1px solid #e5e7eb; display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:sticky; top:0; z-index:30; backdrop-filter:blur(10px); }
     .admin-content { padding: 24px 24px 64px; max-width: 1680px; margin: 0 auto; min-height:calc(100vh - 64px); }
@@ -101,6 +118,11 @@
         border-color:var(--admin-primary) !important;
         box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1) !important;
     }
+    body.admin-page #toast-container.toast-top-right {
+        top: 1rem;
+        right: 1rem;
+        left: auto;
+    }
 
     /* Compact all legacy admin screens without removing their content. */
     .admin-content .text-6xl, .admin-content .text-5xl { font-size:2rem !important; line-height:2.35rem !important; }
@@ -129,6 +151,11 @@
         .admin-main { margin-left:0; width:100%; }
         .admin-content { padding:16px; }
         .admin-topbar { padding:0 16px 0 64px; }
+        body.admin-page #toast-container.toast-top-right {
+            top: 1rem;
+            right: 1rem;
+            left: 1rem;
+        }
     }
 </style>
 @endpush

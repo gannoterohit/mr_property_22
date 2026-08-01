@@ -19,7 +19,6 @@
 @endphp
 <div class="space-y-4 p-5 lg:p-6" x-data="{ activeRole: @js($firstRole) }">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-[10px] font-extrabold uppercase tracking-[.18em] text-indigo-600">Access control</p><h1 class="mt-1 text-xl font-extrabold text-slate-950">Roles & Permissions</h1><p class="mt-1 text-xs text-slate-500">Choose a role and control exactly what its staff can view or manage.</p></div><div class="flex gap-2"><a href="{{ route('admin.staff.index') }}" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-700"><i class="fas fa-users-gear text-indigo-600"></i>Manage staff</a><a href="{{ route('admin.roles.create') }}" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-xs font-bold text-white"><i class="fas fa-plus"></i>Create custom role</a></div></div>
-    @if(session('success'))<div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-bold text-emerald-700">{{ session('success') }}</div>@endif
     @if($errors->any())<div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-bold text-red-700">{{ $errors->first() }}</div>@endif
 
     <div class="role-workspace">

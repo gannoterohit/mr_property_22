@@ -35,13 +35,6 @@
         </a>
     </header>
 
-    @if(session('success'))
-        <div class="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold text-emerald-700">
-            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100"><i class="fas fa-check"></i></span>
-            {{ session('success') }}
-        </div>
-    @endif
-
     @if($errors->any())
         <div class="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-bold text-red-700">
             <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100"><i class="fas fa-triangle-exclamation"></i></span>

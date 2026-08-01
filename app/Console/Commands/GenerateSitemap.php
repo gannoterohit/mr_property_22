@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Models\CmsPage;
 use App\Models\Room;
 
 class GenerateSitemap extends Command
@@ -51,6 +52,17 @@ class GenerateSitemap extends Command
         $sitemap .= "    <changefreq>weekly</changefreq>\n";
         $sitemap .= "    <priority>0.7</priority>\n";
         $sitemap .= "  </url>\n";
+
+        foreach (CmsPage::where('status', 'published')->orderBy('sort_order')->get() as $page) {
+            $lastmod = optional($page->updated_at)->format('Y-m-d') ?? date('Y-m-d');
+
+            $sitemap .= "  <url>\n";
+            $sitemap .= '    <loc>' . htmlspecialchars($page->public_url) . '</loc>' . "\n";
+            $sitemap .= '    <lastmod>' . $lastmod . '</lastmod>' . "\n";
+            $sitemap .= "    <changefreq>monthly</changefreq>\n";
+            $sitemap .= "    <priority>0.5</priority>\n";
+            $sitemap .= "  </url>\n";
+        }
 
         $rooms = Room::where('status','active')->orderBy('updated_at','desc')->get();
         foreach ($rooms as $room) {

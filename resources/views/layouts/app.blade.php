@@ -273,6 +273,115 @@
             margin-top: auto;
         }
 
+        #toast-container {
+            position: fixed;
+            z-index: 99999;
+            pointer-events: none;
+        }
+
+        #toast-container.toast-top-right {
+            top: 1rem;
+            right: 1rem;
+        }
+
+        #toast-container > .toast {
+            position: relative;
+            display: flex;
+            align-items: center;
+            min-height: 3.25rem;
+            width: min(22rem, calc(100vw - 2rem));
+            margin: 0 0 .875rem;
+            padding: .95rem 2.75rem .95rem 3.25rem;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            border-radius: .5rem;
+            background-color: #fff !important;
+            background-image: none !important;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, .16), 0 3px 8px rgba(15, 23, 42, .08);
+            color: #111827;
+            font-family: inherit;
+            font-size: .875rem;
+            line-height: 1.35;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #toast-container > .toast::before {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            display: grid;
+            width: 1.45rem;
+            height: 1.45rem;
+            place-items: center;
+            border-radius: 999px;
+            color: #fff;
+            font-family: "Font Awesome 6 Free";
+            font-size: .8rem;
+            font-weight: 900;
+            transform: translateY(-50%);
+        }
+
+        #toast-container > .toast-success::before { content: "\f00c"; background: #22c55e; }
+        #toast-container > .toast-error::before { content: "\f00d"; background: #ef4444; }
+        #toast-container > .toast-warning::before { content: "\f071"; background: #eab308; }
+        #toast-container > .toast-info::before { content: "\f129"; background: #38bdf8; }
+
+        #toast-container > .toast-success { border-bottom-color: #22c55e; }
+        #toast-container > .toast-error { border-bottom-color: #ef4444; }
+        #toast-container > .toast-warning { border-bottom-color: #eab308; }
+        #toast-container > .toast-info { border-bottom-color: #38bdf8; }
+
+        #toast-container .toast-title {
+            margin-right: .25rem;
+            color: #111827;
+            font-weight: 800;
+        }
+
+        #toast-container .toast-message {
+            color: #111827;
+            font-weight: 500;
+        }
+
+        #toast-container .toast-close-button {
+            position: absolute;
+            top: 50%;
+            right: .9rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            margin: 0;
+            color: #6b7280;
+            font-size: 1.25rem;
+            font-weight: 400;
+            line-height: 1;
+            text-shadow: none;
+            transform: translateY(-50%);
+            opacity: 1;
+        }
+
+        #toast-container .toast-progress {
+            height: .2rem;
+            opacity: 1;
+        }
+
+        #toast-container .toast-success .toast-progress { background-color: #22c55e; }
+        #toast-container .toast-error .toast-progress { background-color: #ef4444; }
+        #toast-container .toast-warning .toast-progress { background-color: #eab308; }
+        #toast-container .toast-info .toast-progress { background-color: #38bdf8; }
+
+        @media (max-width: 640px) {
+            #toast-container.toast-top-right {
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+            }
+
+            #toast-container > .toast {
+                width: 100%;
+                padding-right: 2.5rem;
+            }
+        }
+
         .site-footer {
             background-color: #111827 !important;
             color: #94a3b8;
@@ -762,7 +871,7 @@
     </style>
     @stack('styles')
 </head>
-<body class="bg-gray-50 flex flex-col min-h-screen mobile-app-view dynamic-theme-override">
+<body class="bg-gray-50 flex flex-col min-h-screen mobile-app-view dynamic-theme-override {{ request()->routeIs('admin.*') ? 'admin-page' : '' }}">
     <div id="page-scroll-progress" class="page-scroll-progress" role="progressbar" aria-label="Page scroll progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
     @php
         try {
@@ -967,29 +1076,6 @@
 
     <!-- Mobile App Loading Indicator -->
     @include('partials.mobile-loading')
-    
-    <!-- Flash Messages -->
-    @if(session('success'))
-        <div class="bg-green-50 border-l-4 border-green-500 text-green-800 p-3 mx-4 mt-4 md:mt-0 rounded-r-lg shadow-sm">
-            <div class="flex items-center">
-                <div class="bg-green-500 rounded-full p-1.5 mr-2">
-                    <i class="fas fa-check-circle text-white text-sm"></i>
-                </div>
-                <p class="font-medium text-sm">{{ session('success') }}</p>
-            </div>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="bg-red-50 border-l-4 border-red-500 text-red-800 p-3 mx-4 mt-4 md:mt-0 rounded-r-lg shadow-sm">
-            <div class="flex items-center">
-                <div class="bg-red-500 rounded-full p-1.5 mr-2">
-                    <i class="fas fa-exclamation-circle text-white text-sm"></i>
-                </div>
-                <p class="font-medium text-sm">{{ session('error') }}</p>
-            </div>
-        </div>
-    @endif
 
     <!-- Main Content -->
     <main class="pt-16 md:pt-0 {{ Route::is('pages.*', 'cms-pages.show') ? 'cms-content-main' : '' }}">
@@ -997,7 +1083,7 @@
     </main>
 
     <!-- Stay Updated Banner Section -->
-    @if(!Route::is('home') && !Route::is('pages.*') && !Route::is('cms-pages.show') && !Route::is('owner.*') && !Route::is('complaints.*') && !Route::is('rooms.create', 'rooms.edit') && !Route::is('dashboard', 'profile.edit', 'wallet', 'referral.index', 'plans', 'unlocks.index', 'login', 'register'))
+    @if(!Route::is('home') && !Route::is('pages.*') && !Route::is('cms-pages.show') && !Route::is('admin.*') && !Route::is('owner.*') && !Route::is('complaints.*') && !Route::is('rooms.create', 'rooms.edit') && !Route::is('dashboard', 'profile.edit', 'wallet', 'referral.index', 'plans', 'unlocks.index', 'login', 'register'))
     <div class="hidden lg:block bg-indigo-50/70 border-t border-indigo-100 py-8">
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex items-center gap-4">
@@ -1022,7 +1108,7 @@
     @endif
 
     <!-- Redesigned Footer Section -->
-    <footer class="site-footer relative text-slate-400 pt-12 pb-6 hidden lg:block overflow-hidden border-t" @if(Route::is('owner.*') || Route::is('complaints.*') || Route::is('rooms.create', 'rooms.edit') || Route::is('dashboard', 'profile.edit', 'wallet', 'referral.index', 'plans', 'unlocks.index', 'login', 'register')) style="display:none !important" @endif>
+    <footer class="site-footer relative text-slate-400 pt-12 pb-6 hidden lg:block overflow-hidden border-t" @if(Route::is('admin.*') || Route::is('owner.*') || Route::is('complaints.*') || Route::is('rooms.create', 'rooms.edit') || Route::is('dashboard', 'profile.edit', 'wallet', 'referral.index', 'plans', 'unlocks.index', 'login', 'register')) style="display:none !important" @endif>
         <div class="container mx-auto px-6 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
                 <!-- Brand Info (Col span 3) -->
@@ -1096,7 +1182,6 @@
                         @if($cmsPageLive('how-it-works'))<li><a href="{{ route('pages.how-it-works') }}" class="text-slate-400 hover:text-white transition-all">How It Works</a></li>@endif
                         @if($cmsPageLive('safety-tips'))<li><a href="{{ route('pages.safety-tips') }}" class="text-slate-400 hover:text-white transition-all">Safety Tips</a></li>@endif
                         <li><a href="{{ Auth::check() ? route('complaints.create') : route('login') }}" class="text-slate-400 hover:text-white transition-all">Report an Issue</a></li>
-                        <li><a href="{{ route('sitemap') }}" class="text-slate-400 hover:text-white transition-all">Sitemap</a></li>
                     </ul>
                 </div>
 
@@ -1321,19 +1406,19 @@
         };
 
         @if(Session::has('success'))
-            toastr.success("{{ session('success') }}");
+            toastr.success(@json(session('success')), 'Success');
         @endif
 
         @if(Session::has('error'))
-            toastr.error("{{ session('error') }}");
+            toastr.error(@json(session('error')), 'Error');
         @endif
 
         @if(Session::has('info'))
-            toastr.info("{{ session('info') }}");
+            toastr.info(@json(session('info')), 'Info');
         @endif
 
         @if(Session::has('warning'))
-            toastr.warning("{{ session('warning') }}");
+            toastr.warning(@json(session('warning')), 'Warning');
         @endif
     </script>
     <script>

@@ -39,9 +39,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700"><i class="fas fa-circle-check mr-2"></i>{{ session('success') }}</div>
-    @endif
     @if(isset($errors) && $errors->any())
         <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{{ $errors->first() }}</div>
     @endif

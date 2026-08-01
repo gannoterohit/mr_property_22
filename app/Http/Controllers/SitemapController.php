@@ -36,6 +36,13 @@ class SitemapController extends Controller
             'priority' => '0.9'
         ];
 
+        $urls[] = [
+            'loc' => route('plans'),
+            'lastmod' => now()->toAtomString(),
+            'changefreq' => 'weekly',
+            'priority' => '0.7'
+        ];
+
         foreach ($rooms as $room) {
             $urls[] = [
                 'loc' => route('rooms.show', $room->id),
@@ -63,7 +70,6 @@ class SitemapController extends Controller
         return response($content)->header('Content-Type', 'text/plain');
     }
 }
-
 
 
 

@@ -12,7 +12,6 @@
 <div class="space-y-5 p-5 lg:p-6">
     <header class="flex flex-wrap items-end justify-between gap-4"><div><p class="text-[10px] font-extrabold uppercase tracking-[.2em] text-indigo-600">People management</p><h1 class="mt-1 text-2xl font-extrabold text-slate-950">Property Owners</h1><p class="mt-1 text-sm text-slate-500">Manage owner KYC, listings and account access.</p></div><a href="{{ route('admin.owners.create') }}" class="inline-flex h-11 items-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-extrabold text-white shadow-sm shadow-indigo-200"><i class="fas fa-user-plus"></i>Add Owner</a></header>
     @include('admin.members.nav')
-    @if(session('success'))<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold text-emerald-700"><i class="fas fa-check-circle mr-2"></i>{{ session('success') }}</div>@endif
 
     <section class="people-kpis">
         @foreach([

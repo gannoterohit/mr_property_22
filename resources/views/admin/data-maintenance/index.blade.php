@@ -34,7 +34,6 @@
         <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-bold text-emerald-700"><i class="fas fa-shield-halved mr-2"></i>Protected business records are never auto-deleted</div>
     </div>
 
-    @if(session('success'))<div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700"><i class="fas fa-circle-check mr-2"></i>{{ session('success') }}</div>@endif
     @if($errors->any())<div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700"><i class="fas fa-circle-exclamation mr-2"></i>{{ $errors->first() }}</div>@endif
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
