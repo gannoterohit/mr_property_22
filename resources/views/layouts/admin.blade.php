@@ -264,6 +264,103 @@ document.addEventListener('submit', async (event) => {
         form.submit();
     }
 });
+
+// Admin Notification Bell & Mark Read Interactivity
+document.addEventListener('DOMContentLoaded', () => {
+    const bellBtn = document.getElementById('adminNotificationBell');
+    const dropdown = document.getElementById('adminNotificationDropdown');
+    const badge = document.getElementById('adminNotificationBadge');
+    const dropdownUnreadBadge = document.getElementById('dropdownUnreadBadge');
+    const markAllBtn = document.getElementById('markAllNotificationsReadBtn');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+
+    if (bellBtn && dropdown) {
+        bellBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target) && !bellBtn.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    }
+
+    const updateUnreadBadge = (count) => {
+        if (badge) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.classList.toggle('hidden', count <= 0);
+        }
+        if (dropdownUnreadBadge) {
+            dropdownUnreadBadge.textContent = count + ' new';
+            dropdownUnreadBadge.classList.toggle('hidden', count <= 0);
+        }
+        if (markAllBtn && count <= 0) {
+            markAllBtn.style.display = 'none';
+        }
+        document.querySelectorAll('.sidebar-unread-badge').forEach(b => {
+            if (count <= 0) b.classList.add('hidden');
+        });
+    };
+
+    // Mark single notification read
+    document.querySelectorAll('.mark-single-read-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const id = btn.dataset.id;
+            try {
+                const res = await fetch(`/admin/notifications/${id}/read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const item = btn.closest('.admin-notification-item');
+                    if (item) {
+                        item.classList.remove('bg-indigo-50/30');
+                        item.classList.add('opacity-75');
+                    }
+                    btn.remove();
+                    updateUnreadBadge(data.unread_count);
+                }
+            } catch (err) {
+                console.error('Notification error:', err);
+            }
+        });
+    });
+
+    // Mark all notifications read
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                const res = await fetch('{{ route("admin.notifications.markAllRead") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.querySelectorAll('.admin-notification-item').forEach(item => {
+                        item.classList.remove('bg-indigo-50/30');
+                        item.classList.add('opacity-75');
+                    });
+                    document.querySelectorAll('.mark-single-read-btn').forEach(b => b.remove());
+                    updateUnreadBadge(0);
+                }
+            } catch (err) {
+                console.error('Mark all notifications error:', err);
+            }
+        });
+    }
+});
 </script>
 @endpush
 
@@ -280,6 +377,79 @@ document.addEventListener('submit', async (event) => {
                 <a href="{{ route('home') }}" target="_blank" class="admin-theme-link hidden sm:flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-600 rounded-lg transition">
                     <i class="fas fa-external-link-alt"></i> View website
                 </a>
+
+                @php
+                    $unreadNotificationsCount = \App\Models\AdminNotification::where('is_read', false)->count();
+                    $recentNotifications = \App\Models\AdminNotification::latest()->take(10)->get();
+                @endphp
+
+                <!-- Notification Bell Dropdown -->
+                <div class="relative" id="adminNotificationDropdownRoot">
+                    <button type="button" id="adminNotificationBell" class="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 shadow-sm" aria-label="View notifications">
+                        <i class="fas fa-bell text-sm"></i>
+                        <span id="adminNotificationBadge" class="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-extrabold text-white shadow {{ $unreadNotificationsCount > 0 ? '' : 'hidden' }}">
+                            {{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}
+                        </span>
+                    </button>
+
+                    <div id="adminNotificationDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-slate-200 bg-white shadow-2xl z-50 overflow-hidden">
+                        <div class="flex items-center justify-between border-b border-slate-100 bg-slate-50/80 px-4 py-3">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-bell text-slate-500 text-xs"></i>
+                                <span class="text-xs font-bold text-slate-800">Notifications</span>
+                                <span id="dropdownUnreadBadge" class="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-extrabold text-red-600 {{ $unreadNotificationsCount > 0 ? '' : 'hidden' }}">
+                                    {{ $unreadNotificationsCount }} new
+                                </span>
+                            </div>
+                            @if($unreadNotificationsCount > 0)
+                                <button type="button" id="markAllNotificationsReadBtn" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition">
+                                    Mark all read
+                                </button>
+                            @endif
+                        </div>
+
+                        <div class="max-h-80 overflow-y-auto divide-y divide-slate-100" id="notificationItemsList">
+                            @forelse($recentNotifications as $notif)
+                                <div class="admin-notification-item flex items-start gap-3 p-3 transition hover:bg-slate-50 {{ $notif->is_read ? 'opacity-75' : 'bg-indigo-50/30' }}" data-id="{{ $notif->id }}">
+                                    <div class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg {{ $notif->is_read ? 'bg-slate-100 text-slate-400' : 'admin-theme-soft' }}">
+                                        <i class="fas {{ $notif->icon ?: 'fa-bell' }} text-xs"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center justify-between gap-2">
+                                            @if($notif->link)
+                                                <a href="{{ route('admin.notifications.markRead', $notif->id) }}" class="text-xs font-bold text-slate-800 hover:text-indigo-600 truncate block">
+                                                    {{ $notif->title }}
+                                                </a>
+                                            @else
+                                                <span class="text-xs font-bold text-slate-800 truncate block">{{ $notif->title }}</span>
+                                            @endif
+                                            <span class="text-[9px] font-semibold text-slate-400 whitespace-nowrap">{{ $notif->created_at->diffForHumans(null, true) }}</span>
+                                        </div>
+                                        @if($notif->message)
+                                            <p class="text-[11px] text-slate-500 line-clamp-2 mt-0.5 leading-snug">{{ $notif->message }}</p>
+                                        @endif
+                                    </div>
+                                    @if(!$notif->is_read)
+                                        <button type="button" class="mark-single-read-btn text-slate-300 hover:text-indigo-600 p-1 transition shrink-0" data-id="{{ $notif->id }}" title="Mark as read">
+                                            <i class="fas fa-check-circle text-xs"></i>
+                                        </button>
+                                    @endif
+                                </div>
+                            @empty
+                                <div class="p-6 text-center text-slate-400">
+                                    <i class="fas fa-bell-slash text-2xl mb-2 block text-slate-300"></i>
+                                    <p class="text-xs font-medium">No notifications yet</p>
+                                </div>
+                            @endforelse
+                        </div>
+                        <div class="p-2 border-t border-slate-100 bg-slate-50/50 text-center">
+                            <a href="{{ route('admin.notifications.index') }}" class="text-xs font-bold text-slate-600 hover:text-indigo-600 transition block py-1">
+                                View all notifications <i class="fas fa-arrow-right text-[10px] ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="h-10 pl-1.5 pr-3 rounded-xl border border-slate-200 bg-white flex items-center gap-2.5 shadow-sm">
                     @if(Auth::user()->avatar)
                         <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="w-7 h-7 rounded-lg object-cover ring-1 ring-slate-200">

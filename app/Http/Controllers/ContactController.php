@@ -19,7 +19,7 @@ class ContactController extends Controller
         ]);
 
         try {
-            ContactMessage::create([
+            $contactMsg = ContactMessage::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'subject' => $data['subject'] ?? 'New Inquiry from Contact Form',
@@ -27,6 +27,18 @@ class ContactController extends Controller
                 'ip_address' => $request->ip(),
                 'is_read' => false,
             ]);
+
+            try {
+                \App\Models\AdminNotification::send(
+                    'contact_inquiry',
+                    'New Contact Enquiry',
+                    'From ' . $data['name'] . ': ' . \Illuminate\Support\Str::limit($data['subject'] ?? $data['message'], 40),
+                    route('admin.contact-messages.index'),
+                    'fa-inbox'
+                );
+            } catch (\Throwable $e) {
+                report($e);
+            }
         } catch (\Throwable $e) {
             report($e);
 

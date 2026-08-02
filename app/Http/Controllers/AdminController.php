@@ -934,6 +934,10 @@ class AdminController extends Controller
         $message = \App\Models\ContactMessage::findOrFail($id);
         $message->update(['is_read' => true]);
 
+        \App\Models\AdminNotification::where('type', 'contact_inquiry')
+            ->where('is_read', false)
+            ->update(['is_read' => true, 'read_at' => now()]);
+
         return back()->with('success', 'Message marked as read.');
     }
 }

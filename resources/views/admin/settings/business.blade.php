@@ -377,7 +377,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Primary Color</label>
                                     <div class="flex items-center gap-3">
-                                        <input type="color" name="primary_color" value="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
+                                        <input type="color" id="primary_color" name="primary_color" value="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
                                         <input type="text" name="primary_color_text" value="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#4F46E5" id="primary_color_text">
                                     </div>
                                     <p class="mt-1 text-xs text-gray-500">Main brand color for headers, buttons, links</p>
@@ -385,7 +385,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Secondary Color</label>
                                     <div class="flex items-center gap-3">
-                                        <input type="color" name="secondary_color" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
+                                        <input type="color" id="secondary_color" name="secondary_color" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
                                         <input type="text" name="secondary_color_text" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#10B981" id="secondary_color_text">
                                     </div>
                                     <p class="mt-1 text-xs text-gray-500">Accent color for success states, highlights</p>
@@ -769,20 +769,37 @@ function syncColorInputs(colorId, textId) {
     const colorInput = document.getElementById(colorId);
     const textInput = document.getElementById(textId);
     if (colorInput && textInput) {
-        colorInput.addEventListener('input', () => {
-            textInput.value = colorInput.value;
-        });
-        textInput.addEventListener('input', () => {
-            if (/^#[0-9A-Fa-f]{6}$/.test(textInput.value)) {
-                colorInput.value = textInput.value;
-            }
-        });
+        // Picker → text (both input and change)
+        colorInput.addEventListener('input', () => { textInput.value = colorInput.value; });
+        colorInput.addEventListener('change', () => { textInput.value = colorInput.value; });
+        // Text → picker (both input and change)
+        const applyText = () => {
+            const v = textInput.value.trim();
+            if (/^#[0-9A-Fa-f]{6}$/.test(v)) colorInput.value = v;
+        };
+        textInput.addEventListener('input', applyText);
+        textInput.addEventListener('change', applyText);
     }
 }
-syncColorInputs('primary_color', 'primary_color_text');
-syncColorInputs('secondary_color', 'secondary_color_text');
-
 document.addEventListener('DOMContentLoaded', () => {
+    syncColorInputs('primary_color', 'primary_color_text');
+    syncColorInputs('secondary_color', 'secondary_color_text');
+
+    // Before form submit: force-sync text boxes → color pickers
+    // so the correct hex value is always what gets posted.
+    const settingsForm = document.getElementById('settings-form');
+    if (settingsForm) {
+        settingsForm.addEventListener('submit', () => {
+            [['primary_color','primary_color_text'], ['secondary_color','secondary_color_text']].forEach(([cId, tId]) => {
+                const c = document.getElementById(cId);
+                const t = document.getElementById(tId);
+                if (c && t && /^#[0-9A-Fa-f]{6}$/.test(t.value.trim())) {
+                    c.value = t.value.trim();
+                }
+            });
+        });
+    }
+
     const root = document.getElementById('business-settings-tabs');
     if (!root) return;
 

@@ -48,6 +48,18 @@ class ComplaintController extends Controller
         $complaint->activities()->create(['actor_id' => $request->user()->id, 'type' => 'created', 'status_to' => 'submitted', 'description' => 'Complaint submitted.']);
 
         try {
+            \App\Models\AdminNotification::send(
+                'complaint_submitted',
+                'New Complaint Filed',
+                'Ticket #' . $complaint->ticket_number . ' by ' . ($request->user()?->name ?? 'User'),
+                route('admin.complaints.show', $complaint->id),
+                'fa-shield-halved'
+            );
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        try {
             $adminEmail = Setting::get('contact_email', config('mail.from.address'));
             Mail::to($adminEmail)->send(new BrandedMessageMail(
                 "New complaint {$complaint->ticket_number}", 'A new complaint needs review',

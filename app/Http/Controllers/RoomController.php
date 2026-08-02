@@ -328,6 +328,18 @@ class RoomController extends Controller {
             \Illuminate\Support\Facades\Cache::forget('public_cities_list');
             \Illuminate\Support\Facades\Cache::forget('popular_cities_web');
 
+            try {
+                \App\Models\AdminNotification::send(
+                    'room_posted',
+                    'New Room Listed',
+                    '"' . \Illuminate\Support\Str::limit($room->title, 35) . '" in ' . ($room->city ?: 'Unknown') . ' by ' . (Auth::user()?->name ?? 'Owner'),
+                    route('admin.rooms.show', $room->id),
+                    'fa-building'
+                );
+            } catch (\Throwable $e) {
+                report($e);
+            }
+
             // Free-launch mode: skip subscriptions, wallet and Razorpay while
             // keeping the configured listing amount saved for future use.
             $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);

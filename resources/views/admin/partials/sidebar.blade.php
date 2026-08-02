@@ -46,6 +46,10 @@
         ]],
     ];
     $pagesOpen = false;
+
+    $unreadContactCount = \App\Models\AdminNotification::where('type', 'contact_inquiry')->where('is_read', false)->count();
+    $unreadRoomsCount = \App\Models\AdminNotification::where('type', 'room_posted')->where('is_read', false)->count();
+    $unreadComplaintsCount = \App\Models\AdminNotification::where('type', 'complaint_submitted')->where('is_read', false)->count();
 @endphp
 
 <button id="adminSidebarOpen" class="admin-theme-avatar lg:hidden fixed top-3 left-3 z-[70] w-10 h-10 rounded-xl shadow-lg" aria-label="Open admin menu"><i class="fas fa-bars"></i></button>
@@ -107,16 +111,52 @@
                 $groupOpen = $groupActive;
             @endphp
             @continue($groupItems->isEmpty())
+            @php
+                $groupBadgeCount = collect($group['items'])->sum(function($item) use ($unreadContactCount, $unreadRoomsCount, $unreadComplaintsCount) {
+                    return match($item['route']) {
+                        'admin.contact-messages.index' => $unreadContactCount,
+                        'admin.all-rooms' => $unreadRoomsCount,
+                        'admin.complaints.index' => $unreadComplaintsCount,
+                        default => 0,
+                    };
+                });
+            @endphp
             <section class="admin-nav-group" data-group="{{ $groupKey }}">
                 <button type="button" class="admin-nav-group-toggle group flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-[13px] font-bold transition {{ $groupActive ? 'admin-sidebar-group-active' : 'border-transparent bg-white text-slate-700 hover:bg-slate-50' }}" aria-expanded="{{ $groupOpen ? 'true' : 'false' }}">
-                    <span class="flex min-w-0 items-center gap-2.5"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm {{ $groupActive ? 'admin-sidebar-icon-active' : 'admin-sidebar-icon-idle ring-1 ring-slate-200' }}"><i class="fas {{ $group['icon'] }} text-[12px]"></i></span><span class="whitespace-nowrap text-[12px]">{{ $group['label'] }}</span></span>
-                    <i class="admin-nav-chevron fas fa-chevron-down text-[9px] text-slate-400 transition-transform {{ $groupOpen ? 'rotate-180' : '' }}"></i>
+                    <span class="flex min-w-0 items-center gap-2.5">
+                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm {{ $groupActive ? 'admin-sidebar-icon-active' : 'admin-sidebar-icon-idle ring-1 ring-slate-200' }}"><i class="fas {{ $group['icon'] }} text-[12px]"></i></span>
+                        <span class="whitespace-nowrap text-[12px]">{{ $group['label'] }}</span>
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        @if($groupBadgeCount > 0)
+                            <span class="sidebar-unread-badge rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-extrabold text-white">
+                                {{ $groupBadgeCount > 99 ? '99+' : $groupBadgeCount }}
+                            </span>
+                        @endif
+                        <i class="admin-nav-chevron fas fa-chevron-down text-[9px] text-slate-400 transition-transform {{ $groupOpen ? 'rotate-180' : '' }}"></i>
+                    </span>
                 </button>
                 <div class="admin-sidebar-submenu admin-nav-group-menu {{ $groupOpen ? '' : 'hidden' }} ml-6 mt-2 space-y-1.5 border-l-2 pl-3">
                     @foreach($groupItems as $item)
-                        @php $itemActive = request()->routeIs($item['match']); @endphp
-                        <a href="{{ route($item['route']) }}" class="relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[12px] transition {{ $itemActive ? 'admin-sidebar-subitem-active font-extrabold' : 'text-slate-600 font-semibold hover:bg-slate-50 hover:text-slate-900' }}">
-                            <i class="fas {{ $item['icon'] }} w-4 text-center text-[11px] {{ $itemActive ? 'admin-sidebar-active-icon' : 'text-slate-400' }}"></i><span>{{ $item['label'] }}</span>
+                        @php 
+                            $itemActive = request()->routeIs($item['match']);
+                            $itemBadge = match($item['route']) {
+                                'admin.contact-messages.index' => $unreadContactCount,
+                                'admin.all-rooms' => $unreadRoomsCount,
+                                'admin.complaints.index' => $unreadComplaintsCount,
+                                default => 0,
+                            };
+                        @endphp
+                        <a href="{{ route($item['route']) }}" class="relative flex items-center justify-between gap-2.5 rounded-lg px-3 py-2.5 text-[12px] transition {{ $itemActive ? 'admin-sidebar-subitem-active font-extrabold' : 'text-slate-600 font-semibold hover:bg-slate-50 hover:text-slate-900' }}">
+                            <span class="flex items-center gap-2.5 min-w-0">
+                                <i class="fas {{ $item['icon'] }} w-4 text-center text-[11px] {{ $itemActive ? 'admin-sidebar-active-icon' : 'text-slate-400' }}"></i>
+                                <span class="truncate">{{ $item['label'] }}</span>
+                            </span>
+                            @if($itemBadge > 0)
+                                <span class="sidebar-unread-badge shrink-0 rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-extrabold text-white">
+                                    {{ $itemBadge > 99 ? '99+' : $itemBadge }}
+                                </span>
+                            @endif
                         </a>
                     @endforeach
                 </div>
