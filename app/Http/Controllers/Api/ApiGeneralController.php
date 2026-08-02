@@ -14,13 +14,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
-class ApiMiscController extends BaseApiController
+class ApiGeneralController extends BaseApiController
 {
     public function offers(Request $request)
     {
         $audience = $request->user()?->role ?? 'user';
         return $this->sendSuccess(\App\Models\Offer::active()->forAudience($audience)->latest()->get());
     }
+
     /**
      * Get all blogs
      */
@@ -62,9 +63,9 @@ class ApiMiscController extends BaseApiController
     public function page($slug)
     {
         $content = Setting::get($slug . '_content', 'Content for ' . $slug);
-        
+
         return $this->sendSuccess([
-            'title' => ucwords(str_replace('-', ' ', $slug)),
+            'title'   => ucwords(str_replace('-', ' ', $slug)),
             'content' => $content
         ]);
     }
@@ -84,7 +85,7 @@ class ApiMiscController extends BaseApiController
 
         $alert = CityAlert::create([
             'user_id' => Auth::id(),
-            'city' => $request->city
+            'city'    => $request->city
         ]);
 
         return $this->sendSuccess($alert, 'Subscribed to alerts for ' . $request->city);
@@ -135,22 +136,39 @@ class ApiMiscController extends BaseApiController
 
         // Save to database for Admin Panel visibility
         $contactMessage = \App\Models\ContactMessage::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'subject' => 'Mobile App Inquiry' . ($request->phone ? " ({$request->phone})" : ""),
-            'message' => $request->message,
+            'name'       => $request->name,
+            'email'      => $request->email,
+            'subject'    => 'Mobile App Inquiry' . ($request->phone ? " ({$request->phone})" : ''),
+            'message'    => $request->message,
             'ip_address' => $request->ip(),
         ]);
+
+        // Notify admin (API side)
+        try {
+            \App\Models\AdminNotification::send(
+                'contact_inquiry',
+                'New Contact Message (App)',
+                $request->name . ': ' . \Illuminate\Support\Str::limit($request->message, 60),
+                route('admin.contact-messages.index'),
+                'fa-envelope'
+            );
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         $adminEmail = Setting::get('contact_email', Setting::get('business_email', null));
 
         if ($adminEmail) {
             try {
                 Mail::to($adminEmail)->send(new BrandedMessageMail(
-                    'New mobile app enquiry from '.$request->name,
-                    'A mobile app user contacted ApnaNest', $request->message,
-                    'Mobile enquiry', 'Open contact enquiries', route('admin.contact-messages.index'),
-                    array_filter(['Name'=>$request->name, 'Email'=>$request->email, 'Phone'=>$request->phone]), 'primary'
+                    'New mobile app enquiry from ' . $request->name,
+                    'A mobile app user contacted ApnaNest',
+                    $request->message,
+                    'Mobile enquiry',
+                    'Open contact enquiries',
+                    route('admin.contact-messages.index'),
+                    array_filter(['Name' => $request->name, 'Email' => $request->email, 'Phone' => $request->phone]),
+                    'primary'
                 ));
             } catch (\Exception $e) {
                 \Illuminate\Support\Facades\Log::error('Contact form mail failed: ' . $e->getMessage());
@@ -175,10 +193,10 @@ class ApiMiscController extends BaseApiController
         $joinReward = (int) Setting::get('join_reward', 5);
 
         return $this->sendSuccess([
-            'code' => $code,
+            'code'          => $code,
             'referrer_name' => $referrer->name,
-            'join_reward' => $joinReward,
-            'message' => "Register with this code to receive {$joinReward} bonus points!",
+            'join_reward'   => $joinReward,
+            'message'       => "Register with this code to receive {$joinReward} bonus points!",
         ], 'Referral code is valid');
     }
 

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\ApiRoomController;
-use App\Http\Controllers\Api\ApiMiscController;
+use App\Http\Controllers\Api\ApiGeneralController;
 use App\Http\Controllers\Api\ApiSettingsController;
 use App\Http\Controllers\Api\ApiRoomOptionController;
 
@@ -24,23 +24,23 @@ Route::get('/cities',                  [ApiRoomController::class, 'getCities']);
 Route::get('/room-options',            [ApiRoomOptionController::class, 'index']);
 
 // ── Blogs ─────────────────────────────────
-Route::get('/blogs',           [ApiMiscController::class, 'blogs']);
-Route::get('/blogs/{slug}',    [ApiMiscController::class, 'blogShow']);
+Route::get('/blogs',           [ApiGeneralController::class, 'blogs']);
+Route::get('/blogs/{slug}',    [ApiGeneralController::class, 'blogShow']);
 
 // ── Static Pages ──────────────────────────
-Route::get('/pages/{slug}',    [ApiMiscController::class, 'page']);
+Route::get('/pages/{slug}',    [ApiGeneralController::class, 'page']);
 
 // ── FAQ ───────────────────────────────────
-Route::get('/faq',             [ApiMiscController::class, 'faq']);
+Route::get('/faq',             [ApiGeneralController::class, 'faq']);
 
 // ── Newsletter ────────────────────────────
-Route::post('/newsletter/subscribe', [ApiMiscController::class, 'subscribeNewsletter'])->middleware('throttle:public_form');
+Route::post('/newsletter/subscribe', [ApiGeneralController::class, 'subscribeNewsletter'])->middleware('throttle:public_form');
 
 // ── Contact Us Form ───────────────────────
-Route::post('/contact',        [ApiMiscController::class, 'contactSubmit'])->middleware('throttle:public_form');
+Route::post('/contact',        [ApiGeneralController::class, 'contactSubmit'])->middleware('throttle:public_form');
 
 // ── Active Offers ─────────────────────────
-Route::get('/offers',          [ApiMiscController::class, 'offers']);
+Route::get('/offers',          [ApiGeneralController::class, 'offers']);
 
 // ── Referral Code Validation (mobile deep links) ──
-Route::get('/referral/{code}', [ApiMiscController::class, 'validateReferral']);
+Route::get('/referral/{code}', [ApiGeneralController::class, 'validateReferral']);

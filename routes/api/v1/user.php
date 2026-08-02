@@ -9,7 +9,7 @@ use App\Http\Controllers\Api\ApiBookingController;
 use App\Http\Controllers\Api\ApiUnlockController;
 use App\Http\Controllers\Api\ApiWalletController;
 use App\Http\Controllers\Api\ApiWishlistController;
-use App\Http\Controllers\Api\ApiMiscController;
+use App\Http\Controllers\Api\ApiGeneralController;
 use App\Http\Controllers\Api\ApiSubscriptionController;
 use App\Http\Controllers\Api\ApiComplaintController;
 use App\Http\Controllers\Api\ApiAccountController;
@@ -43,9 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/wishlist/toggle/{roomId}',    [ApiWishlistController::class, 'toggle']);
 
     // ── City Alerts ───────────────────────────
-    Route::get('/city-alerts',          [ApiMiscController::class, 'getCityAlerts']);
-    Route::post('/city-alerts',         [ApiMiscController::class, 'addCityAlert']);
-    Route::delete('/city-alerts/{id}',  [ApiMiscController::class, 'removeCityAlert']);
+    Route::get('/city-alerts',          [ApiGeneralController::class, 'getCityAlerts']);
+    Route::post('/city-alerts',         [ApiGeneralController::class, 'addCityAlert']);
+    Route::delete('/city-alerts/{id}',  [ApiGeneralController::class, 'removeCityAlert']);
 
     // ── Subscriptions ─────────────────────────
     Route::get('/plans',                    [ApiSubscriptionController::class, 'plans']);

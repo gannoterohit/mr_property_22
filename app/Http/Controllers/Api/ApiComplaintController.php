@@ -56,11 +56,24 @@ class ApiComplaintController extends BaseApiController
 
         $complaint = $request->user()->complaints()->create($data);
         $complaint->activities()->create([
-            'actor_id' => $request->user()->id,
-            'type' => 'created',
-            'status_to' => 'submitted',
-            'description' => 'Complaint submitted.',
+            'actor_id'   => $request->user()->id,
+            'type'       => 'created',
+            'status_to'  => 'submitted',
+            'description'=> 'Complaint submitted.',
         ]);
+
+        // Notify admin (API side)
+        try {
+            \App\Models\AdminNotification::send(
+                'complaint_submitted',
+                'New Complaint (App)',
+                $request->user()->name . ': ' . \Illuminate\Support\Str::limit($complaint->subject, 55),
+                route('admin.complaints.show', $complaint->id),
+                'fa-triangle-exclamation'
+            );
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         return $this->sendSuccess($complaint->load('room:id,slug,title'), 'Complaint submitted successfully', 201);
     }

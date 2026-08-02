@@ -287,6 +287,19 @@ class ApiRoomController extends BaseApiController
             $room = Room::create($data);
             \Illuminate\Support\Facades\Cache::forget('public_cities_list');
 
+            // Notify admin about new room listing (API side)
+            try {
+                \App\Models\AdminNotification::send(
+                    'room_posted',
+                    'New Room Listed (App)',
+                    '"' . \Illuminate\Support\Str::limit($room->title, 35) . '" in ' . ($room->city ?: 'Unknown') . ' by ' . (Auth::user()?->name ?? 'Owner'),
+                    route('admin.rooms.show', $room->id),
+                    'fa-building'
+                );
+            } catch (\Throwable $notifEx) {
+                report($notifEx);
+            }
+
             $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
             if (! $listingFeeEnabled) {
                 $payment = Payment::create([
