@@ -117,10 +117,12 @@
                                     <form method="POST" action="{{ route('admin.members.restore',$user->id) }}">@csrf<button class="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">Restore</button></form>
                                 @else
                                     <div class="flex justify-end gap-2">
+                                        <a href="{{ route('admin.users.detail',$user) }}#direct-msg-card" title="Send Direct Notification / SMS" class="rounded-lg bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition"><i class="fas fa-paper-plane"></i></a>
                                         <a href="{{ route('admin.members.index',['q'=>$user->email,'member_id'=>$user->id]) }}" title="Member 360" class="admin-theme-soft rounded-lg px-3 py-2 text-xs font-bold"><i class="fas fa-chart-pie"></i></a>
                                         <a href="{{ route('admin.users.detail',$user) }}" class="rounded-lg border px-3 py-2 text-xs font-bold text-slate-700">View</a>
                                         <a href="{{ route('admin.users.edit',$user) }}" class="rounded-lg bg-slate-900 px-3 py-2 text-xs font-bold text-white">Edit</a>
                                     </div>
+
                                 @endif
                             </td>
                         </tr>

@@ -20,12 +20,14 @@
         <div class="flex flex-wrap items-center gap-2">
             <span class="rounded-full px-3 py-2 text-xs font-bold {{ $owner->is_blocked?'bg-red-50 text-red-700':'bg-emerald-50 text-emerald-700' }}">{{ $owner->is_blocked?'Blocked account':'Active account' }}</span>
             <span class="admin-theme-soft rounded-full px-3 py-2 text-xs font-bold">KYC: {{ ucfirst(str_replace('_',' ',$owner->verification_status)) }}</span>
+            <button onclick="document.getElementById('direct-msg-card').scrollIntoView({behavior:'smooth'})" class="rounded-xl border bg-indigo-50 px-4 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition"><i class="fas fa-paper-plane mr-1"></i>Send Message</button>
             <a href="{{ route('admin.owners.edit',$owner) }}" class="rounded-xl border bg-white px-4 py-2 text-xs font-bold text-slate-700"><i class="fas fa-pen mr-1"></i>Edit</a>
             <form method="POST" action="{{ route('admin.owners.destroy',$owner) }}" class="admin-confirm" data-confirm-title="Delete {{ $owner->name }}?" data-confirm-text="Listings will be retained and the account can be restored later." data-confirm-button="Yes, delete owner">
                 @csrf @method('DELETE')
                 <button class="rounded-xl bg-red-50 px-4 py-2 text-xs font-bold text-red-700"><i class="fas fa-trash mr-1"></i>Delete</button>
             </form>
         </div>
+
     </header>
 
     <section class="admin-detail-stats">
@@ -91,7 +93,10 @@
         </main>
 
         <aside class="space-y-4">
+            @include('admin.members.partials.direct-message-card', ['targetUser' => $owner])
+
             <form method="POST" action="{{ route('admin.members.notes',$owner) }}" class="rounded-2xl border bg-white p-5 shadow-sm">
+
                 @csrf @method('PUT')
                 <div class="flex items-center gap-3">
                     <div class="admin-theme-soft flex h-10 w-10 items-center justify-center rounded-xl"><i class="fas fa-user-check"></i></div>

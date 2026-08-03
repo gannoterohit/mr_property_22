@@ -450,6 +450,116 @@ class AdminController extends Controller
         return back()->with('success', 'Member notes and verification updated.');
     }
 
+    /**
+     * Send direct message / notification to an individual User or Owner via selected channels.
+     */
+    public function sendDirectMessage(Request $request, User $user)
+    {
+        $request->validate([
+            'channels'     => 'required|array|min:1',
+            'channels.*'   => 'in:bell,firebase,email,sms',
+            'title'        => 'required|string|max:255',
+            'message'      => 'required|string|max:2000',
+            'link'         => 'nullable|url|max:500',
+            'banner_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:3072',
+        ], [
+            'channels.required' => 'Please select at least one notification channel.',
+        ]);
+
+        $imageUrl = null;
+        if ($request->hasFile('banner_image')) {
+            $path = $request->file('banner_image')->store('broadcasts', 'public');
+            $imageUrl = asset('storage/' . $path);
+            try {
+                $destDir = public_path('storage/' . dirname($path));
+                if (!is_dir($destDir)) { @mkdir($destDir, 0755, true); }
+                @copy(storage_path('app/public/' . $path), public_path('storage/' . $path));
+            } catch (\Exception $e) {}
+        }
+
+        $channels = $request->channels;
+        $title    = $request->title;
+        $message  = $request->message;
+        $link     = $request->link ?: route('home');
+
+        $sentChannels = [];
+
+        // 1. In-App Bell Icon
+        if (in_array('bell', $channels, true)) {
+            try {
+                \App\Models\UserNotification::send(
+                    $user->id,
+                    'announcement',
+                    $title,
+                    $message,
+                    $link,
+                    'fa-envelope-open-text',
+                    $imageUrl
+                );
+                $sentChannels[] = 'Bell Icon';
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning("Direct Bell Notification failed for User #{$user->id}: " . $e->getMessage());
+            }
+        }
+
+        // 2. Firebase Push Notification (Mobile + Web)
+        if (in_array('firebase', $channels, true)) {
+            try {
+                \App\Services\FirebaseService::sendToUser(
+                    $user,
+                    $title,
+                    $message,
+                    ['type' => 'announcement', 'click_action' => 'FLUTTER_NOTIFICATION_CLICK'],
+                    $link,
+                    $imageUrl
+                );
+                $sentChannels[] = 'Firebase Push';
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning("Direct Push Notification failed for User #{$user->id}: " . $e->getMessage());
+            }
+        }
+
+        // 3. Email Notification
+        if (in_array('email', $channels, true) && !empty($user->email)) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\BrandedMessageMail(
+                    $title,
+                    $title,
+                    $message,
+                    'Direct Message from ApnaNest Support',
+                    'View Details',
+                    $link,
+                    [],
+                    'primary',
+                    null,
+                    $imageUrl
+                ));
+                $sentChannels[] = 'Email';
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning("Direct Email failed for User #{$user->id}: " . $e->getMessage());
+            }
+        }
+
+        // 4. SMS Notification
+        if (in_array('sms', $channels, true) && !empty($user->phone)) {
+            try {
+                $smsSuccess = \App\Services\SmsService::sendMessage($user->phone, "ApnaNest: {$title}\n{$message}");
+                if ($smsSuccess) {
+                    $sentChannels[] = 'SMS';
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning("Direct SMS failed for User #{$user->id}: " . $e->getMessage());
+            }
+        }
+
+        if (empty($sentChannels)) {
+            return back()->with('error', 'Could not deliver message. Please check user contact details or token.');
+        }
+
+        return back()->with('success', 'Direct message sent to ' . $user->name . ' via ' . implode(', ', $sentChannels) . '!');
+    }
+
+
     public function restoreMember(int $user)
     {
         $member = User::withTrashed()->findOrFail($user);

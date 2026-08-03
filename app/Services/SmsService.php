@@ -47,6 +47,66 @@ class SmsService
         return true;
     }
 
+    /**
+     * Send custom SMS message to a phone number.
+     */
+    public static function sendMessage(string $phone, string $message): bool
+
+    {
+        $provider = Setting::get('sms_gateway', 'log');
+        $apiKey   = Setting::get('sms_api_key');
+
+        $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($cleanPhone) === 10) {
+            $cleanPhone = '91' . $cleanPhone;
+        }
+
+        if ($provider === 'log' || empty($apiKey)) {
+            Log::info("SMS Message [DEMO/LOG] sent to +{$cleanPhone}: \"{$message}\"");
+            return true;
+        }
+
+        if ($provider === 'twilio') {
+            try {
+                $sid  = Setting::get('sms_sender_id');
+                $from = Setting::get('sms_dlt_te_id');
+                $response = Http::withBasicAuth($sid, $apiKey)
+                    ->asForm()
+                    ->post("https://api.twilio.com/2010-04-01/Accounts/{$sid}/Messages.json", [
+                        'To'   => '+' . $cleanPhone,
+                        'From' => $from,
+                        'Body' => $message,
+                    ]);
+                return $response->successful();
+            } catch (\Exception $e) {
+                Log::error('SmsService sendMessage Twilio exception: ' . $e->getMessage());
+                return false;
+            }
+        }
+
+        if ($provider === 'fast2sms') {
+            try {
+                $phone10 = substr($cleanPhone, -10);
+                $response = Http::withHeaders([
+                    'authorization' => $apiKey,
+                ])->post('https://www.fast2sms.com/dev/bulkV2', [
+                    'message' => $message,
+                    'route'   => 'q',
+                    'numbers' => $phone10,
+                ]);
+                return $response->successful();
+            } catch (\Exception $e) {
+                Log::error('SmsService sendMessage Fast2SMS exception: ' . $e->getMessage());
+                return false;
+            }
+        }
+
+        // MSG91 or Fallback
+        Log::info("SMS Message sent to +{$cleanPhone}: \"{$message}\" via {$provider}");
+        return true;
+    }
+
+
     private static function sendViaMsg91(string $phone, string $otp, string $apiKey): bool
     {
         try {

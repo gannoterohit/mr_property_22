@@ -209,7 +209,9 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
     Route::post('/users/{user}/toggle-block', [AdminController::class, 'toggleBlock'])->name('users.toggleBlock');
     Route::put('/members/{user}/notes', [AdminController::class, 'updateMemberNotes'])->name('members.notes');
+    Route::post('/members/{user}/send-direct-message', [AdminController::class, 'sendDirectMessage'])->name('members.sendDirectMessage');
     Route::post('/members/{user}/restore', [AdminController::class, 'restoreMember'])->name('members.restore');
+
 
     // Owners Management
     Route::get('/owners', [AdminController::class, 'owners'])->name('owners');
