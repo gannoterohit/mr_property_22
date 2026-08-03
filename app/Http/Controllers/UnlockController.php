@@ -91,6 +91,7 @@ class UnlockController extends Controller
                 );
 
                 DB::commit();
+                \App\Services\NotificationService::notifyContactUnlocked(Auth::user(), $room);
 
                 return response()->json([
                     'success' => true,
@@ -135,6 +136,7 @@ class UnlockController extends Controller
                     );
 
                     DB::commit();
+                    \App\Services\NotificationService::notifyContactUnlocked(Auth::user(), $room);
 
                     return response()->json([
                         'success' => true,
@@ -169,6 +171,7 @@ class UnlockController extends Controller
                 ]);
                 
                 DB::commit();
+                \App\Services\NotificationService::notifyContactUnlocked(Auth::user(), $room);
                 
                 return response()->json([
                     'success' => true,
@@ -210,6 +213,7 @@ class UnlockController extends Controller
                     ]);
 
                     DB::commit();
+                    \App\Services\NotificationService::notifyContactUnlocked(Auth::user(), $room);
 
                     return response()->json([
                         'success' => true,

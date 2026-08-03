@@ -116,7 +116,7 @@
                 <nav class="flex gap-1 overflow-x-auto border-b bg-slate-50 p-2">
                     @foreach([
                         'payments'=>'Payments','listings'=>'Listings','subscriptions'=>'Plans','enquiries'=>'Unlocks',
-                        'bookings'=>'Bookings','complaints'=>'Complaints','wishlists'=>'Wishlist','alerts'=>'City Alerts',
+                        'complaints'=>'Complaints','wishlists'=>'Wishlist','alerts'=>'City Alerts',
                         'referrals'=>'Referrals','activities'=>'Admin Log'
                     ] as $key=>$label)
                         <button type="button" data-history-tab="{{ $key }}" class="history-tab min-w-max rounded-lg px-3 py-2 text-[11px] font-bold {{ $loop->first ? 'admin-theme-bg' : 'text-slate-600 hover:bg-white' }}">{{ $label }}</button>
@@ -126,7 +126,7 @@
                 @php
                     $panels = [
                         'payments' => $history['payments'], 'listings' => $history['rooms'], 'subscriptions' => $history['subscriptions'],
-                        'enquiries' => $history['enquiries'], 'bookings' => $history['bookings'], 'complaints' => $history['complaints'],
+                        'enquiries' => $history['enquiries'], 'complaints' => $history['complaints'],
                         'wishlists' => $history['wishlists'], 'alerts' => $history['city_alerts'], 'referrals' => $history['referrals'],
                         'activities' => $history['activities'],
                     ];
@@ -143,7 +143,6 @@
                                             @case('listings') <p class="truncate text-sm font-bold">{{ $record->title }}</p><p class="text-xs text-slate-400">{{ $record->city }} - &#8377;{{ number_format($record->rent) }}/month</p> @break
                                             @case('subscriptions') <p class="truncate text-sm font-bold">{{ $record->plan?->name ?? 'Deleted plan' }}</p><p class="text-xs text-slate-400">{{ $record->start_date?->format('d M Y') }} to {{ $record->end_date?->format('d M Y') }}</p> @break
                                             @case('enquiries') <p class="truncate text-sm font-bold">{{ $record->room?->title ?? 'Deleted room' }}</p><p class="text-xs text-slate-400">{{ $record->unlocked ? 'Contact unlocked' : 'Pending unlock' }}</p> @break
-                                            @case('bookings') <p class="truncate text-sm font-bold">{{ $record->room?->title ?? 'Deleted room' }}</p><p class="text-xs text-slate-400">&#8377;{{ number_format($record->total_amount,2) }}</p> @break
                                             @case('complaints') <p class="truncate text-sm font-bold">{{ $record->ticket_number }} - {{ $record->subject }}</p><p class="text-xs text-slate-400">{{ ucfirst(str_replace('_',' ',$record->category)) }} - {{ $record->against_user_id === $member->id ? 'Against member' : 'Raised by member' }}</p> @break
                                             @case('wishlists') <p class="truncate text-sm font-bold">{{ $record->room?->title ?? 'Deleted room' }}</p><p class="text-xs text-slate-400">{{ $record->room?->city ?? 'Location unavailable' }}</p> @break
                                             @case('alerts') <p class="truncate text-sm font-bold">{{ $record->city }}</p><p class="text-xs text-slate-400">City availability alert</p> @break

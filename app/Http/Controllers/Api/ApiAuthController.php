@@ -95,6 +95,10 @@ class ApiAuthController extends BaseApiController
             return $this->sendError('Administrators must use the admin email and password login.', [], 403);
         }
 
+        if ($request->filled('fcm_token')) {
+            $user->update(['fcm_token' => $request->fcm_token]);
+        }
+
         $token = $user->createToken('flutter_app')->plainTextToken;
 
         return $this->sendSuccess([
@@ -114,7 +118,8 @@ class ApiAuthController extends BaseApiController
             'phone' => 'nullable|string',
             'role' => 'nullable|in:user,owner',
             'otp' => 'required|string|min:6|max:6',
-            'referral_code' => 'nullable|string'
+            'referral_code' => 'nullable|string',
+            'fcm_token' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -150,6 +155,7 @@ class ApiAuthController extends BaseApiController
             'referred_by_id' => $referredBy,
             'wallet' => 0,
             'free_unlocks' => $initialFreeUnlocks,
+            'fcm_token' => $request->fcm_token ?? null,
         ]);
 
         $token = $user->createToken('flutter_app')->plainTextToken;
@@ -173,7 +179,11 @@ class ApiAuthController extends BaseApiController
      */
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
+        $user = $request->user();
+        if ($user) {
+            $user->update(['fcm_token' => null]);
+            $user->tokens()->delete();
+        }
 
         return $this->sendSuccess([], 'Logged out successfully');
     }

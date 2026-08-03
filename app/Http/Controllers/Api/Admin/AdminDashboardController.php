@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\Payment;
-use App\Models\Booking;
 use App\Models\SearchLog;
 use App\Http\Resources\RoomResource;
 use Illuminate\Http\Request;
@@ -113,14 +112,9 @@ class AdminDashboardController extends BaseApiController
             ->limit(10)
             ->get();
 
-        $bookingsPerMonth = Booking::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
-            ->whereYear('created_at', now()->year)
-            ->groupBy('month')
-            ->pluck('count', 'month');
-
-        $bookingData = [];
+        $unlockData = [];
         for ($i = 1; $i <= 12; $i++) {
-            $bookingData[] = (int) ($bookingsPerMonth[$i] ?? 0);
+            $unlockData[] = 0;
         }
 
         $usersPerMonth = User::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
@@ -136,7 +130,7 @@ class AdminDashboardController extends BaseApiController
 
         return $this->sendSuccess([
             'top_cities'       => $topCities,
-            'bookings_monthly' => $bookingData,
+            'unlocks_monthly' => $unlockData,
             'users_monthly'    => $userData,
         ]);
     }

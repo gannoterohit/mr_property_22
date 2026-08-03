@@ -32,7 +32,7 @@
         <input name="search" value="{{ request('search') }}" placeholder="Title or city" class="h-10 rounded-xl text-xs">
         <select name="listing_status" class="h-10 rounded-xl text-xs">
             <option value="">All approval states</option>
-            @foreach(['pending'=>'Pending','approved'=>'Approved','rejected'=>'Rejected','expired'=>'Expired'] as $k=>$v)
+            @foreach(['pending'=>'Pending','approved'=>'Approved','rejected'=>'Rejected'] as $k=>$v)
                 <option value="{{ $k }}" @selected(request('listing_status')===$k)>{{ $v }}</option>
             @endforeach
         </select>
@@ -124,7 +124,7 @@
                                 <span class="rounded-full px-2 py-1 text-[10px] font-bold {{ $room->listing_status==='approved'?'bg-emerald-50 text-emerald-700':($room->listing_status==='rejected'?'bg-red-50 text-red-700':'bg-amber-50 text-amber-700') }}">{{ ucfirst($room->listing_status) }}</span>
                             </td>
                             <td class="px-4 text-xs font-bold {{ $room->moderation_status==='normal'?'text-slate-500':'text-red-600' }}">{{ ucfirst($room->moderation_status) }}</td>
-                            <td class="px-4 text-xs font-bold">{{ $room->expires_at?->isPast()?'Expired':ucfirst($room->status) }}</td>
+                            <td class="px-4 text-xs font-bold">{{ ucfirst($room->status) }}</td>
                             <td class="px-4">
                                 <div class="flex justify-end gap-1">
                                     <a href="{{ route('admin.rooms.show',$room) }}" class="rounded-lg border px-2.5 py-2 text-xs text-slate-700 hover:bg-slate-50" title="View"><i class="fas fa-eye"></i></a>

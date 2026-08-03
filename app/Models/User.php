@@ -41,6 +41,8 @@ class User extends Authenticatable
         'admin_notes',
         'referral_code',
         'referred_by_id',
+        'fcm_token',
+        'web_push_token',
     ];
 
     protected static function booted()
@@ -101,9 +103,6 @@ class User extends Authenticatable
 
     public function rooms() {
         return $this->hasMany(Room::class);
-    }
-    public function bookings() {
-        return $this->hasMany(Booking::class);
     }
     public function subscriptions() {
         return $this->hasMany(Subscription::class);

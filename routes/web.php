@@ -18,6 +18,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UnlockController;
+use App\Http\Controllers\UserNotificationController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
@@ -110,8 +111,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/payment/razorpay/order', [RazorpayController::class, 'createOrder'])->middleware('throttle:10,1')->name('razorpay.createOrder');
     Route::post('/payment/razorpay/verify', [RazorpayController::class, 'verifyPayment'])->middleware('throttle:10,1')->name('razorpay.verify');
 
-    // Other routes
-    // Phase 1 is listing + room-contact unlock only. Rent booking/payment is intentionally disabled.
     Route::get('/plans', [PlanController::class, 'index'])->name('plans');
     Route::post('/subscription/purchase', [\App\Http\Controllers\SubscriptionController::class, 'store'])->name('subscription.purchase');
     Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscribe');
@@ -130,6 +129,16 @@ Route::middleware('auth')->group(function () {
     // Wallet
     Route::get('/wallet', [WalletController::class, 'index'])->name('wallet');
     Route::post('/wallet/convert', [WalletController::class, 'convertPoints'])->name('wallet.convert');
+
+    // User / Owner Bell Icon Notifications
+    Route::get('/notifications', [UserNotificationController::class, 'index'])->name('user.notifications.index');
+    Route::post('/notifications/{notification}/read', [UserNotificationController::class, 'markRead'])->name('user.notifications.read');
+    Route::post('/notifications/read-all', [UserNotificationController::class, 'markAllRead'])->name('user.notifications.readAll');
+    Route::get('/notifications/unread-count', [UserNotificationController::class, 'unreadCount'])->name('user.notifications.unreadCount');
+
+    // Web Push Notification Token
+    Route::post('/push-token', [\App\Http\Controllers\WebPushTokenController::class, 'store'])->name('web.push.store');
+    Route::delete('/push-token', [\App\Http\Controllers\WebPushTokenController::class, 'destroy'])->name('web.push.destroy');
 });
 
 Route::post('/webhook/razorpay', [RazorpayController::class, 'webhook'])->name('razorpay.webhook');
@@ -151,6 +160,10 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::match(['get', 'post'], '/notifications/{notification}/read', [AdminNotificationController::class, 'markRead'])->name('notifications.markRead');
     Route::post('/notifications/read-all', [AdminNotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
     Route::get('/notifications/unread-count', [AdminNotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
+
+    // Broadcast Announcement Center
+    Route::get('/broadcast', [\App\Http\Controllers\Admin\AdminBroadcastController::class, 'index'])->name('broadcast.index');
+    Route::post('/broadcast/send', [\App\Http\Controllers\Admin\AdminBroadcastController::class, 'send'])->name('broadcast.send');
 
     // Blog Management
     Route::resource('blogs', \App\Http\Controllers\Admin\BlogController::class);
@@ -212,9 +225,7 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::get('/all-rooms', [AdminController::class, 'rooms'])->name('all-rooms');
     Route::get('/payments-index', [AdminController::class, 'paymentsIndex'])->name('payments.index');
 
-    // Payout Management
-    Route::get('/payouts', [AdminController::class, 'payouts'])->name('payouts');
-    Route::post('/payouts/{id}/process', [AdminController::class, 'processPayout'])->name('payouts.process');
+
 
     // City Alerts Management
     Route::get('/city-alerts', [AdminController::class, 'cityAlerts'])->name('city-alerts.index');

@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\ApiProfileController;
 use App\Http\Controllers\Api\ApiDashboardController;
 use App\Http\Controllers\Api\ApiPaymentController;
-use App\Http\Controllers\Api\ApiBookingController;
 use App\Http\Controllers\Api\ApiUnlockController;
 use App\Http\Controllers\Api\ApiWalletController;
 use App\Http\Controllers\Api\ApiWishlistController;
@@ -13,6 +12,9 @@ use App\Http\Controllers\Api\ApiGeneralController;
 use App\Http\Controllers\Api\ApiSubscriptionController;
 use App\Http\Controllers\Api\ApiComplaintController;
 use App\Http\Controllers\Api\ApiAccountController;
+
+use App\Http\Controllers\Api\ApiFcmTokenController;
+use App\Http\Controllers\Api\ApiNotificationController;
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -23,6 +25,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/update',      [ApiProfileController::class, 'update']);
     Route::post('/profile/delete-otp',  [ApiProfileController::class, 'sendDeleteOtp']);
     Route::delete('/profile',           [ApiProfileController::class, 'destroy']);
+    Route::post('/fcm-token',           [ApiFcmTokenController::class, 'store']);
+    Route::delete('/fcm-token',        [ApiFcmTokenController::class, 'destroy']);
+
+    // ── Notifications ─────────────────────────
+    Route::get('/notifications',              [ApiNotificationController::class, 'index']);
+    Route::post('/notifications/read-all',    [ApiNotificationController::class, 'markAllRead']);
+    Route::get('/notifications/unread-count', [ApiNotificationController::class, 'unreadCount']);
+    Route::post('/notifications/{id}/read',   [ApiNotificationController::class, 'markRead']);
 
     // ── Dashboard ─────────────────────────────
     Route::get('/dashboard',        [ApiDashboardController::class, 'index']);
@@ -33,7 +43,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payments/verify',       [ApiPaymentController::class, 'verifyPayment']);
 
     // ── Transactions ──────────────────────────
-    // Phase 1 does not collect rent or create bookings/payouts.
     Route::post('/unlock/{room}', [ApiUnlockController::class, 'unlock']);
 
     // ── Wallet & Wishlist ─────────────────────

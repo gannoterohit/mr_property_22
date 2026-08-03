@@ -21,6 +21,7 @@ class BrandedMessageMail extends Mailable implements ShouldQueue
         public array $details = [],
         public string $tone = 'primary',
         public ?string $notice = null,
+        public ?string $imageUrl = null,
     ) {}
 
     public function build()

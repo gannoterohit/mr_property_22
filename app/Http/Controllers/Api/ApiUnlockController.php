@@ -64,6 +64,7 @@ class ApiUnlockController extends BaseApiController
                     ['payment_id' => $payment->id, 'unlocked' => true, 'unlocked_at' => now()]
                 );
                 DB::commit();
+                \App\Services\NotificationService::notifyContactUnlocked(Auth::user(), $room);
 
                 return $this->sendSuccess([
                     'contact' => $room->owner->phone ?? $room->owner->email,
@@ -94,6 +95,7 @@ class ApiUnlockController extends BaseApiController
                     );
 
                     DB::commit();
+                    \App\Services\NotificationService::notifyContactUnlocked(Auth::user(), $room);
 
                     return $this->sendSuccess([
                         'contact' => $room->owner->phone ?? $room->owner->email
@@ -124,6 +126,7 @@ class ApiUnlockController extends BaseApiController
                 );
 
                 DB::commit();
+                \App\Services\NotificationService::notifyContactUnlocked(Auth::user(), $room);
 
                 return $this->sendSuccess([
                     'contact' => $room->owner->phone ?? $room->owner->email,
@@ -154,6 +157,7 @@ class ApiUnlockController extends BaseApiController
                     ]);
 
                     DB::commit();
+                    \App\Services\NotificationService::notifyContactUnlocked(Auth::user(), $room);
 
                     return $this->sendSuccess([
                         'contact' => $room->owner->phone ?? $room->owner->email,

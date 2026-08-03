@@ -50,6 +50,8 @@ class AdminRoomController extends BaseApiController
             }
         } catch (\Exception $e) { Log::error('Mail fail: ' . $e->getMessage()); }
 
+        \App\Services\NotificationService::notifyRoomApproved($room);
+
         return $this->sendSuccess(new RoomResource($room), 'Room approved');
     }
 
@@ -76,6 +78,9 @@ class AdminRoomController extends BaseApiController
 
         try { Mail::to($room->owner->email)->send(new \App\Mail\RoomRejectedMail($room, $room->owner, $reasons)); } 
         catch (\Exception $e) { Log::error('Mail fail: ' . $e->getMessage()); }
+
+        $reasonsText = implode(', ', $reasons);
+        \App\Services\NotificationService::notifyRoomRejected($room, $reasonsText);
 
         return $this->sendSuccess(new RoomResource($room), 'Room rejected');
     }

@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Room;
 use App\Models\Enquiry;
 use App\Models\Wishlist;
-use App\Models\Payout;
 use App\Http\Resources\RoomResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,9 +32,7 @@ class ApiOwnerController extends BaseApiController
         // Recent rooms
         $recentRooms = Room::where('user_id', $user->id)->latest()->limit(5)->get();
 
-        // Pending payouts
-        $pendingPayouts     = Payout::where('owner_id', $user->id)->where('status', 'pending')->sum('amount');
-        $processedPayouts   = Payout::where('owner_id', $user->id)->where('status', 'processed')->sum('amount');
+
 
         return $this->sendSuccess([
             'stats' => [
@@ -50,26 +47,10 @@ class ApiOwnerController extends BaseApiController
                 'points'          => (float) ($user->wallet ?? 0),
                 'balance'         => (float) ($user->wallet_balance ?? 0),
             ],
-            'payouts' => [
-                'pending'   => (float) $pendingPayouts,
-                'processed' => (float) $processedPayouts,
-            ],
             'recent_rooms' => RoomResource::collection($recentRooms),
         ]);
     }
 
-    /**
-     * Owner's payout history
-     */
-    public function payouts(Request $request)
-    {
-        $payouts = Payout::where('owner_id', Auth::id())
-            ->with('booking')
-            ->latest()
-            ->paginate($request->get('limit', 15));
-
-        return $this->sendSuccess($payouts);
-    }
 
     /**
      * Owner's enquiry/unlock history

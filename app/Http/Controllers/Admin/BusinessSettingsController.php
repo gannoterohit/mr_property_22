@@ -68,6 +68,12 @@ class BusinessSettingsController extends Controller
             'razorpay_secret' => ['nullable', 'string', 'max:500'],
             'razorpay_webhook_secret' => ['nullable', 'string', 'max:500'],
             'google_maps_api_key' => ['nullable', 'string', 'max:500'],
+            'firebase_server_key' => ['nullable', 'string', 'max:1000'],
+            'firebase_project_id' => ['nullable', 'string', 'max:255'],
+            'firebase_web_api_key' => ['nullable', 'string', 'max:500'],
+            'firebase_app_id' => ['nullable', 'string', 'max:255'],
+            'firebase_messaging_sender_id' => ['nullable', 'string', 'max:255'],
+            'firebase_vapid_key' => ['nullable', 'string', 'max:1000'],
             'play_store_url' => ['nullable', 'url', 'max:500'],
             'app_store_url' => ['nullable', 'url', 'max:500'],
             'ga4_measurement_id' => ['nullable', 'string', 'max:100'],
@@ -97,11 +103,12 @@ class BusinessSettingsController extends Controller
             'meta_pixel_enabled',
             'listing_fee_enabled',
             'unlock_fee_enabled',
+            'firebase_push_enabled',
         ] as $booleanKey) {
             $data[$booleanKey] = $request->boolean($booleanKey) ? '1' : '0';
         }
 
-        foreach (['mail_password', 'razorpay_secret', 'razorpay_webhook_secret'] as $secretKey) {
+        foreach (['mail_password', 'razorpay_secret', 'razorpay_webhook_secret', 'firebase_server_key'] as $secretKey) {
             if (($data[$secretKey] ?? '') === '') {
                 unset($data[$secretKey]);
             }

@@ -903,5 +903,202 @@
         @endif
         {{ session()->forget('signup_success') }}
     @endif
+@auth
+@if(Auth::user()->role !== 'admin')
+<script>
+(function () {
+    const btn     = document.getElementById('user-bell-btn');
+    const panel   = document.getElementById('user-bell-panel');
+    const list    = document.getElementById('user-bell-list');
+    const badge   = document.getElementById('user-bell-count');
+    const empty   = document.getElementById('user-bell-empty');
+    const markAll = document.getElementById('user-bell-mark-all');
+
+    if (!btn) return;
+
+    const urls = {
+        fetch:   "{{ route('user.notifications.unreadCount') }}",
+        list:    "{{ route('user.notifications.index') }}",
+        readAll: "{{ route('user.notifications.readAll') }}",
+        read:    (id) => "{{ url('/notifications') }}/" + id + "/read",
+        csrf:    "{{ csrf_token() }}"
+    };
+
+    // Update badge count
+    function updateBadge(count) {
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+        } else {
+            badge.classList.add('hidden');
+            badge.classList.remove('flex');
+        }
+    }
+
+    // Build notification item HTML
+    function buildItem(n) {
+        const iconMap = {
+            'room_approved':   'fa-check-circle text-emerald-500',
+            'room_rejected':   'fa-times-circle text-red-500',
+            'contact_unlock':  'fa-key text-indigo-500',
+            'payment_success': 'fa-credit-card text-green-500',
+            'complaint_update':'fa-headset text-blue-500',
+        };
+        const iconClass = iconMap[n.type] || 'fa-bell text-slate-400';
+        const link = n.link || '#';
+        const imageHtml = n.image ? `<img src="${n.image}" class="mt-2 rounded-lg max-h-24 w-full object-cover border border-slate-100 shadow-sm" alt="Offer Image">` : '';
+        return `<div class="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer notification-item" data-id="${n.id}" data-link="${link}">
+            <div class="mt-0.5 h-8 w-8 shrink-0 rounded-full bg-slate-100 flex items-center justify-center">
+                <i class="fas ${iconClass} text-sm"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-slate-800 truncate">${n.title}</p>
+                <p class="text-[11px] text-slate-500 mt-0.5 line-clamp-2">${n.message || ''}</p>
+                ${imageHtml}
+                <p class="text-[10px] text-slate-400 mt-1">${n.created_at_human || ''}</p>
+            </div>
+        </div>`;
+    }
+
+    // Load notifications into dropdown
+    async function loadNotifications() {
+        try {
+            const res  = await fetch(urls.list, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const data = await res.json();
+
+            // Remove all existing items (keep empty state div)
+            Array.from(list.querySelectorAll('.notification-item')).forEach(el => el.remove());
+
+            if (data.notifications && data.notifications.length > 0) {
+                empty.classList.add('hidden');
+                data.notifications.forEach(n => {
+                    list.insertAdjacentHTML('beforeend', buildItem(n));
+                });
+                // Attach click handlers
+                list.querySelectorAll('.notification-item').forEach(item => {
+                    item.addEventListener('click', () => markRead(item.dataset.id, item.dataset.link));
+                });
+            } else {
+                empty.classList.remove('hidden');
+            }
+            updateBadge(data.unread_count || 0);
+        } catch (e) {}
+    }
+
+    // Mark single as read
+    async function markRead(id, link) {
+        try {
+            await fetch(urls.read(id), {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': urls.csrf, 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            // Remove from list immediately
+            const el = list.querySelector(`[data-id="${id}"]`);
+            if (el) el.remove();
+
+            const remaining = list.querySelectorAll('.notification-item').length;
+            updateBadge(remaining);
+            if (remaining === 0) empty.classList.remove('hidden');
+        } catch (e) {}
+        if (link && link !== '#') window.location.href = link;
+    }
+
+    // Toggle dropdown open/close
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isOpen = !panel.classList.contains('hidden');
+        panel.classList.toggle('hidden');
+        if (!isOpen) loadNotifications();
+    });
+
+    // Mark all read
+    if (markAll) {
+        markAll.addEventListener('click', async function () {
+            try {
+                await fetch(urls.readAll, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': urls.csrf, 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                Array.from(list.querySelectorAll('.notification-item')).forEach(el => el.remove());
+                empty.classList.remove('hidden');
+                updateBadge(0);
+            } catch (e) {}
+        });
+    }
+
+    // Close on outside click
+    document.addEventListener('click', function (e) {
+        if (!document.getElementById('user-bell-wrapper')?.contains(e.target)) {
+            panel.classList.add('hidden');
+        }
+    });
+
+    // Fetch unread count on page load
+    fetch(urls.fetch, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(r => r.json())
+        .then(d => updateBadge(d.unread_count || 0))
+        .catch(() => {});
+})();
+</script>
+@if(\App\Models\Setting::get('firebase_push_enabled', '1') === '1' && \App\Models\Setting::get('firebase_web_api_key') && \App\Models\Setting::get('firebase_project_id'))
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js"></script>
+<script>
+(function() {
+    if (!('serviceWorker' in navigator) || !('Notification' in window)) return;
+
+    const firebaseConfig = {
+        apiKey:            "{{ \App\Models\Setting::get('firebase_web_api_key') }}",
+        authDomain:        "{{ \App\Models\Setting::get('firebase_project_id') }}.firebaseapp.com",
+        projectId:         "{{ \App\Models\Setting::get('firebase_project_id') }}",
+        storageBucket:     "{{ \App\Models\Setting::get('firebase_project_id') }}.appspot.com",
+        messagingSenderId: "{{ \App\Models\Setting::get('firebase_messaging_sender_id') }}",
+        appId:             "{{ \App\Models\Setting::get('firebase_app_id') }}"
+    };
+
+    try {
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+        const vapidKey  = "{{ \App\Models\Setting::get('firebase_vapid_key') }}";
+
+        navigator.serviceWorker.register('/firebase-messaging-sw.js').then(function(registration) {
+            registration.active && registration.active.postMessage({ type: 'FIREBASE_CONFIG', config: firebaseConfig });
+
+            Notification.requestPermission().then(function(permission) {
+                if (permission === 'granted') {
+                    messaging.getToken({ serviceWorkerRegistration: registration, vapidKey: vapidKey || undefined })
+                        .then(function(currentToken) {
+                            if (currentToken) {
+                                fetch("{{ route('web.push.store') }}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    },
+                                    body: JSON.stringify({ token: currentToken })
+                                });
+                            }
+                        }).catch(function(err) {});
+                }
+            });
+        });
+
+        // Foreground notification handler
+        messaging.onMessage(function(payload) {
+            if (payload.notification) {
+                new Notification(payload.notification.title || 'ApnaNest', {
+                    body: payload.notification.body || '',
+                    icon: '/assets/images/icon-192.png'
+                });
+            }
+        });
+    } catch(e) {}
+})();
+</script>
+@endif
+@endif
+@endauth
 </body>
 </html>

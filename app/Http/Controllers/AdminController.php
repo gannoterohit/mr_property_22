@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Mail\RoomApprovedMail;
 use App\Mail\RoomRejectedMail;
 use App\Models\Payment;
-use App\Models\Payout;
 use App\Models\RejectionReason;
 use App\Models\Room;
 use App\Models\RoomOption;
@@ -91,7 +90,7 @@ class AdminController extends Controller
             $data['quickLinks'][] = ['label' => 'Payments', 'route' => route('admin.payments.index'), 'icon' => 'fa-credit-card'];
             $data['quickLinks'][] = ['label' => 'Plans', 'route' => route('admin.plans.index'), 'icon' => 'fa-tags'];
             if ($access['finance_manage']) {
-                $data['quickLinks'][] = ['label' => 'Payouts', 'route' => route('admin.payouts'), 'icon' => 'fa-wallet'];
+                $data['quickLinks'][] = ['label' => 'Payments', 'route' => route('admin.payments.index'), 'icon' => 'fa-credit-card'];
             }
         }
         if ($access['content']) {
@@ -125,7 +124,7 @@ class AdminController extends Controller
             $query->where(fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')->orWhere('city', 'like', '%'.$request->search.'%'));
         }
         if ($request->filled('listing_status')) {
-            $request->listing_status === 'expired' ? $query->where('expires_at', '<', now()) : $query->where('listing_status', $request->listing_status);
+            $query->where('listing_status', $request->listing_status);
         }
         if ($request->filled('moderation_status')) {
             $query->where('moderation_status', $request->moderation_status);
@@ -187,6 +186,8 @@ class AdminController extends Controller
                 // Continue execution even if mail fails
             }
 
+            \App\Services\NotificationService::notifyRoomApproved($room);
+
             return response()->json(['success' => true, 'message' => 'Room approved successfully']);
         } catch (\Exception $e) {
             \Log::error('Room approval error: '.$e->getMessage());
@@ -235,6 +236,9 @@ class AdminController extends Controller
             } catch (\Exception $mailError) {
                 \Log::warning('Room rejection email failed: '.$mailError->getMessage());
             }
+
+            $reasonsText = implode(', ', $reasons);
+            \App\Services\NotificationService::notifyRoomRejected($room, $reasonsText);
 
             return response()->json(['success' => true, 'message' => 'Room rejected successfully']);
         } catch (\Exception $e) {
@@ -286,34 +290,6 @@ class AdminController extends Controller
         return view('admin.analytics.reports', compact('from', 'to', 'revenueByType', 'dailyCollections', 'failedPayments', 'totalUsers', 'unlocks', 'cityDemand', 'ownerGrowth', 'listingGrowth', 'resolutionHours'));
     }
 
-    public function payouts()
-    {
-        $payouts = Payout::with(['owner', 'booking'])
-            ->latest()
-            ->paginate(20);
-
-        return view('admin.payments.payouts', compact('payouts'));
-    }
-
-    public function processPayout(Request $request, $id)
-    {
-        $payout = Payout::findOrFail($id);
-
-        if ($payout->status !== 'pending') {
-            return back()->with('error', 'Payout already processed!');
-        }
-
-        if ($payout->release_date > now()) {
-            return back()->with('error', 'Payout is still on hold period!');
-        }
-
-        $payout->update([
-            'status' => 'processed',
-            'payment_reference' => $request->payment_reference,
-        ]);
-
-        return back()->with('success', 'Payout processed successfully!');
-    }
 
     public function users(Request $request)
     {
@@ -375,7 +351,7 @@ class AdminController extends Controller
         if ($request->filled('member_id')) {
             $member = User::withTrashed()
                 ->whereIn('role', ['user', 'owner'])
-                ->withCount(['rooms', 'payments', 'subscriptions', 'enquiries', 'bookings', 'wishlists', 'complaints', 'cityAlerts', 'referrals'])
+                ->withCount(['rooms', 'payments', 'subscriptions', 'enquiries', 'wishlists', 'complaints', 'cityAlerts', 'referrals'])
                 ->findOrFail($request->integer('member_id'));
 
             $history = [
@@ -383,7 +359,6 @@ class AdminController extends Controller
                 'payments' => \App\Models\Payment::where('user_id', $member->id)->latest()->limit(25)->get(),
                 'subscriptions' => \App\Models\Subscription::with('plan')->where('user_id', $member->id)->latest()->limit(25)->get(),
                 'enquiries' => \App\Models\Enquiry::with('room')->where('user_id', $member->id)->latest()->limit(25)->get(),
-                'bookings' => \App\Models\Booking::with('room')->where('user_id', $member->id)->latest()->limit(25)->get(),
                 'complaints' => \App\Models\Complaint::with(['room', 'againstUser'])
                     ->where(fn ($query) => $query->where('user_id', $member->id)->orWhere('against_user_id', $member->id))
                     ->latest()->limit(25)->get(),

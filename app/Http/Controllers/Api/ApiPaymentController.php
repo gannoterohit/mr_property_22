@@ -173,26 +173,17 @@ class ApiPaymentController extends BaseApiController
                     'payment_id' => $payment->id
                 ]);
             }
-        } elseif ($type === 'booking') {
-            $booking = \App\Models\Booking::find($refId);
-            if ($booking) {
-                $booking->update([
-                    'status' => 'confirmed',
-                    'payment_id' => $payment->id
-                ]);
+        }
 
-                // Update room status
-                \App\Models\Room::where('id', $booking->room_id)->update(['status' => 'booked']);
-
-                // Create Payout for owner
-                \App\Models\Payout::create([
-                    'owner_id' => $booking->room->user_id,
-                    'booking_id' => $booking->id,
-                    'amount' => $booking->owner_payout,
-                    'status' => 'pending',
-                    'release_date' => now()->addDays(7)
-                ]);
+        $user = User::find($payment->user_id);
+        if ($user) {
+            if ($type === 'unlock' && $refId) {
+                $room = Room::find($refId);
+                if ($room) {
+                    \App\Services\NotificationService::notifyContactUnlocked($user, $room);
+                }
             }
+            \App\Services\NotificationService::notifyPaymentSuccess($user, $payment);
         }
     }
 }

@@ -162,6 +162,7 @@
                 ['appearance', 'fa-paint-brush', 'Appearance'],
                 ['payment', 'fa-credit-card', 'Payment'],
                 ['integrations', 'fa-plug', 'Integrations'],
+                ['firebase', 'fa-fire text-amber-500', 'Firebase Push'],
                 ['seo', 'fa-search', 'SEO & Analytics'],
                 ['mail', 'fa-envelope', 'Mail Server'],
                 ['referral', 'fa-toggle-on', 'Feature Toggles'],
@@ -574,6 +575,70 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Apple App Store Link</label>
                                 <input type="url" name="app_store_url" value="{{ \App\Models\Setting::get('app_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors  focus:bg-white focus:ring-0" placeholder="https://apps.apple.com/app/...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Firebase Push Notification Section -->
+                <div data-settings-panel="firebase" class="space-y-6" hidden>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                        <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
+                            <div class="h-10 w-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center mr-4">
+                                <i class="fas fa-fire text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800">Firebase Push Notifications (FCM)</h2>
+                                <p class="text-sm text-gray-500">Configure FCM credentials for Mobile App & Web Browser Push Notifications</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between p-4 bg-amber-50 rounded-xl border border-amber-200">
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800">Firebase Push Notifications</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Enable/Disable FCM push alerts globally across Web and App</p>
+                                </div>
+                                <select name="firebase_push_enabled" class="rounded-lg border-slate-200 text-xs font-bold text-slate-700 bg-white">
+                                    <option value="1" @selected(\App\Models\Setting::get('firebase_push_enabled', '1') === '1')>Active (ON)</option>
+                                    <option value="0" @selected(\App\Models\Setting::get('firebase_push_enabled', '1') === '0')>Inactive (OFF)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">FCM Server Key (Legacy HTTP Key / Secret)</label>
+                                <input type="password" name="firebase_server_key" value="" autocomplete="new-password" placeholder="Leave blank to keep current server key" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono">
+                                <p class="mt-1 text-xs text-gray-500">Found in Firebase Console &rarr; Project Settings &rarr; Cloud Messaging &rarr; Server Key</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Firebase Project ID</label>
+                                    <input type="text" name="firebase_project_id" value="{{ \App\Models\Setting::get('firebase_project_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="e.g. apnanest-12345">
+                                    <p class="mt-1 text-xs text-gray-500">Found in Firebase Console &rarr; Project Settings &rarr; General</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Web API Key (for Web Browser Push)</label>
+                                    <input type="text" name="firebase_web_api_key" value="{{ \App\Models\Setting::get('firebase_web_api_key') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="AIzaSy...">
+                                    <p class="mt-1 text-xs text-gray-500">Found under Firebase Console &rarr; Your apps &rarr; Web app config</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">App ID</label>
+                                    <input type="text" name="firebase_app_id" value="{{ \App\Models\Setting::get('firebase_app_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1:1234567890:web:abcdef...">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Messaging Sender ID</label>
+                                    <input type="text" name="firebase_messaging_sender_id" value="{{ \App\Models\Setting::get('firebase_messaging_sender_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">VAPID Key (Web Push Key Pair)</label>
+                                <input type="text" name="firebase_vapid_key" value="{{ \App\Models\Setting::get('firebase_vapid_key') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="BEl6...">
+                                <p class="mt-1 text-xs text-gray-500">Found in Firebase Console &rarr; Project Settings &rarr; Cloud Messaging &rarr; Web Configuration &rarr; Web Push Certificates</p>
                             </div>
                         </div>
                     </div>

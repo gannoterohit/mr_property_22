@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Razorpay\Api\Api;
-use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
@@ -227,16 +226,6 @@ class RazorpayController extends Controller
                     ]);
                 }
             }
-        } elseif ($paymentType === 'booking' && $referenceId) {
-            $booking = \App\Models\Booking::find($referenceId);
-            if ($booking) {
-                $booking->update(['status' => 'confirmed']);
-                // Set room status to inactive when booked
-                $room = $booking->room;
-                if ($room) {
-                    $room->update(['status' => 'inactive']);
-                }
-            }
         } elseif ($paymentType === 'subscription' && $referenceId) {
             $subscription = \App\Models\Subscription::whereKey($referenceId)->where('user_id', $payment->user_id)->first();
             if ($subscription) {
@@ -250,6 +239,14 @@ class RazorpayController extends Controller
         }
 
         DB::commit();
+
+        $payerUser = Auth::user() ?: \App\Models\User::find($payment->user_id);
+        if ($payerUser) {
+            if ($paymentType === 'unlock' && isset($unlockRoom) && $unlockRoom) {
+                \App\Services\NotificationService::notifyContactUnlocked($payerUser, $unlockRoom);
+            }
+            \App\Services\NotificationService::notifyPaymentSuccess($payerUser, $payment, $unlockRoom ?? null);
+        }
         
         // Prepare conversion tracking data for Google Ads
         $conversionData = [
@@ -281,8 +278,6 @@ class RazorpayController extends Controller
                 return redirect()->route('rooms.show', $referenceId)->with('success', 'Payment successful! Contact unlocked.');
             } elseif ($paymentType === 'subscription') {
                 return redirect()->route('plans')->with('success', 'Subscription activated successfully!');
-            } elseif ($paymentType === 'booking') {
-                return redirect()->route('home')->with('success', 'Booking confirmed successfully!');
             } else {
                 return redirect()->route('home')->with('success', 'Payment verified successfully!');
             }
@@ -399,18 +394,6 @@ class RazorpayController extends Controller
                             }
                         }
                     }
-                    // Handle booking
-                    elseif ($payment->type === 'booking' && $payment->reference_id) {
-                        $booking = \App\Models\Booking::find($payment->reference_id);
-                        if ($booking) {
-                            $booking->update(['status' => 'confirmed']);
-                            // Set room status to inactive when booked
-                            $room = $booking->room;
-                            if ($room) {
-                                $room->update(['status' => 'inactive']);
-                            }
-                        }
-                    }
 
                     // Handle subscription
                     if ($payment->type === 'subscription' && $payment->reference_id) {
@@ -421,6 +404,17 @@ class RazorpayController extends Controller
                     }
 
                     \DB::commit();
+
+                    $payerUser = \App\Models\User::find($payment->user_id);
+                    if ($payerUser) {
+                        if ($payment->type === 'unlock' && $payment->reference_id) {
+                            $unlockedRoom = \App\Models\Room::find($payment->reference_id);
+                            if ($unlockedRoom) {
+                                \App\Services\NotificationService::notifyContactUnlocked($payerUser, $unlockedRoom);
+                            }
+                        }
+                        \App\Services\NotificationService::notifyPaymentSuccess($payerUser, $payment);
+                    }
                 } catch (\Exception $e) {
                     \DB::rollBack();
                     Log::error('Webhook error: '.$e->getMessage());

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Payment;
-use App\Models\Payout;
 use App\Models\Plan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -25,45 +24,6 @@ class AdminFinanceController extends BaseApiController
         }
 
         return $this->sendSuccess($query->paginate($request->get('limit', 15)));
-    }
-
-    /**
-     * List all payouts
-     */
-    public function payouts(Request $request)
-    {
-        $query = Payout::with(['owner', 'booking'])->latest();
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        return $this->sendSuccess($query->paginate($request->get('limit', 15)));
-    }
-
-    /**
-     * Process a payout
-     */
-    public function processPayout(Request $request, $id)
-    {
-        $payout = Payout::find($id);
-        if (! $payout) {
-            return $this->sendError('Payout not found');
-        }
-        if ($payout->status !== 'pending') {
-            return $this->sendError('This payout has already been processed.', [], 409);
-        }
-        if ($payout->release_date > now()) {
-            return $this->sendError('This payout is currently on hold.', [], 422);
-        }
-
-        $validator = Validator::make($request->all(), ['payment_reference' => 'required|string']);
-        if ($validator->fails()) {
-            return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
-        }
-
-        $payout->update(['status' => 'processed', 'payment_reference' => $request->payment_reference]);
-
-        return $this->sendSuccess($payout, 'Payout processed');
     }
 
     /**

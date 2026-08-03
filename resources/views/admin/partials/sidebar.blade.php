@@ -12,7 +12,8 @@
             ['route' => 'admin.owners', 'match' => 'admin.owners*', 'icon' => 'fa-user-tie', 'label' => 'Owners'],
             ['route' => 'admin.users', 'match' => 'admin.users*', 'icon' => 'fa-users', 'label' => 'Users'],
         ]],
-        'support' => ['label' => 'Support', 'icon' => 'fa-headset', 'items' => [
+        'support' => ['label' => 'Support & Push', 'icon' => 'fa-headset', 'items' => [
+            ['route' => 'admin.broadcast.index', 'match' => 'admin.broadcast*', 'icon' => 'fa-bullhorn', 'label' => 'Push Broadcast'],
             ['route' => 'admin.complaints.index', 'match' => 'admin.complaints*', 'icon' => 'fa-shield-halved', 'label' => 'Complaints'],
             ['route' => 'admin.contact-messages.index', 'match' => 'admin.contact-messages*', 'icon' => 'fa-inbox', 'label' => 'Contact Enquiries'],
             ['route' => 'admin.city-alerts.index', 'match' => 'admin.city-alerts*', 'icon' => 'fa-bell', 'label' => 'City Alerts'],
@@ -20,7 +21,8 @@
         ]],
         'finance' => ['label' => 'Finance & Plans', 'icon' => 'fa-wallet', 'items' => [
             ['route' => 'admin.payments.index', 'match' => 'admin.payments*', 'icon' => 'fa-credit-card', 'label' => 'Payments'],
-            ['route' => 'admin.payouts', 'match' => 'admin.payouts*', 'icon' => 'fa-wallet', 'label' => 'Payouts'],
+
+
             ['route' => 'admin.plans.index', 'match' => 'admin.plans*', 'icon' => 'fa-tags', 'label' => 'Subscription Plans'],
             ['route' => 'admin.offers.index', 'match' => 'admin.offers*', 'icon' => 'fa-bullhorn', 'label' => 'Offers'],
         ]],

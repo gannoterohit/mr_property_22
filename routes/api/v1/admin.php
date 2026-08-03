@@ -53,8 +53,6 @@ Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.acti
 
     // ── Finance & Plans ──────────────────────
     Route::get('/payments',                 [AdminFinanceController::class, 'payments']);
-    Route::get('/payouts',                  [AdminFinanceController::class, 'payouts']);
-    Route::post('/payouts/{id}/process',    [AdminFinanceController::class, 'processPayout']);
     
     Route::get('/plans',                    [AdminFinanceController::class, 'plans']);
     Route::post('/plans',                   [AdminFinanceController::class, 'storePlan']);

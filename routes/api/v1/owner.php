@@ -7,7 +7,8 @@ use App\Http\Controllers\Api\ApiRoomController;
 Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(function () {
 
     Route::get('/dashboard',    [ApiOwnerController::class, 'dashboard']);
-    Route::get('/payouts',      [ApiOwnerController::class, 'payouts']);
+
+
     Route::get('/enquiries',    [ApiOwnerController::class, 'enquiries']);
 
     // ── Room Management ────────────────────

@@ -123,6 +123,39 @@
                     </a>
                     
                     @auth
+                        @if(Auth::user()->role !== 'admin')
+                        {{-- Bell Icon Notification Dropdown --}}
+                        <div class="relative" id="user-bell-wrapper">
+                            <button id="user-bell-btn"
+                                    class="relative h-10 w-10 shrink-0 inline-flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-colors"
+                                    title="Notifications"
+                                    aria-label="Notifications">
+                                <i class="far fa-bell text-lg"></i>
+                                <span id="user-bell-count"
+                                      class="absolute -top-0.5 -right-0.5 hidden h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-black text-white shadow"></span>
+                            </button>
+
+                            {{-- Dropdown Panel --}}
+                            <div id="user-bell-panel"
+                                 class="hidden absolute right-0 mt-2 w-80 rounded-2xl border border-slate-100 bg-white shadow-2xl z-50 overflow-hidden"
+                                 style="top:100%;">
+                                <div class="flex items-center justify-between border-b px-4 py-3">
+                                    <p class="text-xs font-extrabold text-slate-800">Notifications</p>
+                                    <button id="user-bell-mark-all"
+                                            class="text-[10px] font-bold text-indigo-600 hover:underline">Mark all read</button>
+                                </div>
+                                <div id="user-bell-list" class="divide-y max-h-72 overflow-y-auto">
+                                    <div id="user-bell-empty" class="py-10 text-center hidden">
+                                        <i class="far fa-bell-slash text-2xl text-slate-300"></i>
+                                        <p class="mt-2 text-xs font-bold text-slate-400">No new notifications</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    @endauth
+
+                    @auth
                         <!-- Account Dropdown - Fixed position via JS to avoid clipping -->
                         @php
                             $isRenter = Auth::user()->role === 'user';

@@ -3,6 +3,11 @@
 @section('content')
     @if($eyebrow)<div style="margin-bottom:16px;"><span class="badge badge-{{ $tone }}">{{ $eyebrow }}</span></div>@endif
     <h2>{{ $heading }}</h2>
+    @if(!empty($imageUrl))
+        <div style="margin: 16px 0; text-align: center;">
+            <img src="{{ $imageUrl }}" alt="{{ $heading }}" style="max-width: 100%; height: auto; border-radius: 12px; border: 1px solid #e2e8f0;">
+        </div>
+    @endif
     <p>{!! nl2br(e($bodyText)) !!}</p>
     @if(count($details))
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">

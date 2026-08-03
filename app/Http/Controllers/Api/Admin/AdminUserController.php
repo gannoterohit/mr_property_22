@@ -48,7 +48,7 @@ class AdminUserController extends BaseApiController
      */
     public function userDetail($id)
     {
-        $user = User::with(['bookings', 'rooms'])->find($id);
+        $user = User::with(['rooms'])->find($id);
         if (!$user) return $this->sendError('User not found');
         return $this->sendSuccess($user);
     }

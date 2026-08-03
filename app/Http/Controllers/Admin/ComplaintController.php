@@ -66,6 +66,12 @@ class ComplaintController extends Controller
         } catch (\Throwable $e) {
             report($e);
         }
+        \App\Services\NotificationService::notifyComplaintUpdated(
+            $complaint->user_id,
+            $complaint->ticket_number,
+            $complaint->status,
+            route('complaints.show', $complaint)
+        );
         return back()->with('success', 'Complaint status updated.');
     }
 

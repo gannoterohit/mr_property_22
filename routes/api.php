@@ -17,7 +17,7 @@ Route::prefix('v1')->group(function () {
     // 1. PUBLIC Endpoints (Settings, Auth, Global Browse)
     require __DIR__ . '/api/v1/public.php';
 
-    // 2. USER Endpoints (Auth, Profile, Wallet, Wishlist, Bookings)
+    // 2. USER Endpoints (Auth, Profile, Wallet, Wishlist, Unlocks)
     require __DIR__ . '/api/v1/user.php';
 
     // 3. OWNER Endpoints (Dashboard, Room Management, Leads)
