@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 @php
                     $unreadNotificationsCount = \App\Models\AdminNotification::where('is_read', false)->count();
-                    $recentNotifications = \App\Models\AdminNotification::latest()->take(10)->get();
+                    $recentNotifications = \App\Models\AdminNotification::where('is_read', false)->latest()->take(10)->get();
                 @endphp
 
                 <!-- Notification Bell Dropdown -->
@@ -438,7 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             @empty
                                 <div class="p-6 text-center text-slate-400">
                                     <i class="fas fa-bell-slash text-2xl mb-2 block text-slate-300"></i>
-                                    <p class="text-xs font-medium">No notifications yet</p>
+                                    <p class="text-xs font-medium">No unread notifications</p>
                                 </div>
                             @endforelse
                         </div>
