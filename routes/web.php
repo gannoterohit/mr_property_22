@@ -261,6 +261,7 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::put('rooms/{room}/update', [AdminController::class, 'updateRoom'])->name('rooms.update');
     Route::post('rooms/{room}/approve', [AdminController::class, 'approveRoom'])->name('rooms.approve');
     Route::post('rooms/{room}/reject', [AdminController::class, 'rejectRoom'])->name('rooms.reject');
+    Route::patch('rooms/{room}/toggle-status', [AdminController::class, 'toggleRoomStatus'])->name('rooms.toggle-status');
     Route::post('rooms/bulk-action', [AdminController::class, 'bulkRooms'])->name('rooms.bulk');
     Route::delete('rooms/{room}', [AdminController::class, 'deleteRoom'])->name('rooms.destroy');
 

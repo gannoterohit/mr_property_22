@@ -536,8 +536,21 @@ class RoomController extends Controller {
         if (is_numeric($request->segment(2)) && $room->slug) {
             return redirect()->route('rooms.show', $room, 301);
         }
-        $isUnlocked = false;
+
         $isOwner = false;
+        $isAdmin = false;
+        if (Auth::check()) {
+            $isOwner = Auth::id() === $room->user_id && Auth::user()->role === 'owner';
+            $isAdmin = Auth::user()->role === 'admin';
+        }
+
+        if (!$isOwner && !$isAdmin) {
+            if ($room->status !== 'active' || $room->listing_status !== 'approved' || !$room->listing_fee_paid) {
+                abort(404);
+            }
+        }
+
+        $isUnlocked = false;
         $subscriptionRemaining = 0;
         
         if (Auth::check()) {

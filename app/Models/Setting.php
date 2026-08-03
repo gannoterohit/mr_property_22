@@ -66,7 +66,8 @@ class Setting extends Model
         }
 
         $setting = self::where('key', $key)->first();
-        return $setting ? $setting->value : $default;
+
+        return $setting && $setting->value !== null && $setting->value !== '' ? $setting->value : $default;
     }
 
     /**

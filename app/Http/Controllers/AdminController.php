@@ -272,6 +272,21 @@ class AdminController extends Controller
         }
     }
 
+    public function toggleRoomStatus(Request $request, Room $room)
+    {
+        try {
+            $room->update([
+                'status' => $room->status === 'active' ? 'booked' : 'active',
+            ]);
+
+            return response()->json(['success' => true, 'new_status' => $room->status]);
+        } catch (\Exception $e) {
+            \Log::error('Room status toggle error: '.$e->getMessage());
+
+            return response()->json(['success' => false, 'message' => 'Unable to update room status. Please try again.'], 500);
+        }
+    }
+
     public function reports(Request $request)
     {
         $from = $request->date('from') ?? now()->startOfMonth();

@@ -5,6 +5,7 @@
     $phone = \App\Models\Setting::get('contact_phone', '+91 9340058914');
     $email = \App\Models\Setting::get('contact_email', 'support@roomrental.com');
     $address = \App\Models\Setting::get('company_address', 'Indore, Madhya Pradesh, India');
+    $businessHours = \App\Models\Setting::get('business_hours', 'Mon - Sun: 9AM - 8PM');
 @endphp
 
 @section('title', 'Contact Us | ' . $siteName)
@@ -21,7 +22,7 @@
             </div>
             <div class="rounded-xl border border-indigo-100 bg-white p-4 text-sm text-slate-600 shadow-sm">
                 <strong class="block text-slate-950"><i class="fas fa-clock mr-2 text-indigo-600"></i>Typical response</strong>
-                <span class="mt-1 block text-xs leading-5">Most support messages are reviewed during business hours. For fraud or safety concerns, include screenshots and room details.</span>
+                <span class="mt-1 block text-xs leading-5">We respond as fast as possible. Most support messages are reviewed during business hours. For fraud or safety concerns, include screenshots and room details.</span>
             </div>
         </div>
 
@@ -49,6 +50,13 @@
                             <span class="min-w-0">
                                 <span class="block text-[10px] font-extrabold uppercase tracking-wide text-slate-400">Location</span>
                                 <span class="block break-words text-sm font-bold text-slate-800">{{ $address }}</span>
+                            </span>
+                        </div>
+                        <div class="flex gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700"><i class="fas fa-clock"></i></span>
+                            <span class="min-w-0">
+                                <span class="block text-[10px] font-extrabold uppercase tracking-wide text-slate-400">Business Hours</span>
+                                <span class="block break-words text-sm font-bold text-slate-800">{{ $businessHours }}</span>
                             </span>
                         </div>
                     </div>

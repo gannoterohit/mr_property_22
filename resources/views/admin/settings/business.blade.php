@@ -129,7 +129,8 @@
         box-shadow: 0 1px 2px rgba(15, 23, 42, .08);
     }
     [data-seo-part][hidden],
-    [data-seo-subpanel][hidden] {
+    [data-seo-subpanel][hidden],
+    [data-appearance-subpanel][hidden] {
         display: none !important;
     }
 </style>
@@ -263,16 +264,23 @@
                     
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
-                             <div class="h-10 w-10 rounded-lg admin-theme-soft flex items-center justify-center mr-4">
-                                <i class="fas fa-palette text-xl"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-800">Branding & Identity</h2>
-                                <p class="text-sm text-gray-500">Look and feel of your website</p>
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-8">
+                              <div class="h-10 w-10 rounded-lg admin-theme-soft flex items-center justify-center mr-4">
+                                 <i class="fas fa-palette text-xl"></i>
+                             </div>
+                             <div>
+                                 <h2 class="text-xl font-bold text-gray-800">Branding & Identity</h2>
+                                 <p class="text-sm text-gray-500">Look and feel of your website</p>
+                             </div>
+                         </div>
+
+                         <div class="settings-subtabs mb-6" role="tablist" aria-label="Appearance settings sections">
+                             <button type="button" data-appearance-tab="branding" aria-selected="true"><i class="fas fa-image"></i>Branding</button>
+                             <button type="button" data-appearance-tab="colors" aria-selected="false"><i class="fas fa-droplet"></i>Colors</button>
+                             <button type="button" data-appearance-tab="contact" aria-selected="false"><i class="fas fa-address-book"></i>Contact</button>
+                             <button type="button" data-appearance-tab="social" aria-selected="false"><i class="fas fa-share-nodes"></i>Social</button>
+                         </div>
+                         
+                         <div data-appearance-subpanel="branding" class="space-y-8">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-3">Website Logo (Navbar)</label>
                                 <div class="flex items-start gap-6">
@@ -354,71 +362,84 @@
                                 </div>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Website Name</label>
-                                    <input type="text" name="website_name" value="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
-                                </div>
-                                 <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                         <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Phone</label>
-                                         <input type="text" name="contact_phone" value="{{ \App\Models\Setting::get('contact_phone') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="+91 9340058914">
-                                    </div>
-                                    <div>
-                                         <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Email</label>
-                                         <input type="email" name="contact_email" value="{{ \App\Models\Setting::get('contact_email') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="support@roomrental.com">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Company Address</label>
-                                <textarea name="company_address" rows="3" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="Enter your company address">{{ \App\Models\Setting::get('company_address') }}</textarea>
-                                <p class="mt-1 text-xs text-gray-500">This will be displayed on the Contact Us page and footer</p>
-                            </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Primary Color</label>
-                                    <div class="flex items-center gap-3">
-                                        <input type="color" id="primary_color" name="primary_color" value="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
-                                        <input type="text" name="primary_color_text" value="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#4F46E5" id="primary_color_text">
-                                    </div>
-                                    <p class="mt-1 text-xs text-gray-500">Main brand color for headers, buttons, links</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Secondary Color</label>
-                                    <div class="flex items-center gap-3">
-                                        <input type="color" id="secondary_color" name="secondary_color" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
-                                        <input type="text" name="secondary_color_text" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#10B981" id="secondary_color_text">
-                                    </div>
-                                    <p class="mt-1 text-xs text-gray-500">Accent color for success states, highlights</p>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Social Media Links</label>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-xs text-gray-600 mb-1">Facebook URL</label>
-                                        <input type="url" name="facebook_url" value="{{ \App\Models\Setting::get('facebook_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://facebook.com/yourpage">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs text-gray-600 mb-1">Twitter URL</label>
-                                        <input type="url" name="twitter_url" value="{{ \App\Models\Setting::get('twitter_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://twitter.com/yourhandle">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs text-gray-600 mb-1">Instagram URL</label>
-                                        <input type="url" name="instagram_url" value="{{ \App\Models\Setting::get('instagram_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://instagram.com/yourprofile">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs text-gray-600 mb-1">LinkedIn URL</label>
-                                        <input type="url" name="linkedin_url" value="{{ \App\Models\Setting::get('linkedin_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://linkedin.com/company/yourcompany">
-                                    </div>
-                                </div>
-                                <p class="mt-2 text-xs text-gray-500">Social media links will appear in the footer. Leave blank to hide.</p>
-                            </div>
-                        </div>
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                 <div>
+                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Website Name</label>
+                                     <input type="text" name="website_name" value="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
+                                 </div>
+                             </div>
+                         </div>
+
+                         <div data-appearance-subpanel="colors" class="space-y-6" hidden>
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                 <div>
+                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Primary Color</label>
+                                     <div class="flex items-center gap-3">
+                                         <input type="color" id="primary_color" name="primary_color" value="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
+                                         <input type="text" name="primary_color_text" value="{{ \App\Models\Setting::get('primary_color', '#4F46E5') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#4F46E5" id="primary_color_text">
+                                     </div>
+                                     <p class="mt-1 text-xs text-gray-500">Main brand color for headers, buttons, links</p>
+                                 </div>
+                                 <div>
+                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Secondary Color</label>
+                                     <div class="flex items-center gap-3">
+                                         <input type="color" id="secondary_color" name="secondary_color" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
+                                         <input type="text" name="secondary_color_text" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#10B981" id="secondary_color_text">
+                                     </div>
+                                     <p class="mt-1 text-xs text-gray-500">Accent color for success states, highlights</p>
+                                 </div>
+                             </div>
+                         </div>
+
+                         <div data-appearance-subpanel="contact" class="space-y-6" hidden>
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                 <div>
+                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Phone</label>
+                                     <input type="text" name="contact_phone" value="{{ \App\Models\Setting::get('contact_phone') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="+91 9340058914">
+                                 </div>
+                                 <div>
+                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Email</label>
+                                     <input type="email" name="contact_email" value="{{ \App\Models\Setting::get('contact_email') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="support@roomrental.com">
+                                 </div>
+                             </div>
+                             
+                             <div>
+                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Company Address</label>
+                                 <textarea name="company_address" rows="3" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="Enter your company address">{{ \App\Models\Setting::get('company_address') }}</textarea>
+                                 <p class="mt-1 text-xs text-gray-500">This will be displayed on the Contact Us page and footer</p>
+                             </div>
+
+                             <div>
+                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Business Hours</label>
+                                 <input type="text" name="business_hours" value="{{ \App\Models\Setting::get('business_hours') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="Mon - Sun: 9AM - 8PM">
+                                 <p class="mt-1 text-xs text-gray-500">Displayed on the Contact Us page and footer</p>
+                             </div>
+                         </div>
+
+                         <div data-appearance-subpanel="social" class="space-y-6" hidden>
+                             <div>
+                                 <label class="block text-sm font-semibold text-gray-700 mb-3">Social Media Links</label>
+                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                     <div>
+                                         <label class="block text-xs text-gray-600 mb-1">Facebook URL</label>
+                                         <input type="url" name="facebook_url" value="{{ \App\Models\Setting::get('facebook_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://facebook.com/yourpage">
+                                     </div>
+                                     <div>
+                                         <label class="block text-xs text-gray-600 mb-1">Twitter URL</label>
+                                         <input type="url" name="twitter_url" value="{{ \App\Models\Setting::get('twitter_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://twitter.com/yourhandle">
+                                     </div>
+                                     <div>
+                                         <label class="block text-xs text-gray-600 mb-1">Instagram URL</label>
+                                         <input type="url" name="instagram_url" value="{{ \App\Models\Setting::get('instagram_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://instagram.com/yourprofile">
+                                     </div>
+                                     <div>
+                                         <label class="block text-xs text-gray-600 mb-1">LinkedIn URL</label>
+                                         <input type="url" name="linkedin_url" value="{{ \App\Models\Setting::get('linkedin_url') }}" class="block w-full px-4 py-2 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white text-sm" placeholder="https://linkedin.com/company/yourcompany">
+                                     </div>
+                                 </div>
+                                 <p class="mt-2 text-xs text-gray-500">Social media links will appear in the footer. Leave blank to hide.</p>
+                             </div>
+                         </div>
                     </div>
                 </div>
                 
@@ -965,6 +986,22 @@ document.addEventListener('DOMContentLoaded', () => {
         adsense: ['Google AdSense', 'Configure publisher and ad slot IDs for public pages.', 'fas fa-rectangle-ad text-xl'],
     };
 
+    const appearanceTabs = [...root.querySelectorAll('[data-appearance-tab]')];
+    const appearancePanels = [...root.querySelectorAll('[data-appearance-subpanel]')];
+    const validAppearanceTabs = appearanceTabs.map((tab) => tab.dataset.appearanceTab);
+
+    const activateAppearanceTab = (tabName) => {
+        const activeAppearanceTab = validAppearanceTabs.includes(tabName) ? tabName : 'branding';
+
+        appearanceTabs.forEach((tab) => {
+            tab.setAttribute('aria-selected', tab.dataset.appearanceTab === activeAppearanceTab ? 'true' : 'false');
+        });
+
+        appearancePanels.forEach((panel) => {
+            panel.hidden = panel.dataset.appearanceSubpanel !== activeAppearanceTab;
+        });
+    };
+
     const activateSeoTab = (tabName) => {
         const activeSeoTab = validSeoTabs.includes(tabName) ? tabName : 'basics';
 
@@ -1008,8 +1045,8 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.hidden = panel.dataset.settingsPanel !== activeTab;
         });
 
-        if (activeTab === 'seo') {
-            activateSeoTab(seoTabs.find((tab) => tab.getAttribute('aria-selected') === 'true')?.dataset.seoTab || 'basics');
+        if (activeTab === 'appearance') {
+            activateAppearanceTab(appearanceTabs.find((tab) => tab.getAttribute('aria-selected') === 'true')?.dataset.appearanceTab || 'branding');
         }
 
         if (updateUrl) {
@@ -1025,7 +1062,13 @@ document.addEventListener('DOMContentLoaded', () => {
         tab.addEventListener('click', () => activateSeoTab(tab.dataset.seoTab));
     });
 
+    appearanceTabs.forEach((tab) => {
+        tab.addEventListener('click', () => activateAppearanceTab(tab.dataset.appearanceTab));
+    });
+
     activateSeoTab('basics');
+
+    activateAppearanceTab('branding');
 
     activateTab(location.hash.replace('#', '') || 'general', false);
 });

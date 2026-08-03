@@ -91,8 +91,8 @@
                         <th>Location & rent</th>
                         <th>Approval</th>
                         <th>Moderation</th>
-                        <th>Availability</th>
-                        <th>Actions</th>
+                        <th class="text-center w-[110px]">Status</th>
+                        <th class="text-right w-[190px]">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y">
@@ -124,17 +124,27 @@
                                 <span class="rounded-full px-2 py-1 text-[10px] font-bold {{ $room->listing_status==='approved'?'bg-emerald-50 text-emerald-700':($room->listing_status==='rejected'?'bg-red-50 text-red-700':'bg-amber-50 text-amber-700') }}">{{ ucfirst($room->listing_status) }}</span>
                             </td>
                             <td class="px-4 text-xs font-bold {{ $room->moderation_status==='normal'?'text-slate-500':'text-red-600' }}">{{ ucfirst($room->moderation_status) }}</td>
-                            <td class="px-4 text-xs font-bold">{{ ucfirst($room->status) }}</td>
+                            <td class="px-4 text-center">
+                                <form action="{{ route('admin.rooms.toggle-status', $room) }}" method="POST" class="toggle-room-status inline-flex" data-label="{{ $room->title }}" data-active="{{ $room->status === 'active' ? '1' : '0' }}">
+                                    @csrf @method('PATCH')
+                                    <button type="submit" class="inline-flex h-8 w-[104px] items-center justify-start gap-2 rounded-full border px-2 text-[10px] font-bold transition-colors {{ $room->status === 'active' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700' }}" title="Click to {{ $room->status === 'active' ? 'mark as booked' : 'mark as active' }}">
+                                        <span class="relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors {{ $room->status === 'active' ? 'bg-emerald-500' : 'bg-red-500' }}">
+                                            <span class="absolute left-0.5 top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition-transform duration-200 {{ $room->status === 'active' ? 'translate-x-3' : 'translate-x-0' }}"></span>
+                                        </span>
+                                        <span class="inline-block w-12 text-left">{{ $room->status === 'active' ? 'Active' : 'Booked' }}</span>
+                                    </button>
+                                </form>
+                            </td>
                             <td class="px-4">
-                                <div class="flex justify-end gap-1">
-                                    <a href="{{ route('admin.rooms.show',$room) }}" class="rounded-lg border px-2.5 py-2 text-xs text-slate-700 hover:bg-slate-50" title="View"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('admin.rooms.edit',$room) }}" class="rounded-lg border px-2.5 py-2 text-xs text-slate-700 hover:bg-slate-50" title="Edit"><i class="fas fa-pen"></i></a>
-                                    @if($room->listing_status!=='approved')
-                                        <button type="button" class="approve-room rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700" data-url="{{ route('admin.rooms.approve',$room) }}" data-title="{{ $room->title }}">Approve</button>
-                                    @endif
-                                    @if($room->listing_status!=='rejected')
-                                        <button type="button" class="reject-room rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-700" data-url="{{ route('admin.rooms.reject',$room) }}" data-title="{{ $room->title }}">Reject</button>
-                                    @endif
+                                <div class="flex justify-end items-center gap-2">
+                                    <a href="{{ route('admin.rooms.show',$room) }}" class="h-8 px-2.5 inline-flex items-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-800 hover:text-white text-[10px] font-bold transition"><i class="fas fa-eye mr-1"></i>View</a>
+                                    <a href="{{ route('admin.rooms.edit',$room) }}" class="h-8 px-2.5 inline-flex items-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-800 hover:text-white text-[10px] font-bold transition"><i class="fas fa-pen mr-1"></i>Edit</a>
+                                    <form action="{{ route('admin.rooms.destroy',$room) }}" method="POST" class="delete-room-option" data-label="{{ $room->title }}">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="inline-flex h-8 items-center rounded-lg border border-red-100 bg-white px-2.5 text-[10px] font-bold text-red-600 transition hover:bg-red-600 hover:text-white">
+                                            <i class="fas fa-trash-can mr-1"></i>Delete
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -156,27 +166,49 @@
 <script>
 const csrf=document.querySelector('meta[name="csrf-token"]').content;
 document.getElementById('selectAllRooms')?.addEventListener('change',e=>document.querySelectorAll('.room-check').forEach(c=>c.checked=e.target.checked));
-document.querySelectorAll('.approve-room').forEach(b=>b.addEventListener('click',async()=>{const ask=await Swal.fire({title:'Approve this room?',text:b.dataset.title,icon:'question',showCancelButton:true,confirmButtonText:'Approve listing',confirmButtonColor:'#059669'});if(!ask.isConfirmed)return;const res=await fetch(b.dataset.url,{method:'POST',headers:{'X-CSRF-TOKEN':csrf,'Accept':'application/json'}});const data=await res.json();if(data.success){await Swal.fire('Approved',data.message,'success');location.reload()}else Swal.fire('Could not approve',data.message||'Please try again.','error')}));
-const reasonOptions=@json($rejectionReasons->pluck('reason','id'));
-document.querySelectorAll('.reject-room').forEach(b=>b.addEventListener('click',async()=>{const ask=await Swal.fire({title:'Reject room listing',text:b.dataset.title,input:'select',inputOptions:reasonOptions,inputPlaceholder:'Select rejection reason',showCancelButton:true,confirmButtonText:'Reject listing',confirmButtonColor:'#dc2626',inputValidator:v=>!v?'Please select a rejection reason.':undefined});if(!ask.isConfirmed)return;const res=await fetch(b.dataset.url,{method:'POST',headers:{'X-CSRF-TOKEN':csrf,'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify({reasons:[ask.value]})});const data=await res.json();if(data.success){await Swal.fire('Rejected',data.message,'success');location.reload()}else Swal.fire('Could not reject',data.message||'Please try again.','error')}));
-document.querySelectorAll('.approve-room').forEach(button=>{
-    const row=button.closest('tr');
-    const status=[...row.querySelectorAll('span')].find(item=>item.textContent.trim().toLowerCase()==='rejected');
-    if(!status)return;
-    const deleteButton=document.createElement('button');
-    deleteButton.type='button';
-    deleteButton.className='delete-room rounded-lg bg-red-600 px-3 py-2 text-xs font-bold text-white';
-    deleteButton.innerHTML='<i class="fas fa-trash mr-1"></i>Delete';
-    deleteButton.addEventListener('click',async()=>{
-        const result=await Swal.fire({title:'Permanently delete this room?',text:button.dataset.title+' and its related listing data will be removed. This cannot be undone.',icon:'warning',showCancelButton:true,confirmButtonText:'Yes, delete permanently',confirmButtonColor:'#dc2626'});
-        if(!result.isConfirmed)return;
-        const deleteUrl=button.dataset.url.replace(/\/approve$/, '');
-        const response=await fetch(deleteUrl,{method:'DELETE',headers:{'X-CSRF-TOKEN':csrf,'Accept':'application/json'}});
-        const data=await response.json();
-        if(data.success){await Swal.fire('Deleted','Rejected room has been permanently deleted.','success');location.reload();}
-        else Swal.fire('Could not delete',data.message||'Please try again.','error');
+
+document.querySelectorAll('.toggle-room-status').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const isActive = form.dataset.active === '1';
+        const action = isActive ? 'Mark as booked' : 'Mark as active';
+        const result = await Swal.fire({
+            title: `${action}?`,
+            text: form.dataset.label,
+            icon: isActive ? 'warning' : 'question',
+            showCancelButton: true,
+            confirmButtonText: `Yes, ${action.toLowerCase()}`,
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: isActive ? '#dc2626' : '#059669',
+            reverseButtons: true,
+        });
+
+        if (result.isConfirmed) {
+            form.submit();
+        }
     });
-    button.parentElement.appendChild(deleteButton);
+});
+
+document.querySelectorAll('.delete-room-option').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const result = await Swal.fire({
+            title: `Delete ${form.dataset.label}?`,
+            text: 'This permanently removes the room and its related listing data. This cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete permanently',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#dc2626',
+            reverseButtons: true,
+        });
+
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
 });
 </script>
 @endpush

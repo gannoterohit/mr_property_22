@@ -51,6 +51,7 @@ class BusinessSettingsController extends Controller
             'contact_phone' => ['nullable', 'string', 'max:30'],
             'contact_email' => ['nullable', 'email', 'max:255'],
             'company_address' => ['nullable', 'string', 'max:1000'],
+            'business_hours' => ['nullable', 'string', 'max:120'],
             'primary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'secondary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'facebook_url' => ['nullable', 'url', 'max:500'],

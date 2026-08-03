@@ -145,7 +145,7 @@
                         </li>
                         <li class="flex items-center gap-2 text-slate-500">
                             <i class="theme-footer-accent far fa-clock"></i>
-                            <span>Mon - Sun: 9AM - 8PM</span>
+                            <span>{{ \App\Models\Setting::get('business_hours', 'Mon - Sun: 9AM - 8PM') }}</span>
                         </li>
                     </ul>
                 </div>
