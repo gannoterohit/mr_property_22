@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -12,31 +11,52 @@ class Otp extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['email', 'code', 'expires_at', 'used'];
+    protected $fillable = ['email', 'phone', 'identifier', 'code', 'expires_at', 'used'];
 
     /**
-     * Generate a new OTP for the given email
+     * Generate OTP by email (legacy + still used for email-mode)
      */
     public static function generate(string $email): string
     {
-        // Delete any existing OTPs for this email
         self::where('email', $email)->delete();
-        
-        // Generate a 6-digit OTP
+
         $code = random_int(100000, 999999);
-        
-        // Create new OTP that expires in 10 minutes
+
         self::create([
-            'email' => $email,
-            'code' => Hash::make((string) $code),
+            'email'      => $email,
+            'identifier' => $email,
+            'code'       => Hash::make((string) $code),
             'expires_at' => now()->addMinutes(10),
         ]);
-        
-        return $code;
+
+        return (string) $code;
     }
-    
+
     /**
-     * Verify if the OTP is valid for the given email
+     * Generate OTP by phone number
+     */
+    public static function generateForPhone(string $phone): string
+    {
+        $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+
+        self::where('phone', $cleanPhone)
+            ->orWhere('identifier', $cleanPhone)
+            ->delete();
+
+        $code = random_int(100000, 999999);
+
+        self::create([
+            'phone'      => $cleanPhone,
+            'identifier' => $cleanPhone,
+            'code'       => Hash::make((string) $code),
+            'expires_at' => now()->addMinutes(10),
+        ]);
+
+        return (string) $code;
+    }
+
+    /**
+     * Verify OTP by email (legacy)
      */
     public static function verify(string $email, string $code): bool
     {
@@ -48,7 +68,7 @@ class Otp extends Model
                 ->lockForUpdate()
                 ->first();
 
-            if (! $otp) {
+            if (!$otp) {
                 return false;
             }
 
@@ -56,12 +76,45 @@ class Otp extends Model
                 ? Hash::check($code, $otp->code)
                 : hash_equals((string) $otp->code, $code);
 
-            if (! $valid) {
+            if (!$valid) {
                 return false;
             }
 
             $otp->update(['used' => true]);
+            return true;
+        });
+    }
 
+    /**
+     * Verify OTP by identifier (email or phone)
+     */
+    public static function verifyByIdentifier(string $identifier, string $code): bool
+    {
+        $cleanIdentifier = filter_var($identifier, FILTER_VALIDATE_EMAIL)
+            ? $identifier
+            : preg_replace('/[^0-9]/', '', $identifier);
+
+        return DB::transaction(function () use ($cleanIdentifier, $code): bool {
+            $otp = self::where('identifier', $cleanIdentifier)
+                ->where('expires_at', '>', now())
+                ->where('used', false)
+                ->latest('id')
+                ->lockForUpdate()
+                ->first();
+
+            if (!$otp) {
+                return false;
+            }
+
+            $valid = str_starts_with($otp->code, '$')
+                ? Hash::check($code, $otp->code)
+                : hash_equals((string) $otp->code, $code);
+
+            if (!$valid) {
+                return false;
+            }
+
+            $otp->update(['used' => true]);
             return true;
         });
     }

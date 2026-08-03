@@ -163,6 +163,7 @@
                 ['payment', 'fa-credit-card', 'Payment'],
                 ['integrations', 'fa-plug', 'Integrations'],
                 ['firebase', 'fa-fire text-amber-500', 'Firebase Push'],
+                ['sms', 'fa-comment-sms text-indigo-500', 'SMS & OTP'],
                 ['seo', 'fa-search', 'SEO & Analytics'],
                 ['mail', 'fa-envelope', 'Mail Server'],
                 ['referral', 'fa-toggle-on', 'Feature Toggles'],
@@ -640,6 +641,77 @@
                                 <input type="text" name="firebase_vapid_key" value="{{ \App\Models\Setting::get('firebase_vapid_key') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="BEl6...">
                                 <p class="mt-1 text-xs text-gray-500">Found in Firebase Console &rarr; Project Settings &rarr; Cloud Messaging &rarr; Web Configuration &rarr; Web Push Certificates</p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SMS Gateway & OTP Delivery Settings -->
+                <div data-settings-panel="sms" class="space-y-6" hidden>
+                    <div class="rounded-xl border bg-white shadow-sm p-6 space-y-6">
+                        <div class="flex items-start gap-4 border-b pb-5">
+                            <div class="h-12 w-12 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
+                                <i class="fas fa-comment-sms text-xl text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800">SMS Gateway & OTP Delivery Mode</h2>
+                                <p class="text-sm text-gray-500 mt-1">Control how OTP is sent to users — via Email, Mobile SMS, or both simultaneously. Switch gateways (MSG91, Twilio, Fast2SMS) without changing any code.</p>
+                            </div>
+                        </div>
+
+                        <!-- OTP Delivery Mode -->
+                        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">OTP Delivery Mode</label>
+                                <select name="otp_delivery" class="block w-full rounded-lg border-gray-200 focus:ring-0 bg-gray-50 focus:bg-white sm:text-sm">
+                                    <option value="email" @selected(\App\Models\Setting::get('otp_delivery', 'email') === 'email')>📧 Email Only (Default)</option>
+                                    <option value="phone" @selected(\App\Models\Setting::get('otp_delivery', 'email') === 'phone')>📱 Mobile Phone (SMS) Only</option>
+                                    <option value="both" @selected(\App\Models\Setting::get('otp_delivery', 'email') === 'both')>📧+📱 Both Email & SMS</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">"Email Only" uses your mail server. "SMS Only" requires a gateway below. "Both" sends OTP on both simultaneously.</p>
+                            </div>
+
+                            <!-- SMS Gateway Provider -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">SMS Gateway Provider</label>
+                                <select name="sms_gateway" class="block w-full rounded-lg border-gray-200 focus:ring-0 bg-gray-50 focus:bg-white sm:text-sm">
+                                    <option value="log" @selected(\App\Models\Setting::get('sms_gateway', 'log') === 'log')>🧪 Log / Demo Mode (No real SMS)</option>
+                                    <option value="msg91" @selected(\App\Models\Setting::get('sms_gateway', 'log') === 'msg91')>MSG91</option>
+                                    <option value="twilio" @selected(\App\Models\Setting::get('sms_gateway', 'log') === 'twilio')>Twilio</option>
+                                    <option value="fast2sms" @selected(\App\Models\Setting::get('sms_gateway', 'log') === 'fast2sms')>Fast2SMS</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">"Log Mode" records OTPs in laravel.log for testing. Switch to a real gateway when ready.</p>
+                            </div>
+
+                            <!-- SMS API Key -->
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">SMS API Key / Auth Token <span class="text-xs font-normal text-gray-400">(Encrypted)</span></label>
+                                <input type="password" name="sms_api_key" value="" autocomplete="new-password" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="Leave blank to keep existing key">
+                                <p class="mt-1 text-xs text-gray-500">MSG91: Auth Key &nbsp;|&nbsp; Twilio: Auth Token &nbsp;|&nbsp; Fast2SMS: API Key</p>
+                            </div>
+
+                            <!-- Sender ID / Account SID -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Sender ID / Account SID</label>
+                                <input type="text" name="sms_sender_id" value="{{ \App\Models\Setting::get('sms_sender_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="e.g. APNANEST or Twilio Account SID">
+                                <p class="mt-1 text-xs text-gray-500">Twilio: Account SID &nbsp;|&nbsp; MSG91 / Fast2SMS: Sender Name (e.g. APNANEST)</p>
+                            </div>
+
+                            <!-- DLT Template ID -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">DLT Template ID / Twilio From Number</label>
+                                <input type="text" name="sms_dlt_te_id" value="{{ \App\Models\Setting::get('sms_dlt_te_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="e.g. 1234567890 or +1415XXXXXXX">
+                                <p class="mt-1 text-xs text-gray-500">MSG91: DLT Approved Template ID &nbsp;|&nbsp; Twilio: From Phone Number &nbsp;|&nbsp; Fast2SMS: Leave blank</p>
+                            </div>
+                        </div>
+
+                        <div class="rounded-xl bg-amber-50 border border-amber-200 p-4 text-xs text-amber-800">
+                            <strong><i class="fas fa-circle-info mr-1"></i> How to switch from Email OTP to SMS OTP:</strong>
+                            <ol class="mt-2 ml-4 list-decimal space-y-1">
+                                <li>Set <strong>OTP Delivery Mode</strong> to <em>Mobile Phone (SMS) Only</em> or <em>Both</em>.</li>
+                                <li>Set <strong>SMS Gateway Provider</strong> to your chosen service (MSG91 / Twilio / Fast2SMS).</li>
+                                <li>Fill in the API Key, Sender ID, and DLT Template ID provided by your gateway.</li>
+                                <li>Save — no code changes needed!</li>
+                            </ol>
                         </div>
                     </div>
                 </div>

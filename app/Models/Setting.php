@@ -15,6 +15,7 @@ class Setting extends Model
         'razorpay_webhook_secret',
         'google_maps_api_key',
         'firebase_server_key',
+        'sms_api_key',
     ];
 
     protected $fillable = [

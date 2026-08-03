@@ -95,6 +95,12 @@ class BusinessSettingsController extends Controller
             'footer_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'website_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'website_favicon' => ['nullable', 'file', 'mimes:ico,png', 'max:1024'],
+            // SMS Gateway
+            'otp_delivery'  => ['nullable', 'in:email,phone,both'],
+            'sms_gateway'   => ['nullable', 'in:log,msg91,twilio,fast2sms'],
+            'sms_api_key'   => ['nullable', 'string', 'max:500'],
+            'sms_sender_id' => ['nullable', 'string', 'max:100'],
+            'sms_dlt_te_id' => ['nullable', 'string', 'max:100'],
         ]);
 
         foreach ([
@@ -108,7 +114,7 @@ class BusinessSettingsController extends Controller
             $data[$booleanKey] = $request->boolean($booleanKey) ? '1' : '0';
         }
 
-        foreach (['mail_password', 'razorpay_secret', 'razorpay_webhook_secret', 'firebase_server_key'] as $secretKey) {
+        foreach (['mail_password', 'razorpay_secret', 'razorpay_webhook_secret', 'firebase_server_key', 'sms_api_key'] as $secretKey) {
             if (($data[$secretKey] ?? '') === '') {
                 unset($data[$secretKey]);
             }
