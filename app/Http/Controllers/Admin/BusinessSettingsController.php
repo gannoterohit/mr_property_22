@@ -172,7 +172,12 @@ class BusinessSettingsController extends Controller
             return back()->withInput()->with('error', 'Unable to update settings. Please try again.');
         }
 
-        return back()->with('success', 'Settings updated successfully!');
+        $tab = in_array($request->input('_active_tab'), [
+            'general','appearance','payment','integrations','firebase','sms','seo','mail','referral'
+        ]) ? $request->input('_active_tab') : 'general';
+
+        return redirect(route('admin.settings') . '#' . $tab)->with('success', 'Settings updated successfully!');
+
     }
 
     public function store(Request $request)

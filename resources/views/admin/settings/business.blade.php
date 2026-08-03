@@ -183,7 +183,9 @@
 
             <form id="settings-form" action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="w-full max-w-5xl space-y-8 pb-12">
                 @csrf
-                
+                {{-- Active tab tracker: JS sets this before submit so controller can redirect back to same tab --}}
+                <input type="hidden" name="_active_tab" id="active_tab_input" value="general">
+
                 <!-- General Section -->
                 <div data-settings-panel="general" class="space-y-6">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
@@ -927,6 +929,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsForm = document.getElementById('settings-form');
     if (settingsForm) {
         settingsForm.addEventListener('submit', () => {
+            // Set active tab before submit so controller can redirect back to same tab
+            const activeTabInput = document.getElementById('active_tab_input');
+            if (activeTabInput) {
+                activeTabInput.value = location.hash.replace('#', '') || 'general';
+            }
+            // Sync color pickers
             [['primary_color','primary_color_text'], ['secondary_color','secondary_color_text']].forEach(([cId, tId]) => {
                 const c = document.getElementById(cId);
                 const t = document.getElementById(tId);
