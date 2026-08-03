@@ -164,11 +164,20 @@ class AdminBroadcastController extends Controller
             $audienceLabel .= " ({$request->target_city})";
         }
 
+        $logPayload = [
+            'audience'    => $audienceLabel,
+            'sent_count'  => $sentCount,
+            'channels'    => $channels,
+            'image_url'   => $imageUrl,
+            'target_link' => $request->link,
+            'message'     => $message,
+        ];
+
         AdminNotification::send(
             'broadcast',
             $title,
-            "Sent to {$sentCount} recipient(s) [{$audienceLabel}]. Channels: " . implode(', ', array_map('ucfirst', $channels)),
-            $imageUrl,
+            json_encode($logPayload),
+            $request->link ?: $imageUrl,
             'fa-bullhorn'
         );
 
