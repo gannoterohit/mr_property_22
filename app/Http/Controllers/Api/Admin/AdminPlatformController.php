@@ -74,6 +74,7 @@ class AdminPlatformController extends BaseApiController
             'name' => ['required', 'string', 'max:100', Rule::unique('cities', 'name')->ignore($city?->id)],
             'slug' => ['nullable', 'string', 'max:120', Rule::unique('cities', 'slug')->ignore($city?->id)],
             'state' => ['nullable', 'string', 'max:100'],
+            'image_url' => ['nullable', 'url', 'max:255'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'sort_order' => ['nullable', 'integer', 'min:0'],

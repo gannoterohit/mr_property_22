@@ -36,6 +36,14 @@ it('exposes every admin controlled module flag through public settings', functio
         ->assertJsonPath('data.module_availability.subscriptions_enabled', true);
 });
 
+it('treats boolean and string feature flags consistently', function () {
+    Setting::set('wallet_enabled', true);
+    Setting::set('referral_enabled', false);
+
+    expect(Setting::isEnabled('wallet_enabled', true))->toBeTrue()
+        ->and(Setting::isEnabled('referral_enabled', true))->toBeFalse();
+});
+
 it('blocks disabled wallet and referral API modules', function () {
     Setting::set('wallet_enabled', '0');
     Setting::set('referral_enabled', '0');

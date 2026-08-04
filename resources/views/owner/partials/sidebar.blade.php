@@ -9,11 +9,11 @@
         ['key' => 'plans', 'label' => 'Plans & Pricing', 'icon' => 'fa-tags', 'href' => route('plans')],
     ];
 
-    if (\App\Models\Setting::get('wallet_enabled', '1') === '1') {
+    if (\App\Models\Setting::isEnabled('wallet_enabled', true)) {
         $ownerItems[] = ['key' => 'wallet', 'label' => 'My Wallet', 'icon' => 'fa-wallet', 'href' => route('wallet')];
     }
 
-    if (\App\Models\Setting::get('referral_enabled', '1') === '1') {
+    if (\App\Models\Setting::isEnabled('referral_enabled', true)) {
         $ownerItems[] = ['key' => 'referral', 'label' => 'Refer & Earn', 'icon' => 'fa-gift', 'href' => route('referral.index')];
     }
 

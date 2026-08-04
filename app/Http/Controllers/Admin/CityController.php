@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\City;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CityController extends Controller
@@ -26,12 +27,22 @@ class CityController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:100|unique:cities,name',
             'state' => 'nullable|string|max:100',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'image_url' => 'nullable|url|max:255',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
             'is_default' => 'nullable|boolean',
         ]);
+
+        if ($request->hasFile('image')) {
+            $data['image_url'] = $request->file('image')->store('city-images', 'public');
+        } elseif ($request->filled('image_url')) {
+            $data['image_url'] = $request->image_url;
+        } else {
+            $data['image_url'] = null;
+        }
 
         $data['slug'] = Str::slug($data['name']);
         $data['is_active'] = $request->boolean('is_active');
@@ -47,12 +58,25 @@ class CityController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:100|unique:cities,name,' . $city->id,
             'state' => 'nullable|string|max:100',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'image_url' => 'nullable|url|max:255',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
             'is_default' => 'nullable|boolean',
         ]);
+
+        if ($request->hasFile('image')) {
+            if ($city->image_url && !filter_var($city->image_url, FILTER_VALIDATE_URL) && Storage::disk('public')->exists($city->image_url)) {
+                Storage::disk('public')->delete($city->image_url);
+            }
+            $data['image_url'] = $request->file('image')->store('city-images', 'public');
+        } elseif ($request->filled('image_url')) {
+            $data['image_url'] = $request->image_url;
+        } else {
+            $data['image_url'] = $city->image_url;
+        }
 
         $data['slug'] = Str::slug($data['name']);
         $data['is_active'] = $request->boolean('is_active');

@@ -208,7 +208,7 @@
                                     <a href="{{ route('unlocks.index') }}" class="theme-account-link flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 transition">
                                         <i class="fas fa-address-book text-emerald-500 w-4 text-sm"></i> My Unlocked Contacts
                                     </a>
-                                    @if(\App\Models\Setting::get('wallet_enabled', '1') === '1')
+                                    @if(\App\Models\Setting::isEnabled('wallet_enabled', true))
                                         <a href="{{ route('wallet') }}" class="theme-account-link flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 transition">
                                             <i class="theme-account-icon fas fa-wallet w-4 text-sm"></i> My Wallet
                                         </a>
@@ -216,7 +216,7 @@
                                     <a href="{{ route('plans') }}" class="theme-account-link flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 transition">
                                         <i class="fas fa-crown text-amber-400 w-4 text-sm"></i> View Plans
                                     </a>
-                                    @if(\App\Models\Setting::get('referral_enabled', '1') === '1')
+                                    @if(\App\Models\Setting::isEnabled('referral_enabled', true))
                                         <a href="{{ route('referral.index') }}" class="theme-account-link flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 transition">
                                             <i class="fas fa-gift text-emerald-400 w-4 text-sm"></i> Refer & Earn
                                         </a>

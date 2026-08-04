@@ -22,7 +22,7 @@ class ReferralController extends Controller
      */
     public function index()
     {
-        if (\App\Models\Setting::get('referral_enabled', '1') !== '1') {
+        if (!\App\Models\Setting::isEnabled('referral_enabled', true)) {
             return redirect()->route('home')->with('error', 'Referral program is currently inactive.');
         }
 

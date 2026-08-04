@@ -11,6 +11,7 @@ class City extends Model
         'name',
         'slug',
         'state',
+        'image_url',
         'is_active',
         'is_default',
         'latitude',
@@ -54,5 +55,26 @@ class City extends Model
     {
         return static::where('is_default', true)->first()
             ?: static::where('is_active', true)->orderBy('sort_order')->orderBy('name')->first();
+    }
+
+    public static function resolveHeroImage(?string $cityName): string
+    {
+        $normalizedName = trim((string) $cityName);
+
+        if ($normalizedName === '') {
+            return asset('assets/images/indore-hero-v2.png');
+        }
+
+        $city = static::whereRaw('LOWER(name) = ?', [Str::lower($normalizedName)])
+            ->first() ?? static::whereRaw('LOWER(slug) = ?', [Str::slug($normalizedName)])
+            ->first();
+
+        if ($city && !empty($city->image_url)) {
+            return filter_var($city->image_url, FILTER_VALIDATE_URL)
+                ? $city->image_url
+                : asset('storage/' . ltrim($city->image_url, '/'));
+        }
+
+        return asset('assets/images/indore-hero-v2.png');
     }
 }

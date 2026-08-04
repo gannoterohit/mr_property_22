@@ -219,7 +219,7 @@ class OtpController extends Controller
 
         $referralCode = $request->referral_code ?? session('referral_code');
 
-        if ($referralCode && Setting::get('referral_enabled', '1') === '1') {
+        if ($referralCode && Setting::isEnabled('referral_enabled', true)) {
             $referrer = User::where('referral_code', $referralCode)->first();
             if ($referrer) {
                 $referredBy = $referrer->id;

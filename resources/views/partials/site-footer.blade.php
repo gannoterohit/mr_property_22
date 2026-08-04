@@ -25,7 +25,7 @@
 
     <!-- Redesigned Footer Section -->
     <footer class="site-footer relative text-slate-400 pt-12 pb-6 hidden lg:block overflow-hidden border-t" @if(Route::is('admin.*') || Route::is('owner.*') || Route::is('complaints.*') || Route::is('rooms.create', 'rooms.edit') || Route::is('dashboard', 'profile.edit', 'wallet', 'referral.index', 'plans', 'unlocks.index', 'login', 'register')) style="display:none !important" @endif>
-        <div class="container mx-auto px-6 relative z-10">
+        <div class="container mx-auto px-0 relative z-10" style="max-width:1280px;width:calc(100% - 32px);">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
                 <!-- Brand Info (Col span 3) -->
                 <div class="lg:col-span-3 space-y-4">

@@ -95,6 +95,7 @@
                     <tr class="border-b">
                         <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">City</th>
                         <th class="px-3 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">State</th>
+                        <th class="px-3 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Hero image</th>
                         <th class="px-3 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Map coordinates</th>
                         <th class="px-3 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Launch status</th>
                         <th class="px-3 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Fallback</th>
@@ -106,7 +107,7 @@
                         @php($formId = 'city-form-'.$city->id)
                         <tr class="city-row transition hover:bg-slate-50/70" data-search="{{ Str::lower($city->name.' '.$city->state) }}">
                             <td class="px-5 py-4">
-                                <form id="{{ $formId }}" method="POST" action="{{ route('admin.cities.update', $city) }}">
+                                <form id="{{ $formId }}" method="POST" action="{{ route('admin.cities.update', $city) }}" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="sort_order" value="{{ $city->sort_order }}">
@@ -118,6 +119,14 @@
                             </td>
                             <td class="px-3 py-4">
                                 <input form="{{ $formId }}" name="state" value="{{ $city->state }}" placeholder="Add state" class="city-field min-w-[140px]">
+                            </td>
+                            <td class="px-3 py-4">
+                                <div class="min-w-[180px] space-y-2">
+                                    <input form="{{ $formId }}" name="image" type="file" accept="image/*" class="block w-full cursor-pointer rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-[10px] text-slate-600 file:mr-2 file:rounded-md file:border-0 file:bg-slate-900 file:px-2 file:py-1 file:text-[10px] file:font-bold file:text-white">
+                                    @if($city->image_url)
+                                        <img src="{{ \App\Models\City::resolveHeroImage($city->name) }}" alt="{{ $city->name }} hero image" class="h-12 w-full rounded-lg border object-cover">
+                                    @endif
+                                </div>
                             </td>
                             <td class="px-3 py-4">
                                 <div class="grid min-w-[230px] grid-cols-2 gap-2">
@@ -153,7 +162,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-16 text-center">
+                            <td colspan="7" class="px-5 py-16 text-center">
                                 <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400"><i class="fas fa-city"></i></span>
                                 <p class="mt-3 text-sm font-extrabold text-slate-700">No cities configured</p>
                                 <p class="mt-1 text-xs text-slate-500">Add your first operational city to get started.</p>

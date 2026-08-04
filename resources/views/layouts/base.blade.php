@@ -285,8 +285,9 @@
 
         /* Keep the desktop navbar identical for guests and signed-in users. */
         .desktop-navbar-inner {
-            width: 100%;
-            padding-inline: 3rem;
+            width: min(1280px, calc(100% - 32px));
+            margin: 0 auto;
+            padding-inline: 0;
         }
 
         .desktop-navbar-row {

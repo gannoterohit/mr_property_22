@@ -8,7 +8,7 @@ class WalletController extends Controller
 {
     public function index()
     {
-        if (\App\Models\Setting::get('wallet_enabled', '1') !== '1') {
+        if (!\App\Models\Setting::isEnabled('wallet_enabled', true)) {
             return redirect()->route('home')->with('error', 'Wallet system is currently inactive.');
         }
         $user=Auth::user();

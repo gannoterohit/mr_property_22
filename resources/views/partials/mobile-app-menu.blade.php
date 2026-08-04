@@ -88,7 +88,7 @@
                         <a href="{{ route('unlocks.index') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-emerald-50 transition text-gray-700 font-bold {{ request()->routeIs('unlocks.index') ? 'bg-emerald-50 text-emerald-700' : '' }}">
                             <i class="fas fa-address-book w-5 text-emerald-500"></i> My Unlocked Contacts
                         </a>
-                        @if(\App\Models\Setting::get('wallet_enabled', '1') === '1')
+                        @if(\App\Models\Setting::isEnabled('wallet_enabled', true))
                             <a href="{{ route('wallet') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('wallet') ? 'bg-indigo-50 text-indigo-600' : '' }}">
                                 <i class="fas fa-wallet w-5 text-indigo-500"></i> My Wallet
                             </a>
@@ -111,7 +111,7 @@
                             <i class="fas fa-plus-circle w-5 text-green-500"></i> List New Room
                         </a>
                     @endif
-                    @if(\App\Models\Setting::get('referral_enabled', '1') === '1')
+                    @if(\App\Models\Setting::isEnabled('referral_enabled', true))
                         <a href="{{ route('referral.index') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-emerald-50 transition text-gray-700 font-bold">
                             <i class="fas fa-gift w-5 text-emerald-500"></i> Refer & Earn
                         </a>

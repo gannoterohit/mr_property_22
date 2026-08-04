@@ -6,7 +6,7 @@
     </a>
 
     <!-- 2. Earn -->
-    @if(\App\Models\Setting::get('referral_enabled', '1') === '1')
+    @if(\App\Models\Setting::isEnabled('referral_enabled', true))
         <a href="{{ route('referral.index') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ Route::is('referral.index') ? 'text-red-600' : 'text-gray-400' }}">
             <i class="{{ Route::is('referral.index') ? 'fas' : 'fas' }} fa-gift text-lg"></i>
             <span class="text-[10px] font-medium">Earn</span>

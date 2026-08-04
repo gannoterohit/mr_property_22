@@ -79,7 +79,7 @@ class PlatformAvailability
 
     private function enabled(string $key, bool $default = false): bool
     {
-        return filter_var(Setting::get($key, $default ? '1' : '0'), FILTER_VALIDATE_BOOLEAN);
+        return Setting::isEnabled($key, $default);
     }
 
     private function isOwnerWorkspace(Request $request): bool

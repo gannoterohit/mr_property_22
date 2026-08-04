@@ -70,6 +70,37 @@ class Setting extends Model
         return $setting && $setting->value !== null && $setting->value !== '' ? $setting->value : $default;
     }
 
+    public static function isEnabled(string $key, bool $default = true): bool
+    {
+        $value = self::get($key, $default ? '1' : '0');
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_int($value)) {
+            return $value === 1;
+        }
+
+        if (is_string($value)) {
+            $normalized = strtolower(trim($value));
+
+            if ($normalized === '') {
+                return $default;
+            }
+
+            if (in_array($normalized, ['1', 'true', 'yes', 'on'], true)) {
+                return true;
+            }
+
+            if (in_array($normalized, ['0', 'false', 'no', 'off'], true)) {
+                return false;
+            }
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool) $value;
+    }
+
     /**
      * Set setting value
      */

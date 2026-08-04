@@ -237,7 +237,7 @@ class ApiAuthController extends BaseApiController
         $referredBy         = null;
         $initialFreeUnlocks = 0;
 
-        if ($request->referral_code && Setting::get('referral_enabled', '1') === '1') {
+        if ($request->referral_code && Setting::isEnabled('referral_enabled', true)) {
             $referrer = User::where('referral_code', $request->referral_code)->first();
             if ($referrer) {
                 $referredBy = $referrer->id;

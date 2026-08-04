@@ -503,8 +503,8 @@
                                     <p class="text-xs text-slate-500 mt-1">Allow renters to refer friends and get 1 Free Contact Unlock per join</p>
                                 </div>
                                 <select name="referral_enabled" class="rounded-lg border-slate-200 text-xs font-bold text-slate-700 bg-white">
-                                    <option value="1" @selected(\App\Models\Setting::get('referral_enabled', '1') === '1')>Active (ON)</option>
-                                    <option value="0" @selected(\App\Models\Setting::get('referral_enabled', '1') === '0')>Inactive (OFF)</option>
+                                    <option value="1" @selected(\App\Models\Setting::isEnabled('referral_enabled', true))>Active (ON)</option>
+                                    <option value="0" @selected(!\App\Models\Setting::isEnabled('referral_enabled', true))>Inactive (OFF)</option>
                                 </select>
                             </div>
 
@@ -514,8 +514,8 @@
                                     <p class="text-xs text-slate-500 mt-1">Allow renters to use balance and view logs</p>
                                 </div>
                                 <select name="wallet_enabled" class="rounded-lg border-slate-200 text-xs font-bold text-slate-700 bg-white">
-                                    <option value="1" @selected(\App\Models\Setting::get('wallet_enabled', '1') === '1')>Active (ON)</option>
-                                    <option value="0" @selected(\App\Models\Setting::get('wallet_enabled', '1') === '0')>Inactive (OFF)</option>
+                                    <option value="1" @selected(\App\Models\Setting::isEnabled('wallet_enabled', true))>Active (ON)</option>
+                                    <option value="0" @selected(!\App\Models\Setting::isEnabled('wallet_enabled', true))>Inactive (OFF)</option>
                                 </select>
                             </div>
 
@@ -525,8 +525,8 @@
                                     <p class="text-xs text-slate-500 mt-1">Allow users to enter coupons during payments</p>
                                 </div>
                                 <select name="promo_enabled" class="rounded-lg border-slate-200 text-xs font-bold text-slate-700 bg-white">
-                                    <option value="1" @selected(\App\Models\Setting::get('promo_enabled', '1') === '1')>Active (ON)</option>
-                                    <option value="0" @selected(\App\Models\Setting::get('promo_enabled', '1') === '0')>Inactive (OFF)</option>
+                                    <option value="1" @selected(\App\Models\Setting::isEnabled('promo_enabled', true))>Active (ON)</option>
+                                    <option value="0" @selected(!\App\Models\Setting::isEnabled('promo_enabled', true))>Inactive (OFF)</option>
                                 </select>
                             </div>
                         </div>
