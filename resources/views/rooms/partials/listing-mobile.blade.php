@@ -52,10 +52,16 @@
                         <p class="text-xs text-gray-500 truncate mb-1"><i class="fas fa-map-marker-alt mr-1"></i>{{ $room->city }}</p>
                         <div class="flex flex-wrap gap-1 mt-2">
                             <span style="background-color: rgba(var(--primary-rgb), 0.08); color: var(--primary);" class="text-[9px] dark:bg-slate-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">{{ $room->roomTypeLabel() }}</span>
+                            @if($room->propertyType?->name)
+                                <span style="background-color: rgba(var(--primary-rgb), 0.08); color: var(--primary);" class="text-[9px] dark:bg-slate-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">{{ $room->propertyType->name }}@if($room->propertyCategory?->name) · {{ $room->propertyCategory->name }}@endif</span>
+                            @endif
                             @if($room->listing_type === 'broker')
                                 <span style="background-color: var(--secondary);" class="text-[9px] text-white px-2 py-0.5 rounded-lg font-black uppercase tracking-tighter">B: ₹{{ $room->broker_fee }}</span>
                             @else
                                 <span style="background-color: var(--secondary);" class="text-[9px] text-white px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Owner</span>
+                            @endif
+                            @if($room->area_sqft)
+                                <span style="background-color: rgba(var(--primary-rgb), 0.08); color: var(--primary);" class="text-[9px] dark:bg-slate-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">{{ number_format((float)$room->area_sqft, 2) }} sqft</span>
                             @endif
                         </div>
                     </div>

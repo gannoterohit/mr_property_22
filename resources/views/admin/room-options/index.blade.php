@@ -145,7 +145,7 @@ document.querySelectorAll('.delete-room-option').forEach((form) => {
 
         const result = await Swal.fire({
             title: `Delete ${form.dataset.label}?`,
-            text: 'This permanently removes the option. Options used by existing rooms cannot be deleted.',
+            text: 'This permanently removes the option from the admin registry. Existing room records will keep their saved values, but the option will no longer be selectable for new listings.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Yes, delete permanently',

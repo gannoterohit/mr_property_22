@@ -12,7 +12,7 @@
             <form action="{{ route('rooms.index') }}" method="GET" class="market-search">
                 <div class="market-search-grid">
                     <div class="market-field market-field-location"><i class="market-field-icon fas fa-location-dot"></i><label>Location</label><input name="city" value="{{ $displayCity }}" placeholder="City or locality"></div>
-                    <div class="market-field"><i class="market-field-icon fas fa-house"></i><label>Property Type</label><select name="room_type[]"><option value="">Any type</option>@foreach(\App\Models\RoomOption::optionsFor('room_type') as $option)<option value="{{ $option->id }}">{{ $option->label }}</option>@endforeach</select></div>
+                    <div class="market-field"><i class="market-field-icon fas fa-house"></i><label>Property Type</label><select name="property_type_id"><option value="">Any type</option>@foreach($propertyTypes as $type)<option value="{{ $type->id }}" @selected(request('property_type_id') == $type->id)>{{ $type->name }}</option>@endforeach</select></div>
                     <div class="market-field"><i class="market-field-icon fas fa-indian-rupee-sign"></i><label>Budget</label><input type="number" min="0" name="max_rent" placeholder="Any budget"></div>
                     <div class="market-field"><i class="market-field-icon fas fa-user"></i><label>Preferred For</label><select name="tenant_type[]"><option value="">Anyone</option>@foreach(\App\Models\RoomOption::optionsFor('tenant_type') as $option)<option value="{{ $option->id }}">{{ $option->label }}</option>@endforeach</select></div>
                     <button type="submit"><i class="fas fa-magnifying-glass"></i>{{ $text('home_search_button','Search Rooms') }}</button>

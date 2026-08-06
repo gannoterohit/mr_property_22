@@ -43,11 +43,12 @@
                 </div>
 
                 <div class="relative min-w-[30%] flex-1">
-                    <label for="mobile_room_type" class="sr-only">Room Type</label>
-                    <select id="mobile_room_type" name="room_type" aria-label="Select room type" class="w-full pl-3 pr-6 py-2 bg-white border border-indigo-100 rounded-full text-[11px] font-bold text-gray-600 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none shadow-sm shadow-indigo-100/50">
+                    <label for="mobile_property_type" class="sr-only">Property Type</label>
+                    @php $mobilePropertyTypes = $propertyTypes ?? App\Models\PropertyType::where('status', true)->orderBy('name')->get(); @endphp
+                    <select id="mobile_property_type" name="property_type_id" aria-label="Select property type" class="w-full pl-3 pr-6 py-2 bg-white border border-indigo-100 rounded-full text-[11px] font-bold text-gray-600 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none shadow-sm shadow-indigo-100/50">
                         <option value="">Type</option>
-                        @foreach(App\Models\RoomOption::optionsFor('room_type') as $option)
-                            <option value="{{ $option->id }}" {{ request('room_type') == $option->id ? 'selected' : '' }}>{{ $option->label }}</option>
+                        @foreach($mobilePropertyTypes as $type)
+                            <option value="{{ $type->id }}" {{ request('property_type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                         @endforeach
                     </select>
                     <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ApiRoomController;
 use App\Http\Controllers\Api\ApiGeneralController;
 use App\Http\Controllers\Api\ApiSettingsController;
 use App\Http\Controllers\Api\ApiRoomOptionController;
+use App\Http\Controllers\Api\ApiPropertyCatalogController;
 
 // ── App Settings ──────────────────────────
 Route::get('/settings', [ApiSettingsController::class, 'index']);
@@ -22,6 +23,8 @@ Route::get('/rooms/{room}/similar',    [ApiRoomController::class, 'similar']);
 Route::post('/rooms/detect-city',      [ApiRoomController::class, 'detectCity']);
 Route::get('/cities',                  [ApiRoomController::class, 'getCities']);
 Route::get('/room-options',            [ApiRoomOptionController::class, 'index']);
+Route::get('/property-types',          [ApiPropertyCatalogController::class, 'propertyTypes']);
+Route::get('/property-categories',     [ApiPropertyCatalogController::class, 'propertyCategories']);
 
 // ── Blogs ─────────────────────────────────
 Route::get('/blogs',           [ApiGeneralController::class, 'blogs']);

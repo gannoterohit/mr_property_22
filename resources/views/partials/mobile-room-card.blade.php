@@ -82,6 +82,18 @@
                 <i class="fas fa-users text-indigo-400 text-[10px]"></i>
                 <span class="text-[10px] font-bold text-slate-600 uppercase">{{ $room->tenantTypeLabel() }}</span>
             </div>
+            @if($room->propertyType?->name)
+            <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 whitespace-nowrap">
+                <i class="fas fa-building text-indigo-400 text-[10px]"></i>
+                <span class="text-[10px] font-bold text-slate-600 uppercase">{{ $room->propertyType->name }}@if($room->propertyCategory?->name) · {{ $room->propertyCategory->name }}@endif</span>
+            </div>
+            @endif
+            @if($room->area_sqft)
+            <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 whitespace-nowrap">
+                <i class="fas fa-ruler-combined text-indigo-400 text-[10px]"></i>
+                <span class="text-[10px] font-bold text-slate-600 uppercase">{{ number_format((float)$room->area_sqft, 2) }} sqft</span>
+            </div>
+            @endif
         </div>
         
         <!-- Price & Action -->

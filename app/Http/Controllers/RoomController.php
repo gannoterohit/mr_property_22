@@ -5,6 +5,7 @@ use App\Models\Room;
 use App\Models\Payment;
 use App\Models\Enquiry;
 use App\Models\RoomOption;
+use App\Models\PropertyType;
 use App\Models\Setting;
 use App\Models\SubscriptionUsage;
 use App\Services\CityOperations;
@@ -115,6 +116,14 @@ class RoomController extends Controller {
         $this->applyOptionFilter($query, 'tenant_type', $request->tenant_type);
     }
 
+    if ($request->filled('property_type_id')) {
+        $query->whereIn('property_type_id', (array) $request->property_type_id);
+    }
+
+    if ($request->filled('property_category_id')) {
+        $query->whereIn('property_category_id', (array) $request->property_category_id);
+    }
+
     if ($request->filled('room_type')) {
         $this->applyOptionFilter($query, 'room_type', $request->room_type);
     }
@@ -189,25 +198,19 @@ class RoomController extends Controller {
         }
     }
     
-    // Fetch room type counts dynamically from DB
-    $roomTypeCounts = Room::select('room_type_option_id', DB::raw('count(*) as total'))
+    $propertyTypeCounts = Room::select('property_type_id', DB::raw('count(*) as total'))
         ->where('status', 'active')
         ->where('listing_status', 'approved')
         ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
-        ->whereNotNull('room_type_option_id')
-        ->groupBy('room_type_option_id')
-        ->pluck('total', 'room_type_option_id')
+        ->whereNotNull('property_type_id')
+        ->groupBy('property_type_id')
+        ->pluck('total', 'property_type_id')
         ->map(fn ($total) => (int) $total)
         ->toArray();
 
-    // Property types are controlled exclusively from Admin > Room Options.
-    // Do not use model fallback values on the public listing page.
-    $roomTypeOptions = RoomOption::query()
-        ->active()
-        ->where('group', 'room_type')
-        ->orderBy('sort_order')
-        ->orderBy('label')
-        ->get(['id', 'key', 'label']);
+    $propertyTypes = PropertyType::where('status', true)
+        ->orderBy('name')
+        ->get(['id', 'name']);
 
     // Dynamic rent bounds from actual DB data
     $rentBounds = Room::where('status', 'active')
@@ -239,7 +242,7 @@ class RoomController extends Controller {
         ->toArray();
 
     return view('rooms.index', compact(
-        'rooms', 'popularCities', 'roomTypeCounts', 'roomTypeOptions',
+        'rooms', 'popularCities', 'propertyTypes', 'propertyTypeCounts',
         'rentBounds', 'tenantTypeCounts', 'furnishingCounts', 'cityContext'
     ));
     }
@@ -253,8 +256,15 @@ class RoomController extends Controller {
         $data = $req->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'property_type_id' => ['required', 'integer', Rule::exists('property_types', 'id')->where('status', true)],
+            'property_category_id' => [
+                'required',
+                'integer',
+                Rule::exists('property_categories', 'id')->where(fn ($query) => $query->where('status', true)->where('property_type_id', $req->property_type_id)),
+            ],
             'rent' => 'required|numeric|min:0',
             'deposit' => 'nullable|numeric|min:0',
+            'area_sqft' => 'nullable|numeric|min:0',
             'city' => 'required|string',
             'state' => 'nullable|string',
             'country' => 'nullable|string',
@@ -263,7 +273,6 @@ class RoomController extends Controller {
             'longitude' => 'nullable|numeric',
             'furnishing_type' => ['required', Rule::in(RoomOption::validIdsFor('furnishing_type'))],
             'tenant_type' => ['required', Rule::in(RoomOption::validIdsFor('tenant_type'))],
-            'room_type' => ['required', Rule::in(RoomOption::validIdsFor('room_type'))],
             'amenities' => 'nullable|array',
             'amenities.*' => 'string',
             'landmarks' => 'nullable|array',
@@ -654,8 +663,15 @@ class RoomController extends Controller {
         $data = $req->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'property_type_id' => ['required', 'integer', Rule::exists('property_types', 'id')->where('status', true)],
+            'property_category_id' => [
+                'required',
+                'integer',
+                Rule::exists('property_categories', 'id')->where(fn ($query) => $query->where('status', true)->where('property_type_id', $req->property_type_id)),
+            ],
             'rent' => 'required|numeric|min:0',
             'deposit' => 'nullable|numeric|min:0',
+            'area_sqft' => 'nullable|numeric|min:0',
             'city' => 'required|string',
             'state' => 'nullable|string',
             'country' => 'nullable|string',
@@ -668,7 +684,6 @@ class RoomController extends Controller {
             'video_url' => 'nullable|url|max:255',
             'furnishing_type' => ['required', Rule::in(RoomOption::validIdsFor('furnishing_type'))],
             'tenant_type' => ['required', Rule::in(RoomOption::validIdsFor('tenant_type'))],
-            'room_type' => ['required', Rule::in(RoomOption::validIdsFor('room_type'))],
             'amenities' => 'nullable|array',
             'landmarks' => 'nullable|array',
             'listing_type' => 'required|in:owner,broker',

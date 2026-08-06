@@ -29,7 +29,7 @@ class AdminPermission
             $path = ltrim((string) $request->path(), '/');
             if (str_contains($path, '/staff') || str_contains($path, '/roles') || str_contains($path, '/permission-catalog')) return 'staff.manage';
             if (str_contains($path, '/activity-logs')) return 'activity.view';
-            if (str_contains($path, '/rooms') || str_contains($path, '/room-options') || str_contains($path, '/rejection-reasons')) return $write ? 'listings.manage' : 'listings.view';
+            if (str_contains($path, '/rooms') || str_contains($path, '/room-options') || str_contains($path, '/property-types') || str_contains($path, '/property-categories') || str_contains($path, '/rejection-reasons')) return $write ? 'listings.manage' : 'listings.view';
             if (str_contains($path, '/users') || str_contains($path, '/owners') || str_contains($path, '/members')) return $write ? 'people.manage' : 'people.view';
             if (str_contains($path, '/complaints') || str_contains($path, '/complaint-options') || str_contains($path, '/contact-messages') || str_contains($path, '/city-alerts') || str_contains($path, '/subscribers')) return $write ? 'support.manage' : 'support.view';
             if (str_contains($path, '/payments') || str_contains($path, '/payouts') || str_contains($path, '/plans')) return $write ? 'finance.manage' : 'finance.view';
@@ -41,7 +41,7 @@ class AdminPermission
         if ($route === 'admin.dashboard') return 'dashboard.view';
         if (str_starts_with($route, 'admin.staff') || str_starts_with($route, 'admin.roles')) return 'staff.manage';
         if (str_starts_with($route, 'admin.activity')) return 'activity.view';
-        if (str_starts_with($route, 'admin.rooms') || $route === 'admin.all-rooms' || str_starts_with($route, 'admin.room-options') || str_starts_with($route, 'admin.rejection-reasons')) return $write ? 'listings.manage' : 'listings.view';
+        if (str_starts_with($route, 'admin.rooms') || $route === 'admin.all-rooms' || str_starts_with($route, 'admin.room-options') || str_starts_with($route, 'admin.property-types') || str_starts_with($route, 'admin.property-categories') || str_starts_with($route, 'admin.rejection-reasons')) return $write ? 'listings.manage' : 'listings.view';
         if (str_starts_with($route, 'admin.users') || str_starts_with($route, 'admin.owners') || str_starts_with($route, 'admin.members')) return $write ? 'people.manage' : 'people.view';
         if (str_starts_with($route, 'admin.complaints') || str_starts_with($route, 'admin.contact-messages') || str_starts_with($route, 'admin.city-alerts') || str_starts_with($route, 'admin.subscribers')) return $write ? 'support.manage' : 'support.view';
         if (str_starts_with($route, 'admin.payments') || str_starts_with($route, 'admin.payouts') || str_starts_with($route, 'admin.plans')) return $write ? 'finance.manage' : 'finance.view';

@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
         // Seed Room Options
         $this->call(RoomOptionSeeder::class);
 
+        // Seed property catalog defaults
+        $this->call(PropertyCatalogSeeder::class);
+
         // Seed Dummy Data
         $this->call(DummyDataSeeder::class);
         $this->call([

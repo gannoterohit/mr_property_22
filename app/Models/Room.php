@@ -12,12 +12,15 @@ class Room extends Model
         'title',
         'description',
         'type',
+        'property_type_id',
+        'property_category_id',
         'room_type_option_id',
         'furnishing_option_id',
         'tenant_option_id',
         'amenities',
         'rent',
         'deposit',
+        'area_sqft',
         'city',
         'state',
         'country',
@@ -44,6 +47,7 @@ class Room extends Model
     protected $casts = [
         'is_featured' => 'boolean',
         'listing_fee_paid' => 'boolean',
+        'area_sqft' => 'decimal:2',
         'photos' => 'array',
         'amenities' => 'array',
         'landmarks' => 'array',
@@ -117,6 +121,16 @@ class Room extends Model
      */
     public function user() {
         return $this->belongsTo(User::class,'user_id');
+    }
+
+    public function propertyType()
+    {
+        return $this->belongsTo(PropertyType::class, 'property_type_id');
+    }
+
+    public function propertyCategory()
+    {
+        return $this->belongsTo(PropertyCategory::class, 'property_category_id');
     }
 
     public function roomTypeOption()

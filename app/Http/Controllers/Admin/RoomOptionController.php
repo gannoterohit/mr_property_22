@@ -70,25 +70,10 @@ class RoomOptionController extends Controller
 
     public function destroy(RoomOption $roomOption)
     {
-        $isInUse = match ($roomOption->group) {
-            'room_type' => Room::where('room_type_option_id', $roomOption->id)->exists(),
-            'furnishing_type' => Room::where('furnishing_option_id', $roomOption->id)->exists(),
-            'tenant_type' => Room::where('tenant_option_id', $roomOption->id)->exists(),
-            'amenity' => Room::whereJsonContains('amenities', $roomOption->label)->exists(),
-            default => false,
-        };
-
-        if ($isInUse) {
-            return redirect()->back()->with(
-                'error',
-                "{$roomOption->label} is used by an existing room. Deactivate it instead of deleting it."
-            );
-        }
-
         $label = $roomOption->label;
         $roomOption->delete();
 
-        return redirect()->back()->with('success', "{$label} deleted permanently.");
+        return redirect()->route('admin.room-options.index')->with('success', "{$label} deleted permanently.");
     }
 
     public function toggleStatus(RoomOption $roomOption)

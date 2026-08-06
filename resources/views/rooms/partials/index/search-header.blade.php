@@ -30,10 +30,10 @@
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Property Type</label>
                     <div class="relative">
                         <i class="fas fa-building absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <select name="room_type[]" class="w-full py-2 pl-8 pr-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none appearance-none transition-all">
+                        <select name="property_type_id" class="w-full py-2 pl-8 pr-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none appearance-none transition-all">
                             <option value="">Any Type</option>
-                            @foreach($roomTypeOptions as $option)
-                                <option value="{{ $option->id }}" {{ in_array($option->id, (array)request('room_type')) ? 'selected' : '' }}>{{ $option->label }}</option>
+                            @foreach($propertyTypes as $type)
+                                <option value="{{ $type->id }}" {{ request('property_type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                             @endforeach
                         </select>
                     </div>

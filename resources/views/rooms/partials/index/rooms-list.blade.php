@@ -71,6 +71,16 @@
                                                 <i class="room-theme-primary-icon fas fa-users"></i> {{ $room->tenantTypeLabel() }}
                                             </span>
                                         @endif
+                                        @if($room->propertyType?->name)
+                                            <span class="bg-slate-50 border border-slate-100 text-slate-500 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1">
+                                                <i class="room-theme-primary-icon fas fa-building"></i> {{ $room->propertyType->name }}@if($room->propertyCategory?->name) · {{ $room->propertyCategory->name }}@endif
+                                            </span>
+                                        @endif
+                                        @if($room->area_sqft)
+                                            <span class="bg-slate-50 border border-slate-100 text-slate-500 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1">
+                                                <i class="room-theme-primary-icon fas fa-ruler-combined"></i> {{ number_format((float)$room->area_sqft, 2) }} sqft
+                                            </span>
+                                        @endif
                                     </div>
 
                                     <div class="room-owner-row">

@@ -50,6 +50,14 @@ class ApiRoomController extends BaseApiController
             $this->applyOptionFilter($query, 'room_type', $roomTypeFilter);
         }
 
+        if ($request->filled('property_type_id')) {
+            $query->whereIn('property_type_id', (array) $request->property_type_id);
+        }
+
+        if ($request->filled('property_category_id')) {
+            $query->whereIn('property_category_id', (array) $request->property_category_id);
+        }
+
         if ($furnishingFilter !== null && $furnishingFilter !== '') {
             $this->applyOptionFilter($query, 'furnishing_type', $furnishingFilter);
         }

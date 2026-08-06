@@ -102,21 +102,31 @@ class LandingPageController extends Controller
         $popularCities = CityOperations::selectorCities();
 
         // Room categories with dynamic counts from DB
-        $roomCategories = Room::select('room_type_option_id', \DB::raw('count(*) as total'))
+        $propertyTypes = \App\Models\PropertyType::where('status', true)
+            ->orderBy('name')
+            ->get();
+
+        $propertyCategories = Room::select('property_category_id', \DB::raw('count(*) as total'))
             ->where('status', 'active')
             ->where('listing_status', 'approved')
             ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
-            ->whereNotNull('room_type_option_id')
-            ->groupBy('room_type_option_id')
+            ->whereNotNull('property_category_id')
+            ->groupBy('property_category_id')
             ->orderByDesc('total')
             ->get()
             ->map(function ($item) {
-                $option = \App\Models\RoomOption::find($item->room_type_option_id);
-                $item->room_type_option_id = $item->room_type_option_id;
-                $item->label = $option ? $option->label : 'Room';
-                $item->icon  = 'fas fa-home';
+                $category = \App\Models\PropertyCategory::find($item->property_category_id);
+                if (! $category) {
+                    return null;
+                }
+
+                $item->label = $category->name;
+                $item->property_type_id = $category->property_type_id;
+                $item->icon = 'fas fa-building';
                 return $item;
-            });
+            })
+            ->filter()
+            ->values();
 
         $latestBlogs = \App\Models\Blog::where('is_published', true)->orderBy('created_at', 'desc')->take(3)->get();
 
@@ -185,7 +195,7 @@ class LandingPageController extends Controller
         });
 
         return view('home.index', compact(
-            'rooms', 'popularCities', 'roomCategories', 'latestBlogs',
+            'rooms', 'popularCities', 'propertyTypes', 'propertyCategories', 'latestBlogs',
             'heroRoom', 'totalRooms', 'totalOwners', 'totalUsers', 'totalAreas', 'popularAreas',
             'cityContext'
         ));

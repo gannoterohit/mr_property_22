@@ -77,8 +77,12 @@
                     <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Discover</h4>
                     <ul class="space-y-2.5 text-xs font-semibold">
                         <li><a href="{{ route('rooms.index') }}" class="text-slate-400 hover:text-white transition-all">Browse Rooms</a></li>
-                        <li><a href="{{ route('rooms.index', ['room_type' => [\App\Models\RoomOption::idForKey('room_type', 'shared_room')]]) }}" class="text-slate-400 hover:text-white transition-all">PG</a></li>
-                        <li><a href="{{ route('rooms.index', ['room_type' => [\App\Models\RoomOption::idForKey('room_type', '1bhk')]]) }}" class="text-slate-400 hover:text-white transition-all">Apartments</a></li>
+                        @php
+                            $pgTypeId = \App\Models\PropertyType::where('slug', 'pg')->value('id');
+                            $flatTypeId = \App\Models\PropertyType::where('slug', 'flat')->value('id');
+                        @endphp
+                        <li><a href="{{ $pgTypeId ? route('rooms.index', ['property_type_id' => $pgTypeId]) : route('rooms.index') }}" class="text-slate-400 hover:text-white transition-all">PG</a></li>
+                        <li><a href="{{ $flatTypeId ? route('rooms.index', ['property_type_id' => $flatTypeId]) : route('rooms.index') }}" class="text-slate-400 hover:text-white transition-all">Apartments</a></li>
                         @if($cmsPageLive('how-it-works'))<li><a href="{{ route('pages.how-it-works') }}" class="text-slate-400 hover:text-white transition-all">How It Works</a></li>@endif
                         <li><a href="{{ route('plans') }}" class="text-slate-400 hover:text-white transition-all">Pricing</a></li>
                     </ul>

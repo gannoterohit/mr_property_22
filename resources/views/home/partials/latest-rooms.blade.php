@@ -12,7 +12,7 @@
                             <span class="market-room-badge">Featured</span>
                         @endif
                     </div>
-                    <div class="market-room-copy"><h3>{{ $room->title }}</h3><p><i class="fas fa-location-dot"></i>{{ $room->city }}</p><span class="market-room-price">₹{{ number_format($room->rent) }} <small>/month</small></span><div class="market-room-meta"><span>{{ $room->roomTypeLabel() }}</span><span>{{ $room->furnishingTypeLabel() }}</span><span>{{ $room->tenantTypeLabel() }}</span></div></div>
+                    <div class="market-room-copy"><h3>{{ $room->title }}</h3><p><i class="fas fa-location-dot"></i>{{ $room->city }}</p><span class="market-room-price">₹{{ number_format($room->rent) }} <small>/month</small></span><div class="market-room-meta"><span>{{ $room->roomTypeLabel() }}</span>@if($room->propertyType?->name)<span>{{ $room->propertyType->name }}@if($room->propertyCategory?->name) · {{ $room->propertyCategory->name }}@endif</span>@endif<span>{{ $room->furnishingTypeLabel() }}</span><span>{{ $room->tenantTypeLabel() }}</span>@if($room->area_sqft)<span>{{ number_format((float)$room->area_sqft, 2) }} sqft</span>@endif</div></div>
                 </a>
             @empty
                 <div class="market-empty"><i class="fas fa-house"></i><p>No verified listings are available yet.</p><a href="{{ route('rooms.index') }}">Browse rooms</a></div>

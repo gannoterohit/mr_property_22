@@ -70,11 +70,19 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Room Type</label>
-                                <select name="room_type" required class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                                    @foreach(App\Models\RoomOption::optionsFor('room_type') as $option)
-                                        <option value="{{ $option->id }}">{{ $option->label }}</option>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Property Type</label>
+                                <select name="property_type_id" id="property_type_id" required class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
+                                    <option value="">Select property type</option>
+                                    @foreach(\App\Models\PropertyType::where('status', true)->orderBy('name')->get() as $type)
+                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Property Category</label>
+                                <select name="property_category_id" id="property_category_id" data-selected-category-id="{{ old('property_category_id') }}" required class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700" disabled>
+                                    <option value="">Select category</option>
                                 </select>
                             </div>
 
@@ -112,6 +120,12 @@
                                     <input type="number" name="deposit" min="0" placeholder="0"
                                            class="w-full bg-gray-50 border-none rounded-2xl pl-10 pr-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
                                 </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Area (sq ft)</label>
+                                <input type="number" name="area_sqft" min="0" step="0.01" placeholder="e.g. 450"
+                                       class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
                             </div>
 
                             <div>
@@ -565,6 +579,59 @@ function handleVideoUpload(e) {
         video.src = URL.createObjectURL(file);
         video.classList.remove('hidden');
     }
+}
+
+function loadPropertyCategories(propertyTypeId, selectedCategoryId = null) {
+    const propertyCategorySelect = document.getElementById('property_category_id');
+    if (!propertyCategorySelect) {
+        return;
+    }
+
+    propertyCategorySelect.innerHTML = '<option value="">Select category</option>';
+    propertyCategorySelect.disabled = true;
+
+    if (!propertyTypeId) {
+        return;
+    }
+
+    fetch(`{{ url('/api/v1/property-categories') }}?property_type_id=${encodeURIComponent(propertyTypeId)}`, {
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.json())
+    .then(payload => {
+        const categories = payload?.data ?? [];
+        if (!Array.isArray(categories) || !categories.length) {
+            propertyCategorySelect.innerHTML = '<option value="">No categories available</option>';
+            return;
+        }
+
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            propertyCategorySelect.appendChild(option);
+        });
+
+        propertyCategorySelect.disabled = false;
+        if (selectedCategoryId) {
+            propertyCategorySelect.value = String(selectedCategoryId);
+        }
+    })
+    .catch(() => {
+        propertyCategorySelect.innerHTML = '<option value="">Unable to load categories</option>';
+    });
+}
+
+const propertyTypeSelect = document.getElementById('property_type_id');
+const propertyCategorySelect = document.getElementById('property_category_id');
+if (propertyTypeSelect && propertyCategorySelect) {
+    propertyTypeSelect.addEventListener('change', function () {
+        loadPropertyCategories(this.value, null);
+    });
+
+    const initialPropertyTypeId = propertyTypeSelect.value;
+    const initialCategoryId = propertyCategorySelect.dataset.selectedCategoryId || '';
+    loadPropertyCategories(initialPropertyTypeId, initialCategoryId);
 }
 
 // Form Submission

@@ -32,16 +32,16 @@
                     <div class="space-y-2">
                         <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Property Type</label>
                         <div class="space-y-2.5">
-                            @forelse($roomTypeOptions as $option)
+                            @forelse($propertyTypes as $type)
                                 @php
-                                    $count = $roomTypeCounts[$option->id] ?? 0;
-                                    $isChecked = in_array($option->id, (array)request('room_type'));
+                                    $count = $propertyTypeCounts[$type->id] ?? 0;
+                                    $isChecked = in_array($type->id, (array)request('property_type_id'));
                                 @endphp
                                 <label class="flex items-center justify-between text-xs text-slate-600 font-semibold cursor-pointer hover:text-indigo-600 transition-colors">
                                     <span class="flex items-center gap-2">
-                                        <input type="checkbox" name="room_type[]" value="{{ $option->id }}" {{ $isChecked ? 'checked' : '' }}
+                                        <input type="checkbox" name="property_type_id[]" value="{{ $type->id }}" {{ $isChecked ? 'checked' : '' }}
                                                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20">
-                                        <span>{{ $option->label }}</span>
+                                        <span>{{ $type->name }}</span>
                                     </span>
                                     <span class="text-[9px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded-full">{{ $count }}</span>
                                 </label>

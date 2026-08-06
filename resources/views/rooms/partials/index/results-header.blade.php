@@ -37,6 +37,16 @@
             @php
                 $activeFilters = [];
                 if (request('city')) $activeFilters['city'] = ['label' => 'City: ' . request('city'), 'param' => 'city'];
+                if (request('property_type_id')) {
+                    foreach((array)request('property_type_id') as $t) {
+                        $activeFilters['property_type_' . $t] = ['label' => \App\Models\PropertyType::find($t)?->name ?? 'Type', 'param' => 'property_type_id', 'value' => $t];
+                    }
+                }
+                if (request('property_category_id')) {
+                    foreach((array)request('property_category_id') as $c) {
+                        $activeFilters['property_category_' . $c] = ['label' => \App\Models\PropertyCategory::find($c)?->name ?? 'Category', 'param' => 'property_category_id', 'value' => $c];
+                    }
+                }
                 if (request('room_type')) {
                     foreach((array)request('room_type') as $t) {
                         $activeFilters['room_type_' . $t] = ['label' => \App\Models\RoomOption::getLabel('room_type', $t), 'param' => 'room_type', 'value' => $t];

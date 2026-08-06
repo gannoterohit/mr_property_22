@@ -69,21 +69,32 @@
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1 ml-1">Room Type</label>
-                                        <select name="room_type" required class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition text-sm font-medium">
-                                            @foreach(App\Models\RoomOption::optionsFor('room_type', $room->room_type_option_id) as $option)
-                                                <option value="{{ $option->id }}" {{ $room->room_type_option_id == $option->id ? 'selected' : '' }}>{{ $option->label }}</option>
+                                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1 ml-1">Property Type</label>
+                                        <select name="property_type_id" id="property_type_id" required class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition text-sm font-medium">
+                                            <option value="">Select property type</option>
+                                            @foreach(\App\Models\PropertyType::where('status', true)->orderBy('name')->get() as $type)
+                                                <option value="{{ $type->id }}" {{ $room->property_type_id == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1 ml-1">Furnishing</label>
-                                        <select name="furnishing_type" required class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition text-sm font-medium">
-                                            @foreach(App\Models\RoomOption::optionsFor('furnishing_type', $room->furnishing_option_id) as $option)
-                                                <option value="{{ $option->id }}" {{ $room->furnishing_option_id == $option->id ? 'selected' : '' }}>{{ $option->label }}</option>
+                                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1 ml-1">Property Category</label>
+                                        <select name="property_category_id" id="property_category_id" data-selected-category-id="{{ $room->property_category_id }}" required class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition text-sm font-medium">
+                                            <option value="">Select category</option>
+                                            @foreach(\App\Models\PropertyCategory::where('property_type_id', $room->property_type_id)->where('status', true)->orderBy('name')->get() as $category)
+                                                <option value="{{ $category->id }}" {{ $room->property_category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1 ml-1">Furnishing</label>
+                                    <select name="furnishing_type" required class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition text-sm font-medium">
+                                        @foreach(App\Models\RoomOption::optionsFor('furnishing_type', $room->furnishing_option_id) as $option)
+                                            <option value="{{ $option->id }}" {{ $room->furnishing_option_id == $option->id ? 'selected' : '' }}>{{ $option->label }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-4">
@@ -97,6 +108,12 @@
                                         <input type="number" name="deposit" min="0" value="{{ $room->deposit }}"
                                                class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition text-sm font-medium">
                                     </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1 ml-1">Area (sq ft)</label>
+                                    <input type="number" name="area_sqft" min="0" step="0.01" value="{{ $room->area_sqft }}"
+                                           class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition text-sm font-medium">
                                 </div>
 
                                 <div>

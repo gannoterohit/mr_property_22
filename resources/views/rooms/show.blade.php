@@ -223,6 +223,14 @@
                                 <div class="text-xs text-slate-700 mb-1">Furnishing</div>
                                 <div class="text-sm font-bold text-purple-700 capitalize">{{ $room->furnishingTypeLabel() }}</div>
                             </div>
+                            <div class="text-center p-3 bg-slate-50 rounded-lg">
+                                <div class="text-xs text-slate-700 mb-1">Type</div>
+                                <div class="text-sm font-bold text-slate-700">{{ $room->propertyType?->name ?? 'N/A' }}@if($room->propertyCategory?->name) · {{ $room->propertyCategory->name }}@endif</div>
+                            </div>
+                            <div class="text-center p-3 bg-cyan-50 rounded-lg">
+                                <div class="text-xs text-slate-700 mb-1">Area</div>
+                                <div class="text-xl font-black text-cyan-600">{{ $room->area_sqft ? number_format((float)$room->area_sqft, 2) . ' sqft' : 'N/A' }}</div>
+                            </div>
                             <div class="text-center p-3 bg-orange-50 rounded-lg">
                                 <div class="text-xs text-slate-700 mb-1">For</div>
                                 <div class="text-sm font-bold text-orange-700 capitalize">{{ $room->tenantTypeLabel() }}</div>

@@ -7,7 +7,7 @@
 @php
     $cityContext = $cityContext ?? ['isFallback' => false, 'activeCityName' => request('city') ?? session('user_city'), 'launchingSoonCityName' => null];
     $displayCity = $cityContext['launchingSoonCityName'] ?? $cityContext['activeCityName'] ?? request('city') ?? session('user_city');
-    $hasMetaSearchIntent = request()->hasAny(['city', 'min_rent', 'max_rent', 'room_type', 'tenant_type', 'furnishing_type', 'available_now', 'availability_from']);
+    $hasMetaSearchIntent = request()->hasAny(['city', 'min_rent', 'max_rent', 'property_type_id', 'property_category_id', 'tenant_type', 'furnishing_type', 'available_now', 'availability_from']);
 @endphp
 
 @push('styles')
