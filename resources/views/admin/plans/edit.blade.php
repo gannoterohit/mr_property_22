@@ -61,7 +61,7 @@
                     <label for="type" class="block text-xs font-bold text-slate-700">Plan Type</label>
                     <select name="type" id="type" onchange="toggleLimitFields()" class="admin-plan-field mt-2">
                         <option value="user" @selected(old('type', $plan->type) === 'user')>User (Contact Unlocks)</option>
-                        <option value="owner" @selected(old('type', $plan->type) === 'owner')>Owner (Room Listings)</option>
+                        <option value="owner" @selected(old('type', $plan->type) === 'owner')>Owner (Property Listings)</option>
                     </select>
                 </div>
 

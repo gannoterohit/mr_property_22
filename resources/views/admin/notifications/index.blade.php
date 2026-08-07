@@ -7,7 +7,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <div>
             <h1 class="text-xl font-bold text-slate-800">Notifications</h1>
-            <p class="text-xs text-slate-500 mt-1">Manage system alerts for new room listings, customer inquiries, and complaints</p>
+            <p class="text-xs text-slate-500 mt-1">Manage system alerts for new property listings, customer inquiries, and complaints</p>
         </div>
         <div class="flex items-center gap-3">
             @if(\App\Models\AdminNotification::where('is_read', false)->exists())

@@ -76,7 +76,7 @@
                 <div class="lg:col-span-2">
                     <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Discover</h4>
                     <ul class="space-y-2.5 text-xs font-semibold">
-                        <li><a href="{{ route('rooms.index') }}" class="text-slate-400 hover:text-white transition-all">Browse Rooms</a></li>
+                        <li><a href="{{ route('rooms.index') }}" class="text-slate-400 hover:text-white transition-all">Browse Properties</a></li>
                         @php
                             $pgTypeId = \App\Models\PropertyType::where('slug', 'pg')->value('id');
                             $flatTypeId = \App\Models\PropertyType::where('slug', 'flat')->value('id');

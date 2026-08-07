@@ -13,7 +13,7 @@
                     <p>{{ $unlocks->total() }} {{ Str::plural('property contact', $unlocks->total()) }} available in your account.</p>
                 </div>
                 <a href="{{ route('rooms.index') }}" class="account-action">
-                    <i class="fas fa-magnifying-glass"></i> Find more rooms
+                    <i class="fas fa-magnifying-glass"></i> Find more properties
                 </a>
             </div>
         </header>
@@ -80,7 +80,7 @@
                 <div class="account-card account-empty">
                     <span><i class="fas fa-address-book"></i></span>
                     <h2>No unlocked contacts yet</h2>
-                    <p>Browse rooms and unlock the owner contact when you find a property you like. It will remain saved here for future access.</p>
+                    <p>Browse properties and unlock the owner contact when you find a listing you like. It will remain saved here for future access.</p>
                     <a href="{{ route('rooms.index') }}" class="account-action">Browse rooms</a>
                 </div>
             @endif

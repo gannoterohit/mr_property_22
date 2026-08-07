@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Edit Room - RoomRental')
+@section('title', 'Edit Property - RoomRental')
 
 @section('content')
   @php
@@ -13,7 +13,7 @@
             <a href="{{ route('owner.dashboard') }}" class="text-gray-900">
                 <i class="fas fa-arrow-left text-xl"></i>
             </a>
-            <h1 class="text-lg font-black text-gray-900">Edit Room</h1>
+            <h1 class="text-lg font-black text-gray-900">Edit Property</h1>
         </div>
         <div class="w-8"></div>
     </div>
@@ -27,8 +27,8 @@
             <div class="owner-page-header owner-form-page-header hidden lg:block bg-white border-b border-slate-200">
                 <div class="max-w-6xl mx-auto flex items-center justify-between">
                     <div>
-                        <h1 class="font-black text-slate-950">Update Room Listing</h1>
-                        <p class="text-slate-500">Modify your room details to keep your listing accurate.</p>
+                        <h1 class="font-black text-slate-950">Update Property Listing</h1>
+                        <p class="text-slate-500">Modify your property details to keep your listing accurate.</p>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                         <i class="fas fa-info-circle"></i>
                     </div>
                     <div>
-                        <p class="font-bold text-indigo-900">Room Status: {{ ucfirst($room->status) }}</p>
+                        <p class="font-bold text-indigo-900">Property Status: {{ ucfirst($room->status) }}</p>
                         <p class="text-sm text-indigo-700">Need to update pricing or photos? You can do it here anytime.</p>
                     </div>
                 </div>
@@ -142,7 +142,7 @@
 
                                 <div>
                                     <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1 ml-1">Description</label>
-                                    <textarea name="description" rows="3" placeholder="Describe your room, rules, etc."
+                                    <textarea name="description" rows="3" placeholder="Describe your property, rules, etc."
                                               class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition resize-none text-sm font-medium">{{ $room->description }}</textarea>
                                 </div>
                             </div>
@@ -188,7 +188,7 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-4 px-1">Room Video (Optional)</label>
+                                        <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-4 px-1">Property Video (Optional)</label>
                                         <input type="file" name="video" accept="video/*" class="hidden" id="videoInput" onchange="handleVideoUpload(event)">
                                         <label for="videoInput" class="cursor-pointer block border-2 border-dashed border-gray-200 rounded-[2rem] p-8 text-center hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
                                             <i class="fas fa-video text-3xl text-gray-300 group-hover:text-indigo-400 transition mb-3"></i>
@@ -805,7 +805,7 @@ document.getElementById('editRoomForm').addEventListener('submit', async functio
         
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ message: 'Failed to update room' }));
-            const requestError = new Error(showRoomFormErrors(this, errorData, 'Failed to update room'));
+            const requestError = new Error(showRoomFormErrors(this, errorData, 'Failed to update property'));
             requestError.alreadyShown = Boolean(errorData?.errors && Object.keys(errorData.errors).length);
             throw requestError;
         }
@@ -813,7 +813,7 @@ document.getElementById('editRoomForm').addEventListener('submit', async functio
         const data = await response.json();
         
         if (data.success) {
-            toastr.success(data.message || 'Room updated successfully!');
+            toastr.success(data.message || 'Property updated successfully!');
             setTimeout(() => {
                 window.location.href = '{{ route("owner.rooms") }}';
             }, 1500);

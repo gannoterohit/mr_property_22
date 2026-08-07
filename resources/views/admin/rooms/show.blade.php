@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Room Details')
+@section('title', 'Property Details')
 
 @push('styles')
 <style>
@@ -42,11 +42,11 @@
             <a href="{{ route('admin.all-rooms') }}" class="admin-theme-text text-xs font-bold"><i class="fas fa-arrow-left mr-1"></i>All listings</a>
             <p class="admin-theme-text mt-3 text-[10px] font-extrabold uppercase tracking-[.2em]">Property management</p>
             <h1 class="mt-1 text-2xl font-extrabold text-slate-950">{{ $room->title }}</h1>
-            <p class="text-sm text-slate-500">Internal room review, owner details and publishing controls.</p>
+            <p class="text-sm text-slate-500">Internal property review, owner details and publishing controls.</p>
         </div>
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('rooms.show', $room) }}" target="_blank" class="rounded-xl border bg-white px-4 py-2.5 text-xs font-bold text-slate-700"><i class="fas fa-up-right-from-square mr-2"></i>Public preview</a>
-            <a href="{{ route('admin.rooms.edit', $room) }}" class="admin-theme-bg rounded-xl px-4 py-2.5 text-xs font-bold"><i class="fas fa-pen mr-2"></i>Edit room</a>
+            <a href="{{ route('admin.rooms.edit', $room) }}" class="admin-theme-bg rounded-xl px-4 py-2.5 text-xs font-bold"><i class="fas fa-pen mr-2"></i>Edit property</a>
         </div>
     </header>
 
@@ -69,7 +69,7 @@
             <section class="admin-room-kpis">
                 <div class="admin-room-kpi"><span>Rent</span><strong>&#8377;{{ number_format((float) $room->rent) }}/mo</strong></div>
                 <div class="admin-room-kpi"><span>Deposit</span><strong>&#8377;{{ number_format((float) $room->deposit) }}</strong></div>
-                <div class="admin-room-kpi"><span>Room type</span><strong>{{ $room->roomTypeLabel() }}</strong></div>
+                <div class="admin-room-kpi"><span>Property type</span><strong>{{ $room->roomTypeLabel() }}</strong></div>
                 <div class="admin-room-kpi"><span>Availability</span><strong>{{ ucfirst($room->status) }}</strong></div>
             </section>
 
@@ -159,7 +159,7 @@
                         </form>
                     @endif
                     <a href="{{ route('admin.rooms.edit', $room) }}" class="flex h-11 items-center justify-center rounded-xl border bg-white text-sm font-bold text-slate-700"><i class="fas fa-pen mr-2"></i>Edit listing</a>
-                    <form method="POST" action="{{ route('admin.rooms.destroy', $room) }}" class="admin-confirm" data-confirm-title="Delete this room listing?" data-confirm-text="This listing and its related data will be permanently removed." data-confirm-button="Yes, delete listing">
+                    <form method="POST" action="{{ route('admin.rooms.destroy', $room) }}" class="admin-confirm" data-confirm-title="Delete this property listing?" data-confirm-text="This listing and its related data will be permanently removed." data-confirm-button="Yes, delete listing">
                         @csrf @method('DELETE')
                         <button class="w-full rounded-xl bg-red-50 py-3 text-sm font-bold text-red-700"><i class="fas fa-trash mr-2"></i>Delete listing</button>
                     </form>

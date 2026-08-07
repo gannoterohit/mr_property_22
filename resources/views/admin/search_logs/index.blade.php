@@ -113,7 +113,7 @@
                 @foreach([
                     ['Page views',$visitorStats['page_views'],'fa-eye','admin-theme-text'],
                     ['Visitors',$visitorStats['unique_visitors'],'fa-users','text-sky-600'],
-                    ['Room views',$visitorStats['room_views'],'fa-door-open','text-emerald-600'],
+                    ['Property views',$visitorStats['room_views'],'fa-door-open','text-emerald-600'],
                     ['Searches',$visitorStats['searches'],'fa-magnifying-glass','text-amber-600'],
                     ['Checkout starts',$visitorStats['checkout_starts'],'fa-cart-shopping','admin-theme-text'],
                     ['Purchases',$visitorStats['purchases'],'fa-circle-check','text-green-600'],
@@ -132,18 +132,18 @@
 
             <div class="grid gap-4 lg:grid-cols-2">
                 <div class="rounded-2xl border bg-white p-5">
-                    <h2 class="text-sm font-extrabold">Top Viewed Rooms</h2>
+                    <h2 class="text-sm font-extrabold">Top Viewed Properties</h2>
                     <div class="mt-4 space-y-3">
                         @forelse($topViewedRooms as $item)
                             <div class="flex items-center justify-between gap-3 rounded-xl border p-3">
                                 <div class="min-w-0">
-                                    <p class="truncate text-xs font-extrabold">{{ $item->room?->title ?? 'Deleted room' }}</p>
+                                    <p class="truncate text-xs font-extrabold">{{ $item->room?->title ?? 'Deleted property' }}</p>
                                     <p class="text-[10px] text-slate-400">{{ $item->room?->city ?? 'Unknown city' }}</p>
                                 </div>
                                 <strong class="text-sm admin-theme-text">{{ $item->total }}</strong>
                             </div>
                         @empty
-                            <p class="py-8 text-sm text-slate-500">No room views tracked yet.</p>
+                            <p class="py-8 text-sm text-slate-500">No property views tracked yet.</p>
                         @endforelse
                     </div>
                 </div>
@@ -173,14 +173,14 @@
                 <div class="overflow-x-auto">
                     <table class="analytics-table">
                         <thead>
-                            <tr><th>Date & time</th><th>Event</th><th>Room / city</th><th>Visitor</th><th>Value</th></tr>
+                            <tr><th>Date & time</th><th>Event</th><th>Property / city</th><th>Visitor</th><th>Value</th></tr>
                         </thead>
                         <tbody class="divide-y">
                             @forelse($recentEvents as $event)
                                 <tr>
                                     <td class="px-5"><p class="text-xs font-bold">{{ $event->created_at->format('d M Y') }}</p><p class="text-[10px] text-slate-400">{{ $event->created_at->format('h:i A') }}</p></td>
                                     <td class="px-5"><span class="rounded-lg admin-theme-soft px-2 py-1 text-[10px] font-extrabold admin-theme-text">{{ $event->event_name }}</span></td>
-                                    <td class="px-5"><p class="max-w-xs truncate text-xs font-semibold">{{ $event->room?->title ?? 'No room linked' }}</p><p class="text-[10px] text-slate-400">{{ $event->city ?: $event->room?->city ?: 'Unknown city' }}</p></td>
+                                    <td class="px-5"><p class="max-w-xs truncate text-xs font-semibold">{{ $event->room?->title ?? 'No property linked' }}</p><p class="text-[10px] text-slate-400">{{ $event->city ?: $event->room?->city ?: 'Unknown city' }}</p></td>
                                     <td class="px-5"><p class="text-xs font-semibold">{{ $event->user?->name ?: 'Guest visitor' }}</p><p class="text-[10px] text-slate-400">{{ $event->ip_address }}</p></td>
                                     <td class="px-5"><p class="text-xs font-extrabold">{{ $event->amount ? 'Rs '.number_format((float)$event->amount,2) : '-' }}</p><p class="text-[10px] text-slate-400">{{ $event->currency }}</p></td>
                                 </tr>

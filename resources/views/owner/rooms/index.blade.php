@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'My Rooms - ' . \App\Models\Setting::get('website_name', 'RoomRental'))
+@section('title', 'My Properties - ' . \App\Models\Setting::get('website_name', 'RoomRental'))
 
 @push('styles')
 <style>
@@ -59,19 +59,19 @@
     <main class="flex-1 min-w-0 pb-24 lg:pb-12">
         <header class="border-b border-slate-200 bg-white">
             <div class="owner-rooms-header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-                <div><p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-600">Property management</p><h1 class="mt-1 text-2xl sm:text-3xl font-extrabold text-slate-950">My Rooms</h1><p class="mt-2 text-sm text-slate-500">View and manage all your room listings in one place.</p></div>
-                <a href="{{ route('rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-700"><i class="fas fa-plus"></i>Add New Room</a>
+                <div><p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-600">Property management</p><h1 class="mt-1 text-2xl sm:text-3xl font-extrabold text-slate-950">My Properties</h1><p class="mt-2 text-sm text-slate-500">View and manage all your property listings in one place.</p></div>
+                <a href="{{ route('rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-700"><i class="fas fa-plus"></i>Add New Property</a>
             </div>
         </header>
         <div class="owner-rooms-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="owner-room-stats">
-                @foreach([['All rooms','all'],['Active','active'],['Pending','pending'],['Rented','booked']] as $item)
+                @foreach([['All properties','all'],['Active','active'],['Pending','pending'],['Rented','booked']] as $item)
                     <div class="owner-room-stat"><p class="text-xs font-semibold text-slate-500">{{ $item[0] }}</p><p class="mt-2 text-2xl font-extrabold text-slate-950">{{ $roomCounts[$item[1]] }}</p></div>
                 @endforeach
             </div>
             <section class="owner-listing-section">
                 <div class="owner-listing-heading flex items-end justify-between gap-4">
-                    <div><h2 class="text-lg font-extrabold text-slate-950">Your listings</h2><p class="mt-1 text-sm text-slate-500">Manage room details, pricing and availability.</p></div>
+                    <div><h2 class="text-lg font-extrabold text-slate-950">Your listings</h2><p class="mt-1 text-sm text-slate-500">Manage property details, pricing and availability.</p></div>
                     <span class="hidden sm:block text-xs font-bold text-slate-400">{{ $myRooms->total() }} {{ Str::plural('property', $myRooms->total()) }}</span>
                 </div>
             @if($myRooms->count())
@@ -101,7 +101,7 @@
                     @endforeach
                 </div>
             @else
-                <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center"><i class="fas fa-house-circle-xmark text-4xl text-slate-300"></i><h2 class="mt-4 text-lg font-bold text-slate-900">No rooms listed yet</h2><p class="mt-2 text-sm text-slate-500">Add your first room and start receiving enquiries.</p><a href="{{ route('rooms.create') }}" class="mt-5 inline-flex rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white">Add Your First Room</a></div>
+                <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center"><i class="fas fa-house-circle-xmark text-4xl text-slate-300"></i><h2 class="mt-4 text-lg font-bold text-slate-900">No properties listed yet</h2><p class="mt-2 text-sm text-slate-500">Add your first property and start receiving enquiries.</p><a href="{{ route('rooms.create') }}" class="mt-5 inline-flex rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white">Add Your First Property</a></div>
             @endif
             @if($myRooms->hasPages())<div class="mt-8">{{ $myRooms->links() }}</div>@endif
             </section>
@@ -123,33 +123,26 @@ async function ownerRoomPost(url, payload = {}) {
 }
 
 async function markRoomRented(roomId) {
-    const result = await Swal.fire({ title: 'Mark room as rented?', text: 'This room will stop appearing to room seekers.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, mark rented', confirmButtonColor: '#e11d48' });
+    const result = await Swal.fire({ title: 'Mark property as rented?', text: 'This property will stop appearing to property seekers.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, mark rented', confirmButtonColor: '#e11d48' });
     if (!result.isConfirmed) return;
-    try { const data = await ownerRoomPost(`{{ route('rooms.markBooked', ':room') }}`.replace(':room', roomId)); await Swal.fire('Room rented', data.message, 'success'); location.reload(); }
-    catch (error) { Swal.fire('Could not update room', error.message, 'error'); }
+    try { const data = await ownerRoomPost(`{{ route('rooms.markBooked', ':room') }}`.replace(':room', roomId)); await Swal.fire('Property rented', data.message, 'success'); location.reload(); }
+    catch (error) { Swal.fire('Could not update property', error.message, 'error'); }
 }
 
 async function makeRoomAvailable(roomId) {
     if (!listingFeeEnabled) {
-        const confirmation = await Swal.fire({ title: 'Make room available?', text: 'The listing fee is currently disabled, so no payment or plan credit will be used.', icon: 'question', showCancelButton: true, confirmButtonText: 'Make available', confirmButtonColor: '#059669' });
+        const confirmation = await Swal.fire({ title: 'Make property available?', text: 'The listing fee is currently disabled, so no payment or plan credit will be used.', icon: 'question', showCancelButton: true, confirmButtonText: 'Make available', confirmButtonColor: '#059669' });
         if (!confirmation.isConfirmed) return;
         try {
             const data = await ownerRoomPost(`{{ route('rooms.markAvailable', ':room') }}`.replace(':room', roomId), { payment_method: 'free' });
-            await Swal.fire('Room available', data.message || 'Your room is visible to room seekers again.', 'success');
+            await Swal.fire('Property available', data.message || 'Your property is visible to property seekers again.', 'success');
             location.reload();
-        } catch (error) { Swal.fire('Could not publish room', error.message, 'error'); }
-        return;
-    }
-
-    const choice = await Swal.fire({ title: 'Make room available?', html: '<p class="text-sm text-slate-600">Your active listing plan will be checked first. If no listing credit is available, choose how to pay.</p>', icon: 'info', showCancelButton: true, showDenyButton: true, confirmButtonText: 'Online payment', denyButtonText: 'Use wallet', cancelButtonText: 'Cancel', confirmButtonColor: '#4f46e5', denyButtonColor: '#059669' });
-    if (choice.isDismissed) return;
-    const paymentMethod = choice.isDenied ? 'wallet' : 'online';
-    try {
+            } catch (error) { Swal.fire('Could not publish property', error.message, 'error'); }
         const data = await ownerRoomPost(`{{ route('rooms.markAvailable', ':room') }}`.replace(':room', roomId), { payment_method: paymentMethod });
         if (data.payment_id) return startAvailabilityPayment(data.payment_id, data.amount, roomId);
-        await Swal.fire('Room available', data.message || 'Your room is visible to users again.', 'success');
+        await Swal.fire('Property available', data.message || 'Your property is visible to users again.', 'success');
         location.reload();
-    } catch (error) { Swal.fire('Could not publish room', error.message, 'error'); }
+    } catch (error) { Swal.fire('Could not publish property', error.message, 'error'); }
 }
 
 async function startAvailabilityPayment(paymentId, amount, roomId) {
@@ -157,12 +150,12 @@ async function startAvailabilityPayment(paymentId, amount, roomId) {
         const RazorpayClient = await loadRazorpaySDK();
         const order = await ownerRoomPost('{{ route('razorpay.createOrder') }}', { payment_id: paymentId });
         if (!order.success || !order.order_id) throw new Error(order.message || 'Payment order could not be created');
-        new RazorpayClient({ key: ownerRazorpayKey, amount: order.amount * 100, currency: 'INR', name: '{{ \App\Models\Setting::get("website_name", "RoomRental") }}', description: 'Room listing activation', order_id: order.order_id,
+        new RazorpayClient({ key: ownerRazorpayKey, amount: order.amount * 100, currency: 'INR', name: '{{ \App\Models\Setting::get("website_name", "RoomRental") }}', description: 'Property listing activation', order_id: order.order_id,
             handler: async function (response) {
                 try {
                     const verified = await ownerRoomPost('{{ route('razorpay.verify') }}', { razorpay_payment_id: response.razorpay_payment_id, razorpay_order_id: response.razorpay_order_id || order.order_id, razorpay_signature: response.razorpay_signature, payment_id: paymentId, type: 'listing', reference_id: roomId });
                     if (verified.status !== 'success') throw new Error(verified.message || 'Payment verification failed');
-                    await Swal.fire('Payment successful', 'Room is available to users again.', 'success'); location.reload();
+                    await Swal.fire('Payment successful', 'Property is available to users again.', 'success'); location.reload();
                 } catch (error) { Swal.fire('Verification failed', error.message, 'error'); }
             }, prefill: { name: '{{ Auth::user()->name }}', email: '{{ Auth::user()->email }}' }, theme: { color: '#4f46e5' }
         }).open();

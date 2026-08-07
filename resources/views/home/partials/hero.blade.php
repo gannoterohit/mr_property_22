@@ -3,8 +3,8 @@
         <div class="market-hero-box">
             <div class="market-hero-image" style="background-image:url('{{ $heroImage }}')"></div>
             <div class="market-hero-copy">
-                <span class="market-eyebrow"><i class="fas fa-shield-halved"></i>100% verified rooms · zero brokerage</span>
-                <h1>Find your perfect room <span>@if($displayCity)in {{ $displayCity }}@else near you @endif</span></h1>
+                <span class="market-eyebrow"><i class="fas fa-shield-halved"></i>100% verified properties · zero brokerage</span>
+                <h1>Find your perfect property <span>@if($displayCity)in {{ $displayCity }}@else near you @endif</span></h1>
                 <p>{{ $heroDescription }}</p>
                 <div class="market-benefits">@foreach([1,2,3] as $benefit)<span><i class="fas {{ $text('home_why_'.$benefit.'_icon',['fa-shield-halved','fa-ban','fa-user-check'][$benefit-1]) }}"></i>{{ $text('home_why_'.$benefit.'_title',['Verified Listings','No Brokerage','Direct Owner Contact'][$benefit-1]) }}</span>@endforeach</div>
             </div>
@@ -15,7 +15,7 @@
                     <div class="market-field"><i class="market-field-icon fas fa-house"></i><label>Property Type</label><select name="property_type_id"><option value="">Any type</option>@foreach($propertyTypes as $type)<option value="{{ $type->id }}" @selected(request('property_type_id') == $type->id)>{{ $type->name }}</option>@endforeach</select></div>
                     <div class="market-field"><i class="market-field-icon fas fa-indian-rupee-sign"></i><label>Budget</label><input type="number" min="0" name="max_rent" placeholder="Any budget"></div>
                     <div class="market-field"><i class="market-field-icon fas fa-user"></i><label>Preferred For</label><select name="tenant_type[]"><option value="">Anyone</option>@foreach(\App\Models\RoomOption::optionsFor('tenant_type') as $option)<option value="{{ $option->id }}">{{ $option->label }}</option>@endforeach</select></div>
-                    <button type="submit"><i class="fas fa-magnifying-glass"></i>{{ $text('home_search_button','Search Rooms') }}</button>
+                    <button type="submit"><i class="fas fa-magnifying-glass"></i>{{ $text('home_search_button','Search Properties') }}</button>
                 </div>
             </form>
         </div>

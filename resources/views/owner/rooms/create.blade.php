@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'List Your Room - RoomRental')
+@section('title', 'List Your Property - RoomRental')
 
 @section('content')
 <style>
@@ -17,7 +17,7 @@
             <a href="{{ route('owner.dashboard') }}" class="text-gray-900">
                 <i class="fas fa-arrow-left text-xl"></i>
             </a>
-            <h1 class="text-lg font-black text-gray-900">List Your Room</h1>
+            <h1 class="text-lg font-black text-gray-900">List Your Property</h1>
         </div>
         <div class="w-8"></div> <!-- Spacer -->
     </div>
@@ -47,9 +47,9 @@
                     <div>
                         @if(filter_var(\App\Models\Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))
                             <p class="font-bold text-amber-900">Listing Fee: &#8377;{{ \App\Models\Setting::get('listing_fee', 199) }}</p>
-                            <p class="text-sm text-amber-700">Your room will be submitted for admin approval after payment confirmation.</p>
+                            <p class="text-sm text-amber-700">Your property will be submitted for admin approval after payment confirmation.</p>
                         @else
-                            <p class="font-bold text-emerald-900">Room listing is currently free</p>
+                            <p class="font-bold text-emerald-900">Property listing is currently free</p>
                             <p class="text-sm text-emerald-700">No payment or listing-plan credit will be used. Admin approval is still required.</p>
                         @endif
                     </div>
@@ -64,7 +64,7 @@
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="md:col-span-2">
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Room Title</label>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Property Title</label>
                                 <input type="text" name="title" required placeholder="e.g. Luxury 1BHK in Indiranagar"
                                        class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
                             </div>
@@ -148,7 +148,7 @@
 
                         <div>
                             <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Description</label>
-                            <textarea name="description" rows="4" placeholder="Tell us more about the room, rules, and nearby facilities..."
+                            <textarea name="description" rows="4" placeholder="Tell us more about the property, rules, and nearby facilities..."
                                       class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition resize-none font-bold text-gray-700"></textarea>
                         </div>
                     </div>
@@ -173,7 +173,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Room Video (Optional)</label>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Property Video (Optional)</label>
                                 <input type="file" name="video" accept="video/*" class="hidden" id="videoInput" onchange="handleVideoUpload(event)">
                                 <label for="videoInput" class="cursor-pointer block border-2 border-dashed border-gray-200 rounded-[2rem] p-10 text-center hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
                                     <i class="fas fa-video text-4xl text-gray-300 group-hover:text-indigo-400 transition mb-3"></i>
@@ -302,7 +302,7 @@
                     <div class="owner-form-wide pt-2">
                         <button type="submit" 
                                 class="w-full bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-700 hover:to-indigo-900 text-white font-black py-6 rounded-[2rem] shadow-xl shadow-indigo-100 hover:shadow-indigo-200 transition-all duration-300 transform active:scale-95 text-lg flex items-center justify-center gap-3">
-                            <i class="fas fa-paper-plane"></i> Post Room Listing
+                            <i class="fas fa-paper-plane"></i> Post Property Listing
                         </button>
                     </div>
                 </form>
@@ -683,7 +683,7 @@ document.getElementById('roomForm').addEventListener('submit', async function(e)
         const data = await res.json();
         if (data.success) {
             if (data.subscription_used || data.free_listing || data.wallet_used) {
-                toastr.success(data.message || 'Room listed successfully!');
+                toastr.success(data.message || 'Property listed successfully!');
                 setTimeout(() => window.location.href = '{{ url("/rooms") }}', 1500);
             } else {
                 await initiatePayment(data.payment_id, data.amount, data.room_id);

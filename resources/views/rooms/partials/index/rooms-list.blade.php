@@ -24,6 +24,16 @@
                                         <span class="room-theme-type-badge bg-white/90 backdrop-blur-sm text-[8px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-lg border border-white/40 shadow-sm">
                                             {{ $room->roomTypeLabel() }}
                                         </span>
+                                        @if($room->propertyType?->name)
+                                            <span class="bg-slate-900 text-white text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg">
+                                                {{ $room->propertyType->name }}
+                                            </span>
+                                        @endif
+                                        @if($room->propertyCategory?->name)
+                                            <span class="bg-indigo-600 text-white text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg">
+                                                {{ $room->propertyCategory->name }}
+                                            </span>
+                                        @endif
                                         @if($room->listing_type === 'broker')
                                             <span class="room-theme-secondary-badge text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg">Broker Fee</span>
                                         @else
@@ -69,11 +79,6 @@
                                         @if($room->tenantTypeLabel() !== 'N/A')
                                             <span class="bg-slate-50 border border-slate-100 text-slate-500 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1">
                                                 <i class="room-theme-primary-icon fas fa-users"></i> {{ $room->tenantTypeLabel() }}
-                                            </span>
-                                        @endif
-                                        @if($room->propertyType?->name)
-                                            <span class="bg-slate-50 border border-slate-100 text-slate-500 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1">
-                                                <i class="room-theme-primary-icon fas fa-building"></i> {{ $room->propertyType->name }}@if($room->propertyCategory?->name) · {{ $room->propertyCategory->name }}@endif
                                             </span>
                                         @endif
                                         @if($room->area_sqft)
@@ -137,8 +142,8 @@
                         <div class="room-theme-primary-soft inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 shadow-sm">
                             <i class="fas fa-house-circle-xmark text-4xl"></i>
                         </div>
-                        <h3 class="text-xl font-black text-slate-800 mb-2">No Rooms Found</h3>
-                        <p class="text-slate-500 mb-6 text-sm">We couldn't find any rooms matching your search criteria. Try modifying your filters or view all rooms.</p>
+                        <h3 class="text-xl font-black text-slate-800 mb-2">No Properties Found</h3>
+                        <p class="text-slate-500 mb-6 text-sm">We couldn't find any properties matching your search criteria. Try modifying your filters or view all properties.</p>
                         <a href="{{ route('rooms.index', ['clear' => 1]) }}" class="room-theme-primary-button inline-flex items-center justify-center font-extrabold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
                             <i class="fas fa-rotate-left mr-1.5"></i> Clear All Filters
                         </a>

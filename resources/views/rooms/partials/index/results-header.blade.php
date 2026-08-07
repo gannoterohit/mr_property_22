@@ -2,10 +2,10 @@
             <div class="rooms-results-head flex items-center justify-between mb-5 flex-wrap gap-3">
                 <div>
                     <h2 class="text-2xl font-black text-slate-900 font-heading">
-                        All Rooms in {{ $cityContext['activeCityName'] ?? $displayCity ?? 'India' }}
+                        All Properties in {{ $cityContext['activeCityName'] ?? $displayCity ?? 'India' }}
                     </h2>
                     <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">
-                        {{ $rooms->total() }}+ Rooms Found
+                        {{ $rooms->total() }}+ Properties Found
                     </span>
                 </div>
 

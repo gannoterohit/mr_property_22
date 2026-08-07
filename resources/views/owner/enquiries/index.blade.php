@@ -11,8 +11,8 @@
             <div class="max-w-7xl mx-auto px-4 py-7 sm:px-6 lg:px-8">
                 <p class="text-[10px] font-extrabold uppercase tracking-[.18em] text-indigo-600">Customer interest</p>
                 <div class="mt-1 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                    <div><h1 class="text-2xl font-extrabold text-slate-950">Room Enquiries</h1><p class="mt-2 text-sm text-slate-500">See when a room seeker unlocks contact details for one of your listings.</p></div>
-                    <a href="{{ route('owner.rooms') }}" class="inline-flex h-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-700"><i class="fas fa-building mr-2 text-indigo-600"></i>My Rooms</a>
+                    <div><h1 class="text-2xl font-extrabold text-slate-950">Property Enquiries</h1><p class="mt-2 text-sm text-slate-500">See when a property seeker unlocks contact details for one of your listings.</p></div>
+                    <a href="{{ route('owner.rooms') }}" class="inline-flex h-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-700"><i class="fas fa-building mr-2 text-indigo-600"></i>My Properties</a>
                 </div>
             </div>
         </header>
@@ -22,7 +22,7 @@
                 @foreach([
                     ['Total unlocks', $stats['total'], 'fa-address-card', 'text-indigo-600 bg-indigo-50'],
                     ['Unlocked today', $stats['today'], 'fa-calendar-day', 'text-emerald-600 bg-emerald-50'],
-                    ['Rooms receiving interest', $stats['rooms'], 'fa-house-circle-check', 'text-amber-600 bg-amber-50'],
+                    ['Properties receiving interest', $stats['rooms'], 'fa-house-circle-check', 'text-amber-600 bg-amber-50'],
                 ] as [$label,$value,$icon,$tone])
                     <article><div><p>{{ $label }}</p><strong>{{ number_format($value) }}</strong></div><span class="{{ $tone }}"><i class="fas {{ $icon }}"></i></span></article>
                 @endforeach
@@ -47,13 +47,13 @@
                                 <h3 class="mt-1 truncate text-sm font-extrabold text-slate-900">{{ $room?->title ?? 'Deleted room' }}</h3>
                                 <p class="mt-1 truncate text-xs text-slate-500"><i class="fas fa-location-dot mr-1 text-rose-400"></i>{{ $room?->city ?: 'Location unavailable' }}</p>
                             </div>
-                            <div class="enquiry-seeker"><span>{{ strtoupper(substr($enquiry->user?->name ?? 'U',0,1)) }}</span><div><small>Room seeker</small><strong>{{ $enquiry->user?->name ?? 'Deleted user' }}</strong></div></div>
+                            <div class="enquiry-seeker"><span>{{ strtoupper(substr($enquiry->user?->name ?? 'U',0,1)) }}</span><div><small>Property seeker</small><strong>{{ $enquiry->user?->name ?? 'Deleted user' }}</strong></div></div>
                             <div><small class="enquiry-label">Unlock method</small><p class="mt-1 text-xs font-bold text-slate-700">{{ $gateway }}</p></div>
                             <div><small class="enquiry-label">Date & time</small><p class="mt-1 text-xs font-bold text-slate-700">{{ ($enquiry->unlocked_at ?? $enquiry->created_at)->format('d M Y') }}</p><p class="text-[10px] text-slate-400">{{ ($enquiry->unlocked_at ?? $enquiry->created_at)->format('h:i A') }}</p></div>
                             <div class="flex items-center justify-end gap-2"><span class="rounded-full px-2.5 py-1 text-[9px] font-extrabold {{ $room?->status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' }}">{{ $statusLabel }}</span>@if($room)<a href="{{ route('rooms.show',$room) }}" class="flex h-9 w-9 items-center justify-center rounded-lg border text-indigo-600" title="View room"><i class="fas fa-arrow-right text-xs"></i></a>@endif</div>
                         </article>
                     @empty
-                        <div class="px-6 py-16 text-center"><span class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-xl text-indigo-500"><i class="fas fa-address-card"></i></span><h3 class="mt-4 text-base font-extrabold text-slate-900">No enquiries yet</h3><p class="mx-auto mt-2 max-w-md text-sm text-slate-500">When a room seeker unlocks your contact details, the activity will appear here.</p><a href="{{ route('owner.rooms') }}" class="mt-5 inline-flex rounded-xl bg-indigo-600 px-5 py-3 text-xs font-bold text-white">Review my listings</a></div>
+                        <div class="px-6 py-16 text-center"><span class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-xl text-indigo-500"><i class="fas fa-address-card"></i></span><h3 class="mt-4 text-base font-extrabold text-slate-900">No enquiries yet</h3><p class="mx-auto mt-2 max-w-md text-sm text-slate-500">When a property seeker unlocks your contact details, the activity will appear here.</p><a href="{{ route('owner.rooms') }}" class="mt-5 inline-flex rounded-xl bg-indigo-600 px-5 py-3 text-xs font-bold text-white">Review my listings</a></div>
                     @endforelse
                 </div>
 

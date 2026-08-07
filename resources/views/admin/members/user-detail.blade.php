@@ -70,7 +70,7 @@
                 <div class="divide-y">
                     @forelse($user->enquiries->sortByDesc('created_at')->take(10) as $enquiry)
                         <div class="flex items-center justify-between gap-3 px-5 py-4">
-                            <div><strong class="text-sm">{{ $enquiry->room?->title ?? 'Deleted room' }}</strong><p class="text-xs text-slate-400">{{ $enquiry->created_at->format('d M Y, h:i A') }}</p></div>
+                            <div><strong class="text-sm">{{ $enquiry->room?->title ?? 'Deleted property' }}</strong><p class="text-xs text-slate-400">{{ $enquiry->created_at->format('d M Y, h:i A') }}</p></div>
                             <span class="rounded-full px-2.5 py-1 text-[10px] font-bold {{ $enquiry->unlocked?'bg-emerald-50 text-emerald-700':'bg-amber-50 text-amber-700' }}">{{ $enquiry->unlocked?'Unlocked':'Pending' }}</span>
                         </div>
                     @empty

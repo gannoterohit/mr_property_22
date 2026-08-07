@@ -66,7 +66,7 @@
                 <!-- Search Button -->
                 <div class="w-[120px] pl-1">
                     <button type="submit" class="room-theme-primary-button w-full py-2.5 font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 text-xs">
-                        <i class="fas fa-search text-[10px]"></i> Search Rooms
+                        <i class="fas fa-search text-[10px]"></i> Search Properties
                     </button>
                 </div>
             </form>

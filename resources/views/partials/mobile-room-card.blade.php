@@ -31,24 +31,38 @@
         @endif
         
         <!-- Tags Overlay -->
-        <div class="absolute top-3 left-3 flex gap-2">
-             <span class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-gray-800 dark:text-gray-200 shadow-sm uppercase tracking-wide">
-                {{ $room->roomTypeLabel() }}
-            </span>
-            @if($room->listing_type === 'broker')
-                <span style="background-color: #f97316 !important;" class="text-white px-2.5 py-1 rounded-lg text-[10px] font-black shadow-sm uppercase tracking-widest border border-white/20">
-                    Broker Fee: ₹{{ $room->broker_fee }}
+        <div class="absolute top-3 left-3 flex flex-col gap-2">
+            <div class="flex flex-wrap gap-2">
+                <span class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-gray-800 dark:text-gray-200 shadow-sm uppercase tracking-wide">
+                    {{ $room->roomTypeLabel() }}
                 </span>
-            @else
-                <span class="bg-emerald-600 text-white px-2.5 py-1 rounded-full text-[10px] font-black shadow-sm uppercase tracking-widest border border-emerald-400">
-                    No Broker Fee
-                </span>
-            @endif
-             @if($room->is_featured)
-                <span class="bg-amber-400 text-amber-900 px-2.5 py-1 rounded-full text-[10px] font-black shadow-sm uppercase tracking-wide">
-                    Featured
-                </span>
-            @endif
+                @if($room->listing_type === 'broker')
+                    <span style="background-color: #f97316 !important;" class="text-white px-2.5 py-1 rounded-lg text-[10px] font-black shadow-sm uppercase tracking-widest border border-white/20">
+                        Broker Fee: ₹{{ $room->broker_fee }}
+                    </span>
+                @else
+                    <span class="bg-emerald-600 text-white px-2.5 py-1 rounded-full text-[10px] font-black shadow-sm uppercase tracking-widest border border-emerald-400">
+                        No Broker Fee
+                    </span>
+                @endif
+                @if($room->is_featured)
+                    <span class="bg-amber-400 text-amber-900 px-2.5 py-1 rounded-full text-[10px] font-black shadow-sm uppercase tracking-wide">
+                        Featured
+                    </span>
+                @endif
+            </div>
+            <div class="flex flex-wrap gap-2">
+                @if($room->propertyType?->name)
+                    <span class="bg-slate-900 text-white text-[9px] font-black uppercase tracking-wide px-3 py-1.5 rounded-full">
+                        {{ $room->propertyType->name }}
+                    </span>
+                @endif
+                @if($room->propertyCategory?->name)
+                    <span class="bg-indigo-600 text-white text-[9px] font-black uppercase tracking-wide px-3 py-1.5 rounded-full">
+                        {{ $room->propertyCategory->name }}
+                    </span>
+                @endif
+            </div>
         </div>
     </a>
     
@@ -65,8 +79,20 @@
                 <i class="fas fa-location-dot mr-2 text-indigo-500"></i>
                 {{ $room->city }}
             </div>
+            <div class="flex flex-wrap gap-2 mt-3">
+                @if($room->propertyType?->name)
+                    <span class="bg-slate-900 text-white text-[10px] font-black uppercase tracking-wide px-3 py-1.5 rounded-full">
+                        {{ $room->propertyType->name }}
+                    </span>
+                @endif
+                @if($room->propertyCategory?->name)
+                    <span class="bg-indigo-600 text-white text-[10px] font-black uppercase tracking-wide px-3 py-1.5 rounded-full">
+                        {{ $room->propertyCategory->name }}
+                    </span>
+                @endif
+            </div>
             <!-- Distance Tag -->
-            <div class="distance-tag hidden mt-1 flex items-center gap-1.5" data-lat="{{ $room->latitude }}" data-lng="{{ $room->longitude }}">
+            <div class="distance-tag hidden mt-3 flex items-center gap-1.5" data-lat="{{ $room->latitude }}" data-lng="{{ $room->longitude }}">
                 <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
                 <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest"><span class="distance-km">0</span> km away</span>
             </div>

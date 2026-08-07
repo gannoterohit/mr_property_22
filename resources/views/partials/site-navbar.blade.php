@@ -107,7 +107,7 @@
                 <!-- Center Links -->
                 <div class="desktop-navbar-menu hidden lg:flex items-center gap-1 bg-slate-50 border border-slate-100 rounded-xl p-1">
                     <a href="{{ route('home') }}" class="theme-nav-link {{ request()->routeIs('home') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition">Home</a>
-                    <a href="{{ route('rooms.index') }}" class="theme-nav-link {{ request()->routeIs('rooms.index', 'rooms.show') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition">Browse Rooms</a>
+                    <a href="{{ route('rooms.index') }}" class="theme-nav-link {{ request()->routeIs('rooms.index', 'rooms.show') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition">Browse Properties</a>
                     @if($cmsPageLive('how-it-works'))
                         <a href="{{ route('pages.how-it-works') }}" class="theme-nav-link {{ request()->routeIs('pages.how-it-works') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition">How It Works</a>
                     @endif

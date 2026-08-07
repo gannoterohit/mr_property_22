@@ -6,7 +6,7 @@
             ['route' => 'admin.all-rooms', 'match' => 'admin.all-rooms', 'icon' => 'fa-building', 'label' => 'All Rooms'],
             ['route' => 'admin.property-types.index', 'match' => 'admin.property-types*', 'icon' => 'fa-layer-group', 'label' => 'Property Types'],
             ['route' => 'admin.property-categories.index', 'match' => 'admin.property-categories*', 'icon' => 'fa-list-ul', 'label' => 'Property Categories'],
-            ['route' => 'admin.room-options.index', 'match' => 'admin.room-options*', 'icon' => 'fa-sliders-h', 'label' => 'Room Options'],
+            ['route' => 'admin.room-options.index', 'match' => 'admin.room-options*', 'icon' => 'fa-sliders-h', 'label' => 'Property Options'],
             ['route' => 'admin.rejection-reasons.index', 'match' => 'admin.rejection-reasons*', 'icon' => 'fa-clipboard-list', 'label' => 'Rejection Reasons'],
         ]],
         'people' => ['label' => 'People Management', 'icon' => 'fa-users', 'items' => [

@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Room Option')
+@section('title', 'Edit Property Option')
 
 @section('admin-content')
 <div class="max-w-2xl mx-auto space-y-5">
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.room-options.index') }}" class="w-9 h-9 rounded-lg bg-white border border-slate-200 text-slate-500 admin-theme-hover-text flex items-center justify-center"><i class="fas fa-arrow-left text-xs"></i></a>
-        <div><h2 class="text-xl font-bold text-slate-900">Edit room option</h2><p class="text-xs text-slate-500 mt-0.5">Update {{ $roomOption->label }} details.</p></div>
+        <div><h2 class="text-xl font-bold text-slate-900">Edit property option</h2><p class="text-xs text-slate-500 mt-0.5">Update {{ $roomOption->label }} details.</p></div>
     </div>
 
     @if($errors->any())<div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"><ul class="list-disc ml-5">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif

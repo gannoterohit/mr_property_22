@@ -828,9 +828,9 @@
                             </div>
 
                             <div data-seo-part="google_ads">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Room View Conversion Label</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Property View Conversion Label</label>
                                 <input type="text" name="google_ads_room_view_label" value="{{ \App\Models\Setting::get('google_ads_room_view_label') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm" placeholder="view_xyz123">
-                                <p class="mt-1 text-xs text-gray-500">Label for room detail page views</p>
+                                <p class="mt-1 text-xs text-gray-500">Label for property detail page views</p>
                             </div>
 
                             <div data-seo-part="meta_pixel" class="space-y-6">
@@ -840,7 +840,7 @@
                                     </div>
                                     <div>
                                         <h3 class="text-lg font-bold text-gray-900">Meta Pixel</h3>
-                                        <p class="text-xs text-gray-500">Collect visitor, room-view, search and unlock conversion data for future ads.</p>
+                                        <p class="text-xs text-gray-500">Collect visitor, property-view, search and unlock conversion data for future ads.</p>
                                     </div>
                                 </div>
 
@@ -899,11 +899,11 @@
                                     <input type="text" name="adsense_home_bottom_id" value="{{ \App\Models\Setting::get('adsense_home_bottom_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Room Detail: Content Slot ID</label>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Property Detail: Content Slot ID</label>
                                     <input type="text" name="adsense_room_content_id" value="{{ \App\Models\Setting::get('adsense_room_content_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Room Detail: Sidebar Slot ID</label>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Property Detail: Sidebar Slot ID</label>
                                     <input type="text" name="adsense_room_sidebar_id" value="{{ \App\Models\Setting::get('adsense_room_sidebar_id') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="1234567890">
                                 </div>
                             </div>

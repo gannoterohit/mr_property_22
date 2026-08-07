@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title','Room Listings')
+@section('title','Property Listings')
 
 
 @push('styles')
@@ -19,12 +19,12 @@
     <header class="flex flex-wrap items-end justify-between gap-3">
         <div>
             <p class="admin-theme-text text-[10px] font-extrabold uppercase tracking-[.2em]">Property management</p>
-            <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Room Listings</h1>
+            <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Property Listings</h1>
             <p class="text-sm text-slate-500">Review, approve, reject and moderate every listing.</p>
         </div>
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('admin.rejection-reasons.index') }}" class="rounded-xl border bg-white px-4 py-3 text-xs font-bold text-slate-700">Rejection reasons</a>
-            <a href="{{ route('admin.rooms.create') }}" class="admin-theme-bg rounded-xl px-4 py-3 text-xs font-bold"><i class="fas fa-plus mr-2"></i>Add room</a>
+            <a href="{{ route('admin.rooms.create') }}" class="admin-theme-bg rounded-xl px-4 py-3 text-xs font-bold"><i class="fas fa-plus mr-2"></i>Add property</a>
         </div>
     </header>
 
@@ -108,7 +108,7 @@
                                     </div>
                                     <div class="min-w-0">
                                         <a href="{{ route('admin.rooms.show',$room) }}" class="admin-theme-text block max-w-[220px] truncate text-xs font-bold">{{ $room->title }}</a>
-                                        <p class="text-[10px] text-slate-400">#{{ $room->id }} - {{ $room->roomTypeOption?->label??'Room' }}</p>
+                                        <p class="text-[10px] text-slate-400">#{{ $room->id }} - {{ $room->roomTypeOption?->label??'Property' }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -196,7 +196,7 @@ document.querySelectorAll('.delete-room-option').forEach((form) => {
 
         const result = await Swal.fire({
             title: `Delete ${form.dataset.label}?`,
-            text: 'This permanently removes the room and its related listing data. This cannot be undone.',
+            text: 'This permanently removes the property and its related listing data. This cannot be undone.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Yes, delete permanently',

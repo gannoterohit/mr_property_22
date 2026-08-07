@@ -39,12 +39,23 @@
                         @if($room->is_featured)
                             <span class="absolute top-2 right-2 bg-yellow-400 text-[10px] font-bold px-1.5 py-0.5 rounded text-yellow-900 z-10">Featured</span>
                         @endif
-                        <div class="absolute top-2 left-2 flex flex-col gap-1 z-10">
-                            @if($room->listing_type === 'broker')
-                                <span style="background-color: var(--secondary);" class="text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase tracking-wider border border-white/20">Broker</span>
-                            @else
-                                <span style="background-color: var(--secondary); border-color: rgba(var(--secondary-rgb), 0.55);" class="text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase tracking-wider border">Owner</span>
-                            @endif
+                        <div class="absolute top-2 left-2 flex flex-col gap-2 z-10">
+                            <div class="flex flex-wrap gap-1">
+                                <span style="background-color: rgba(var(--primary-rgb), 0.08); color: var(--primary);" class="text-[9px] dark:bg-slate-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">{{ $room->roomTypeLabel() }}</span>
+                                @if($room->listing_type === 'broker')
+                                    <span style="background-color: var(--secondary);" class="text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase tracking-wider border border-white/20">Broker</span>
+                                @else
+                                    <span style="background-color: var(--secondary); border-color: rgba(var(--secondary-rgb), 0.55);" class="text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase tracking-wider border">Owner</span>
+                                @endif
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                @if($room->propertyType?->name)
+                                    <span style="background-color: #111827; color: #f8fafc;" class="text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">{{ $room->propertyType->name }}</span>
+                                @endif
+                                @if($room->propertyCategory?->name)
+                                    <span style="background-color: #4338ca; color: #f8fafc;" class="text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">{{ $room->propertyCategory->name }}</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                     <div class="p-3">
@@ -53,7 +64,10 @@
                         <div class="flex flex-wrap gap-1 mt-2">
                             <span style="background-color: rgba(var(--primary-rgb), 0.08); color: var(--primary);" class="text-[9px] dark:bg-slate-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">{{ $room->roomTypeLabel() }}</span>
                             @if($room->propertyType?->name)
-                                <span style="background-color: rgba(var(--primary-rgb), 0.08); color: var(--primary);" class="text-[9px] dark:bg-slate-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">{{ $room->propertyType->name }}@if($room->propertyCategory?->name) · {{ $room->propertyCategory->name }}@endif</span>
+                                <span style="background-color: #111827; color: #f8fafc;" class="text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">{{ $room->propertyType->name }}</span>
+                            @endif
+                            @if($room->propertyCategory?->name)
+                                <span style="background-color: #4338ca; color: #f8fafc;" class="text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">{{ $room->propertyCategory->name }}</span>
                             @endif
                             @if($room->listing_type === 'broker')
                                 <span style="background-color: var(--secondary);" class="text-[9px] text-white px-2 py-0.5 rounded-lg font-black uppercase tracking-tighter">B: ₹{{ $room->broker_fee }}</span>

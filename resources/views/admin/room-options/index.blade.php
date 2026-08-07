@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Room Options')
+@section('title', 'Property Options')
 
 @push('styles')
 <style>
@@ -14,7 +14,7 @@
 @php
     $allOptions = $options->flatten(1)->sortBy([['group', 'asc'], ['sort_order', 'asc'], ['label', 'asc']]);
     $groupMeta = [
-        'room_type' => ['label' => 'Room Type', 'icon' => 'fa-door-open', 'badge' => 'admin-theme-soft border-slate-200'],
+        'room_type' => ['label' => 'Property Type', 'icon' => 'fa-door-open', 'badge' => 'admin-theme-soft border-slate-200'],
         'furnishing_type' => ['label' => 'Furnishing', 'icon' => 'fa-couch', 'badge' => 'bg-amber-50 text-amber-700 border-amber-100'],
         'tenant_type' => ['label' => 'Preferred Tenant', 'icon' => 'fa-user-friends', 'badge' => 'bg-emerald-50 text-emerald-700 border-emerald-100'],
         'amenity' => ['label' => 'Amenities', 'icon' => 'fa-bell-concierge', 'badge' => 'bg-sky-50 text-sky-700 border-sky-100'],
@@ -24,8 +24,8 @@
 <div class="room-options-page space-y-4" x-data="{ filter: 'all' }">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <h2 class="text-xl font-bold text-slate-900">Room option manager</h2>
-            <p class="text-sm text-slate-500 mt-1">Manage room type, furnishing, tenant and amenity options from one place.</p>
+            <h2 class="text-xl font-bold text-slate-900">Property option manager</h2>
+            <p class="text-sm text-slate-500 mt-1">Manage property type, furnishing, tenant and amenity options from one place.</p>
         </div>
         <div class="flex items-center gap-2">
             <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 shadow-sm">
@@ -123,8 +123,8 @@ document.querySelectorAll('.toggle-room-option').forEach((form) => {
         const result = await Swal.fire({
             title: `${action} ${form.dataset.label}?`,
             text: isActive
-                ? 'This option will be hidden from new room forms, filters and API.'
-                : 'This option will become available in room forms, filters and API.',
+            : 'This option will be hidden from new property forms, filters and API.'
+                : 'This option will become available in property forms, filters and API.',
             icon: isActive ? 'warning' : 'question',
             showCancelButton: true,
             confirmButtonText: `Yes, ${action.toLowerCase()}`,

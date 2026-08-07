@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Add Room Option')
+@section('title', 'Add Property Option')
 
 @section('admin-content')
 <div class="max-w-2xl mx-auto space-y-5">
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.room-options.index') }}" class="w-9 h-9 rounded-lg bg-white border border-slate-200 text-slate-500 admin-theme-hover-text  flex items-center justify-center transition"><i class="fas fa-arrow-left text-xs"></i></a>
-        <div><h2 class="text-xl font-bold text-slate-900">Add new room option</h2><p class="text-xs text-slate-500 mt-0.5">Create a value for room forms, filters and API.</p></div>
+        <div><h2 class="text-xl font-bold text-slate-900">Add new property option</h2><p class="text-xs text-slate-500 mt-0.5">Create a value for property forms, filters and API.</p></div>
     </div>
 
     @if($errors->any())

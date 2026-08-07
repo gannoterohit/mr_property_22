@@ -67,7 +67,7 @@
                     <p class="mt-2 text-sm text-slate-500">A quick overview of your property listings and customer interest.</p>
                 </div>
                 <a href="{{ route('rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition">
-                    <i class="fas fa-plus"></i> Add New Room
+                    <i class="fas fa-plus"></i> Add New Property
                 </a>
             </div>
         </header>
@@ -76,7 +76,7 @@
             @include('partials.offer-banner', ['placement' => 'dashboard'])
             <section class="owner-dashboard-stats" aria-label="Dashboard statistics">
                 @foreach([
-                    ['Total rooms', $rooms ?? 0, 'fa-building', 'bg-indigo-50 text-indigo-600', route('owner.rooms')],
+                    ['Total properties', $rooms ?? 0, 'fa-building', 'bg-indigo-50 text-indigo-600', route('owner.rooms')],
                     ['Contact unlocks', $contactUnlocks ?? 0, 'fa-address-card', 'bg-emerald-50 text-emerald-600', route('owner.enquiries')],
                     ['Featured', $featuredRooms ?? 0, 'fa-star', 'bg-amber-50 text-amber-600', route('owner.rooms')],
                     ['Wallet points', number_format($user->wallet ?? 0), 'fa-wallet', 'bg-sky-50 text-sky-600', route('wallet')],
@@ -93,7 +93,7 @@
             <section class="owner-dashboard-body">
                 <div class="owner-dashboard-panel rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                     <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
-                        <div><h2 class="font-bold text-slate-950">Recent listings</h2><p class="mt-0.5 text-xs text-slate-500">Your latest rooms and their current status</p></div>
+                        <div><h2 class="font-bold text-slate-950">Recent listings</h2><p class="mt-0.5 text-xs text-slate-500">Your latest properties and their current status</p></div>
                         <a href="{{ route('owner.rooms') }}" class="text-sm font-bold text-indigo-600 hover:text-indigo-700">View all</a>
                     </div>
                     @forelse($recentRooms as $room)
@@ -106,7 +106,7 @@
                             <span class="hidden sm:inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase {{ $room->status === 'active' ? 'bg-emerald-50 text-emerald-700' : ($room->status === 'pending' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600') }}">{{ $room->status === 'booked' ? 'Rented' : $room->status }}</span>
                         </div>
                     @empty
-                        <div class="px-6 py-12 text-center"><i class="fas fa-house-circle-xmark text-3xl text-slate-300"></i><h3 class="mt-3 font-bold text-slate-900">No rooms listed yet</h3><p class="mt-1 text-sm text-slate-500">Create your first listing to get started.</p></div>
+                        <div class="px-6 py-12 text-center"><i class="fas fa-house-circle-xmark text-3xl text-slate-300"></i><h3 class="mt-3 font-bold text-slate-900">No properties listed yet</h3><p class="mt-1 text-sm text-slate-500">Create your first property listing to get started.</p></div>
                     @endforelse
                 </div>
 
@@ -115,7 +115,7 @@
                         <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10"><i class="fas fa-bolt text-amber-300"></i></span>
                         <h2 class="mt-4 font-bold">Quick actions</h2>
                         <div class="mt-4 space-y-2">
-                            <a href="{{ route('rooms.create') }}" class="owner-quick-primary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold"><span><i class="fas fa-plus mr-2 text-indigo-600"></i>Add a room</span><i class="fas fa-arrow-right text-xs"></i></a>
+                            <a href="{{ route('rooms.create') }}" class="owner-quick-primary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold"><span><i class="fas fa-plus mr-2 text-indigo-600"></i>Add a property</span><i class="fas fa-arrow-right text-xs"></i></a>
                             <a href="{{ route('owner.enquiries') }}" class="owner-quick-secondary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold"><span><i class="fas fa-address-card mr-2"></i>View enquiries</span><i class="fas fa-arrow-right text-xs"></i></a>
                             <a href="{{ route('plans') }}" class="owner-quick-secondary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold"><span><i class="fas fa-tags mr-2"></i>Listing plans</span><i class="fas fa-arrow-right text-xs"></i></a>
                         </div>
