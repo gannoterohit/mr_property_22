@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\PropertyCategoryController;
 use App\Http\Controllers\Admin\PropertyTypeController;
 use App\Http\Controllers\Admin\RejectionReasonController;
 use App\Http\Controllers\Admin\RoomOptionController;
-use App\Http\Controllers\Admin\HomePageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnalyticsEventController;
 use App\Http\Controllers\LandingPageController;
@@ -181,8 +180,6 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::get('/cities/create', [CityController::class, 'create'])->name('cities.create');
     Route::post('/cities', [CityController::class, 'store'])->name('cities.store');
     Route::put('/cities/{city}', [CityController::class, 'update'])->name('cities.update');
-    Route::get('/home-page', [HomePageController::class, 'index'])->name('home-page.index');
-    Route::put('/home-page', [HomePageController::class, 'update'])->name('home-page.update');
     Route::post('/settings', [BusinessSettingsController::class, 'update'])->name('settings.update');
     Route::post('/settings/store', [BusinessSettingsController::class, 'store'])->name('settings.store');
     Route::post('/settings/ping', [BusinessSettingsController::class, 'pingSearchEngines'])->name('settings.ping');

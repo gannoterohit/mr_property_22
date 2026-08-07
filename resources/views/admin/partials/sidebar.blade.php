@@ -29,7 +29,6 @@
             ['route' => 'admin.offers.index', 'match' => 'admin.offers*', 'icon' => 'fa-bullhorn', 'label' => 'Offers'],
         ]],
         'content' => ['label' => 'Content Management', 'icon' => 'fa-pen-to-square', 'items' => [
-            ['route' => 'admin.home-page.index', 'match' => 'admin.home-page*', 'icon' => 'fa-home', 'label' => 'Home Page'],
             ['route' => 'admin.blogs.index', 'match' => 'admin.blogs*', 'icon' => 'fa-newspaper', 'label' => 'Blogs'],
             ['route' => 'admin.cms-pages.index', 'match' => 'admin.cms-pages*', 'icon' => 'fa-file-lines', 'label' => 'CMS Pages'],
         ]],
