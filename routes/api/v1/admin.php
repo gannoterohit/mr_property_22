@@ -63,8 +63,6 @@ Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.acti
     // ── Content & Settings ───────────────────
     Route::get('/settings',                 [AdminContentController::class, 'getSettings']);
     Route::post('/settings',                [AdminContentController::class, 'updateSettings']);
-    Route::get('/home-page',                [AdminPlatformController::class, 'homePage']);
-    Route::put('/home-page',                [AdminPlatformController::class, 'updateHomePage']);
     Route::get('/cities',                   [AdminPlatformController::class, 'cities']);
     Route::post('/cities',                  [AdminPlatformController::class, 'storeCity']);
     Route::put('/cities/{city}',            [AdminPlatformController::class, 'updateCity']);

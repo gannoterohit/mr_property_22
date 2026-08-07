@@ -29,7 +29,7 @@ class LandingPageController extends Controller
             ->where('status', 'active')
             ->where('listing_fee_paid', true)
             ->where('listing_status', 'approved')
-            ->with(['user:id,name,avatar']);
+            ->with(['user:id,name,avatar', 'propertyType', 'propertyCategory']);
 
         $userCity = session('user_city');
         $locationVerified = session('location_verified', false);
@@ -87,6 +87,29 @@ class LandingPageController extends Controller
             ->paginate(5)
             ->withQueryString();
 
+        $otherRooms = Room::query()
+            ->where('status', 'active')
+            ->where('listing_fee_paid', true)
+            ->where('listing_status', 'approved')
+            ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
+            ->with(['user:id,name,avatar', 'propertyType', 'propertyCategory'])
+            ->orderBy('is_featured', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->take(32)
+            ->get();
+
+        $otherRoomGroups = $otherRooms->filter(fn($room) => $room->propertyType?->id)
+            ->groupBy(fn($room) => $room->propertyType->id)
+            ->map(function ($group, $typeId) {
+                $first = $group->first();
+
+                return (object)[
+                    'label' => $first->propertyType->name,
+                    'params' => ['property_type_id' => $typeId],
+                    'rooms' => $group->take(4),
+                ];
+            });
+
         if ($request->ajax()) {
             $view = '';
             foreach ($rooms as $room) {
@@ -98,6 +121,10 @@ class LandingPageController extends Controller
                 'hasMore' => $rooms->hasMorePages(),
             ]);
         }
+
+        $otherRoomGroups = $otherRoomGroups->filter(function ($group) {
+            return $group->rooms->count() > 0;
+        });
 
         $popularCities = CityOperations::selectorCities();
 
@@ -145,58 +172,10 @@ class LandingPageController extends Controller
         $totalAreas  = Room::where('status', 'active')->where('listing_status', 'approved')
             ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
             ->distinct('city')->count('city');
-        // Popular city areas — dynamically extracted from address field of active city
-        $homeCity = $cityContext['activeCityName'] ?: 'Bhopal';
-        $popularAreas = FacadesCache::remember('popular_areas_' . $homeCity . '_v2', 3600, function () use ($homeCity) {
-            return Room::where('status', 'active')
-                ->where('listing_status', 'approved')
-                ->where('city', 'like', '%' . $homeCity . '%')
-                ->get()
-                ->map(function ($room) {
-                    $address = $room->address;
-                    $area = null;
-                    
-                    if (stripos($address, 'Arera Colony') !== false) $area = 'Arera Colony';
-                    elseif (stripos($address, 'BHEL') !== false) $area = 'BHEL';
-                    elseif (stripos($address, 'MANIT') !== false) $area = 'MANIT';
-                    elseif (stripos($address, 'New Market') !== false) $area = 'New Market';
-                    elseif (stripos($address, 'Kolar Road') !== false) $area = 'Kolar Road';
-                    elseif (stripos($address, 'MP Nagar') !== false) $area = 'MP Nagar';
-                    elseif (stripos($address, 'Vijay Nagar') !== false) $area = 'Vijay Nagar';
-                    elseif (stripos($address, 'Palasia') !== false) $area = 'Palasia';
-                    elseif (stripos($address, 'Koramangala') !== false) $area = 'Koramangala';
-                    elseif (stripos($address, 'Whitefield') !== false) $area = 'Whitefield';
-                    elseif (stripos($address, 'HSR Layout') !== false) $area = 'HSR Layout';
-                    elseif (stripos($address, 'Jayanagar') !== false) $area = 'Jayanagar';
-                    
-                    if (!$area) {
-                        $parts = array_map('trim', explode(',', $address));
-                        if (count($parts) > 1) {
-                            $area = $parts[0];
-                        } else {
-                            $area = $address ?: 'Central Area';
-                        }
-                    }
-                    
-                    $room->parsed_area = $area;
-                    return $room;
-                })
-                ->groupBy('parsed_area')
-                ->map(function ($group, $key) {
-                    return (object)[
-                        'area_name' => $key,
-                        'total' => $group->count(),
-                        'min_rent' => $group->min('rent')
-                    ];
-                })
-                ->sortByDesc('total')
-                ->take(8)
-                ->values();
-        });
 
         return view('home.index', compact(
-            'rooms', 'popularCities', 'propertyTypes', 'propertyCategories', 'latestBlogs',
-            'heroRoom', 'totalRooms', 'totalOwners', 'totalUsers', 'totalAreas', 'popularAreas',
+            'rooms', 'otherRooms', 'otherRoomGroups', 'popularCities', 'propertyTypes', 'propertyCategories', 'latestBlogs',
+            'heroRoom', 'totalRooms', 'totalOwners', 'totalUsers', 'totalAreas',
             'cityContext'
         ));
     }

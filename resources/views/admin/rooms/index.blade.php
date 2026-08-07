@@ -89,9 +89,8 @@
                         <th>Property</th>
                         <th>Owner / KYC</th>
                         <th>Location & rent</th>
-                        <th>Approval</th>
-                        <th>Moderation</th>
-                        <th class="text-center w-[110px]">Status</th>
+                        <th>Approval / Status</th>
+                        <th>Property type</th>
                         <th class="text-right w-[190px]">Actions</th>
                     </tr>
                 </thead>
@@ -121,35 +120,31 @@
                                 <p class="text-xs font-bold">&#8377;{{ number_format($room->rent) }}/mo</p>
                             </td>
                             <td class="px-4">
-                                <span class="rounded-full px-2 py-1 text-[10px] font-bold {{ $room->listing_status==='approved'?'bg-emerald-50 text-emerald-700':($room->listing_status==='rejected'?'bg-red-50 text-red-700':'bg-amber-50 text-amber-700') }}">{{ ucfirst($room->listing_status) }}</span>
-                            </td>
-                            <td class="px-4 text-xs font-bold {{ $room->moderation_status==='normal'?'text-slate-500':'text-red-600' }}">{{ ucfirst($room->moderation_status) }}</td>
-                            <td class="px-4 text-center">
-                                <form action="{{ route('admin.rooms.toggle-status', $room) }}" method="POST" class="toggle-room-status inline-flex" data-label="{{ $room->title }}" data-active="{{ $room->status === 'active' ? '1' : '0' }}">
-                                    @csrf @method('PATCH')
-                                    <button type="submit" class="inline-flex h-8 w-[104px] items-center justify-start gap-2 rounded-full border px-2 text-[10px] font-bold transition-colors {{ $room->status === 'active' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700' }}" title="Click to {{ $room->status === 'active' ? 'mark as booked' : 'mark as active' }}">
+                                <div class="flex flex-col gap-2">
+                                    <span class="rounded-full px-2 py-1 text-[10px] font-bold {{ $room->listing_status==='approved'?'bg-emerald-50 text-emerald-700':($room->listing_status==='rejected'?'bg-red-50 text-red-700':'bg-amber-50 text-amber-700') }}">{{ ucfirst($room->listing_status) }}</span>
+                                    <button type="submit" form="toggle-room-{{ $room->id }}" class="inline-flex h-8 w-[104px] items-center justify-start gap-2 rounded-full border px-2 text-[10px] font-bold transition-colors {{ $room->status === 'active' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700' }}" title="Click to {{ $room->status === 'active' ? 'mark as booked' : 'mark as active' }}">
                                         <span class="relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors {{ $room->status === 'active' ? 'bg-emerald-500' : 'bg-red-500' }}">
                                             <span class="absolute left-0.5 top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition-transform duration-200 {{ $room->status === 'active' ? 'translate-x-3' : 'translate-x-0' }}"></span>
                                         </span>
                                         <span class="inline-block w-12 text-left">{{ $room->status === 'active' ? 'Active' : 'Booked' }}</span>
                                     </button>
-                                </form>
+                                </div>
+                            </td>
+                            <td class="px-4 text-xs font-bold text-slate-600">
+                                {{ $room->propertyType?->name ?? 'N/A' }}
                             </td>
                             <td class="px-4">
                                 <div class="flex justify-end items-center gap-2">
                                     <a href="{{ route('admin.rooms.show',$room) }}" class="h-8 px-2.5 inline-flex items-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-800 hover:text-white text-[10px] font-bold transition"><i class="fas fa-eye mr-1"></i>View</a>
                                     <a href="{{ route('admin.rooms.edit',$room) }}" class="h-8 px-2.5 inline-flex items-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-800 hover:text-white text-[10px] font-bold transition"><i class="fas fa-pen mr-1"></i>Edit</a>
-                                    <form action="{{ route('admin.rooms.destroy',$room) }}" method="POST" class="delete-room-option" data-label="{{ $room->title }}">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="inline-flex h-8 items-center rounded-lg border border-red-100 bg-white px-2.5 text-[10px] font-bold text-red-600 transition hover:bg-red-600 hover:text-white">
-                                            <i class="fas fa-trash-can mr-1"></i>Delete
-                                        </button>
-                                    </form>
+                                    <button type="submit" form="delete-room-{{ $room->id }}" class="inline-flex h-8 items-center rounded-lg border border-red-100 bg-white px-2.5 text-[10px] font-bold text-red-600 transition hover:bg-red-600 hover:text-white">
+                                        <i class="fas fa-trash-can mr-1"></i>Delete
+                                    </button>
                                 </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" class="p-12 text-center text-sm text-slate-500">No listings match these filters.</td></tr>
+                        <tr><td colspan="7" class="p-12 text-center text-sm text-slate-500">No listings match these filters.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -159,6 +154,17 @@
             <div class="border-t p-4">{{ $allrooms->links() }}</div>
         @endif
     </form>
+
+    @foreach($allrooms as $room)
+        <form id="toggle-room-{{ $room->id }}" action="{{ route('admin.rooms.toggle-status', $room) }}" method="POST" class="hidden toggle-room-status" data-label="{{ $room->title }}" data-active="{{ $room->status === 'active' ? '1' : '0' }}">
+            @csrf
+            @method('PATCH')
+        </form>
+        <form id="delete-room-{{ $room->id }}" action="{{ route('admin.rooms.destroy', $room) }}" method="POST" class="hidden delete-room-option" data-label="{{ $room->title }}">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endforeach
 </div>
 @endsection
 

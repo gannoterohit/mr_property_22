@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Room Enquiries - ' . \App\Models\Setting::get('website_name', 'ApnaNest'))
+@section('title', 'Property Enquiries - ' . \App\Models\Setting::get('website_name', 'ApnaNest'))
 
 @section('content')
 <div class="owner-workspace min-h-screen bg-slate-50">
@@ -44,13 +44,13 @@
                             </a>
                             <div class="min-w-0">
                                 <p class="text-[9px] font-extrabold uppercase tracking-wider text-indigo-600">Contact unlocked</p>
-                                <h3 class="mt-1 truncate text-sm font-extrabold text-slate-900">{{ $room?->title ?? 'Deleted room' }}</h3>
+                                <h3 class="mt-1 truncate text-sm font-extrabold text-slate-900">{{ $room?->title ?? 'Deleted property' }}</h3>
                                 <p class="mt-1 truncate text-xs text-slate-500"><i class="fas fa-location-dot mr-1 text-rose-400"></i>{{ $room?->city ?: 'Location unavailable' }}</p>
                             </div>
                             <div class="enquiry-seeker"><span>{{ strtoupper(substr($enquiry->user?->name ?? 'U',0,1)) }}</span><div><small>Property seeker</small><strong>{{ $enquiry->user?->name ?? 'Deleted user' }}</strong></div></div>
                             <div><small class="enquiry-label">Unlock method</small><p class="mt-1 text-xs font-bold text-slate-700">{{ $gateway }}</p></div>
                             <div><small class="enquiry-label">Date & time</small><p class="mt-1 text-xs font-bold text-slate-700">{{ ($enquiry->unlocked_at ?? $enquiry->created_at)->format('d M Y') }}</p><p class="text-[10px] text-slate-400">{{ ($enquiry->unlocked_at ?? $enquiry->created_at)->format('h:i A') }}</p></div>
-                            <div class="flex items-center justify-end gap-2"><span class="rounded-full px-2.5 py-1 text-[9px] font-extrabold {{ $room?->status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' }}">{{ $statusLabel }}</span>@if($room)<a href="{{ route('rooms.show',$room) }}" class="flex h-9 w-9 items-center justify-center rounded-lg border text-indigo-600" title="View room"><i class="fas fa-arrow-right text-xs"></i></a>@endif</div>
+                            <div class="flex items-center justify-end gap-2"><span class="rounded-full px-2.5 py-1 text-[9px] font-extrabold {{ $room?->status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' }}">{{ $statusLabel }}</span>@if($room)<a href="{{ route('rooms.show',$room) }}" class="flex h-9 w-9 items-center justify-center rounded-lg border text-indigo-600" title="View property"><i class="fas fa-arrow-right text-xs"></i></a>@endif</div>
                         </article>
                     @empty
                         <div class="px-6 py-16 text-center"><span class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-xl text-indigo-500"><i class="fas fa-address-card"></i></span><h3 class="mt-4 text-base font-extrabold text-slate-900">No enquiries yet</h3><p class="mx-auto mt-2 max-w-md text-sm text-slate-500">When a property seeker unlocks your contact details, the activity will appear here.</p><a href="{{ route('owner.rooms') }}" class="mt-5 inline-flex rounded-xl bg-indigo-600 px-5 py-3 text-xs font-bold text-white">Review my listings</a></div>

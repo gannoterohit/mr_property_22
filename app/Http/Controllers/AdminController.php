@@ -264,11 +264,19 @@ class AdminController extends Controller
             }
             $room->delete();
 
-            return response()->json(['success' => true]);
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json(['success' => true]);
+            }
+
+            return redirect()->back()->with('success', 'Room deleted successfully.');
         } catch (\Exception $e) {
             \Log::error('Room deletion error: '.$e->getMessage());
 
-            return response()->json(['success' => false, 'message' => 'Unable to delete the room. Please try again.'], 500);
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Unable to delete the room. Please try again.'], 500);
+            }
+
+            return redirect()->back()->with('error', 'Unable to delete the room. Please try again.');
         }
     }
 
@@ -279,11 +287,19 @@ class AdminController extends Controller
                 'status' => $room->status === 'active' ? 'booked' : 'active',
             ]);
 
-            return response()->json(['success' => true, 'new_status' => $room->status]);
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'new_status' => $room->status]);
+            }
+
+            return redirect()->back()->with('success', 'Room status updated.');
         } catch (\Exception $e) {
             \Log::error('Room status toggle error: '.$e->getMessage());
 
-            return response()->json(['success' => false, 'message' => 'Unable to update room status. Please try again.'], 500);
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Unable to update room status. Please try again.'], 500);
+            }
+
+            return redirect()->back()->with('error', 'Unable to update room status. Please try again.');
         }
     }
 

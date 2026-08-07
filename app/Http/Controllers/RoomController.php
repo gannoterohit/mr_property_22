@@ -124,6 +124,15 @@ class RoomController extends Controller {
         $query->whereIn('property_category_id', (array) $request->property_category_id);
     }
 
+    if ($request->filled('area')) {
+        $area = trim($request->area);
+        if ($area !== '') {
+            $query->where(function ($q) use ($area) {
+                $q->where('address', 'like', '%' . $area . '%');
+            });
+        }
+    }
+
     if ($request->filled('room_type')) {
         $this->applyOptionFilter($query, 'room_type', $request->room_type);
     }

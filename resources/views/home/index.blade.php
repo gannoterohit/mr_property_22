@@ -545,7 +545,6 @@ body>nav .desktop-navbar-menu a:first-child {
     @include('home.partials.categories')
     @include('home.partials.latest-rooms')
 
-    @include('home.partials.areas-and-trust')
     @include('home.partials.editorial')
 </main>
 @endsection
