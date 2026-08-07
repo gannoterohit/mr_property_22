@@ -36,13 +36,7 @@ class CityController extends Controller
             'is_default' => 'nullable|boolean',
         ]);
 
-        if ($request->hasFile('image')) {
-            $data['image_url'] = $request->file('image')->store('city-images', 'public');
-        } elseif ($request->filled('image_url')) {
-            $data['image_url'] = $request->image_url;
-        } else {
-            $data['image_url'] = null;
-        }
+        $data['image_url'] = $this->handleCityImageUpload($request);
 
         $data['slug'] = Str::slug($data['name']);
         $data['is_active'] = $request->boolean('is_active');
@@ -68,10 +62,7 @@ class CityController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($city->image_url && !filter_var($city->image_url, FILTER_VALIDATE_URL) && Storage::disk('public')->exists($city->image_url)) {
-                Storage::disk('public')->delete($city->image_url);
-            }
-            $data['image_url'] = $request->file('image')->store('city-images', 'public');
+            $data['image_url'] = $this->handleCityImageUpload($request, $city);
         } elseif ($request->filled('image_url')) {
             $data['image_url'] = $request->image_url;
         } else {
@@ -96,5 +87,59 @@ class CityController extends Controller
         $city->update(['is_active' => !$city->is_active]);
 
         return back()->with('success', $city->is_active ? 'City activated successfully.' : 'City deactivated successfully.');
+    }
+
+    protected function handleCityImageUpload(Request $request, ?City $city = null): ?string
+    {
+        if ($request->hasFile('image')) {
+            $this->deleteStoredCityImage($city?->image_url);
+
+            $file = $request->file('image');
+            $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+            $filename = Str::uuid() . '.' . $extension;
+            $destination = public_path('uploads/cities');
+
+            if (!is_dir($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $filename);
+
+            return 'uploads/cities/' . $filename;
+        }
+
+        if ($request->filled('image_url')) {
+            return $request->image_url;
+        }
+
+        return $city?->image_url;
+    }
+
+    protected function deleteStoredCityImage(?string $imageUrl): void
+    {
+        if (empty($imageUrl) || filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            return;
+        }
+
+        $normalized = ltrim($imageUrl, '/');
+        $paths = [$normalized];
+
+        if (str_starts_with($normalized, 'storage/')) {
+            $paths[] = substr($normalized, 8);
+        } else {
+            $paths[] = 'storage/' . $normalized;
+        }
+
+        foreach ($paths as $path) {
+            $publicPath = public_path($path);
+            if (file_exists($publicPath)) {
+                @unlink($publicPath);
+            }
+
+            $storagePath = storage_path('app/public/' . ltrim($path, '/'));
+            if (file_exists($storagePath)) {
+                @unlink($storagePath);
+            }
+        }
     }
 }

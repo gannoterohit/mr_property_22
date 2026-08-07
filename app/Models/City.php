@@ -70,9 +70,50 @@ class City extends Model
             ->first();
 
         if ($city && !empty($city->image_url)) {
-            return filter_var($city->image_url, FILTER_VALIDATE_URL)
-                ? $city->image_url
-                : asset('storage/' . ltrim($city->image_url, '/'));
+            return static::resolveImageUrl($city->image_url);
+        }
+
+        return asset('assets/images/indore-hero-v2.png');
+    }
+
+    public static function resolveImageUrl(?string $value): string
+    {
+        if (empty($value)) {
+            return asset('assets/images/indore-hero-v2.png');
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return $value;
+        }
+
+        $normalized = ltrim($value, '/');
+        $candidates = [$normalized];
+
+        if (str_starts_with($normalized, 'storage/')) {
+            $candidates[] = substr($normalized, 8);
+        } else {
+            $candidates[] = 'storage/' . $normalized;
+        }
+
+        foreach ($candidates as $candidate) {
+            $publicPath = public_path($candidate);
+            if (file_exists($publicPath)) {
+                return asset($candidate);
+            }
+        }
+
+        $storagePath = storage_path('app/public/' . ltrim($normalized, '/'));
+        if (file_exists($storagePath)) {
+            $target = public_path('storage/' . ltrim($normalized, '/'));
+            $targetDir = dirname($target);
+
+            if (!is_dir($targetDir)) {
+                mkdir($targetDir, 0755, true);
+            }
+
+            copy($storagePath, $target);
+
+            return asset('storage/' . ltrim($normalized, '/'));
         }
 
         return asset('assets/images/indore-hero-v2.png');
