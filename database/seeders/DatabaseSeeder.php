@@ -16,9 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SettingsSeeder::class);
         $this->call(CitySeeder::class);
         $this->call(PropertyCatalogSeeder::class);
-        $this->call(DummyDataSeeder::class);
         $this->call(AdminUserSeeder::class);
-        $this->call(DummyActivitySeeder::class);
         $this->call(BlogSeeder::class);
     }
 }
