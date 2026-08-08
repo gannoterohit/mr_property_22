@@ -154,11 +154,16 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::post('/staff', [\App\Http\Controllers\Admin\AdminStaffController::class, 'store'])->name('staff.store');
     Route::put('/staff/{staff}', [\App\Http\Controllers\Admin\AdminStaffController::class, 'update'])->name('staff.update');
     Route::post('/staff/{staff}/toggle', [\App\Http\Controllers\Admin\AdminStaffController::class, 'toggle'])->name('staff.toggle');
+    Route::delete('/staff/{staff}', [\App\Http\Controllers\Admin\AdminStaffController::class, 'destroy'])->name('staff.destroy');
+    Route::post('/staff/{id}/restore', [\App\Http\Controllers\Admin\AdminStaffController::class, 'restore'])->name('staff.restore');
     Route::get('/roles', [\App\Http\Controllers\Admin\AdminRoleController::class, 'index'])->name('roles.index');
     Route::get('/roles/create', [\App\Http\Controllers\Admin\AdminRoleController::class, 'create'])->name('roles.create');
     Route::post('/roles', [\App\Http\Controllers\Admin\AdminRoleController::class, 'store'])->name('roles.store');
     Route::put('/roles/{role}', [\App\Http\Controllers\Admin\AdminRoleController::class, 'update'])->name('roles.update');
     Route::get('/activity-logs', [\App\Http\Controllers\Admin\AdminActivityController::class, 'index'])->name('activity.index');
+    Route::delete('/activity-logs/bulk', [\App\Http\Controllers\Admin\AdminActivityController::class, 'bulkDestroy'])->name('activity.bulk-destroy');
+    Route::delete('/activity-logs/filtered', [\App\Http\Controllers\Admin\AdminActivityController::class, 'destroyFiltered'])->name('activity.destroy-filtered');
+    Route::delete('/activity-logs/{activityLog}', [\App\Http\Controllers\Admin\AdminActivityController::class, 'destroy'])->name('activity.destroy');
 
     // Admin Notifications
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');

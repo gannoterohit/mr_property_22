@@ -125,6 +125,8 @@ Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.acti
     Route::post('/staff',                       [AdminAccessController::class, 'staffStore']);
     Route::put('/staff/{staff}',                [AdminAccessController::class, 'staffUpdate']);
     Route::post('/staff/{staff}/toggle',        [AdminAccessController::class, 'staffToggle']);
+    Route::delete('/staff/{staff}',             [AdminAccessController::class, 'staffDestroy']);
+    Route::post('/staff/{id}/restore',          [AdminAccessController::class, 'staffRestore']);
     Route::get('/roles',                        [AdminAccessController::class, 'roles']);
     Route::post('/roles',                       [AdminAccessController::class, 'roleStore']);
     Route::put('/roles/{role}',                 [AdminAccessController::class, 'roleUpdate']);
