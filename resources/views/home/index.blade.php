@@ -536,6 +536,9 @@ body>nav .desktop-navbar-menu a:first-child {
  .market-hero h1{font-size:30px}
 }
 </style>
+<style>
+.market-feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.market-feature{display:flex;gap:14px;min-height:138px;padding:20px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.04)}.market-feature>span{display:grid;place-items:center;flex:none;width:48px;height:48px;border-radius:13px;background:rgba(var(--primary-rgb),.1);color:var(--primary)}.market-feature h3{margin:0;color:#0f172a;font-size:15px;font-weight:900}.market-feature p{margin:8px 0 0;color:#64748b;font-size:12px;line-height:1.65}.market-testimonial-section{background:#fbfcff;border-top:1px solid #eef2f8;border-bottom:1px solid #eef2f8}.market-testimonial-grid{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:2px 0 8px;scrollbar-width:none;cursor:grab;user-select:none}.market-testimonial-grid.is-dragging{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}.market-testimonial-grid::-webkit-scrollbar{display:none}.market-testimonial{position:relative;display:flex;min-height:265px;flex:0 0 calc((100% - 32px)/3);scroll-snap-align:start;flex-direction:column;padding:24px;border:1px solid #e2e8f0;border-radius:16px;background:#fff;box-shadow:0 10px 28px rgba(15,23,42,.06)}.market-testimonial:before{content:"";position:absolute;left:24px;right:24px;top:88px;height:1px;background:#eef2f7}.market-testimonial-rating{display:flex;gap:4px;margin-top:22px;color:#cbd5e1;font-size:13px}.market-testimonial-rating .is-filled{color:var(--secondary)}.market-testimonial>p{margin:16px 0 0;color:#334155;font-size:14px;line-height:1.75}.market-testimonial-person{display:flex;align-items:center;gap:14px;min-height:54px}.market-testimonial-person img,.market-testimonial-person>span{width:56px;height:56px;flex:none;border-radius:16px;object-fit:cover;box-shadow:0 8px 18px rgba(15,23,42,.12)}.market-testimonial-person>span{display:grid;place-items:center;background:rgba(var(--primary-rgb),.12);color:var(--primary);font-size:19px;font-weight:900}.market-testimonial-person strong{display:block;color:#0f172a;font-size:15px;line-height:1.2}.market-testimonial-person small{display:block;margin-top:5px;color:#64748b;font-size:11px;font-weight:800}.market-testimonial-dots{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px}.market-testimonial-dot{width:8px;height:8px;border:0;border-radius:999px;background:#cbd5e1;padding:0;transition:width .18s ease,background-color .18s ease}.market-testimonial-dot.is-active{width:24px;background:var(--primary)}@media(max-width:899px){.market-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.market-testimonial{flex-basis:calc((100% - 16px)/2)}}@media(max-width:599px){.market-feature-grid{grid-template-columns:1fr}.market-testimonial{flex-basis:88%;min-height:0;padding:20px}.market-testimonial:before{left:20px;right:20px;top:82px}.market-testimonial-person img,.market-testimonial-person>span{width:52px;height:52px}.market-feature{min-height:0;padding:18px}}
+</style>
 @endpush
 
 @section('content')
@@ -543,7 +546,9 @@ body>nav .desktop-navbar-menu a:first-child {
     @include('home.partials.hero')
 
     @include('home.partials.categories')
+    @include('home.partials.why-choose-us')
     @include('home.partials.latest-rooms')
+    @include('home.partials.testimonials')
 
     @include('home.partials.editorial')
 </main>
@@ -651,7 +656,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     revealSections.forEach(section => {
         section.classList.add('market-reveal');
-        section.querySelectorAll('.market-type, .market-room, .market-area, .market-step, .market-blog, .market-review')
+        section.querySelectorAll('.market-type, .market-room, .market-area, .market-step, .market-blog, .market-review, .market-feature, .market-testimonial')
             .forEach(item => item.classList.add('market-reveal-item'));
     });
 
@@ -664,6 +669,74 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { threshold: 0.12, rootMargin: '0px 0px -45px 0px' });
 
     revealSections.forEach(section => revealObserver.observe(section));
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const slider = document.querySelector('[data-testimonial-slider]');
+    if (!slider) return;
+    const dotsWrap = document.querySelector('[data-testimonial-dots]');
+    const cards = Array.from(slider.querySelectorAll('.market-testimonial'));
+    if (!dotsWrap || cards.length < 2) return;
+    let isDragging = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    const dots = cards.map((card, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'market-testimonial-dot';
+        dot.setAttribute('aria-label', `Show testimonial ${index + 1}`);
+        dot.addEventListener('click', () => {
+            slider.scrollTo({ left: card.offsetLeft - slider.offsetLeft, behavior: 'smooth' });
+        });
+        dotsWrap.appendChild(dot);
+        return dot;
+    });
+
+    const updateDots = () => {
+        const activeIndex = cards.reduce((closestIndex, card, index) => {
+            const currentDistance = Math.abs(card.offsetLeft - slider.offsetLeft - slider.scrollLeft);
+            const closestDistance = Math.abs(cards[closestIndex].offsetLeft - slider.offsetLeft - slider.scrollLeft);
+            return currentDistance < closestDistance ? index : closestIndex;
+        }, 0);
+
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('is-active', index === activeIndex);
+            dot.setAttribute('aria-current', index === activeIndex ? 'true' : 'false');
+        });
+    };
+
+    slider.addEventListener('scroll', () => window.requestAnimationFrame(updateDots), { passive: true });
+    slider.addEventListener('wheel', event => {
+        if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+        event.preventDefault();
+        slider.scrollBy({ left: event.deltaY, behavior: 'smooth' });
+    }, { passive: false });
+    slider.addEventListener('pointerdown', event => {
+        isDragging = true;
+        startX = event.clientX;
+        startScrollLeft = slider.scrollLeft;
+        slider.classList.add('is-dragging');
+        slider.setPointerCapture(event.pointerId);
+    });
+    slider.addEventListener('pointermove', event => {
+        if (!isDragging) return;
+        slider.scrollLeft = startScrollLeft - (event.clientX - startX);
+    });
+    const stopDrag = event => {
+        if (!isDragging) return;
+        isDragging = false;
+        slider.classList.remove('is-dragging');
+        if (slider.hasPointerCapture(event.pointerId)) {
+            slider.releasePointerCapture(event.pointerId);
+        }
+    };
+    slider.addEventListener('pointerup', stopDrag);
+    slider.addEventListener('pointercancel', stopDrag);
+    slider.addEventListener('pointerleave', stopDrag);
+    window.addEventListener('resize', updateDots);
+    updateDots();
 });
 </script>
 @endpush

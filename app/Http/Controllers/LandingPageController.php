@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Room;
 use App\Models\City;
+use App\Models\HomeFeature;
+use App\Models\Room;
+use App\Models\Testimonial;
 use App\Models\User;
 use App\Services\CityOperations;
 use Illuminate\Cache\Cache;
@@ -156,6 +158,8 @@ class LandingPageController extends Controller
             ->values();
 
         $latestBlogs = \App\Models\Blog::where('is_published', true)->orderBy('created_at', 'desc')->take(3)->get();
+        $homeFeatures = HomeFeature::active()->orderBy('sort_order')->orderBy('id')->take(6)->get();
+        $testimonials = Testimonial::active()->orderBy('sort_order')->orderByDesc('created_at')->take(6)->get();
 
         // Hero room — cheapest featured/active room in current city
         $heroRoom = Room::where('status', 'active')
@@ -175,6 +179,7 @@ class LandingPageController extends Controller
 
         return view('home.index', compact(
             'rooms', 'otherRooms', 'otherRoomGroups', 'popularCities', 'propertyTypes', 'propertyCategories', 'latestBlogs',
+            'homeFeatures', 'testimonials',
             'heroRoom', 'totalRooms', 'totalOwners', 'totalUsers', 'totalAreas',
             'cityContext'
         ));

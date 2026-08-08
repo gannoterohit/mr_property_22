@@ -31,6 +31,8 @@
         'content' => ['label' => 'Content Management', 'icon' => 'fa-pen-to-square', 'items' => [
             ['route' => 'admin.blogs.index', 'match' => 'admin.blogs*', 'icon' => 'fa-newspaper', 'label' => 'Blogs'],
             ['route' => 'admin.cms-pages.index', 'match' => 'admin.cms-pages*', 'icon' => 'fa-file-lines', 'label' => 'CMS Pages'],
+            ['route' => 'admin.home-features.index', 'match' => 'admin.home-features*', 'icon' => 'fa-circle-check', 'label' => 'Why Choose Us'],
+            ['route' => 'admin.testimonials.index', 'match' => 'admin.testimonials*', 'icon' => 'fa-star', 'label' => 'Testimonials'],
         ]],
         'reports' => ['label' => 'Reports & Analytics', 'icon' => 'fa-chart-line', 'items' => [
             ['route' => 'admin.reports', 'match' => 'admin.reports', 'icon' => 'fa-chart-pie', 'label' => 'Reports'],
