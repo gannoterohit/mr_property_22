@@ -24,9 +24,7 @@
     $isDanger = in_array($variant, ['delete', 'remove'], true);
     $iconClass = $icon ?: ($icons[$variant] ?? 'fa-circle');
     $label = $title ?: ($labels[$variant] ?? ucfirst($variant));
-    $classes = $isDanger
-        ? 'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-100 bg-white text-[10px] font-bold text-red-600 transition hover:bg-red-600 hover:text-white'
-        : 'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[10px] font-bold text-slate-600 transition hover:bg-slate-800 hover:text-white';
+    $classes = $isDanger ? 'admin-action-icon admin-action-icon-danger' : 'admin-action-icon';
 @endphp
 
 @if($href)

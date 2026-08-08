@@ -24,8 +24,8 @@
             <p class="text-sm text-slate-500">Review, approve, reject and moderate every listing.</p>
         </div>
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('admin.rejection-reasons.index') }}" class="rounded-xl border bg-white px-4 py-3 text-xs font-bold text-slate-700">Rejection reasons</a>
-            <a href="{{ route('admin.rooms.create') }}" class="admin-theme-bg rounded-xl px-4 py-3 text-xs font-bold"><i class="fas fa-plus mr-2"></i>Add property</a>
+            <x-admin.button :href="route('admin.rejection-reasons.index')">Rejection reasons</x-admin.button>
+            <x-admin.button variant="primary" icon="fa-plus" :href="route('admin.rooms.create')">Add property</x-admin.button>
         </div>
     </header>
 
@@ -60,8 +60,8 @@
                 @endforeach
             </select>
             <div class="flex gap-2">
-                <button class="rounded-xl bg-slate-900 px-4 text-xs font-bold text-white">Filter</button>
-                <a href="{{ route('admin.all-rooms') }}" class="flex h-10 items-center rounded-xl border px-3 text-xs font-bold text-slate-700">Reset</a>
+                <x-admin.button type="submit" variant="primary">Filter</x-admin.button>
+                <x-admin.button :href="route('admin.all-rooms')">Reset</x-admin.button>
             </div>
         </div>
 

@@ -139,6 +139,93 @@
     }
     .admin-theme-link { color: var(--admin-primary); }
     .admin-theme-link:hover { background: rgba(var(--admin-primary-rgb), .07); color: var(--admin-primary); }
+    .admin-btn,
+    .admin-content a.admin-theme-bg:not(.admin-action-icon):not(.admin-sidebar-active),
+    .admin-content button.admin-theme-bg:not(.admin-action-icon),
+    .admin-content a.bg-slate-900:not(.admin-action-icon),
+    .admin-content button.bg-slate-900:not(.admin-action-icon),
+    .admin-content a.bg-white.border:not(.admin-action-icon),
+    .admin-content button.bg-white.border:not(.admin-action-icon),
+    .admin-content a.rounded-xl:not(.admin-action-icon):not(.admin-sidebar-active):not(.admin-sidebar-subitem-active),
+    .admin-content button.rounded-xl:not(.admin-action-icon):not(.toggle-btn),
+    .admin-content a.rounded-lg:not(.admin-action-icon):not(.admin-sidebar-active):not(.admin-sidebar-subitem-active),
+    .admin-content button.rounded-lg:not(.admin-action-icon):not(.toggle-btn) {
+        display: inline-flex !important;
+        min-height: 2.5rem;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: .45rem;
+        border: 1px solid #dbe1ea !important;
+        border-radius: .75rem !important;
+        background: #fff !important;
+        color: #334155 !important;
+        padding: .625rem 1rem !important;
+        font-size: .75rem !important;
+        font-weight: 800 !important;
+        line-height: 1 !important;
+        box-shadow: 0 1px 2px rgba(15,23,42,.04) !important;
+        transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease !important;
+    }
+    .admin-btn:hover,
+    .admin-content a.admin-theme-bg:not(.admin-action-icon):not(.admin-sidebar-active):hover,
+    .admin-content button.admin-theme-bg:not(.admin-action-icon):hover,
+    .admin-content a.bg-slate-900:not(.admin-action-icon):hover,
+    .admin-content button.bg-slate-900:not(.admin-action-icon):hover,
+    .admin-content a.bg-white.border:not(.admin-action-icon):hover,
+    .admin-content button.bg-white.border:not(.admin-action-icon):hover,
+    .admin-content a.rounded-xl:not(.admin-action-icon):not(.admin-sidebar-active):not(.admin-sidebar-subitem-active):hover,
+    .admin-content button.rounded-xl:not(.admin-action-icon):not(.toggle-btn):hover,
+    .admin-content a.rounded-lg:not(.admin-action-icon):not(.admin-sidebar-active):not(.admin-sidebar-subitem-active):hover,
+    .admin-content button.rounded-lg:not(.admin-action-icon):not(.toggle-btn):hover {
+        border-color: rgba(var(--admin-primary-rgb), .28) !important;
+        background: rgba(var(--admin-primary-rgb), .06) !important;
+        color: var(--admin-primary) !important;
+        box-shadow: 0 2px 5px rgba(15,23,42,.07) !important;
+    }
+    .admin-btn-primary {
+        border-color: rgba(var(--admin-primary-rgb), .22) !important;
+        background: rgba(var(--admin-primary-rgb), .08) !important;
+        color: var(--admin-primary) !important;
+    }
+    .admin-btn-danger {
+        border-color: #fecaca !important;
+        background: #fff !important;
+        color: #dc2626 !important;
+    }
+    .admin-btn-danger:hover {
+        border-color: #dc2626 !important;
+        background: #fef2f2 !important;
+        color: #b91c1c !important;
+    }
+    .admin-action-icon {
+        display: inline-flex !important;
+        height: 2rem !important;
+        width: 2rem !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: .5rem !important;
+        border: 1px solid #e2e8f0 !important;
+        background: #f8fafc !important;
+        color: #475569 !important;
+        font-size: .625rem !important;
+        font-weight: 800 !important;
+        transition: background-color .15s ease, color .15s ease, border-color .15s ease !important;
+    }
+    .admin-action-icon:hover {
+        border-color: #1e293b !important;
+        background: #1e293b !important;
+        color: #fff !important;
+    }
+    .admin-action-icon-danger {
+        border-color: #fee2e2 !important;
+        background: #fff !important;
+        color: #dc2626 !important;
+    }
+    .admin-action-icon-danger:hover {
+        border-color: #dc2626 !important;
+        background: #dc2626 !important;
+        color: #fff !important;
+    }
     .admin-theme-avatar {
         background: var(--admin-primary);
         color: #fff;
