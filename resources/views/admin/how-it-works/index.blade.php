@@ -10,7 +10,10 @@
             <h1 class="mt-1 text-2xl font-extrabold">How It Works</h1>
             <p class="text-sm text-slate-500">Manage this page with structured fields instead of a free-form editor.</p>
         </div>
-        <a href="{{ route('pages.how-it-works') }}" target="_blank" class="rounded-xl border bg-white px-4 py-3 text-xs font-bold text-slate-700"><i class="fas fa-up-right-from-square mr-2"></i>Preview</a>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="how-it-works" importable />
+            <a href="{{ route('pages.how-it-works') }}" target="_blank" class="rounded-xl border bg-white px-4 py-3 text-xs font-bold text-slate-700"><i class="fas fa-up-right-from-square mr-2"></i>Preview</a>
+        </div>
     </header>
 
     @if(isset($errors) && $errors->any())

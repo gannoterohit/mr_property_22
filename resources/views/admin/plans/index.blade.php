@@ -16,9 +16,12 @@
             <h2 class="mt-1 text-2xl font-bold text-slate-950">Subscription Plans</h2>
             <p class="mt-1 text-sm text-slate-500">Control property-listing credits and room-contact unlock credits.</p>
         </div>
-        <a href="{{ route('admin.plans.create') }}" class="admin-theme-bg inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold shadow-sm">
-            <i class="fas fa-plus text-xs"></i> Create plan
-        </a>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="plans" />
+            <a href="{{ route('admin.plans.create') }}" class="admin-theme-bg inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold shadow-sm">
+                <i class="fas fa-plus text-xs"></i> Create plan
+            </a>
+        </div>
     </div>
 
     @if(session('success'))

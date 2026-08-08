@@ -9,7 +9,10 @@
             <h2 class="text-xl font-bold text-slate-900">Property Types</h2>
             <p class="text-sm text-slate-500">Manage rental property classes such as Room, Flat, Shop and Office.</p>
         </div>
-        <a href="{{ route('admin.property-types.create') }}" class="px-4 py-2 rounded-xl admin-theme-bg text-xs font-bold text-white">Add Property Type</a>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="property-types" importable />
+            <a href="{{ route('admin.property-types.create') }}" class="px-4 py-2 rounded-xl admin-theme-bg text-xs font-bold text-white">Add Property Type</a>
+        </div>
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">

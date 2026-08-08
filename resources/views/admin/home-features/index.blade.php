@@ -10,9 +10,12 @@
             <h1 class="mt-1 text-2xl font-extrabold">Why Choose Us</h1>
             <p class="text-sm text-slate-500">Manage the benefit cards shown on the landing page.</p>
         </div>
-        <a href="{{ route('admin.home-features.create') }}" class="inline-flex items-center gap-2 rounded-xl admin-theme-bg px-4 py-3 text-xs font-bold text-white">
-            <i class="fas fa-plus"></i>Add Item
-        </a>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="home-features" importable />
+            <a href="{{ route('admin.home-features.create') }}" class="inline-flex items-center gap-2 rounded-xl admin-theme-bg px-4 py-3 text-xs font-bold text-white">
+                <i class="fas fa-plus"></i>Add Item
+            </a>
+        </div>
     </header>
 
     @if(isset($errors) && $errors->any())

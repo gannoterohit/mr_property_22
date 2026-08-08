@@ -9,7 +9,10 @@
             <h2 class="text-xl font-bold text-slate-900">Property Categories</h2>
             <p class="text-sm text-slate-500">Manage dynamic category values such as 1BHK, 2BHK, Furnished Office, Road Facing.</p>
         </div>
-        <a href="{{ route('admin.property-categories.create') }}" class="px-4 py-2 rounded-xl admin-theme-bg text-xs font-bold text-white">Add Category</a>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="property-categories" importable />
+            <a href="{{ route('admin.property-categories.create') }}" class="px-4 py-2 rounded-xl admin-theme-bg text-xs font-bold text-white">Add Category</a>
+        </div>
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">

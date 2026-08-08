@@ -15,6 +15,7 @@
                     </h1>
                     <p class="text-gray-600 mt-1">Total: {{ $messages->total() }} enquiries</p>
                 </div>
+                <x-admin.data-actions dataset="contact-messages" />
             </div>
 
             <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border border-gray-100">

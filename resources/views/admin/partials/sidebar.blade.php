@@ -105,7 +105,7 @@
                             ? ($adminUser->hasAdminPermission('content.view') || $adminUser->hasAdminPermission('content.manage'))
                             : ($adminUser->hasAdminPermission('finance.view') || $adminUser->hasAdminPermission('finance.manage')),
                         'content' => $adminUser->hasAdminPermission('content.view') || $adminUser->hasAdminPermission('content.manage'),
-                        'reports' => $adminUser->hasAdminPermission('reports.view'),
+                        'reports' => $adminUser->hasAdminPermission('reports.view') || $adminUser->hasAdminPermission('settings.manage'),
                         'settings' => $adminUser->hasAdminPermission('settings.manage'),
                         'administration' => str_starts_with($item['route'], 'admin.activity')
                             ? $adminUser->hasAdminPermission('activity.view')

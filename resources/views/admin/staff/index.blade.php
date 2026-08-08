@@ -9,7 +9,10 @@
             <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Admin Staff</h1>
             <p class="mt-1 text-sm text-slate-500">Create staff accounts, assign roles, pause access and restore deleted staff.</p>
         </div>
-        <x-admin.button type="button" variant="primary" icon="fa-user-plus" @click="open = true; edit = null">Add staff member</x-admin.button>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="staff" />
+            <x-admin.button type="button" variant="primary" icon="fa-user-plus" @click="open = true; edit = null">Add staff member</x-admin.button>
+        </div>
     </div>
 
     @if($errors->any())

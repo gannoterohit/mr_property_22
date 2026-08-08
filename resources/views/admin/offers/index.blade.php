@@ -34,9 +34,12 @@
             <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Offer Banner Management</h1>
             <p class="mt-1 text-sm text-slate-500">Create, schedule and place promotions across the website.</p>
         </div>
-        <a href="{{ route('admin.offers.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl admin-theme-bg px-5 py-3 text-sm font-bold text-white shadow-sm ">
-            <i class="fas fa-plus"></i>Create Offer
-        </a>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="offers" />
+            <a href="{{ route('admin.offers.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl admin-theme-bg px-5 py-3 text-sm font-bold text-white shadow-sm ">
+                <i class="fas fa-plus"></i>Create Offer
+            </a>
+        </div>
     </div>
 
     @if(isset($errors) && $errors->any())

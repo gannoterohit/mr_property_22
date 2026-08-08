@@ -30,9 +30,12 @@
             <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Operational Cities</h1>
             <p class="mt-1 max-w-2xl text-sm text-slate-500">Manage launch status, map coordinates and the fallback city shown across the platform.</p>
         </div>
-        <a href="{{ route('admin.cities.create') }}" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl admin-theme-bg px-5 text-xs font-extrabold text-white shadow-sm  transition ">
-            <i class="fas fa-plus"></i> Add New City
-        </a>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="cities" importable />
+            <a href="{{ route('admin.cities.create') }}" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl admin-theme-bg px-5 text-xs font-extrabold text-white shadow-sm  transition ">
+                <i class="fas fa-plus"></i> Add New City
+            </a>
+        </div>
     </header>
 
     @if($errors->any())

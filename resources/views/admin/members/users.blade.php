@@ -21,9 +21,12 @@
             <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Platform Users</h1>
             <p class="mt-1 text-sm text-slate-500">Manage renter accounts, access, verification and benefits.</p>
         </div>
-        <a href="{{ route('admin.users.create') }}" class="admin-theme-bg inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-extrabold shadow-sm">
-            <i class="fas fa-user-plus"></i>Add User
-        </a>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="users" />
+            <a href="{{ route('admin.users.create') }}" class="admin-theme-bg inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-extrabold shadow-sm">
+                <i class="fas fa-user-plus"></i>Add User
+            </a>
+        </div>
     </header>
 
     @include('admin.members.nav')

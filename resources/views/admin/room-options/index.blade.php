@@ -28,6 +28,7 @@
             <p class="text-sm text-slate-500 mt-1">Manage property type, furnishing, tenant and facility options from one place.</p>
         </div>
         <div class="flex items-center gap-2">
+            <x-admin.data-actions dataset="room-options" importable />
             <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 shadow-sm">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                 <span class="text-xs font-bold text-slate-600">{{ $allOptions->where('is_active', true)->count() }} active</span>

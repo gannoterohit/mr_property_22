@@ -9,9 +9,12 @@
             <h1 class="text-2xl font-bold text-gray-800">Manage Blogs</h1>
             <p class="text-gray-600 text-sm">Create and publish articles for your audience.</p>
         </div>
-        <a href="{{ route('admin.blogs.create') }}" class="admin-theme-bg px-4 py-2 rounded-lg shadow-sm transition flex items-center">
-            <i class="fas fa-plus mr-2"></i> New Post
-        </a>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="blogs" />
+            <a href="{{ route('admin.blogs.create') }}" class="admin-theme-bg px-4 py-2 rounded-lg shadow-sm transition flex items-center">
+                <i class="fas fa-plus mr-2"></i> New Post
+            </a>
+        </div>
     </div>
 
     <!-- Blog List -->

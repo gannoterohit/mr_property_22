@@ -226,6 +226,46 @@
         background: #dc2626 !important;
         color: #fff !important;
     }
+    .admin-data-action-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: .75rem !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: #fff !important;
+        color: #334155 !important;
+        padding: .75rem !important;
+        text-decoration: none !important;
+        box-shadow: none !important;
+    }
+    .admin-data-action-item:hover {
+        background: #f8fafc !important;
+        color: #0f172a !important;
+    }
+    .admin-data-action-item i {
+        display: inline-flex;
+        height: 2rem;
+        width: 2rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: .65rem;
+        background: #f1f5f9;
+        font-size: .8rem;
+    }
+    .admin-data-action-item strong {
+        display: block;
+        color: #0f172a;
+        font-size: .75rem;
+        line-height: 1.1;
+    }
+    .admin-data-action-item small {
+        display: block;
+        margin-top: .2rem;
+        color: #64748b;
+        font-size: .65rem;
+        font-weight: 600;
+        line-height: 1.2;
+    }
     .admin-theme-avatar {
         background: var(--admin-primary);
         color: #fff;

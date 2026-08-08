@@ -33,9 +33,12 @@
             <h1 class="mt-1 text-2xl font-extrabold">Search Analytics</h1>
             <p class="text-sm text-slate-500">Demand, listing supply, visitor events and raw search activity.</p>
         </div>
-        <div class="rounded-xl admin-theme-bg px-5 py-3 text-white">
-            <p class="text-[9px] font-bold uppercase text-white/70">Tracked searches</p>
-            <p class="text-xl font-extrabold">{{ \App\Models\SearchLog::count() }}</p>
+        <div class="flex flex-wrap items-center gap-2">
+            <x-admin.data-actions dataset="search-logs" />
+            <div class="rounded-xl admin-theme-bg px-5 py-3 text-white">
+                <p class="text-[9px] font-bold uppercase text-white/70">Tracked searches</p>
+                <p class="text-xl font-extrabold">{{ \App\Models\SearchLog::count() }}</p>
+            </div>
         </div>
     </header>
 

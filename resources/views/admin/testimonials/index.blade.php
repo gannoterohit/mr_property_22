@@ -10,9 +10,12 @@
             <h1 class="mt-1 text-2xl font-extrabold">Testimonials</h1>
             <p class="text-sm text-slate-500">Add, approve, deactivate or remove reviews shown on the landing page.</p>
         </div>
-        <a href="{{ route('admin.testimonials.create') }}" class="inline-flex items-center gap-2 rounded-xl admin-theme-bg px-4 py-3 text-xs font-bold text-white">
-            <i class="fas fa-plus"></i>Add Review
-        </a>
+        <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="testimonials" importable />
+            <a href="{{ route('admin.testimonials.create') }}" class="inline-flex items-center gap-2 rounded-xl admin-theme-bg px-4 py-3 text-xs font-bold text-white">
+                <i class="fas fa-plus"></i>Add Review
+            </a>
+        </div>
     </header>
 
     @if(isset($errors) && $errors->any())

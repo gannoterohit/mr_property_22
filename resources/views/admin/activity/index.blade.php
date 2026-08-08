@@ -13,12 +13,15 @@
             <h1 class="mt-1 text-xl font-extrabold text-slate-950">Admin Activity Logs</h1>
             <p class="mt-1 text-xs text-slate-500">Track successful changes made by every administrator and staff member.</p>
         </div>
-        <div class="audit-summary">
-            <span><strong>{{ number_format($totalLogs) }}</strong>Total</span>
-            <span><strong>{{ number_format($todayLogs) }}</strong>Today</span>
-            <span><strong>{{ number_format($filteredLogs) }}</strong>Filtered</span>
-            <span><strong>{{ number_format($activeActors) }}</strong>Active staff</span>
-            <em><i class="fas fa-circle-check"></i>Logging active</em>
+        <div class="flex flex-wrap items-center justify-end gap-2">
+            <div class="audit-summary">
+                <span><strong>{{ number_format($totalLogs) }}</strong>Total</span>
+                <span><strong>{{ number_format($todayLogs) }}</strong>Today</span>
+                <span><strong>{{ number_format($filteredLogs) }}</strong>Filtered</span>
+                <span><strong>{{ number_format($activeActors) }}</strong>Active staff</span>
+                <em><i class="fas fa-circle-check"></i>Logging active</em>
+            </div>
+            <x-admin.data-actions dataset="activity-logs" />
         </div>
     </div>
 

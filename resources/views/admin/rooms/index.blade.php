@@ -24,6 +24,7 @@
             <p class="text-sm text-slate-500">Review, approve, reject and moderate every listing.</p>
         </div>
         <div class="flex flex-wrap gap-2">
+            <x-admin.data-actions dataset="rooms" />
             <x-admin.button :href="route('admin.rejection-reasons.index')">Rejection reasons</x-admin.button>
             <x-admin.button variant="primary" icon="fa-plus" :href="route('admin.rooms.create')">Add property</x-admin.button>
         </div>
