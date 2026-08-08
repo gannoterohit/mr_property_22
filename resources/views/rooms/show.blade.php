@@ -225,7 +225,11 @@
                             </div>
                             <div class="text-center p-3 bg-slate-50 rounded-lg">
                                 <div class="text-xs text-slate-700 mb-1">Type</div>
-                                <div class="text-sm font-bold text-slate-700">{{ $room->propertyType?->name ?? 'N/A' }}@if($room->propertyCategory?->name) · {{ $room->propertyCategory->name }}@endif</div>
+                                <div class="text-sm font-bold text-slate-700">
+                                    {{ $room->propertyType?->name ?? 'N/A' }}
+                                    @if($room->propertyCategory?->name) / {{ $room->propertyCategory->name }} @endif
+                                    @if($room->roomTypeLabel() !== 'N/A') / {{ $room->roomTypeLabel() }} @endif
+                                </div>
                             </div>
                             <div class="text-center p-3 bg-cyan-50 rounded-lg">
                                 <div class="text-xs text-slate-700 mb-1">Area</div>
@@ -293,63 +297,6 @@
                     </div>
                 </div>
                 @endif
-
-                {{-- COMPACT LOCATION --}}
-                @if($isUnlocked || ($isOwner ?? false))
-                    @if($room->address || ($room->latitude && $room->longitude))
-                    <div class="bg-white rounded-xl p-4 shadow-xl">
-                        <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
-                            <i class="fas fa-map-marked-alt text-red-600"></i>
-                            Location
-                        </h2>
-                        @if($room->address)
-                            <div class="bg-red-50 rounded-lg p-3 mb-3 relative overflow-hidden">
-                                <div class="distance-tag hidden absolute top-0 right-0 bg-red-600 text-white px-3 py-1 rounded-bl-xl text-[10px] font-black shadow-lg" data-lat="{{ $room->latitude }}" data-lng="{{ $room->longitude }}">
-                                    <i class="fas fa-location-arrow mr-1"></i><span class="distance-km">...</span> km away
-                                </div>
-                                @if($room->latitude && $room->longitude)
-                                    <a href="https://www.google.com/maps?q={{ $room->latitude }},{{ $room->longitude }}"
-                                       target="_blank"
-                                       class="text-gray-800 font-semibold flex items-center gap-2 hover:text-red-600 transition group text-sm">
-                                        <i class="fas fa-location-dot text-red-500"></i>
-                                        <span class="group-hover:underline">{{ $room->address }}, {{ $room->city }}</span>
-                                        <i class="fas fa-external-link-alt text-xs"></i>
-                                    </a>
-                                @else
-                                    <p class="text-sm"><i class="fas fa-map-marker-alt text-red-500 mr-2"></i>{{ $room->address }}, {{ $room->city }}</p>
-                                @endif
-                            </div>
-                        @endif
-                        @if($room->latitude && $room->longitude)
-                            <div id="roomMap" class="rounded-lg overflow-hidden shadow-lg" style="height: 250px;"></div>
-                        @endif
-                    </div>
-                    @endif
-                @else
-                    <div class="bg-indigo-900 rounded-2xl overflow-hidden shadow-2xl relative min-h-[280px] flex items-center justify-center group border border-indigo-800">
-                        {{-- Blurred Map Background --}}
-                        <div class="absolute inset-0 z-0">
-                            <div id="lockedMap" class="w-full h-full opacity-40 blur-md grayscale scale-110"></div>
-                            <div class="absolute inset-0 bg-gradient-to-br from-indigo-950/80 to-purple-950/80"></div>
-                        </div>
-                        
-                        <div class="relative z-10 p-6 text-center">
-                            <div class="w-20 h-20 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center mx-auto mb-5 shadow-2xl ring-4 ring-white/5 group-hover:scale-110 transition-all duration-500">
-                                <i class="fas fa-lock text-4xl text-white"></i>
-                            </div>
-                            <h3 class="font-black text-2xl text-white mb-2 uppercase tracking-tight">Location Locked</h3>
-                            <p class="text-indigo-200 text-sm mb-8 max-w-xs mx-auto leading-relaxed">
-                                Unlock to see house number, street name, and get precise navigation to this property.
-                            </p>
-                            
-<button onclick="unlockContact({{ $room->id }})"
-                                class="bg-indigo-600 text-white font-black py-4 px-10 rounded-2xl hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto uppercase text-sm tracking-widest shadow-xl ring-2 ring-indigo-400/50">
-                                <i class="fas fa-unlock-alt"></i> Unlock Full Address
-                            </button>
-                        </div>
-                    </div>
-                @endif
-
 
                 {{-- VIDEO (if exists) --}}
                 @if($room->video || $room->video_url)
@@ -552,6 +499,69 @@
                             </div>
                         </div>
                     </div>
+
+                    {{-- COMPACT LOCATION --}}
+                    @if($isUnlocked || ($isOwner ?? false))
+                        @if($room->address || ($room->latitude && $room->longitude))
+                        <div class="bg-white rounded-xl p-4 shadow-xl">
+                            <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
+                                <i class="fas fa-map-marked-alt text-red-600"></i>
+                                Location
+                            </h2>
+                            @if($room->address)
+                                <div class="bg-red-50 rounded-lg p-3 mb-3 relative overflow-hidden">
+                                    <div class="distance-tag hidden absolute top-0 right-0 bg-red-600 text-white px-3 py-1 rounded-bl-xl text-[10px] font-black shadow-lg" data-lat="{{ $room->latitude }}" data-lng="{{ $room->longitude }}">
+                                        <i class="fas fa-location-arrow mr-1"></i><span class="distance-km">...</span> km away
+                                    </div>
+                                    @if($room->latitude && $room->longitude)
+                                        <a href="https://www.google.com/maps?q={{ $room->latitude }},{{ $room->longitude }}"
+                                           target="_blank"
+                                           class="text-gray-800 font-semibold flex items-center gap-2 hover:text-red-600 transition group text-sm">
+                                            <i class="fas fa-location-dot text-red-500"></i>
+                                            <span class="group-hover:underline">{{ $room->address }}, {{ $room->city }}</span>
+                                            <i class="fas fa-external-link-alt text-xs"></i>
+                                        </a>
+                                    @else
+                                        <p class="text-sm"><i class="fas fa-map-marker-alt text-red-500 mr-2"></i>{{ $room->address }}, {{ $room->city }}</p>
+                                    @endif
+                                </div>
+                            @endif
+                            @if($room->latitude && $room->longitude)
+                                <div id="roomMap" class="rounded-lg overflow-hidden shadow-lg" style="height: 220px;"></div>
+                            @elseif($room->address || $room->city)
+                                <iframe
+                                    class="rounded-lg overflow-hidden shadow-lg border border-slate-200"
+                                    style="height:220px;width:100%;"
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"
+                                    src="https://www.google.com/maps?q={{ urlencode(trim(($room->address ? $room->address . ', ' : '') . ($room->city ?? '') . ', ' . ($room->state ?? '') . ', ' . ($room->country ?? 'India'))) }}&output=embed">
+                                </iframe>
+                            @endif
+                        </div>
+                        @endif
+                    @else
+                        <div class="bg-indigo-900 rounded-2xl overflow-hidden shadow-2xl relative min-h-[260px] flex items-center justify-center group border border-indigo-800">
+                            <div class="absolute inset-0 z-0">
+                                <div id="lockedMap" class="w-full h-full opacity-40 blur-md grayscale scale-110"></div>
+                                <div class="absolute inset-0 bg-gradient-to-br from-indigo-950/80 to-purple-950/80"></div>
+                            </div>
+
+                            <div class="relative z-10 p-6 text-center">
+                                <div class="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center mx-auto mb-4 shadow-2xl ring-4 ring-white/5 group-hover:scale-110 transition-all duration-500">
+                                    <i class="fas fa-lock text-3xl text-white"></i>
+                                </div>
+                                <h3 class="font-black text-xl text-white mb-2 uppercase tracking-tight">Location Locked</h3>
+                                <p class="text-indigo-200 text-xs mb-6 max-w-xs mx-auto leading-relaxed">
+                                    Unlock to see house number, street name, and precise navigation.
+                                </p>
+
+                                <button onclick="unlockContact({{ $room->id }})"
+                                        class="bg-indigo-600 text-white font-black py-3 px-6 rounded-xl hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-2 mx-auto uppercase text-xs tracking-widest shadow-xl ring-2 ring-indigo-400/50">
+                                    <i class="fas fa-unlock-alt"></i> Unlock Address
+                                </button>
+                            </div>
+                        </div>
+                    @endif
 
                     {{-- COMPACT FEATURED CARD --}}
                     @auth

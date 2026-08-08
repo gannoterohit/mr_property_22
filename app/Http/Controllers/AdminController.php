@@ -991,7 +991,15 @@ class AdminController extends Controller
         $isUnlocked = true;
         $isOwner = true;
         $subscriptionRemaining = 0;
-        $room->load(['owner', 'rejectionReasons']);
+        $room->load([
+            'owner',
+            'rejectionReasons',
+            'propertyType',
+            'propertyCategory',
+            'roomTypeOption',
+            'furnishingOption',
+            'tenantOption',
+        ]);
         $rejectionReasons = RejectionReason::where('is_active', true)->orderBy('reason')->get();
 
         return view('admin.rooms.show', compact('room', 'isUnlocked', 'isOwner', 'subscriptionRemaining', 'rejectionReasons'));

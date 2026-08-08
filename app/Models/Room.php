@@ -93,6 +93,12 @@ class Room extends Model
                 $room->slug = static::generateUniqueSlug($room->title);
             }
         });
+
+        static::deleting(function ($room) {
+            foreach ($room->publicMediaPaths() as $path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($path);
+            }
+        });
     }
 
     /**
@@ -171,7 +177,7 @@ class Room extends Model
             $url = $this->photo;
         }
 
-        $finalUrl = (preg_match('/^https?:\/\//', $url)) ? $url : asset('storage/' . $url);
+        $finalUrl = $this->resolvePublicMediaUrl($url);
 
         // Optimize Unsplash URLs
         if (str_contains($finalUrl, 'images.unsplash.com')) {
@@ -192,15 +198,52 @@ class Room extends Model
         $urls = [];
         if ($this->photos && is_array($this->photos)) {
             foreach ($this->photos as $photo) {
-                $urls[] = (str_starts_with($photo, 'http')) ? $photo : asset('storage/' . $photo);
+                $urls[] = $this->resolvePublicMediaUrl($photo);
             }
         }
         
         if (empty($urls) && $this->photo) {
-            $urls[] = (str_starts_with($this->photo, 'http')) ? $this->photo : asset('storage/' . $this->photo);
+            $urls[] = $this->resolvePublicMediaUrl($this->photo);
         }
 
         return $urls;
+    }
+
+    public function publicMediaPaths(): array
+    {
+        $paths = array_merge([$this->photo], $this->photos ?: [], [$this->video]);
+
+        return collect($paths)
+            ->filter(fn ($path) => is_string($path) && $path !== '' && ! preg_match('/^https?:\/\//', $path))
+            ->map(function ($path) {
+                $path = ltrim($path, '/');
+                return str_starts_with($path, 'storage/') ? substr($path, strlen('storage/')) : $path;
+            })
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function resolvePublicMediaUrl(?string $path): string
+    {
+        if (!$path) {
+            return asset('storage/default-room.jpg');
+        }
+
+        if (preg_match('/^https?:\/\//', $path)) {
+            return $path;
+        }
+
+        $path = ltrim($path, '/');
+        if (str_starts_with($path, 'storage/')) {
+            $path = substr($path, strlen('storage/'));
+        }
+
+        if (!\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+            return asset('storage/default-room.jpg');
+        }
+
+        return asset('storage/' . $path);
     }
 
     public function roomTypeLabel(): string

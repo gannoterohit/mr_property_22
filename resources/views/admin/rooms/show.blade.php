@@ -3,6 +3,9 @@
 @section('title', 'Property Details')
 
 @push('styles')
+@if($room->latitude && $room->longitude)
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+@endif
 <style>
     .admin-room-show-grid { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:20px; align-items:start; }
     .admin-room-gallery { display:grid; grid-template-columns:2fr 1fr; gap:10px; }
@@ -15,6 +18,9 @@
     .admin-room-kpi span { display:block; color:#64748b; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }
     .admin-room-kpi strong { display:block; margin-top:6px; color:#0f172a; font-size:15px; font-weight:900; }
     .admin-room-aside { position:sticky; top:86px; }
+    #adminRoomMap { height:320px; border-radius:14px; border:1px solid #e2e8f0; overflow:hidden; z-index:10; }
+    .admin-address-map { width:100%; height:320px; border:0; border-radius:14px; background:#f8fafc; }
+    .admin-map-empty { min-height:180px; border:1px dashed #cbd5e1; border-radius:14px; background:#f8fafc; display:flex; align-items:center; justify-content:center; text-align:center; padding:24px; }
     @media(max-width:1199px){ .admin-room-show-grid{grid-template-columns:1fr}.admin-room-aside{position:static} }
     @media(max-width:767px){ .admin-room-gallery,.admin-room-kpis{grid-template-columns:1fr}.admin-room-gallery-main{min-height:240px}.admin-room-gallery-side{grid-template-columns:1fr 1fr}.admin-room-gallery-side img{min-height:110px} }
 </style>
@@ -69,7 +75,7 @@
             <section class="admin-room-kpis">
                 <div class="admin-room-kpi"><span>Rent</span><strong>&#8377;{{ number_format((float) $room->rent) }}/mo</strong></div>
                 <div class="admin-room-kpi"><span>Deposit</span><strong>&#8377;{{ number_format((float) $room->deposit) }}</strong></div>
-                <div class="admin-room-kpi"><span>Property type</span><strong>{{ $room->roomTypeLabel() }}</strong></div>
+                <div class="admin-room-kpi"><span>Property type</span><strong>{{ $room->propertyType?->name ?? 'Not set' }}</strong></div>
                 <div class="admin-room-kpi"><span>Availability</span><strong>{{ ucfirst($room->status) }}</strong></div>
             </section>
 
@@ -84,17 +90,72 @@
                     @endif
                 </div>
                 <dl class="grid gap-4 md:grid-cols-2">
+                    <div><dt class="text-[10px] font-bold uppercase text-slate-400">Property type</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->propertyType?->name ?? 'Not set' }}</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase text-slate-400">Property category</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->propertyCategory?->name ?? 'Not set' }}</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase text-slate-400">Room type</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->roomTypeLabel() }}</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase text-slate-400">Area</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->area_sqft ? number_format((float) $room->area_sqft, 2) . ' sq ft' : 'Not provided' }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase text-slate-400">Address</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->address ?: 'Not provided' }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase text-slate-400">City</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->city ?: 'Not provided' }}</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase text-slate-400">State</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->state ?: 'Not provided' }}</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase text-slate-400">Country</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->country ?: 'Not provided' }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase text-slate-400">Furnishing</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->furnishingTypeLabel() }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase text-slate-400">Preferred tenant</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->tenantTypeLabel() }}</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase text-slate-400">Latitude</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->latitude ?? 'Not provided' }}</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase text-slate-400">Longitude</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->longitude ?? 'Not provided' }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase text-slate-400">Listing type</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ ucfirst($room->listing_type ?? 'owner') }} @if($room->listing_type === 'broker') - Broker fee &#8377;{{ number_format((float) $room->broker_fee) }} @endif</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase text-slate-400">Available from</dt><dd class="mt-1 text-sm font-semibold text-slate-800">{{ $room->availability_from ? \Carbon\Carbon::parse($room->availability_from)->format('d M Y') : 'Not specified' }}</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase text-slate-400">Video upload</dt><dd class="mt-1 text-sm font-semibold text-slate-800">@if($room->video)<a href="{{ asset('storage/' . $room->video) }}" target="_blank" class="admin-theme-text">View uploaded video</a>@else Not uploaded @endif</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase text-slate-400">Video URL</dt><dd class="mt-1 break-all text-sm font-semibold text-slate-800">@if($room->video_url)<a href="{{ $room->video_url }}" target="_blank" class="admin-theme-text">{{ $room->video_url }}</a>@else Not provided @endif</dd></div>
                 </dl>
                 <div class="mt-5 border-t pt-5">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Description</h3>
                     <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{{ $room->description ?: 'No description added.' }}</p>
                 </div>
+            </section>
+
+            <section class="rounded-2xl border bg-white p-5 shadow-sm">
+                <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-extrabold text-slate-950"><i class="fas fa-map-marked-alt mr-2 text-red-600"></i>Location</h2>
+                        <p class="text-xs text-slate-500">{{ $room->address ? $room->address . ', ' . $room->city : 'Map preview and saved coordinates.' }}</p>
+                    </div>
+                    @if($room->latitude && $room->longitude)
+                        <a href="https://www.google.com/maps?q={{ $room->latitude }},{{ $room->longitude }}" target="_blank" class="rounded-xl border bg-white px-3 py-2 text-xs font-bold text-slate-700">
+                            <i class="fas fa-up-right-from-square mr-1"></i>Open map
+                        </a>
+                    @elseif($room->address || $room->city)
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode(trim(($room->address ? $room->address . ', ' : '') . ($room->city ?? ''))) }}" target="_blank" class="rounded-xl border bg-white px-3 py-2 text-xs font-bold text-slate-700">
+                            <i class="fas fa-magnifying-glass-location mr-1"></i>Search address
+                        </a>
+                    @endif
+                </div>
+
+                @if($room->latitude && $room->longitude)
+                    <div id="adminRoomMap"></div>
+                    <div class="mt-3 grid gap-3 text-xs md:grid-cols-2">
+                        <div class="rounded-xl bg-slate-50 px-3 py-2"><span class="font-bold text-slate-400">Latitude</span><strong class="ml-2 text-slate-700">{{ $room->latitude }}</strong></div>
+                        <div class="rounded-xl bg-slate-50 px-3 py-2"><span class="font-bold text-slate-400">Longitude</span><strong class="ml-2 text-slate-700">{{ $room->longitude }}</strong></div>
+                    </div>
+                @elseif($room->address || $room->city)
+                    <iframe
+                        class="admin-address-map"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src="https://www.google.com/maps?q={{ urlencode(trim(($room->address ? $room->address . ', ' : '') . ($room->city ?? '') . ', ' . ($room->state ?? '') . ', ' . ($room->country ?? 'India'))) }}&output=embed">
+                    </iframe>
+                    <p class="mt-3 rounded-xl bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700">
+                        <i class="fas fa-circle-info mr-1"></i> This map is based on the saved address. Add latitude/longitude in edit mode for an exact marker.
+                    </p>
+                @else
+                    <div class="admin-map-empty">
+                        <div>
+                            <i class="fas fa-location-crosshairs text-3xl text-slate-300"></i>
+                            <h3 class="mt-3 text-sm font-extrabold text-slate-700">Coordinates not saved</h3>
+                            <p class="mt-1 max-w-md text-xs leading-5 text-slate-500">Edit this property and save latitude/longitude to show the same embedded map preview here.</p>
+                            <a href="{{ route('admin.rooms.edit', $room) }}" class="admin-theme-text mt-3 inline-flex text-xs font-bold">Edit location <i class="fas fa-arrow-right ml-2"></i></a>
+                        </div>
+                    </div>
+                @endif
             </section>
 
             <section class="grid gap-5 lg:grid-cols-2">
@@ -125,9 +186,13 @@
             <section class="rounded-2xl border bg-white p-5 shadow-sm">
                 <h2 class="text-sm font-extrabold text-slate-950">Review status</h2>
                 <div class="mt-4 space-y-2">
+                    <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600"><span class="text-xs font-bold">Room ID</span><strong class="text-xs">#{{ $room->id }}</strong></div>
                     <div class="flex items-center justify-between gap-3 rounded-xl border px-3 py-2 {{ $approvalClass }}"><span class="text-xs font-bold">Approval</span><strong class="text-xs uppercase">{{ $room->listing_status }}</strong></div>
                     <div class="flex items-center justify-between gap-3 rounded-xl border px-3 py-2 {{ $moderationClass }}"><span class="text-xs font-bold">Moderation</span><strong class="text-xs uppercase">{{ $room->moderation_status }}</strong></div>
+                    <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600"><span class="text-xs font-bold">Public status</span><strong class="text-xs uppercase">{{ $room->status }}</strong></div>
                     <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600"><span class="text-xs font-bold">Listing fee</span><strong class="text-xs uppercase">{{ $room->listing_fee_paid ? 'Paid' : 'Unpaid' }}</strong></div>
+                    <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600"><span class="text-xs font-bold">Payment ID</span><strong class="text-xs">{{ $room->listing_payment_id ?? 'Not set' }}</strong></div>
+                    <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600"><span class="text-xs font-bold">Featured</span><strong class="text-xs uppercase">{{ $room->is_featured ? 'Yes' : 'No' }}</strong></div>
                     <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600"><span class="text-xs font-bold">Expires</span><strong class="text-xs">{{ $room->expires_at?->format('d M Y') ?? 'Not set' }}</strong></div>
                 </div>
             </section>
@@ -142,6 +207,7 @@
                     </div>
                 </div>
                 <dl class="mt-4 space-y-3 text-xs">
+                    <div class="flex justify-between gap-3"><dt class="text-slate-400">Owner ID</dt><dd class="font-bold text-slate-700">{{ $room->user_id }}</dd></div>
                     <div class="flex justify-between gap-3"><dt class="text-slate-400">Phone</dt><dd class="font-bold text-slate-700">{{ $room->owner?->phone ?? 'Not provided' }}</dd></div>
                     <div class="flex justify-between gap-3"><dt class="text-slate-400">KYC</dt><dd class="font-bold text-slate-700">{{ ucfirst(str_replace('_', ' ', $room->owner?->verification_status ?? 'unknown')) }}</dd></div>
                     <div class="flex justify-between gap-3"><dt class="text-slate-400">Created</dt><dd class="font-bold text-slate-700">{{ $room->created_at->format('d M Y') }}</dd></div>
@@ -190,6 +256,41 @@
 @endsection
 
 @push('scripts')
+@if($room->latitude && $room->longitude)
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const mapElement = document.getElementById('adminRoomMap');
+    if (!mapElement || typeof L === 'undefined') return;
+
+    const coords = [{{ $room->latitude }}, {{ $room->longitude }}];
+    const roomTitle = @json($room->title);
+    const roomCity = @json($room->city ?? '');
+    const map = L.map('adminRoomMap').setView(coords, 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const markerIcon = L.divIcon({
+        html: '<div class="flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-indigo-600 shadow-xl"><i class="fas fa-building text-sm text-white"></i></div>',
+        className: 'admin-room-marker',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    });
+
+    L.marker(coords, { icon: markerIcon }).addTo(map).bindPopup(`
+        <div class="p-2">
+            <h3 class="mb-1 font-black text-indigo-700">${roomTitle}</h3>
+            <p class="mb-2 text-xs text-slate-600">${roomCity}</p>
+            <a href="https://www.google.com/maps/dir/?api=1&destination={{ $room->latitude }},{{ $room->longitude }}" target="_blank" class="inline-block rounded-lg bg-indigo-600 px-3 py-1.5 text-[10px] font-bold text-white no-underline">
+                Get Directions
+            </a>
+        </div>
+    `).openPopup();
+});
+</script>
+@endif
 <script>
 document.querySelectorAll('.admin-room-json-form').forEach(form => {
     form.addEventListener('submit', async event => {
