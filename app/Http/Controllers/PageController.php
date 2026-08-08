@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CmsPage;
+use App\Models\HowItWorksItem;
 use App\Models\Setting;
 
 class PageController extends Controller
@@ -20,7 +21,24 @@ class PageController extends Controller
 
     public function howItWorks()
     {
-        return $this->render('how-it-works', 'How It Works', 'how_it_works_content', 'pages.how-it-works');
+        $page = $this->page('how-it-works');
+        if ($page && !$page->isPublished()) {
+            abort(404);
+        }
+
+        $items = HowItWorksItem::active()
+            ->orderBy('group')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get()
+            ->groupBy('group');
+
+        $title = $page?->seo_title ?: 'How It Works';
+        $pageTitle = $page?->title ?: 'How It Works';
+        $metaDescription = $page?->meta_description ?: 'Learn how users find properties and unlock owner contacts, and how property owners list and manage properties.';
+        $updatedAt = $page?->updated_at;
+
+        return view('pages.how-it-works', compact('items', 'title', 'pageTitle', 'metaDescription', 'updatedAt'));
     }
 
     public function safetyTips()
@@ -93,6 +111,7 @@ class PageController extends Controller
         }
 
         $content = Setting::get($settingKey, config("cms.defaults.{$settingKey}", ''));
+        $content = $this->replaceContentTokens((string) $content);
         $title = $fallbackTitle;
         $pageTitle = $fallbackTitle;
         $metaDescription = '';
@@ -104,7 +123,7 @@ class PageController extends Controller
     {
         if (!$page->isPublished()) abort(404);
 
-        $content = $page->content;
+        $content = $this->replaceContentTokens((string) $page->content);
         $title = $page->seo_title ?: $page->title;
         $pageTitle = $page->title;
         $metaDescription = $page->meta_description ?: '';
@@ -119,6 +138,23 @@ class PageController extends Controller
         }
         $view = $forcedView ?: 'pages.show';
         return view($view, compact('content', 'title', 'pageTitle', 'metaDescription', 'updatedAt'));
+    }
+
+    private function replaceContentTokens(string $content): string
+    {
+        return str_replace([
+            '{{site_name}}',
+            '{{rooms_url}}',
+            '{{owner_register_url}}',
+            '{{plans_url}}',
+            '{{safety_tips_url}}',
+        ], [
+            Setting::get('website_name', 'ApnaNest'),
+            route('rooms.index'),
+            route('register', ['role' => 'owner']),
+            route('plans'),
+            route('pages.safety-tips'),
+        ], $content);
     }
 
     private function page(string $slug): ?CmsPage

@@ -13,6 +13,7 @@ class CmsPageController extends Controller
     public function index(Request $request)
     {
         $pages = CmsPage::query()
+            ->where('slug', '!=', 'how-it-works')
             ->when($request->filled('search'), fn ($query) => $query->where(fn ($q) => $q
                 ->where('title', 'like', '%'.$request->search.'%')
                 ->orWhere('slug', 'like', '%'.$request->search.'%')))
@@ -39,6 +40,10 @@ class CmsPageController extends Controller
 
     public function edit(CmsPage $cmsPage)
     {
+        if ($cmsPage->slug === 'how-it-works') {
+            return redirect()->route('admin.how-it-works.index');
+        }
+
         $page = $cmsPage;
         return view('admin.cms-pages.form', compact('page'));
     }

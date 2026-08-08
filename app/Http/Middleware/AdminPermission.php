@@ -33,7 +33,7 @@ class AdminPermission
             if (str_contains($path, '/users') || str_contains($path, '/owners') || str_contains($path, '/members')) return $write ? 'people.manage' : 'people.view';
             if (str_contains($path, '/complaints') || str_contains($path, '/complaint-options') || str_contains($path, '/contact-messages') || str_contains($path, '/city-alerts') || str_contains($path, '/subscribers')) return $write ? 'support.manage' : 'support.view';
             if (str_contains($path, '/payments') || str_contains($path, '/payouts') || str_contains($path, '/plans')) return $write ? 'finance.manage' : 'finance.view';
-            if (str_contains($path, '/blogs') || str_contains($path, '/offers') || str_contains($path, '/pages') || str_contains($path, '/home-page') || str_contains($path, '/home-features') || str_contains($path, '/testimonials')) return $write ? 'content.manage' : 'content.view';
+            if (str_contains($path, '/blogs') || str_contains($path, '/offers') || str_contains($path, '/pages') || str_contains($path, '/home-page') || str_contains($path, '/home-features') || str_contains($path, '/how-it-works') || str_contains($path, '/testimonials')) return $write ? 'content.manage' : 'content.view';
             if (str_contains($path, '/reports') || str_contains($path, '/analytics') || str_contains($path, '/search-analytics') || str_contains($path, '/search-logs')) return $write ? 'reports.manage' : 'reports.view';
             if (str_contains($path, '/settings') || str_contains($path, '/maintenance') || str_contains($path, '/cities')) return 'settings.manage';
             if (str_ends_with($path, '/dashboard')) return 'dashboard.view';
@@ -45,7 +45,7 @@ class AdminPermission
         if (str_starts_with($route, 'admin.users') || str_starts_with($route, 'admin.owners') || str_starts_with($route, 'admin.members')) return $write ? 'people.manage' : 'people.view';
         if (str_starts_with($route, 'admin.complaints') || str_starts_with($route, 'admin.contact-messages') || str_starts_with($route, 'admin.city-alerts') || str_starts_with($route, 'admin.subscribers')) return $write ? 'support.manage' : 'support.view';
         if (str_starts_with($route, 'admin.payments') || str_starts_with($route, 'admin.payouts') || str_starts_with($route, 'admin.plans')) return $write ? 'finance.manage' : 'finance.view';
-        if (str_starts_with($route, 'admin.blogs') || str_starts_with($route, 'admin.offers') || str_starts_with($route, 'admin.pages') || str_starts_with($route, 'admin.cms-pages') || str_starts_with($route, 'admin.home-features') || str_starts_with($route, 'admin.testimonials')) return $write ? 'content.manage' : 'content.view';
+        if (str_starts_with($route, 'admin.blogs') || str_starts_with($route, 'admin.offers') || str_starts_with($route, 'admin.pages') || str_starts_with($route, 'admin.cms-pages') || str_starts_with($route, 'admin.home-features') || str_starts_with($route, 'admin.how-it-works') || str_starts_with($route, 'admin.testimonials')) return $write ? 'content.manage' : 'content.view';
         if ($route === 'admin.reports' || str_starts_with($route, 'admin.analytics')) return $write ? 'reports.manage' : 'reports.view';
         if (str_starts_with($route, 'admin.settings') || str_starts_with($route, 'admin.maintenance') || str_starts_with($route, 'admin.data-maintenance') || str_starts_with($route, 'admin.cities')) return 'settings.manage';
         return null;

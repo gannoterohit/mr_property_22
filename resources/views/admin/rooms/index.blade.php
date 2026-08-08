@@ -5,8 +5,8 @@
 
 @push('styles')
 <style>
-    .room-filter{display:grid!important;grid-template-columns:minmax(190px,1fr) repeat(5,150px) auto!important;gap:8px}
-    .room-table{min-width:1240px;width:100%}
+    .room-filter{display:grid!important;grid-template-columns:minmax(190px,1fr) repeat(8,140px) auto!important;gap:8px}
+    .room-table{min-width:1380px;width:100%}
     .room-table th,.room-table td{text-align:left!important;vertical-align:middle!important}
     .room-table th:last-child,.room-table td:last-child{text-align:right!important}
     @media(max-width:1279px){.room-filter{grid-template-columns:repeat(3,1fr)!important}}
@@ -59,6 +59,20 @@
                 <option value="{{ $city }}" @selected(request('city')===$city)>{{ $city }}</option>
             @endforeach
         </select>
+        <select name="property_type_id" class="h-10 rounded-xl text-xs">
+            <option value="">All property types</option>
+            @foreach($propertyTypes as $type)
+                <option value="{{ $type->id }}" @selected(request('property_type_id')==$type->id)>{{ $type->name }}</option>
+            @endforeach
+        </select>
+        <select name="property_category_id" class="h-10 rounded-xl text-xs">
+            <option value="">All categories</option>
+            @foreach($propertyCategories as $category)
+                <option value="{{ $category->id }}" @selected(request('property_category_id')==$category->id)>{{ $category->propertyType?->name ? $category->propertyType->name.' - ' : '' }}{{ $category->name }}</option>
+            @endforeach
+        </select>
+        <input type="number" name="min_area_sqft" value="{{ request('min_area_sqft') }}" placeholder="Min sqft" class="h-10 rounded-xl text-xs">
+        <input type="number" name="max_area_sqft" value="{{ request('max_area_sqft') }}" placeholder="Max sqft" class="h-10 rounded-xl text-xs">
         <div class="flex gap-2">
             <button class="rounded-xl bg-slate-900 px-4 text-xs font-bold text-white">Filter</button>
             <a href="{{ route('admin.all-rooms') }}" class="flex h-10 items-center rounded-xl border px-3 text-xs font-bold text-slate-700">Reset</a>
@@ -131,7 +145,13 @@
                                 </div>
                             </td>
                             <td class="px-4 text-xs font-bold text-slate-600">
-                                {{ $room->propertyType?->name ?? 'N/A' }}
+                                <span class="block">{{ $room->propertyType?->name ?? 'N/A' }}</span>
+                                @if($room->propertyCategory?->name)
+                                    <span class="mt-1 block text-[10px] font-semibold text-slate-400">{{ $room->propertyCategory->name }}</span>
+                                @endif
+                                @if($room->area_sqft)
+                                    <span class="mt-1 block text-[10px] font-semibold text-slate-500">{{ number_format((float)$room->area_sqft, 2) }} sqft</span>
+                                @endif
                             </td>
                             <td class="px-4">
                                 <div class="flex justify-end items-center gap-2">

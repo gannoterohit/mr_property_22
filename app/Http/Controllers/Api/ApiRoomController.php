@@ -25,7 +25,7 @@ class ApiRoomController extends BaseApiController
     public function index(Request $request)
     {
         $query = Room::query()
-            ->with('owner')
+            ->with(['owner', 'propertyType', 'propertyCategory'])
             ->where('status', 'active')
             ->where('listing_fee_paid', true)
             ->where('listing_status', 'approved');
@@ -56,6 +56,14 @@ class ApiRoomController extends BaseApiController
 
         if ($request->filled('property_category_id')) {
             $query->whereIn('property_category_id', (array) $request->property_category_id);
+        }
+
+        if ($request->filled('min_area_sqft')) {
+            $query->where('area_sqft', '>=', $request->min_area_sqft);
+        }
+
+        if ($request->filled('max_area_sqft')) {
+            $query->where('area_sqft', '<=', $request->max_area_sqft);
         }
 
         if ($furnishingFilter !== null && $furnishingFilter !== '') {
@@ -99,6 +107,10 @@ class ApiRoomController extends BaseApiController
                         'room_type_option_id' => $roomTypeFilter,
                         'furnishing_option_id' => $furnishingFilter,
                         'tenant_option_id' => $tenantFilter,
+                        'property_type_id' => $request->property_type_id,
+                        'property_category_id' => $request->property_category_id,
+                        'min_area_sqft' => $request->min_area_sqft,
+                        'max_area_sqft' => $request->max_area_sqft,
                         'is_api' => true,
                     ],
                     'user_id' => Auth::id(),

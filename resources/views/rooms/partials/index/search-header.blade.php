@@ -39,6 +39,20 @@
                     </div>
                 </div>
 
+                <!-- Property Category -->
+                <div class="flex-1 min-w-[180px] border-r border-slate-100 pr-4">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Category</label>
+                    <div class="relative">
+                        <i class="fas fa-layer-group absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <select name="property_category_id" class="w-full py-2 pl-8 pr-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none appearance-none transition-all">
+                            <option value="">Any Category</option>
+                            @foreach(($propertyCategories ?? collect()) as $category)
+                                <option value="{{ $category->id }}" {{ request('property_category_id') == $category->id ? 'selected' : '' }}>{{ $category->propertyType?->name ? $category->propertyType->name.' - ' : '' }}{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Budget -->
                 <div class="flex-1 min-w-[150px] border-r border-slate-100 pr-4">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Max Budget (₹/mo)</label>

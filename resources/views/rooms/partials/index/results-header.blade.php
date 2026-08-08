@@ -59,6 +59,13 @@
                     else $label .= 'Max ₹' . request('max_rent');
                     $activeFilters['budget'] = ['label' => $label, 'param' => ['min_rent', 'max_rent']];
                 }
+                if (request('min_area_sqft') || request('max_area_sqft')) {
+                    $label = 'Area: ';
+                    if (request('min_area_sqft') && request('max_area_sqft')) $label .= request('min_area_sqft') . ' - ' . request('max_area_sqft') . ' sqft';
+                    elseif (request('min_area_sqft')) $label .= 'Min ' . request('min_area_sqft') . ' sqft';
+                    else $label .= 'Max ' . request('max_area_sqft') . ' sqft';
+                    $activeFilters['area_sqft'] = ['label' => $label, 'param' => ['min_area_sqft', 'max_area_sqft']];
+                }
                 if (request('tenant_type')) {
                     foreach((array)request('tenant_type') as $t) {
                         $activeFilters['tenant_type_' . $t] = ['label' => \App\Models\RoomOption::getLabel('tenant_type', $t), 'param' => 'tenant_type', 'value' => $t];

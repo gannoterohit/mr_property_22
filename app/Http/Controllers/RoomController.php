@@ -5,6 +5,7 @@ use App\Models\Room;
 use App\Models\Payment;
 use App\Models\Enquiry;
 use App\Models\RoomOption;
+use App\Models\PropertyCategory;
 use App\Models\PropertyType;
 use App\Models\Setting;
 use App\Models\SubscriptionUsage;
@@ -124,6 +125,14 @@ class RoomController extends Controller {
         $query->whereIn('property_category_id', (array) $request->property_category_id);
     }
 
+    if ($request->filled('min_area_sqft')) {
+        $query->where('area_sqft', '>=', $request->min_area_sqft);
+    }
+
+    if ($request->filled('max_area_sqft')) {
+        $query->where('area_sqft', '<=', $request->max_area_sqft);
+    }
+
     if ($request->filled('area')) {
         $area = trim($request->area);
         if ($area !== '') {
@@ -170,7 +179,7 @@ class RoomController extends Controller {
         $query->orderBy('created_at', 'desc');
     }
     
-    $rooms = $query->with(['user:id,name,avatar'])
+    $rooms = $query->with(['user:id,name,avatar', 'propertyType', 'propertyCategory', 'roomTypeOption', 'furnishingOption', 'tenantOption'])
                    ->paginate(20)
                    ->withQueryString();
 
@@ -197,6 +206,10 @@ class RoomController extends Controller {
                 'filters' => [
                     'min_rent' => $request->min_rent,
                     'max_rent' => $request->max_rent,
+                    'property_type_id' => $request->property_type_id,
+                    'property_category_id' => $request->property_category_id,
+                    'min_area_sqft' => $request->min_area_sqft,
+                    'max_area_sqft' => $request->max_area_sqft,
                     'is_auto_detected' => ! $request->filled('city') // Flag to know it was passive
                 ],
                 'user_id' => Auth::id(),
@@ -220,6 +233,22 @@ class RoomController extends Controller {
     $propertyTypes = PropertyType::where('status', true)
         ->orderBy('name')
         ->get(['id', 'name']);
+
+    $propertyCategoryCounts = Room::select('property_category_id', DB::raw('count(*) as total'))
+        ->where('status', 'active')
+        ->where('listing_status', 'approved')
+        ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
+        ->whereNotNull('property_category_id')
+        ->groupBy('property_category_id')
+        ->pluck('total', 'property_category_id')
+        ->map(fn ($total) => (int) $total)
+        ->toArray();
+
+    $propertyCategories = PropertyCategory::with('propertyType:id,name')
+        ->where('status', true)
+        ->orderBy('property_type_id')
+        ->orderBy('name')
+        ->get(['id', 'property_type_id', 'name']);
 
     // Dynamic rent bounds from actual DB data
     $rentBounds = Room::where('status', 'active')
@@ -252,7 +281,7 @@ class RoomController extends Controller {
 
     return view('rooms.index', compact(
         'rooms', 'popularCities', 'propertyTypes', 'propertyTypeCounts',
-        'rentBounds', 'tenantTypeCounts', 'furnishingCounts', 'cityContext'
+        'propertyCategories', 'propertyCategoryCounts', 'rentBounds', 'tenantTypeCounts', 'furnishingCounts', 'cityContext'
     ));
     }
     
@@ -641,14 +670,16 @@ class RoomController extends Controller {
             $isUnlocked = true;
         }
         
-        $room->load('owner');
+        $room->load(['owner', 'propertyType', 'propertyCategory', 'roomTypeOption', 'furnishingOption', 'tenantOption']);
 
         $relatedRooms = Room::query()
             ->whereKeyNot($room->getKey())
             ->where('city', $room->city)
             ->where('status', 'active')
             ->where('listing_status', 'approved')
-            ->with('owner')
+            ->when($room->property_category_id, fn ($query) => $query->where('property_category_id', $room->property_category_id))
+            ->when(!$room->property_category_id && $room->property_type_id, fn ($query) => $query->where('property_type_id', $room->property_type_id))
+            ->with(['owner', 'propertyType', 'propertyCategory'])
             ->orderByDesc('is_featured')
             ->latest()
             ->take(4)

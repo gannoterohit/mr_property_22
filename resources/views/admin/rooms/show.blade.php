@@ -160,12 +160,12 @@
 
             <section class="grid gap-5 lg:grid-cols-2">
                 <div class="rounded-2xl border bg-white p-5 shadow-sm">
-                    <h2 class="text-sm font-extrabold text-slate-950">Amenities</h2>
+                    <h2 class="text-sm font-extrabold text-slate-950">Facilities</h2>
                     <div class="mt-4 flex flex-wrap gap-2">
                         @forelse($currentAmenities as $amenity)
                             <span class="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-600">{{ $amenity }}</span>
                         @empty
-                            <p class="text-sm text-slate-500">No amenities listed.</p>
+                            <p class="text-sm text-slate-500">No facilities listed.</p>
                         @endforelse
                     </div>
                 </div>

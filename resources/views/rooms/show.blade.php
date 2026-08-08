@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', ($room->title ?? 'Room') . ' in ' . $room->city . ' | ' . \App\Models\Setting::get('website_name', 'RoomRental'))
-@section('description', 'Looking for ' . ($room->title ?? 'a room') . ' in ' . $room->city . ($room->landmarks ? ' near ' . implode(', ', $room->landmarks) : '') . '? Rent starts at ₹' . number_format($room->rent) . '. Verified listings with photos, amenities, and owner contact.')
+@section('description', 'Looking for ' . ($room->title ?? 'a property') . ' in ' . $room->city . ($room->landmarks ? ' near ' . implode(', ', $room->landmarks) : '') . '? Rent starts at ₹' . number_format($room->rent) . '. Verified listings with photos, facilities, and owner contact.')
 @section('keywords', 'pg in ' . $room->city . ', room on rent in ' . $room->city . ', paying guest for ' . $room->tenantTypeLabel() . ' in ' . $room->city . ', ' . ($room->roomTypeLabel() !== 'N/A' ? $room->roomTypeLabel() : 'room') . ' in ' . $room->city . ($room->landmarks ? ', ' . implode(', ', $room->landmarks) : ''))
 @section('og_title', ($room->title ?? 'Room') . ' in ' . $room->city . ' - ₹' . number_format($room->rent))
 @section('og_description', Str::limit(($room->description ?? 'Find your perfect room in ' . $room->city) . ($room->landmarks ? '. Nearby: ' . implode(', ', $room->landmarks) : ''), 155))
@@ -243,7 +243,7 @@
                     </div>
                 </div>
 
-                {{-- 1st Ad Slot: Above Description/Amenities --}}
+                {{-- 1st Ad Slot: Above Description/Facilities --}}
                 <div class="mb-4">
                      @include('partials.adsense-slot', ['placement' => 'room_content'])
                 </div>
@@ -264,7 +264,7 @@
                         <div class="{{ $room->description ? 'border-t pt-4' : '' }}">
                             <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
                                 <i class="fas fa-check-circle text-green-600"></i>
-                                Amenities
+                                Facilities
                             </h2>
                             <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
                                 @foreach($room->amenities as $amenity)

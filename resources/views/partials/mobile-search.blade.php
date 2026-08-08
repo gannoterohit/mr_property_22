@@ -55,6 +55,20 @@
                         <i class="fas fa-chevron-down text-indigo-400 text-[9px]"></i>
                     </div>
                 </div>
+
+                <div class="relative min-w-[36%] flex-1">
+                    <label for="mobile_property_category" class="sr-only">Property Category</label>
+                    @php $mobilePropertyCategories = $propertyCategories ?? App\Models\PropertyCategory::where('status', true)->orderBy('name')->get(); @endphp
+                    <select id="mobile_property_category" name="property_category_id" aria-label="Select property category" class="w-full pl-3 pr-6 py-2 bg-white border border-indigo-100 rounded-full text-[11px] font-bold text-gray-600 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none shadow-sm shadow-indigo-100/50">
+                        <option value="">Category</option>
+                        @foreach($mobilePropertyCategories as $category)
+                            <option value="{{ $category->id }}" {{ request('property_category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                        <i class="fas fa-chevron-down text-indigo-400 text-[9px]"></i>
+                    </div>
+                </div>
             </div>
 
             <!-- Price Filters (Collapsible/Inline) -->

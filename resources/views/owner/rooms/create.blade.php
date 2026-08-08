@@ -191,9 +191,9 @@
                         </div>
                     </div>
 
-                    <!-- Amenities -->
+                    <!-- Facilities -->
                     <div class="owner-form-wide bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
-                        <h3 class="text-xl font-black text-gray-900 border-b pb-4 mb-6">Common Amenities</h3>
+                        <h3 class="text-xl font-black text-gray-900 border-b pb-4 mb-6">Common Facilities</h3>
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                             @foreach(\App\Models\RoomOption::optionsFor('amenity') as $amenityOption)
                                 @php $amenity = $amenityOption->label; @endphp

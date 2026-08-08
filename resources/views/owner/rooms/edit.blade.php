@@ -208,13 +208,13 @@
                         </div>
 
                             
-                        <!-- Amenities Card -->
+                        <!-- Facilities Card -->
                         <div class="owner-form-wide bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6">
                             <h3 class="text-lg font-black text-gray-900 mb-6 flex items-center gap-2">
                                 <span class="w-8 h-8 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 text-sm">
                                     <i class="fas fa-wifi"></i>
                                 </span>
-                                Amenities
+                                Facilities
                             </h3>
                             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                 @php

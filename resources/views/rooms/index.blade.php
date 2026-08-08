@@ -7,7 +7,7 @@
 @php
     $cityContext = $cityContext ?? ['isFallback' => false, 'activeCityName' => request('city') ?? session('user_city'), 'launchingSoonCityName' => null];
     $displayCity = $cityContext['launchingSoonCityName'] ?? $cityContext['activeCityName'] ?? request('city') ?? session('user_city');
-    $hasMetaSearchIntent = request()->hasAny(['city', 'min_rent', 'max_rent', 'property_type_id', 'property_category_id', 'tenant_type', 'furnishing_type', 'available_now', 'availability_from']);
+    $hasMetaSearchIntent = request()->hasAny(['city', 'min_rent', 'max_rent', 'min_area_sqft', 'max_area_sqft', 'property_type_id', 'property_category_id', 'tenant_type', 'furnishing_type', 'available_now', 'availability_from']);
 @endphp
 
 @push('styles')
@@ -25,6 +25,39 @@
         top: 80px;
         max-height: calc(100vh - 100px);
         overflow-y: auto;
+    }
+    .rooms-filter-form {
+        padding-bottom: 74px;
+    }
+    .rooms-amenities-scroll {
+        max-height: 190px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        background: #f8fafc;
+    }
+    .rooms-amenities-scroll::-webkit-scrollbar {
+        width: 6px;
+    }
+    .rooms-amenities-scroll::-webkit-scrollbar-track {
+        background: #e2e8f0;
+        border-radius: 999px;
+    }
+    .rooms-amenities-scroll::-webkit-scrollbar-thumb {
+        background: rgba(var(--primary-rgb), .5);
+        border-radius: 999px;
+    }
+    .rooms-filter-actions {
+        position: sticky;
+        bottom: 0;
+        z-index: 8;
+        margin: 0 -1.25rem -1.25rem;
+        padding: 12px 1.25rem;
+        border-top: 1px solid #e2e8f0;
+        background: rgba(255, 255, 255, .96);
+        backdrop-filter: blur(10px);
     }
     /* Scrollbar styling for sidebar */
     .filter-sticky {

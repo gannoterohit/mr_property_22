@@ -9,7 +9,7 @@
                     </a>
                 </div>
 
-                <form action="{{ route('rooms.index') }}" method="GET" class="space-y-4">
+                <form action="{{ route('rooms.index') }}" method="GET" class="rooms-filter-form space-y-4">
                     <!-- Locality Input -->
                     <div class="space-y-2">
                         <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Location</label>
@@ -48,6 +48,32 @@
                             @empty
                                 <p class="rounded-lg bg-amber-50 px-3 py-2 text-[11px] font-semibold text-amber-700">
                                     No active property types configured.
+                                </p>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Property Category</label>
+                        <div class="space-y-2.5">
+                            @forelse(($propertyCategories ?? collect()) as $category)
+                                @php
+                                    $count = $propertyCategoryCounts[$category->id] ?? 0;
+                                    $isChecked = in_array($category->id, (array)request('property_category_id'));
+                                @endphp
+                                @if($count > 0 || $isChecked)
+                                    <label class="flex items-center justify-between text-xs text-slate-600 font-semibold cursor-pointer hover:text-indigo-600 transition-colors">
+                                        <span class="flex items-center gap-2">
+                                            <input type="checkbox" name="property_category_id[]" value="{{ $category->id }}" {{ $isChecked ? 'checked' : '' }}
+                                                   class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20">
+                                            <span>{{ $category->name }}</span>
+                                        </span>
+                                        <span class="text-[9px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded-full">{{ $count }}</span>
+                                    </label>
+                                @endif
+                            @empty
+                                <p class="rounded-lg bg-amber-50 px-3 py-2 text-[11px] font-semibold text-amber-700">
+                                    No active property categories configured.
                                 </p>
                             @endforelse
                         </div>
@@ -96,6 +122,22 @@
 
                     <!-- Gender Preference — dynamic from DB tenant type counts -->
                     <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Area (sq ft)</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="space-y-1">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Min</span>
+                                <input type="number" name="min_area_sqft" value="{{ request('min_area_sqft') }}" placeholder="Min sqft"
+                                       class="w-full py-1.5 px-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                            </div>
+                            <div class="space-y-1">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Max</span>
+                                <input type="number" name="max_area_sqft" value="{{ request('max_area_sqft') }}" placeholder="Max sqft"
+                                       class="w-full py-1.5 px-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
                         <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Gender Preference</label>
                         <div class="space-y-2">
                             @foreach(App\Models\RoomOption::optionsFor('tenant_type') as $option)
@@ -140,10 +182,18 @@
                         </div>
                     </div>
 
-                    <!-- Amenities -->
+                    <!-- Facilities -->
                     <div class="space-y-2">
-                        <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Amenities</label>
-                        <div class="space-y-2">
+                        @php
+                            $selectedAmenities = (array) request('amenities');
+                        @endphp
+                        <div class="flex items-center justify-between gap-2">
+                            <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Facilities</label>
+                            @if(count($selectedAmenities))
+                                <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-black text-indigo-600">{{ count($selectedAmenities) }} selected</span>
+                            @endif
+                        </div>
+                        <div class="rooms-amenities-scroll space-y-2">
                             @php
                                 $amenityOpts = \App\Models\RoomOption::optionsFor('amenity')
                                     ->pluck('label', 'label')
@@ -178,9 +228,11 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" class="room-theme-primary-button w-full py-2.5 font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 text-xs">
-                        Apply Filters
-                    </button>
+                    <div class="rooms-filter-actions">
+                        <button type="submit" class="room-theme-primary-button w-full py-2.5 font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 text-xs">
+                            <i class="fas fa-filter text-[10px]"></i> Apply Filters
+                        </button>
+                    </div>
                 </form>
             </div>
             <div class="mt-5">

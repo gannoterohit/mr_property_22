@@ -119,7 +119,7 @@ class AdminController extends Controller
 
     public function rooms(Request $request)
     {
-        $query = Room::with(['owner', 'roomTypeOption'])->whereHas('owner');
+        $query = Room::with(['owner', 'roomTypeOption', 'propertyType', 'propertyCategory'])->whereHas('owner');
         if ($request->filled('search')) {
             $query->where(fn ($q) => $q->where('title', 'like', '%'.$request->search.'%')->orWhere('city', 'like', '%'.$request->search.'%'));
         }
@@ -138,6 +138,18 @@ class AdminController extends Controller
         if ($request->filled('room_type')) {
             $query->where('room_type_option_id', $request->room_type);
         }
+        if ($request->filled('property_type_id')) {
+            $query->where('property_type_id', $request->property_type_id);
+        }
+        if ($request->filled('property_category_id')) {
+            $query->where('property_category_id', $request->property_category_id);
+        }
+        if ($request->filled('min_area_sqft')) {
+            $query->where('area_sqft', '>=', $request->min_area_sqft);
+        }
+        if ($request->filled('max_area_sqft')) {
+            $query->where('area_sqft', '<=', $request->max_area_sqft);
+        }
         if ($request->filled('kyc')) {
             $query->whereHas('owner', fn ($q) => $q->where('verification_status', $request->kyc));
         }
@@ -147,8 +159,10 @@ class AdminController extends Controller
         $allrooms = $query->latest()->paginate($perPage)->withQueryString();
         $rejectionReasons = RejectionReason::where('is_active', true)->get();
         $cities = Room::whereNotNull('city')->distinct()->orderBy('city')->pluck('city');
+        $propertyTypes = \App\Models\PropertyType::where('status', true)->orderBy('name')->get(['id', 'name']);
+        $propertyCategories = \App\Models\PropertyCategory::with('propertyType:id,name')->where('status', true)->orderBy('property_type_id')->orderBy('name')->get(['id', 'property_type_id', 'name']);
 
-        return view('admin.rooms.index', compact('allrooms', 'rejectionReasons', 'cities'));
+        return view('admin.rooms.index', compact('allrooms', 'rejectionReasons', 'cities', 'propertyTypes', 'propertyCategories'));
     }
 
     public function bulkRooms(Request $request)
