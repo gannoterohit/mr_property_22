@@ -191,7 +191,7 @@ class RazorpayController extends Controller
                 $room->update(['is_featured' => true]);
             }
         } elseif ($paymentType === 'unlock' && $referenceId) {
-            $unlockRoom = \App\Models\Room::whereKey($referenceId)->where('status', 'active')->where('listing_status', 'approved')->where('listing_fee_paid', true)->firstOrFail();
+            $unlockRoom = \App\Models\Room::publicVisible()->whereKey($referenceId)->firstOrFail();
             // Unlock contact details
             $enquiry = \App\Models\Enquiry::where('room_id', $referenceId)
                 ->where('user_id', $payment->user_id)

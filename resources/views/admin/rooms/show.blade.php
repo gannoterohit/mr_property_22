@@ -52,7 +52,7 @@
         </div>
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('rooms.show', $room) }}" target="_blank" class="rounded-xl border bg-white px-4 py-2.5 text-xs font-bold text-slate-700"><i class="fas fa-up-right-from-square mr-2"></i>Public preview</a>
-            <a href="{{ route('admin.rooms.edit', $room) }}" class="admin-theme-bg rounded-xl px-4 py-2.5 text-xs font-bold"><i class="fas fa-pen mr-2"></i>Edit property</a>
+            <x-admin.action-icon variant="edit" :href="route('admin.rooms.edit', $room)" title="Edit property" />
         </div>
     </header>
 
@@ -224,10 +224,10 @@
                             <button class="w-full rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white"><i class="fas fa-check mr-2"></i>Approve listing</button>
                         </form>
                     @endif
-                    <a href="{{ route('admin.rooms.edit', $room) }}" class="flex h-11 items-center justify-center rounded-xl border bg-white text-sm font-bold text-slate-700"><i class="fas fa-pen mr-2"></i>Edit listing</a>
+                    <x-admin.action-icon variant="edit" :href="route('admin.rooms.edit', $room)" title="Edit listing" />
                     <form method="POST" action="{{ route('admin.rooms.destroy', $room) }}" class="admin-confirm" data-confirm-title="Delete this property listing?" data-confirm-text="This listing and its related data will be permanently removed." data-confirm-button="Yes, delete listing">
                         @csrf @method('DELETE')
-                        <button class="w-full rounded-xl bg-red-50 py-3 text-sm font-bold text-red-700"><i class="fas fa-trash mr-2"></i>Delete listing</button>
+                        <x-admin.action-icon variant="delete" type="submit" title="Delete listing" />
                     </form>
                 </div>
             </section>

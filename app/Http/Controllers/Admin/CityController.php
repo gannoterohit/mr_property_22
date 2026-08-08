@@ -70,7 +70,7 @@ class CityController extends Controller
         }
 
         $data['slug'] = Str::slug($data['name']);
-        $data['is_active'] = $request->boolean('is_active');
+        $data['is_active'] = $request->has('is_active') ? $request->boolean('is_active') : $city->is_active;
         $data['is_default'] = $request->boolean('is_default');
 
         $city->update($data);
@@ -87,6 +87,25 @@ class CityController extends Controller
         $city->update(['is_active' => !$city->is_active]);
 
         return back()->with('success', $city->is_active ? 'City activated successfully.' : 'City deactivated successfully.');
+    }
+
+    public function destroy(City $city)
+    {
+        if ($city->is_default) {
+            return back()->with('error', 'Default city cannot be deleted. Set another city as default first.');
+        }
+
+        $hasListings = \App\Models\Room::where('city', $city->name)->exists();
+        $hasAlerts = \App\Models\CityAlert::where('city', $city->name)->exists();
+
+        if ($hasListings || $hasAlerts) {
+            return back()->with('error', 'This city has related listings or alerts. Deactivate it instead of deleting.');
+        }
+
+        $this->deleteStoredCityImage($city->image_url);
+        $city->delete();
+
+        return redirect()->route('admin.cities.index')->with('success', 'City deleted successfully.');
     }
 
     protected function handleCityImageUpload(Request $request, ?City $city = null): ?string

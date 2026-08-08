@@ -19,11 +19,19 @@
         </div>
         <div class="flex flex-wrap items-center gap-2">
             <span class="rounded-full px-3 py-2 text-xs font-bold {{ $user->is_blocked?'bg-red-50 text-red-700':'bg-emerald-50 text-emerald-700' }}">{{ $user->is_blocked?'Blocked account':'Active account' }}</span>
+            <x-admin.status-toggle
+                :active="!$user->is_blocked"
+                active-label="Active"
+                inactive-label="Blocked"
+                :action="route('admin.users.toggleBlock', $user)"
+                :data-label="$user->name"
+                method="POST"
+            />
             <button onclick="document.getElementById('direct-msg-card').scrollIntoView({behavior:'smooth'})" class="rounded-xl border bg-indigo-50 px-4 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition"><i class="fas fa-paper-plane mr-1"></i>Send Message</button>
-            <a href="{{ route('admin.users.edit',$user) }}" class="rounded-xl border bg-white px-4 py-2 text-xs font-bold text-slate-700"><i class="fas fa-pen mr-1"></i>Edit</a>
+            <x-admin.action-icon variant="edit" :href="route('admin.users.edit',$user)" />
             <form method="POST" action="{{ route('admin.users.destroy',$user) }}" class="admin-confirm" data-confirm-title="Delete {{ $user->name }}?" data-confirm-text="The account will be removed but can be restored later." data-confirm-button="Yes, delete account">
                 @csrf @method('DELETE')
-                <button class="rounded-xl bg-red-50 px-4 py-2 text-xs font-bold text-red-700"><i class="fas fa-trash mr-1"></i>Delete</button>
+                <x-admin.action-icon variant="delete" type="submit" />
             </form>
         </div>
 

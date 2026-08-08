@@ -225,7 +225,7 @@
                                     <td class="px-5"><strong class="text-xs">{{ $log->city?:'All cities' }}</strong><p class="text-[10px] text-slate-400">{{ $log->search_term?:'Auto-detected' }}</p></td>
                                     <td class="px-5"><p class="text-xs font-semibold">{{ $log->user?->name?:'Guest visitor' }}</p><p class="text-[10px] text-slate-400">{{ $log->ip_address }}</p></td>
                                     <td class="px-5"><div class="flex max-w-lg flex-wrap gap-1">@forelse(collect($log->filters)->filter() as $key=>$value)<span class="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-semibold">{{ ucfirst(str_replace('_',' ',$key)) }}: {{ is_array($value)?implode(', ',$value):$value }}</span>@empty<span class="text-xs text-slate-400">No filters</span>@endforelse</div></td>
-                                    <td class="px-5"><form method="POST" action="{{ route('admin.analytics.logs.destroy',$log) }}" class="confirm-one">@csrf @method('DELETE')<button class="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-700"><i class="fas fa-trash"></i></button></form></td>
+                                    <td class="px-5"><form method="POST" action="{{ route('admin.analytics.logs.destroy',$log) }}" class="confirm-one">@csrf @method('DELETE')<x-admin.action-icon variant="delete" type="submit" /></form></td>
                                 </tr>
                             @empty
                                 <tr><td colspan="5" class="p-12 text-center text-sm text-slate-500">No search logs found.</td></tr>

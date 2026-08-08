@@ -8,6 +8,7 @@ use App\Models\Offer;
 use App\Models\Setting;
 use App\Models\Subscriber;
 use App\Models\CityAlert;
+use App\Models\Room;
 use App\Models\RoomOption;
 use App\Http\Resources\BlogResource;
 use App\Services\HtmlSanitizer;
@@ -90,6 +91,13 @@ class AdminContentController extends BaseApiController
         if (!$blog) return $this->sendError('Blog not found');
         $blog->delete();
         return $this->sendSuccess([], 'Blog deleted');
+    }
+
+    public function toggleBlog($id) {
+        $blog = Blog::find($id);
+        if (!$blog) return $this->sendError('Blog not found');
+        $blog->update(['is_published' => ! $blog->is_published]);
+        return $this->sendSuccess(['is_published' => $blog->is_published], 'Blog status updated');
     }
 
     /**
@@ -180,10 +188,27 @@ class AdminContentController extends BaseApiController
         return $this->sendSuccess(RoomOption::create($data),'Room option created',201);
     }
     public function updateRoomOption(Request $request, RoomOption $option) {
-        $data=$request->validate(['label'=>'required|string|max:100','icon'=>'nullable|string|max:100','sort_order'=>'nullable|integer|min:0','is_active'=>'nullable|boolean']);$option->update($data);return $this->sendSuccess($option->fresh(),'Room option updated');
+        $data=$request->validate(['label'=>'required|string|max:100','icon'=>'nullable|string|max:100','sort_order'=>'nullable|integer|min:0','is_active'=>'nullable|boolean']);
+        if($request->has('is_active'))$data['is_active']=$request->boolean('is_active');
+        $option->update($data);return $this->sendSuccess($option->fresh(),'Room option updated');
     }
     public function toggleRoomOption(RoomOption $option) {$option->update(['is_active'=>!$option->is_active]);return $this->sendSuccess($option,'Room option status updated');}
-    public function destroyRoomOption(RoomOption $option) {$option->delete();return $this->sendSuccess([],'Room option deleted');}
+    public function destroyRoomOption(RoomOption $option) {
+        $isUsed = match ($option->group) {
+            'room_type' => Room::where('room_type_option_id', $option->id)->exists(),
+            'furnishing_type' => Room::where('furnishing_option_id', $option->id)->exists(),
+            'tenant_type' => Room::where('tenant_option_id', $option->id)->exists(),
+            'amenity' => Room::whereJsonContains('amenities', $option->label)->exists(),
+            default => false,
+        };
+
+        if ($isUsed) {
+            $option->update(['is_active' => false]);
+            return $this->sendSuccess(['is_active' => false], 'Room option is in use, so it was deactivated');
+        }
+
+        $option->delete();return $this->sendSuccess([],'Room option deleted');
+    }
 
     private function offerData(Request $request, bool $partial = false): array
     {

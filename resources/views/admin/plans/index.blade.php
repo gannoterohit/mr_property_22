@@ -59,11 +59,10 @@
                             <td class="px-5 font-bold text-slate-900">&#8377;{{ number_format($plan->price) }}</td>
                             <td class="px-5 text-slate-600">{{ $limit == -1 ? 'Unlimited' : number_format($limit) }} {{ $plan->type === 'owner' ? 'listings' : 'unlocks' }}</td>
                             <td class="px-5 text-slate-600">{{ $plan->duration_days }} days</td>
-                            <td class="px-5"><span class="inline-flex items-center gap-1.5 text-xs font-bold {{ $plan->is_active ? 'text-emerald-700' : 'text-slate-400' }}"><span class="h-2 w-2 rounded-full {{ $plan->is_active ? 'bg-emerald-500' : 'bg-slate-300' }}"></span>{{ $plan->is_active ? 'Active' : 'Inactive' }}</span></td>
+                            <td class="px-5"><x-admin.status-toggle :active="$plan->is_active" :action="route('admin.plans.toggleActive', $plan)" :data-label="$plan->name" method="POST" /></td>
                             <td class="px-5"><div class="flex justify-end gap-2">
-                                <form action="{{ route('admin.plans.toggleActive', $plan) }}" method="POST">@csrf<button class="h-9 rounded-lg border border-slate-200 px-3 text-xs font-bold {{ $plan->is_active ? 'text-amber-700 hover:bg-amber-50' : 'text-emerald-700 hover:bg-emerald-50' }}">{{ $plan->is_active ? 'Deactivate' : 'Activate' }}</button></form>
-                                <a href="{{ route('admin.plans.edit', $plan) }}" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100" title="Edit"><i class="fas fa-pen text-xs"></i></a>
-                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="admin-confirm" data-confirm-title="Delete {{ $plan->name }}?" data-confirm-text="Existing subscription history may be affected." data-confirm-button="Yes, delete plan">@csrf @method('DELETE')<button class="h-9 w-9 rounded-lg border border-red-200 text-red-600 hover:bg-red-50" title="Delete"><i class="fas fa-trash text-xs"></i></button></form>
+                                <x-admin.action-icon variant="edit" :href="route('admin.plans.edit', $plan)" />
+                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="admin-confirm" data-confirm-title="Delete {{ $plan->name }}?" data-confirm-text="Existing subscription history may be affected." data-confirm-button="Yes, delete plan">@csrf @method('DELETE')<x-admin.action-icon variant="delete" type="submit" /></form>
                             </div></td>
                         </tr>
                     @empty
@@ -79,7 +78,7 @@
                 <article x-show="(filter === 'all' || filter === '{{ $plan->type }}') && '{{ strtolower(addslashes($plan->name)) }}'.includes(query.toLowerCase())" class="p-4">
                     <div class="flex items-start justify-between gap-3"><div><h3 class="font-bold text-slate-900">{{ $plan->name }}</h3><p class="mt-1 text-xs text-slate-500">{{ ucfirst($plan->type) }} · {{ $plan->duration_days }} days</p></div><span class="text-lg font-bold text-slate-950">&#8377;{{ number_format($plan->price) }}</span></div>
                     <div class="my-4 flex items-center justify-between rounded-lg bg-slate-50 p-3 text-sm"><span class="text-slate-500">Credits</span><strong class="text-slate-900">{{ $limit == -1 ? 'Unlimited' : $limit }} {{ $plan->type === 'owner' ? 'listings' : 'unlocks' }}</strong></div>
-                    <div class="flex gap-2"><form class="flex-1" action="{{ route('admin.plans.toggleActive', $plan) }}" method="POST">@csrf<button class="w-full rounded-lg border border-slate-200 py-2 text-xs font-bold">{{ $plan->is_active ? 'Deactivate' : 'Activate' }}</button></form><a href="{{ route('admin.plans.edit', $plan) }}" class="admin-theme-bg rounded-lg px-4 py-2 text-xs font-bold">Edit</a></div>
+                    <div class="flex items-center justify-between gap-2"><x-admin.status-toggle :active="$plan->is_active" :action="route('admin.plans.toggleActive', $plan)" :data-label="$plan->name" method="POST" /><x-admin.action-icon variant="edit" :href="route('admin.plans.edit', $plan)" /></div>
                 </article>
             @empty
                 <div class="p-12 text-center text-sm text-slate-500">No plans created yet.</div>

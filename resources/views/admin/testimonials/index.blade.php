@@ -44,12 +44,18 @@
                             </td>
                             <td class="p-4 text-amber-500 text-xs">@for($i=1;$i<=5;$i++)<i class="fas fa-star {{ $i <= $testimonial->rating ? '' : 'text-slate-200' }}"></i>@endfor</td>
                             <td class="p-4 text-xs font-bold text-slate-600">{{ $testimonial->sort_order }}</td>
-                            <td class="p-4"><span class="rounded-lg px-2.5 py-1 text-[10px] font-extrabold {{ $testimonial->status === 'active' ? 'bg-emerald-50 text-emerald-700' : ($testimonial->status === 'pending' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-500') }}">{{ ucfirst($testimonial->status) }}</span></td>
+                            <td class="p-4">
+                                <x-admin.status-toggle
+                                    :active="$testimonial->status === 'active'"
+                                    :inactive-label="ucfirst($testimonial->status)"
+                                    :action="route('admin.testimonials.toggle-status', $testimonial)"
+                                    :data-label="$testimonial->name"
+                                />
+                            </td>
                             <td class="p-4">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{{ route('admin.testimonials.edit', $testimonial) }}" class="rounded-lg admin-theme-soft px-3 py-2 text-xs font-bold admin-theme-text"><i class="fas fa-edit mr-1"></i>Edit</a>
-                                    <form method="POST" action="{{ route('admin.testimonials.toggle-status', $testimonial) }}">@csrf @method('PATCH')<button class="rounded-lg bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700"><i class="fas fa-{{ $testimonial->status === 'active' ? 'pause' : 'play' }} mr-1"></i>{{ $testimonial->status === 'active' ? 'Disable' : 'Activate' }}</button></form>
-                                    <form method="POST" action="{{ route('admin.testimonials.destroy', $testimonial) }}" class="admin-confirm" data-confirm-title="Delete review by {{ $testimonial->name }}?" data-confirm-text="This testimonial will be permanently removed." data-confirm-button="Yes, delete review">@csrf @method('DELETE')<button class="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-700"><i class="fas fa-trash"></i></button></form>
+                                    <x-admin.action-icon variant="edit" :href="route('admin.testimonials.edit', $testimonial)" />
+                                    <form method="POST" action="{{ route('admin.testimonials.destroy', $testimonial) }}" class="admin-confirm" data-confirm-title="Delete review by {{ $testimonial->name }}?" data-confirm-text="This testimonial will be permanently removed." data-confirm-button="Yes, delete review">@csrf @method('DELETE')<x-admin.action-icon variant="delete" type="submit" /></form>
                                 </div>
                             </td>
                         </tr>

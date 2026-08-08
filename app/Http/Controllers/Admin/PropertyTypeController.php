@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PropertyType;
+use App\Models\Room;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class PropertyTypeController extends Controller
 {
@@ -54,8 +54,8 @@ class PropertyTypeController extends Controller
 
     public function destroy(PropertyType $propertyType)
     {
-        if ($propertyType->categories()->exists()) {
-            return redirect()->back()->with('error', 'Deactivate this property type instead of deleting it while categories are still attached.');
+        if ($propertyType->categories()->exists() || Room::where('property_type_id', $propertyType->id)->exists()) {
+            return redirect()->back()->with('error', 'This property type is in use. Deactivate it instead of deleting it.');
         }
 
         $propertyType->delete();

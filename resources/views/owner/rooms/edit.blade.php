@@ -219,9 +219,8 @@
                             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                 @php
                                     $amenityOptions = \App\Models\RoomOption::optionsFor('amenity');
-                                    $savedAmenities = collect($room->amenities ?? [])->diff($amenityOptions->pluck('label'));
                                 @endphp
-                                @foreach($amenityOptions->pluck('label')->concat($savedAmenities)->unique() as $amenity)
+                                @foreach($amenityOptions->pluck('label')->unique() as $amenity)
                                 <label class="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl cursor-pointer hover:bg-indigo-50 transition border border-transparent hover:border-indigo-100">
                                     <input type="checkbox" name="amenities[]" value="{{ $amenity }}" 
                                            {{ in_array($amenity, $room->amenities ?? []) ? 'checked' : '' }}

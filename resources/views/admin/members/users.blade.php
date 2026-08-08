@@ -6,7 +6,7 @@
 <style>
     .people-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .people-filter{display:grid;grid-template-columns:minmax(260px,1fr) 180px auto;gap:10px}
-    .people-table{width:100%;min-width:960px}
+    .people-table{width:100%;min-width:1180px}
     .people-table th,.people-table td{text-align:left!important;vertical-align:middle!important}
     .people-table th:last-child,.people-table td:last-child{text-align:right!important}
     @media(max-width:767px){.people-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.people-filter{grid-template-columns:1fr}}
@@ -85,7 +85,7 @@
                 <tbody class="divide-y">
                     @forelse($users as $user)
                         <tr class="hover:bg-slate-50/70">
-                            <td class="px-5 py-4">
+                            <td class="px-5 py-4 whitespace-nowrap">
                                 <div class="flex min-w-[230px] items-center gap-3">
                                     <span class="admin-theme-soft flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-extrabold">{{ strtoupper(substr($user->name,0,1)) }}</span>
                                     <div class="min-w-0">
@@ -117,10 +117,23 @@
                                     <form method="POST" action="{{ route('admin.members.restore',$user->id) }}">@csrf<button class="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">Restore</button></form>
                                 @else
                                     <div class="flex justify-end gap-2">
+                                        <x-admin.status-toggle
+                                            :active="!$user->is_blocked"
+                                            active-label="Active"
+                                            inactive-label="Blocked"
+                                            :action="route('admin.users.toggleBlock', $user)"
+                                            :data-label="$user->name"
+                                            method="POST"
+                                        />
                                         <a href="{{ route('admin.users.detail',$user) }}#direct-msg-card" title="Send Direct Notification / SMS" class="rounded-lg bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition"><i class="fas fa-paper-plane"></i></a>
                                         <a href="{{ route('admin.members.index',['q'=>$user->email,'member_id'=>$user->id]) }}" title="Member 360" class="admin-theme-soft rounded-lg px-3 py-2 text-xs font-bold"><i class="fas fa-chart-pie"></i></a>
-                                        <a href="{{ route('admin.users.detail',$user) }}" class="rounded-lg border px-3 py-2 text-xs font-bold text-slate-700">View</a>
-                                        <a href="{{ route('admin.users.edit',$user) }}" class="rounded-lg bg-slate-900 px-3 py-2 text-xs font-bold text-white">Edit</a>
+                                        <x-admin.action-icon variant="view" :href="route('admin.users.detail',$user)" />
+                                        <x-admin.action-icon variant="edit" :href="route('admin.users.edit',$user)" />
+                                        <form method="POST" action="{{ route('admin.users.destroy',$user) }}" class="admin-confirm" data-confirm-title="Delete {{ $user->name }}?" data-confirm-text="The account will be soft deleted and can be restored from the Deleted filter." data-confirm-button="Yes, delete account">
+                                            @csrf
+                                            @method('DELETE')
+                                            <x-admin.action-icon variant="delete" type="submit" />
+                                        </form>
                                     </div>
 
                                 @endif

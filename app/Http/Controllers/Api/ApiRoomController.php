@@ -26,9 +26,7 @@ class ApiRoomController extends BaseApiController
     {
         $query = Room::query()
             ->with(['owner', 'propertyType', 'propertyCategory'])
-            ->where('status', 'active')
-            ->where('listing_fee_paid', true)
-            ->where('listing_status', 'approved');
+            ->publicVisible();
 
         if ($request->filled('city')) {
             $query->where('city', 'like', '%'.$request->city.'%');
@@ -133,9 +131,7 @@ class ApiRoomController extends BaseApiController
     public function show(Request $request, $id)
     {
         $room = Room::with('owner')
-            ->where('status', 'active')
-            ->where('listing_status', 'approved')
-            ->where('listing_fee_paid', true)
+            ->publicVisible()
             ->where(fn ($query) => $query->where('id', $id)->orWhere('slug', $id))
             ->first();
 
@@ -176,11 +172,9 @@ class ApiRoomController extends BaseApiController
             return $this->sendError('Room not found');
         }
 
-        $rooms = Room::where('id', '!=', $id)
+        $rooms = Room::publicVisible()
+            ->where('id', '!=', $id)
             ->where('city', $room->city)
-            ->where('status', 'active')
-            ->where('listing_fee_paid', true)
-            ->where('listing_status', 'approved')
             ->limit(4)
             ->get();
 
@@ -203,6 +197,7 @@ class ApiRoomController extends BaseApiController
 
         // Logic to find closest city from our database
         $closestRoom = Room::selectRaw('city, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$request->lat, $request->lng, $request->lat])
+            ->publicVisible()
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->orderBy('distance', 'asc')
@@ -237,8 +232,15 @@ class ApiRoomController extends BaseApiController
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'property_type_id' => ['required', 'integer', Rule::exists('property_types', 'id')->where('status', true)],
+            'property_category_id' => [
+                'required',
+                'integer',
+                Rule::exists('property_categories', 'id')->where(fn ($query) => $query->where('status', true)->where('property_type_id', $request->property_type_id)),
+            ],
             'rent' => 'required|numeric|min:0',
             'deposit' => 'nullable|numeric|min:0',
+            'area_sqft' => 'nullable|numeric|min:0',
             'city' => 'required|string',
             'state' => 'nullable|string',
             'country' => 'nullable|string',
@@ -249,7 +251,7 @@ class ApiRoomController extends BaseApiController
             'tenant_type' => ['required', 'in:'.implode(',', RoomOption::validIdsFor('tenant_type'))],
             'room_type' => ['required', 'in:'.implode(',', RoomOption::validIdsFor('room_type'))],
             'amenities' => 'nullable|array',
-            'amenities.*' => 'string',
+            'amenities.*' => ['string', Rule::in(RoomOption::activeLabelsFor('amenity')->all())],
             'landmarks' => 'nullable|array',
             'landmarks.*' => 'string',
             'photos' => 'required|array|min:1|max:5',
@@ -438,8 +440,15 @@ class ApiRoomController extends BaseApiController
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'property_type_id' => ['required', 'integer', Rule::exists('property_types', 'id')->where('status', true)],
+            'property_category_id' => [
+                'required',
+                'integer',
+                Rule::exists('property_categories', 'id')->where(fn ($query) => $query->where('status', true)->where('property_type_id', $request->property_type_id)),
+            ],
             'rent' => 'required|numeric|min:0',
             'deposit' => 'nullable|numeric|min:0',
+            'area_sqft' => 'nullable|numeric|min:0',
             'city' => 'required|string',
             'state' => 'nullable|string',
             'country' => 'nullable|string',
@@ -450,7 +459,7 @@ class ApiRoomController extends BaseApiController
             'tenant_type' => ['required', Rule::in(RoomOption::validIdsFor('tenant_type'))],
             'room_type' => ['required', Rule::in(RoomOption::validIdsFor('room_type'))],
             'amenities' => 'nullable|array',
-            'amenities.*' => 'string',
+            'amenities.*' => ['string', Rule::in(RoomOption::activeLabelsFor('amenity')->all())],
             'landmarks' => 'nullable|array',
             'landmarks.*' => 'string',
             'photos' => 'nullable|array|max:5',

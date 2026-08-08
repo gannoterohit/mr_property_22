@@ -110,4 +110,13 @@ class BlogController extends Controller
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog post deleted successfully.');
     }
+
+    public function toggleStatus(Blog $blog)
+    {
+        $blog->update(['is_published' => ! $blog->is_published]);
+
+        return redirect()
+            ->route('admin.blogs.index')
+            ->with('success', $blog->is_published ? 'Blog post published successfully.' : 'Blog post moved to draft.');
+    }
 }

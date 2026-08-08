@@ -260,4 +260,28 @@ class Room extends Model
     {
         return RoomOption::getLabel('tenant_type', $this->tenant_option_id);
     }
+
+    public function scopePublicVisible($query)
+    {
+        return $query->where('status', 'active')
+            ->where('listing_status', 'approved')
+            ->where('listing_fee_paid', true)
+            ->whereHas('propertyType', fn ($type) => $type->active())
+            ->whereHas('propertyCategory', fn ($category) => $category->publicSelectable())
+            ->where(fn ($room) => $room->whereNull('room_type_option_id')->orWhereHas('roomTypeOption', fn ($option) => $option->active()))
+            ->where(fn ($room) => $room->whereNull('furnishing_option_id')->orWhereHas('furnishingOption', fn ($option) => $option->active()))
+            ->where(fn ($room) => $room->whereNull('tenant_option_id')->orWhereHas('tenantOption', fn ($option) => $option->active()));
+    }
+
+    public function publicAmenities(): array
+    {
+        $activeLabels = RoomOption::activeLabelsFor('amenity')
+            ->map(fn ($label) => mb_strtolower((string) $label))
+            ->all();
+
+        return collect($this->amenities ?: [])
+            ->filter(fn ($amenity) => in_array(mb_strtolower((string) $amenity), $activeLabels, true))
+            ->values()
+            ->all();
+    }
 }

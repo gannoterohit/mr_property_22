@@ -23,4 +23,9 @@ class PropertyType extends Model
     {
         return $this->hasMany(PropertyCategory::class, 'property_type_id');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
 }

@@ -47,32 +47,11 @@ class RoomOption extends Model
 
     public static function optionsFor(string $group, $selectedValue = null): Collection
     {
-        $options = static::active()
+        return static::active()
             ->where('group', $group)
             ->orderBy('sort_order')
             ->orderBy('label')
             ->get(['id', 'key', 'label']);
-
-    if ($selectedValue !== null) {
-        $matches = is_numeric($selectedValue)
-            ? fn ($option) => $option->id == $selectedValue
-            : fn ($option) => $option->key === $selectedValue;
-
-        if (!$options->contains($matches)) {
-            // Keep an inactive option visible when editing an existing room.
-            // Owners can see the saved value, but active-only validation prevents
-            // selecting a retired option for a new room or changing back to it.
-            $selectedOption = static::resolveOption($group, $selectedValue, true);
-
-            $options->prepend((object) [
-                'id' => $selectedOption?->id,
-                'key' => $selectedOption?->key ?? $selectedValue,
-                'label' => $selectedOption?->label ?? static::formatLabel($group, $selectedValue),
-            ]);
-        }
-    }
-
-        return $options;
     }
 
     public static function validIdsFor(string $group): array
@@ -82,6 +61,13 @@ class RoomOption extends Model
             ->filter()
             ->map(fn ($id) => (string) $id)
             ->all();
+    }
+
+    public static function activeLabelsFor(string $group): Collection
+    {
+        return static::active()
+            ->where('group', $group)
+            ->pluck('label');
     }
 
     public static function idForKey(string $group, $key): ?int
@@ -135,15 +121,13 @@ class RoomOption extends Model
             return $fallback ?? 'N/A';
         }
 
-        // Existing listings must retain a human-readable label after an admin
-        // retires the option.
-        $option = static::resolveOption($group, $value, true);
+        $option = static::resolveOption($group, $value, false);
 
         if ($option) {
             return $option->label;
         }
 
-        return static::formatLabel($group, $value, $fallback);
+        return $fallback ?? 'N/A';
     }
 
     public static function formatLabel(string $group, $value, ?string $fallback = null): string

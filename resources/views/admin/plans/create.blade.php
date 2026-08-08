@@ -92,7 +92,11 @@
         <aside class="space-y-4">
             <section class="admin-plan-card p-5">
                 <h2 class="text-sm font-extrabold text-slate-950">Publishing</h2>
-                <p class="mt-1 text-xs leading-5 text-slate-500">Plan will be available after creation when active status is enabled from the plans list.</p>
+                <p class="mt-1 text-xs leading-5 text-slate-500">Only active plans are shown to users and owners.</p>
+                <label class="mt-4 flex items-center justify-between rounded-xl bg-slate-50 p-3 text-xs font-bold text-slate-700">
+                    <span>Active plan</span>
+                    <input type="checkbox" name="is_active" value="1" @checked(old('is_active', '1')) class="rounded admin-theme-text">
+                </label>
                 <button type="submit" class="admin-theme-bg mt-5 flex h-11 w-full items-center justify-center rounded-xl text-sm font-bold">
                     <i class="fas fa-plus mr-2"></i>Create Plan
                 </button>

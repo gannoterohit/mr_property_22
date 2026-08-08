@@ -99,20 +99,40 @@ class AdminRoomController extends BaseApiController
     /**
      * Rejection reasons CRUD
      */
-    public function getReasons() { return $this->sendSuccess(RejectionReason::where('is_active', true)->get()); }
+    public function getReasons(Request $request) {
+        $query = RejectionReason::query()->orderBy('reason');
+        if ($request->filled('active')) {
+            $query->where('is_active', $request->boolean('active'));
+        }
+
+        return $this->sendSuccess($query->get());
+    }
 
     public function storeReason(Request $request) {
-        $validator = Validator::make($request->all(), ['reason' => 'required|string|max:255']);
+        $validator = Validator::make($request->all(), ['reason' => 'required|string|max:255', 'is_active' => 'nullable|boolean']);
         if ($validator->fails()) return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
-        $reason = RejectionReason::create(['reason' => $request->reason, 'is_active' => true]);
+        $reason = RejectionReason::create(['reason' => $request->reason, 'is_active' => $request->boolean('is_active', true)]);
         return $this->sendSuccess($reason, 'Reason added', 201);
     }
 
     public function updateReason(Request $request, $id) {
         $reason = RejectionReason::find($id);
         if (!$reason) return $this->sendError('Reason not found');
-        $reason->update(['reason' => $request->reason]);
+        $validator = Validator::make($request->all(), ['reason' => 'required|string|max:255', 'is_active' => 'nullable|boolean']);
+        if ($validator->fails()) return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
+        $data = ['reason' => $request->reason];
+        if ($request->has('is_active')) {
+            $data['is_active'] = $request->boolean('is_active');
+        }
+        $reason->update($data);
         return $this->sendSuccess($reason, 'Reason updated');
+    }
+
+    public function toggleReason($id) {
+        $reason = RejectionReason::find($id);
+        if (!$reason) return $this->sendError('Reason not found');
+        $reason->update(['is_active' => !$reason->is_active]);
+        return $this->sendSuccess(['is_active' => $reason->is_active], 'Reason status updated');
     }
 
     public function deleteReason($id) {

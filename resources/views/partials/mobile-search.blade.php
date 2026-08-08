@@ -44,7 +44,7 @@
 
                 <div class="relative min-w-[30%] flex-1">
                     <label for="mobile_property_type" class="sr-only">Property Type</label>
-                    @php $mobilePropertyTypes = $propertyTypes ?? App\Models\PropertyType::where('status', true)->orderBy('name')->get(); @endphp
+                    @php $mobilePropertyTypes = $propertyTypes ?? App\Models\PropertyType::active()->orderBy('name')->get(); @endphp
                     <select id="mobile_property_type" name="property_type_id" aria-label="Select property type" class="w-full pl-3 pr-6 py-2 bg-white border border-indigo-100 rounded-full text-[11px] font-bold text-gray-600 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none shadow-sm shadow-indigo-100/50">
                         <option value="">Type</option>
                         @foreach($mobilePropertyTypes as $type)
@@ -58,7 +58,7 @@
 
                 <div class="relative min-w-[36%] flex-1">
                     <label for="mobile_property_category" class="sr-only">Property Category</label>
-                    @php $mobilePropertyCategories = $propertyCategories ?? App\Models\PropertyCategory::where('status', true)->orderBy('name')->get(); @endphp
+                    @php $mobilePropertyCategories = $propertyCategories ?? App\Models\PropertyCategory::publicSelectable()->orderBy('name')->get(); @endphp
                     <select id="mobile_property_category" name="property_category_id" aria-label="Select property category" class="w-full pl-3 pr-6 py-2 bg-white border border-indigo-100 rounded-full text-[11px] font-bold text-gray-600 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none shadow-sm shadow-indigo-100/50">
                         <option value="">Category</option>
                         @foreach($mobilePropertyCategories as $category)

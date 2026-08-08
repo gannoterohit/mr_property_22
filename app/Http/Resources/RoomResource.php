@@ -42,7 +42,7 @@ class RoomResource extends JsonResource
             'room_type_label' => $this->roomTypeLabel(),
             'furnishing_type_label' => $this->furnishingTypeLabel(),
             'tenant_type_label' => $this->tenantTypeLabel(),
-            'amenities' => $this->amenities ?? [],
+            'amenities' => $this->publicAmenities(),
             'rent' => (float) $this->rent,
             'deposit' => (float) $this->deposit,
             'area_sqft' => $this->area_sqft !== null ? (float) $this->area_sqft : null,

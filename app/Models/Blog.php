@@ -25,6 +25,11 @@ class Blog extends Model
         'is_published' => 'boolean',
     ];
 
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true);
+    }
+
     /**
      * Get the resolved image path.
      */

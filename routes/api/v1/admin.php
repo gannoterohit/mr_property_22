@@ -49,6 +49,7 @@ Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.acti
     Route::get('/rejection-reasons',           [AdminRoomController::class, 'getReasons']);
     Route::post('/rejection-reasons',          [AdminRoomController::class, 'storeReason']);
     Route::put('/rejection-reasons/{id}',      [AdminRoomController::class, 'updateReason']);
+    Route::post('/rejection-reasons/{id}/toggle', [AdminRoomController::class, 'toggleReason']);
     Route::delete('/rejection-reasons/{id}',   [AdminRoomController::class, 'deleteReason']);
 
     // ── Finance & Plans ──────────────────────
@@ -66,11 +67,25 @@ Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.acti
     Route::get('/cities',                   [AdminPlatformController::class, 'cities']);
     Route::post('/cities',                  [AdminPlatformController::class, 'storeCity']);
     Route::put('/cities/{city}',            [AdminPlatformController::class, 'updateCity']);
+    Route::post('/cities/{city}/toggle',    [AdminPlatformController::class, 'toggleCity']);
     Route::delete('/cities/{city}',         [AdminPlatformController::class, 'destroyCity']);
+
+    Route::get('/property-types',                    [AdminPlatformController::class, 'propertyTypes']);
+    Route::post('/property-types',                   [AdminPlatformController::class, 'storePropertyType']);
+    Route::put('/property-types/{propertyType}',     [AdminPlatformController::class, 'updatePropertyType']);
+    Route::post('/property-types/{propertyType}/toggle', [AdminPlatformController::class, 'togglePropertyType']);
+    Route::delete('/property-types/{propertyType}',  [AdminPlatformController::class, 'destroyPropertyType']);
+
+    Route::get('/property-categories',                    [AdminPlatformController::class, 'propertyCategories']);
+    Route::post('/property-categories',                   [AdminPlatformController::class, 'storePropertyCategory']);
+    Route::put('/property-categories/{propertyCategory}', [AdminPlatformController::class, 'updatePropertyCategory']);
+    Route::post('/property-categories/{propertyCategory}/toggle', [AdminPlatformController::class, 'togglePropertyCategory']);
+    Route::delete('/property-categories/{propertyCategory}', [AdminPlatformController::class, 'destroyPropertyCategory']);
     
     Route::get('/blogs',                    [AdminContentController::class, 'blogs']);
     Route::post('/blogs',                   [AdminContentController::class, 'storeBlog']);
     Route::put('/blogs/{id}',               [AdminContentController::class, 'updateBlog']);
+    Route::post('/blogs/{id}/toggle',       [AdminContentController::class, 'toggleBlog']);
     Route::delete('/blogs/{id}',            [AdminContentController::class, 'destroyBlog']);
 
     Route::get('/offers',                   [AdminContentController::class, 'offers']);

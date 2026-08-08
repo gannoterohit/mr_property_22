@@ -2,47 +2,6 @@
 
 @section('title', 'CMS Pages')
 
-@push('styles')
-<style>
-    .cms-publish-switch {
-        position: relative;
-        display: inline-flex;
-        height: 28px;
-        width: 52px;
-        align-items: center;
-        border-radius: 999px;
-        padding: 3px;
-        transition: background-color .18s ease, box-shadow .18s ease;
-    }
-
-    .cms-publish-switch:focus-visible {
-        outline: 3px solid rgba(79, 70, 229, .22);
-        outline-offset: 2px;
-    }
-
-    .cms-publish-switch span {
-        height: 22px;
-        width: 22px;
-        border-radius: 999px;
-        background: #fff;
-        box-shadow: 0 5px 12px rgba(15, 23, 42, .18);
-        transition: transform .18s ease;
-    }
-
-    .cms-publish-switch.is-live {
-        background: #10b981;
-    }
-
-    .cms-publish-switch.is-live span {
-        transform: translateX(24px);
-    }
-
-    .cms-publish-switch.is-draft {
-        background: #cbd5e1;
-    }
-</style>
-@endpush
-
 @section('admin-content')
 <div class="space-y-5 p-5 lg:p-6">
     <header class="flex flex-wrap items-end justify-between gap-3">
@@ -100,28 +59,25 @@
                                 </div>
                             </td>
                             <td class="p-4 text-center">
-                                <form method="POST" action="{{ route('admin.cms-pages.toggle-status', $page) }}" class="inline-flex items-center justify-center">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit"
-                                            class="cms-publish-switch {{ $page->isPublished() ? 'is-live' : 'is-draft' }}"
-                                            title="{{ $page->isPublished() ? 'Unpublish page' : 'Publish page' }}"
-                                            aria-label="{{ $page->isPublished() ? 'Unpublish '.$page->title : 'Publish '.$page->title }}">
-                                        <span></span>
-                                    </button>
-                                </form>
+                                <x-admin.status-toggle
+                                    :active="$page->isPublished()"
+                                    active-label="Published"
+                                    inactive-label="Draft"
+                                    :action="route('admin.cms-pages.toggle-status', $page)"
+                                    :data-label="$page->title"
+                                />
                             </td>
                             <td class="p-4 text-xs text-slate-500">{{ $page->updated_at?->format('d M Y, h:i A') }}</td>
                             <td class="p-4">
                                 <div class="flex justify-end gap-2">
                                     @if($page->isPublished())
-                                        <a href="{{ $page->public_url }}" target="_blank" class="rounded-lg bg-slate-50 px-3 py-2 text-xs font-bold text-slate-600" title="View public page"><i class="fas fa-eye"></i></a>
+                                        <x-admin.action-icon variant="view" :href="$page->public_url" target="_blank" title="View public page" />
                                     @else
                                         <span class="rounded-lg bg-slate-50 px-3 py-2 text-xs font-bold text-slate-300" title="Draft pages are hidden from the public website"><i class="fas fa-eye-slash"></i></span>
                                     @endif
-                                    <a href="{{ route('admin.cms-pages.edit', $page) }}" class="rounded-lg admin-theme-soft px-3 py-2 text-xs font-bold admin-theme-text"><i class="fas fa-edit mr-1"></i>Edit</a>
+                                    <x-admin.action-icon variant="edit" :href="route('admin.cms-pages.edit', $page)" />
                                     @unless($page->is_system)
-                                        <form method="POST" action="{{ route('admin.cms-pages.destroy', $page) }}" class="admin-confirm" data-confirm-title="Delete {{ $page->title }}?" data-confirm-text="This CMS page will be permanently removed." data-confirm-button="Yes, delete page">@csrf @method('DELETE')<button class="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-700"><i class="fas fa-trash"></i></button></form>
+                                        <form method="POST" action="{{ route('admin.cms-pages.destroy', $page) }}" class="admin-confirm" data-confirm-title="Delete {{ $page->title }}?" data-confirm-text="This CMS page will be permanently removed." data-confirm-button="Yes, delete page">@csrf @method('DELETE')<x-admin.action-icon variant="delete" type="submit" /></form>
                                     @endunless
                                 </div>
                             </td>

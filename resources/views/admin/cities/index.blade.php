@@ -141,11 +141,12 @@
                                 </div>
                             </td>
                             <td class="px-3 py-4">
-                                <label class="inline-flex min-w-max cursor-pointer items-center gap-2 rounded-full border px-3 py-2 text-[11px] font-extrabold {{ $city->is_active ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-amber-200 bg-amber-50 text-amber-700' }}">
-                                    <input form="{{ $formId }}" type="checkbox" name="is_active" value="1" @checked($city->is_active) class="rounded border-slate-300 admin-theme-text">
-                                    <span class="h-1.5 w-1.5 rounded-full {{ $city->is_active ? 'bg-emerald-500' : 'bg-amber-500' }}"></span>
-                                    {{ $city->is_active ? 'Active' : 'Coming Soon' }}
-                                </label>
+                                <x-admin.status-toggle
+                                    :active="$city->is_active"
+                                    inactive-label="Inactive"
+                                    :action="route('admin.cities.toggle-status', $city)"
+                                    :data-label="$city->name"
+                                />
                             </td>
                             <td class="px-3 py-4">
                                 <label class="inline-flex min-w-max cursor-pointer items-center gap-2 text-xs font-bold {{ $city->is_default ? 'admin-theme-text' : 'text-slate-500' }}">
@@ -155,9 +156,16 @@
                                 </label>
                             </td>
                             <td class="px-5 py-4 text-right">
-                                <button form="{{ $formId }}" class="inline-flex h-9 items-center gap-2 rounded-lg bg-slate-900 px-4 text-xs font-extrabold text-white transition admin-theme-hover-bg">
-                                    <i class="fas fa-floppy-disk"></i> Save
-                                </button>
+                                <div class="flex justify-end gap-2">
+                                    <button form="{{ $formId }}" class="inline-flex h-9 items-center gap-2 rounded-lg bg-slate-900 px-4 text-xs font-extrabold text-white transition admin-theme-hover-bg">
+                                        <i class="fas fa-floppy-disk"></i> Save
+                                    </button>
+                                    <form method="POST" action="{{ route('admin.cities.destroy', $city) }}" class="admin-confirm" data-confirm-title="Delete {{ $city->name }}?" data-confirm-text="Only cities without related listings or alerts can be deleted." data-confirm-button="Yes, delete city">
+                                        @csrf
+                                        @method('DELETE')
+                                        <x-admin.action-icon variant="delete" type="submit" title="Delete city" />
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

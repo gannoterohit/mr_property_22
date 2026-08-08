@@ -27,7 +27,7 @@ class ApiGeneralController extends BaseApiController
      */
     public function blogs(Request $request)
     {
-        $query = Blog::where('is_published', true)->latest();
+        $query = Blog::published()->latest();
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -47,7 +47,7 @@ class ApiGeneralController extends BaseApiController
     public function blogShow($slug)
     {
         $blog = Blog::where('slug', $slug)
-                    ->where('is_published', true)
+                    ->published()
                     ->first();
 
         if (!$blog) {

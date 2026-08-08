@@ -45,7 +45,7 @@
                         <td class="px-5"><span class="rounded-full px-2.5 py-1 text-xs font-bold {{ $member->is_staff_active ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700' }}">{{ $member->is_staff_active ? 'Active' : 'Disabled' }}</span></td>
                         <td class="px-5 text-xs text-slate-500">{{ $member->last_admin_login_at?->format('d M Y, h:i A') ?? 'Not recorded' }}</td>
                         <td class="px-5"><div class="flex gap-2">
-                            <button type="button" @click='edit = {{ \Illuminate\Support\Js::from($editPayload) }}; open = true' class="h-9 rounded-lg border border-slate-200 px-3 text-xs font-bold">Edit</button>
+                            <x-admin.action-icon variant="edit" type="button" @click='edit = {{ \Illuminate\Support\Js::from($editPayload) }}; open = true' />
                             @if(auth()->id() !== $member->id)<form method="POST" action="{{ route('admin.staff.toggle', $member) }}">@csrf<button class="h-9 rounded-lg px-3 text-xs font-bold {{ $member->is_staff_active ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-700' }}">{{ $member->is_staff_active ? 'Disable' : 'Enable' }}</button></form>@endif
                         </div></td>
                     </tr>

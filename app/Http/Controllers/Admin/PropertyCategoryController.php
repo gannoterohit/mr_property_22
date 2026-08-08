@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PropertyCategory;
 use App\Models\PropertyType;
+use App\Models\Room;
 use Illuminate\Http\Request;
 
 class PropertyCategoryController extends Controller
@@ -61,6 +62,10 @@ class PropertyCategoryController extends Controller
 
     public function destroy(PropertyCategory $propertyCategory)
     {
+        if (Room::where('property_category_id', $propertyCategory->id)->exists()) {
+            return redirect()->back()->with('error', 'This property category is in use. Deactivate it instead of deleting it.');
+        }
+
         $propertyCategory->delete();
 
         return redirect()->route('admin.property-categories.index')->with('success', 'Property category deleted successfully.');

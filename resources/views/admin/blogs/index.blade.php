@@ -49,15 +49,13 @@
                                     </div>
                                 </td>
                                 <td class="p-4">
-                                    @if($blog->is_published)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            Published
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                            Draft
-                                        </span>
-                                    @endif
+                                    <x-admin.status-toggle
+                                        :active="$blog->is_published"
+                                        active-label="Published"
+                                        inactive-label="Draft"
+                                        :action="route('admin.blogs.toggle-status', $blog)"
+                                        :data-label="$blog->title"
+                                    />
                                 </td>
                                 <td class="p-4 text-sm text-gray-600">
                                     - <!-- Could add view counter later -->
@@ -67,15 +65,11 @@
                                 </td>
                                 <td class="p-4 text-right">
                                     <div class="flex justify-end gap-2">
-                                        <a href="{{ route('admin.blogs.edit', $blog->id) }}" class="p-2 admin-theme-text hover:bg-slate-50 rounded-lg transition" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                        <x-admin.action-icon variant="edit" :href="route('admin.blogs.edit', $blog->id)" />
                                         <form action="{{ route('admin.blogs.destroy', $blog->id) }}" method="POST" class="admin-confirm" data-confirm-title="Delete {{ $blog->title }}?" data-confirm-text="This blog post will be permanently removed." data-confirm-button="Yes, delete post">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
+                                            <x-admin.action-icon variant="delete" type="submit" />
                                         </form>
                                     </div>
                                 </td>

@@ -24,4 +24,14 @@ class PropertyCategory extends Model
     {
         return $this->belongsTo(PropertyType::class, 'property_type_id');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
+
+    public function scopePublicSelectable($query)
+    {
+        return $query->active()->whereHas('propertyType', fn ($type) => $type->active());
+    }
 }

@@ -5,12 +5,13 @@
 
 @push('styles')
 <style>
-    .room-filter{display:grid!important;grid-template-columns:minmax(190px,1fr) repeat(8,140px) auto!important;gap:8px}
-    .room-table{min-width:1380px;width:100%}
+    .room-filter-main{display:grid!important;grid-template-columns:minmax(240px,1.35fr) repeat(4,minmax(150px,1fr)) auto!important;gap:10px}
+    .room-filter-advanced{display:grid!important;grid-template-columns:repeat(5,minmax(150px,1fr))!important;gap:10px}
+    .room-table{min-width:1260px;width:100%}
     .room-table th,.room-table td{text-align:left!important;vertical-align:middle!important}
     .room-table th:last-child,.room-table td:last-child{text-align:right!important}
-    @media(max-width:1279px){.room-filter{grid-template-columns:repeat(3,1fr)!important}}
-    @media(max-width:767px){.room-filter{grid-template-columns:1fr!important}}
+    @media(max-width:1279px){.room-filter-main{grid-template-columns:repeat(3,1fr)!important}.room-filter-advanced{grid-template-columns:repeat(3,1fr)!important}}
+    @media(max-width:767px){.room-filter-main,.room-filter-advanced{grid-template-columns:1fr!important}}
 </style>
 @endpush
 
@@ -28,55 +29,73 @@
         </div>
     </header>
 
-    <form method="GET" class="room-filter rounded-2xl border bg-white p-4 shadow-sm">
-        <input name="search" value="{{ request('search') }}" placeholder="Title or city" class="h-10 rounded-xl text-xs">
-        <select name="listing_status" class="h-10 rounded-xl text-xs">
-            <option value="">All approval states</option>
-            @foreach(['pending'=>'Pending','approved'=>'Approved','rejected'=>'Rejected'] as $k=>$v)
-                <option value="{{ $k }}" @selected(request('listing_status')===$k)>{{ $v }}</option>
-            @endforeach
-        </select>
-        <select name="moderation_status" class="h-10 rounded-xl text-xs">
-            <option value="">All moderation</option>
-            @foreach(['normal'=>'Normal','suspended'=>'Suspended','reported'=>'Reported'] as $k=>$v)
-                <option value="{{ $k }}" @selected(request('moderation_status')===$k)>{{ ucfirst($v) }}</option>
-            @endforeach
-        </select>
-        <select name="status" class="h-10 rounded-xl text-xs">
-            <option value="">Availability</option>
-            <option value="active" @selected(request('status')==='active')>Active</option>
-            <option value="booked" @selected(request('status')==='booked')>Rented / booked</option>
-        </select>
-        <select name="kyc" class="h-10 rounded-xl text-xs">
-            <option value="">Owner KYC</option>
-            @foreach(['pending','under_review','verified','rejected'] as $v)
-                <option value="{{ $v }}" @selected(request('kyc')===$v)>{{ ucfirst(str_replace('_',' ',$v)) }}</option>
-            @endforeach
-        </select>
-        <select name="city" class="h-10 rounded-xl text-xs">
-            <option value="">All cities</option>
-            @foreach($cities as $city)
-                <option value="{{ $city }}" @selected(request('city')===$city)>{{ $city }}</option>
-            @endforeach
-        </select>
-        <select name="property_type_id" class="h-10 rounded-xl text-xs">
-            <option value="">All property types</option>
-            @foreach($propertyTypes as $type)
-                <option value="{{ $type->id }}" @selected(request('property_type_id')==$type->id)>{{ $type->name }}</option>
-            @endforeach
-        </select>
-        <select name="property_category_id" class="h-10 rounded-xl text-xs">
-            <option value="">All categories</option>
-            @foreach($propertyCategories as $category)
-                <option value="{{ $category->id }}" @selected(request('property_category_id')==$category->id)>{{ $category->propertyType?->name ? $category->propertyType->name.' - ' : '' }}{{ $category->name }}</option>
-            @endforeach
-        </select>
-        <input type="number" name="min_area_sqft" value="{{ request('min_area_sqft') }}" placeholder="Min sqft" class="h-10 rounded-xl text-xs">
-        <input type="number" name="max_area_sqft" value="{{ request('max_area_sqft') }}" placeholder="Max sqft" class="h-10 rounded-xl text-xs">
-        <div class="flex gap-2">
-            <button class="rounded-xl bg-slate-900 px-4 text-xs font-bold text-white">Filter</button>
-            <a href="{{ route('admin.all-rooms') }}" class="flex h-10 items-center rounded-xl border px-3 text-xs font-bold text-slate-700">Reset</a>
+    @php
+        $advancedOpen = request()->filled('moderation_status') || request()->filled('kyc') || request()->filled('property_category_id') || request()->filled('min_area_sqft') || request()->filled('max_area_sqft');
+        $activeFilterCount = collect(['search','listing_status','status','city','property_type_id','moderation_status','kyc','property_category_id','min_area_sqft','max_area_sqft'])->filter(fn($key) => request()->filled($key))->count();
+    @endphp
+    <form method="GET" class="rounded-2xl border bg-white p-4 shadow-sm">
+        <div class="room-filter-main">
+            <input name="search" value="{{ request('search') }}" placeholder="Search title, city..." class="h-10 rounded-xl text-xs">
+            <select name="listing_status" class="h-10 rounded-xl text-xs">
+                <option value="">Approval</option>
+                @foreach(['pending'=>'Pending','approved'=>'Approved','rejected'=>'Rejected'] as $k=>$v)
+                    <option value="{{ $k }}" @selected(request('listing_status')===$k)>{{ $v }}</option>
+                @endforeach
+            </select>
+            <select name="status" class="h-10 rounded-xl text-xs">
+                <option value="">Availability</option>
+                <option value="active" @selected(request('status')==='active')>Active</option>
+                <option value="booked" @selected(request('status')==='booked')>Rented / booked</option>
+            </select>
+            <select name="city" class="h-10 rounded-xl text-xs">
+                <option value="">City</option>
+                @foreach($cities as $city)
+                    <option value="{{ $city }}" @selected(request('city')===$city)>{{ $city }}</option>
+                @endforeach
+            </select>
+            <select name="property_type_id" class="h-10 rounded-xl text-xs">
+                <option value="">Property type</option>
+                @foreach($propertyTypes as $type)
+                    <option value="{{ $type->id }}" @selected(request('property_type_id')==$type->id)>{{ $type->name }}</option>
+                @endforeach
+            </select>
+            <div class="flex gap-2">
+                <button class="rounded-xl bg-slate-900 px-4 text-xs font-bold text-white">Filter</button>
+                <a href="{{ route('admin.all-rooms') }}" class="flex h-10 items-center rounded-xl border px-3 text-xs font-bold text-slate-700">Reset</a>
+            </div>
         </div>
+
+        <details class="mt-3 border-t pt-3" {{ $advancedOpen ? 'open' : '' }}>
+            <summary class="inline-flex cursor-pointer list-none items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700">
+                <i class="fas fa-sliders"></i>
+                Advanced filters
+                @if($activeFilterCount)
+                    <span class="rounded-full admin-theme-soft px-2 py-0.5 text-[10px] admin-theme-text">{{ $activeFilterCount }} active</span>
+                @endif
+            </summary>
+            <div class="room-filter-advanced mt-3">
+                <select name="moderation_status" class="h-10 rounded-xl text-xs">
+                    <option value="">Moderation</option>
+                    @foreach(['normal'=>'Normal','suspended'=>'Suspended','reported'=>'Reported'] as $k=>$v)
+                        <option value="{{ $k }}" @selected(request('moderation_status')===$k)>{{ ucfirst($v) }}</option>
+                    @endforeach
+                </select>
+                <select name="kyc" class="h-10 rounded-xl text-xs">
+                    <option value="">Owner KYC</option>
+                    @foreach(['pending','under_review','verified','rejected'] as $v)
+                        <option value="{{ $v }}" @selected(request('kyc')===$v)>{{ ucfirst(str_replace('_',' ',$v)) }}</option>
+                    @endforeach
+                </select>
+                <select name="property_category_id" class="h-10 rounded-xl text-xs">
+                    <option value="">Property category</option>
+                    @foreach($propertyCategories as $category)
+                        <option value="{{ $category->id }}" @selected(request('property_category_id')==$category->id)>{{ $category->propertyType?->name ? $category->propertyType->name.' - ' : '' }}{{ $category->name }}</option>
+                    @endforeach
+                </select>
+                <input type="number" name="min_area_sqft" value="{{ request('min_area_sqft') }}" placeholder="Min sq ft" class="h-10 rounded-xl text-xs">
+                <input type="number" name="max_area_sqft" value="{{ request('max_area_sqft') }}" placeholder="Max sq ft" class="h-10 rounded-xl text-xs">
+            </div>
+        </details>
     </form>
 
     <form method="POST" action="{{ route('admin.rooms.bulk') }}" class="overflow-hidden rounded-2xl border bg-white shadow-sm">
@@ -134,14 +153,15 @@
                                 <p class="text-xs font-bold">&#8377;{{ number_format($room->rent) }}/mo</p>
                             </td>
                             <td class="px-4">
-                                <div class="flex flex-col gap-2">
-                                    <span class="rounded-full px-2 py-1 text-[10px] font-bold {{ $room->listing_status==='approved'?'bg-emerald-50 text-emerald-700':($room->listing_status==='rejected'?'bg-red-50 text-red-700':'bg-amber-50 text-amber-700') }}">{{ ucfirst($room->listing_status) }}</span>
-                                    <button type="submit" form="toggle-room-{{ $room->id }}" class="inline-flex h-8 w-[104px] items-center justify-start gap-2 rounded-full border px-2 text-[10px] font-bold transition-colors {{ $room->status === 'active' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700' }}" title="Click to {{ $room->status === 'active' ? 'mark as booked' : 'mark as active' }}">
-                                        <span class="relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors {{ $room->status === 'active' ? 'bg-emerald-500' : 'bg-red-500' }}">
-                                            <span class="absolute left-0.5 top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition-transform duration-200 {{ $room->status === 'active' ? 'translate-x-3' : 'translate-x-0' }}"></span>
-                                        </span>
-                                        <span class="inline-block w-12 text-left">{{ $room->status === 'active' ? 'Active' : 'Booked' }}</span>
-                                    </button>
+                                <div class="flex flex-col items-start gap-1.5">
+                                    <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold {{ $room->listing_status==='approved'?'bg-emerald-50 text-emerald-700':($room->listing_status==='rejected'?'bg-red-50 text-red-700':'bg-amber-50 text-amber-700') }}">{{ ucfirst($room->listing_status) }}</span>
+                                    <x-admin.status-toggle
+                                        :active="$room->status === 'active'"
+                                        active-label="Active"
+                                        inactive-label="Booked"
+                                        form="toggle-room-{{ $room->id }}"
+                                        title="Click to {{ $room->status === 'active' ? 'mark as booked' : 'mark as active' }}"
+                                    />
                                 </div>
                             </td>
                             <td class="px-4 text-xs font-bold text-slate-600">
@@ -155,11 +175,9 @@
                             </td>
                             <td class="px-4">
                                 <div class="flex justify-end items-center gap-2">
-                                    <a href="{{ route('admin.rooms.show',$room) }}" class="h-8 px-2.5 inline-flex items-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-800 hover:text-white text-[10px] font-bold transition"><i class="fas fa-eye mr-1"></i>View</a>
-                                    <a href="{{ route('admin.rooms.edit',$room) }}" class="h-8 px-2.5 inline-flex items-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-800 hover:text-white text-[10px] font-bold transition"><i class="fas fa-pen mr-1"></i>Edit</a>
-                                    <button type="submit" form="delete-room-{{ $room->id }}" class="inline-flex h-8 items-center rounded-lg border border-red-100 bg-white px-2.5 text-[10px] font-bold text-red-600 transition hover:bg-red-600 hover:text-white">
-                                        <i class="fas fa-trash-can mr-1"></i>Delete
-                                    </button>
+                                    <x-admin.action-icon variant="view" :href="route('admin.rooms.show',$room)" />
+                                    <x-admin.action-icon variant="edit" :href="route('admin.rooms.edit',$room)" />
+                                    <x-admin.action-icon variant="delete" type="submit" form="delete-room-{{ $room->id }}" />
                                 </div>
                             </td>
                         </tr>

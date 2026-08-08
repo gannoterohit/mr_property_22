@@ -28,12 +28,16 @@
                         <td class="px-4 py-3 font-bold text-slate-800">{{ $type->name }}</td>
                         <td class="px-4 py-3 text-slate-600">{{ $type->slug }}</td>
                         <td class="px-4 py-3">
-                            <span class="px-2 py-1 rounded-full text-xs font-bold {{ $type->status ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700' }}">{{ $type->status ? 'Active' : 'Inactive' }}</span>
+                            <x-admin.status-toggle :active="$type->status" :action="route('admin.property-types.toggle-status', $type)" :data-label="$type->name" />
                         </td>
                         <td class="px-4 py-3 text-right">
                             <div class="flex justify-end gap-2">
-                                <a href="{{ route('admin.property-types.edit', $type) }}" class="px-3 py-2 rounded-lg bg-slate-100 text-xs font-bold">Edit</a>
-                                <form action="{{ route('admin.property-types.toggle-status', $type) }}" method="POST">@csrf @method('PATCH')<button class="px-3 py-2 rounded-lg {{ $type->status ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700' }} text-xs font-bold">{{ $type->status ? 'Deactivate' : 'Activate' }}</button></form>
+                                <x-admin.action-icon variant="edit" :href="route('admin.property-types.edit', $type)" />
+                                <form method="POST" action="{{ route('admin.property-types.destroy', $type) }}" class="admin-confirm" data-confirm-title="Delete {{ $type->name }}?" data-confirm-text="Delete only if this property type is not used by categories or listings. Used records should be deactivated." data-confirm-button="Yes, delete">
+                                    @csrf
+                                    @method('DELETE')
+                                    <x-admin.action-icon variant="delete" type="submit" />
+                                </form>
                             </div>
                         </td>
                     </tr>

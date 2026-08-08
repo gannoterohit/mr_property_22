@@ -13,7 +13,7 @@ class RoomOptionController extends Controller
         'room_type' => 'Room Type',
         'furnishing_type' => 'Furnishing',
         'tenant_type' => 'Preferred Tenant',
-        'amenity' => 'Amenities',
+        'amenity' => 'Facilities',
     ];
 
     public function index()
@@ -71,6 +71,21 @@ class RoomOptionController extends Controller
     public function destroy(RoomOption $roomOption)
     {
         $label = $roomOption->label;
+
+        $isUsed = match ($roomOption->group) {
+            'room_type' => Room::where('room_type_option_id', $roomOption->id)->exists(),
+            'furnishing_type' => Room::where('furnishing_option_id', $roomOption->id)->exists(),
+            'tenant_type' => Room::where('tenant_option_id', $roomOption->id)->exists(),
+            'amenity' => Room::whereJsonContains('amenities', $roomOption->label)->exists(),
+            default => false,
+        };
+
+        if ($isUsed) {
+            $roomOption->update(['is_active' => false]);
+
+            return redirect()->route('admin.room-options.index')->with('success', "{$label} is used in listings, so it was deactivated instead of deleted.");
+        }
+
         $roomOption->delete();
 
         return redirect()->route('admin.room-options.index')->with('success', "{$label} deleted permanently.");

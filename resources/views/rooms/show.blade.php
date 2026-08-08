@@ -12,6 +12,7 @@
 @push('head')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 @php
+    $publicAmenities = $room->publicAmenities();
     $ld = [
         "@context" => "https://schema.org",
         "@type" => "Accommodation",
@@ -32,10 +33,10 @@
         ]
     ];
 
-    if (!empty($room->amenities)) {
+    if (!empty($publicAmenities)) {
         $ld['amenityFeature'] = array_map(function($a) {
             return ["@type" => "LocationFeatureSpecification", "name" => $a, "value" => true];
-        }, $room->amenities);
+        }, $publicAmenities);
     }
 
     if (!empty($room->latitude) && !empty($room->longitude)) {
@@ -260,14 +261,14 @@
                         </div>
                     @endif
                      
-                    @if(!empty($room->amenities) && is_array($room->amenities))
+                    @if(!empty($publicAmenities))
                         <div class="{{ $room->description ? 'border-t pt-4' : '' }}">
                             <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
                                 <i class="fas fa-check-circle text-green-600"></i>
                                 Facilities
                             </h2>
                             <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                                @foreach($room->amenities as $amenity)
+                                @foreach($publicAmenities as $amenity)
                                 <div class="flex items-center gap-2 text-sm p-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded">
                                     <i class="fas fa-check text-green-500 text-xs"></i>
                                     <span class="text-gray-700">{{ $amenity }}</span>

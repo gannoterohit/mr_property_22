@@ -24,7 +24,7 @@ class AdminUserController extends BaseApiController
      */
     public function users(Request $request)
     {
-        $query = User::where('role', 'user');
+        $query = User::withTrashed()->where('role', 'user');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -35,8 +35,12 @@ class AdminUserController extends BaseApiController
             });
         }
 
-        if ($request->filled('status')) {
-            $query->where('is_blocked', $request->status === 'blocked');
+        if ($request->status === 'active') {
+            $query->where('is_blocked', false)->whereNull('deleted_at');
+        } elseif ($request->status === 'blocked') {
+            $query->where('is_blocked', true)->whereNull('deleted_at');
+        } elseif ($request->status === 'deleted') {
+            $query->onlyTrashed();
         }
 
         $users = $query->latest()->paginate($request->get('limit', 15));
@@ -48,8 +52,8 @@ class AdminUserController extends BaseApiController
      */
     public function userDetail($id)
     {
-        $user = User::with(['rooms'])->find($id);
-        if (!$user) return $this->sendError('User not found');
+        $user = User::withTrashed()->with(['payments', 'subscriptions.plan', 'complaints', 'enquiries.room'])->where('role', 'user')->find($id);
+        if (!$user) return $this->sendError('User not found', [], 404);
         return $this->sendSuccess($user);
     }
 
@@ -58,9 +62,13 @@ class AdminUserController extends BaseApiController
      */
     public function toggleBlockUser($id)
     {
-        $user = User::find($id);
-        if (!$user) return $this->sendError('User not found');
-        $user->update(['is_blocked' => !$user->is_blocked]);
+        $user = User::where('role', 'user')->find($id);
+        if (!$user) return $this->sendError('User not found', [], 404);
+        $blocking = ! $user->is_blocked;
+        $user->update([
+            'is_blocked' => $blocking,
+            'block_reason' => $blocking ? 'Blocked by administrator' : null,
+        ]);
         return $this->sendSuccess(['is_blocked' => $user->is_blocked], $user->is_blocked ? 'User blocked' : 'User unblocked');
     }
 
@@ -96,7 +104,7 @@ class AdminUserController extends BaseApiController
      */
     public function owners(Request $request)
     {
-        $query = User::where('role', 'owner')->withCount('rooms');
+        $query = User::withTrashed()->where('role', 'owner')->withCount('rooms');
         if($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -105,6 +113,17 @@ class AdminUserController extends BaseApiController
                   ->orWhere('phone', 'like', "%$search%");
             });
         }
+        if ($request->filled('verification_status')) {
+            $query->where('verification_status', $request->verification_status);
+        }
+        if ($request->status === 'active') {
+            $query->where('is_blocked', false)->whereNull('deleted_at');
+        } elseif ($request->status === 'blocked') {
+            $query->where('is_blocked', true)->whereNull('deleted_at');
+        } elseif ($request->status === 'deleted') {
+            $query->onlyTrashed();
+        }
+
         $owners = $query->latest()->paginate($request->get('limit', 15));
         return $this->sendSuccess($owners);
     }
@@ -114,8 +133,8 @@ class AdminUserController extends BaseApiController
      */
     public function ownerDetail($id)
     {
-        $owner = User::where('role', 'owner')->find($id);
-        if (!$owner) return $this->sendError('Owner not found');
+        $owner = User::withTrashed()->where('role', 'owner')->find($id);
+        if (!$owner) return $this->sendError('Owner not found', [], 404);
         $rooms = Room::where('user_id', $id)->latest()->paginate(10);
         return $this->sendSuccess([
             'owner' => $owner,
@@ -129,8 +148,12 @@ class AdminUserController extends BaseApiController
     public function toggleBlockOwner($id)
     {
         $owner = User::where('role', 'owner')->find($id);
-        if (!$owner) return $this->sendError('Owner not found');
-        $owner->update(['is_blocked' => !$owner->is_blocked]);
+        if (!$owner) return $this->sendError('Owner not found', [], 404);
+        $blocking = ! $owner->is_blocked;
+        $owner->update([
+            'is_blocked' => $blocking,
+            'block_reason' => $blocking ? 'Blocked by administrator' : null,
+        ]);
         return $this->sendSuccess(['is_blocked' => $owner->is_blocked], $owner->is_blocked ? 'Owner blocked' : 'Owner unblocked');
     }
 
@@ -158,13 +181,29 @@ class AdminUserController extends BaseApiController
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
+            'verification_status' => ['nullable', Rule::in(['pending', 'under_review', 'verified', 'rejected'])],
+            'wallet_balance' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
+            'free_unlocks' => ['nullable', 'integer', 'min:0', 'max:100000'],
+            'admin_notes' => ['nullable', 'string', 'max:5000'],
+            'is_blocked' => ['nullable', 'boolean'],
+            'block_reason' => ['nullable', 'string', 'max:255'],
+            'email_verified' => ['nullable', 'boolean'],
         ]);
-        $member = User::create($data + [
+        $verificationStatus = $data['verification_status'] ?? 'verified';
+        $isBlocked = $request->boolean('is_blocked');
+        $blockReason = $data['block_reason'] ?? 'Blocked by administrator';
+        unset($data['email_verified'], $data['is_blocked'], $data['block_reason']);
+        $member = User::create(array_merge($data, [
             'role' => $role,
             'password' => Hash::make(Str::random(64)),
-            'email_verified_at' => now(),
+            'email_verified_at' => $request->boolean('email_verified', true) ? now() : null,
+            'is_verified' => $verificationStatus === 'verified',
+            'verified_at' => $verificationStatus === 'verified' ? now() : null,
+            'verification_status' => $verificationStatus,
+            'is_blocked' => $isBlocked,
+            'block_reason' => $isBlocked ? $blockReason : null,
             'is_staff_active' => true,
-        ]);
+        ]));
         return $this->sendSuccess($member, ucfirst($role) . ' created', 201);
     }
 
@@ -176,9 +215,26 @@ class AdminUserController extends BaseApiController
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($member->id)],
             'phone' => ['nullable', 'string', 'max:20', Rule::unique('users', 'phone')->ignore($member->id)],
-            'is_verified' => ['nullable', 'boolean'],
-            'verification_status' => ['nullable', Rule::in(['pending', 'verified', 'rejected'])],
+            'verification_status' => ['nullable', Rule::in(['pending', 'under_review', 'verified', 'rejected'])],
+            'wallet_balance' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
+            'free_unlocks' => ['nullable', 'integer', 'min:0', 'max:100000'],
+            'admin_notes' => ['nullable', 'string', 'max:5000'],
+            'is_blocked' => ['nullable', 'boolean'],
+            'block_reason' => ['nullable', 'string', 'max:255'],
+            'email_verified' => ['nullable', 'boolean'],
         ]);
+        if ($request->has('verification_status')) {
+            $data['is_verified'] = $data['verification_status'] === 'verified';
+            $data['verified_at'] = $data['is_verified'] ? ($member->verified_at ?: now()) : null;
+        }
+        if ($request->has('email_verified')) {
+            $data['email_verified_at'] = $request->boolean('email_verified') ? ($member->email_verified_at ?: now()) : null;
+            unset($data['email_verified']);
+        }
+        if ($request->has('is_blocked')) {
+            $data['is_blocked'] = $request->boolean('is_blocked');
+            $data['block_reason'] = $data['is_blocked'] ? ($data['block_reason'] ?? 'Blocked by administrator') : null;
+        }
         $member->update($data);
         return $this->sendSuccess($member->fresh(), ucfirst($role) . ' updated');
     }

@@ -171,7 +171,8 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::post('/broadcast/send', [\App\Http\Controllers\Admin\AdminBroadcastController::class, 'send'])->name('broadcast.send');
 
     // Blog Management
-    Route::resource('blogs', \App\Http\Controllers\Admin\BlogController::class);
+    Route::patch('blogs/{blog}/toggle-status', [\App\Http\Controllers\Admin\BlogController::class, 'toggleStatus'])->name('blogs.toggle-status');
+    Route::resource('blogs', \App\Http\Controllers\Admin\BlogController::class)->except(['show']);
 
     Route::get('/settings', [BusinessSettingsController::class, 'index'])->name('settings');
     Route::get('/maintenance', [BusinessSettingsController::class, 'maintenance'])->name('maintenance');
@@ -183,6 +184,7 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::get('/cities/create', [CityController::class, 'create'])->name('cities.create');
     Route::post('/cities', [CityController::class, 'store'])->name('cities.store');
     Route::put('/cities/{city}', [CityController::class, 'update'])->name('cities.update');
+    Route::delete('/cities/{city}', [CityController::class, 'destroy'])->name('cities.destroy');
     Route::post('/settings', [BusinessSettingsController::class, 'update'])->name('settings.update');
     Route::post('/settings/store', [BusinessSettingsController::class, 'store'])->name('settings.store');
     Route::post('/settings/ping', [BusinessSettingsController::class, 'pingSearchEngines'])->name('settings.ping');
@@ -208,12 +210,12 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::patch('property-categories/{propertyCategory}/toggle-status', [PropertyCategoryController::class, 'toggleStatus'])->name('property-categories.toggle-status');
     Route::patch('rejection-reasons/{rejectionReason}/toggle-status', [\App\Http\Controllers\Admin\RejectionReasonController::class, 'toggleStatus'])->name('rejection-reasons.toggle-status');
     Route::patch('cities/{city}/toggle-status', [\App\Http\Controllers\Admin\CityController::class, 'toggleStatus'])->name('cities.toggle-status');
-    Route::resource('plans', PlanController::class);
+    Route::resource('plans', PlanController::class)->except(['show']);
     Route::post('/plans/{plan}/toggle-active', [PlanController::class, 'toggleActive'])->name('plans.toggleActive');
 
     // Offers Management
     Route::get('/offerses', fn () => redirect()->route('admin.offers.index'))->name('offers.legacy');
-    Route::resource('offers', \App\Http\Controllers\Admin\OfferController::class);
+    Route::resource('offers', \App\Http\Controllers\Admin\OfferController::class)->except(['show']);
     Route::post('/offers/{offer}/toggle-active', [\App\Http\Controllers\Admin\OfferController::class, 'toggleActive'])->name('offers.toggleActive');
     Route::post('/offers/display-settings', [\App\Http\Controllers\Admin\OfferController::class, 'updateDisplaySettings'])->name('offers.display-settings');
 

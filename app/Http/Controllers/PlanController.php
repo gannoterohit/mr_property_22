@@ -59,8 +59,11 @@ class PlanController extends Controller
             'contacts_limit' => 'nullable|integer|min:-1',
             'type' => 'required|in:owner,user',
             'benefits' => 'nullable|array',
-            'benefits.*' => 'string'
+            'benefits.*' => 'string',
+            'is_active' => 'nullable|boolean',
         ]);
+
+        $data['is_active'] = $request->boolean('is_active');
 
         Plan::create($data);
         return redirect()->route('admin.plans.index')->with('success', 'Plan created successfully!');
@@ -81,8 +84,11 @@ class PlanController extends Controller
             'contacts_limit' => 'nullable|integer|min:-1',
             'type' => 'required|in:owner,user',
             'benefits' => 'nullable|array',
-            'benefits.*' => 'string'
+            'benefits.*' => 'string',
+            'is_active' => 'nullable|boolean',
         ]);
+
+        $data['is_active'] = $request->boolean('is_active');
 
         $plan->update($data);
         return redirect()->route('admin.plans.index')->with('success', 'Plan updated successfully!');

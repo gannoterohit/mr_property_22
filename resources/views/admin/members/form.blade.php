@@ -31,7 +31,7 @@
             <p class="mt-1 text-sm text-slate-500">Manage identity, access, verification and account benefits.</p>
         </div>
         @if($editing)
-            <a href="{{ $isOwner ? route('admin.owners.detail',$member) : route('admin.users.detail',$member) }}" class="inline-flex h-11 items-center gap-2 rounded-xl border bg-white px-5 text-xs font-extrabold text-slate-700"><i class="fas fa-eye"></i>View profile</a>
+            <x-admin.action-icon variant="view" :href="$isOwner ? route('admin.owners.detail',$member) : route('admin.users.detail',$member)" title="View profile" />
         @endif
     </header>
 

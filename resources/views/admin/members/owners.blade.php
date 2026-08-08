@@ -6,7 +6,7 @@
 <style>
     .people-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .owner-filter{display:grid;grid-template-columns:minmax(240px,1fr) 180px 160px auto;gap:10px}
-    .people-table{width:100%;min-width:1040px}
+    .people-table{width:100%;min-width:1260px}
     .people-table th,.people-table td{text-align:left!important;vertical-align:middle!important}
     .people-table th:last-child,.people-table td:last-child{text-align:right!important}
     @media(max-width:1023px){.owner-filter{grid-template-columns:1fr 1fr}}
@@ -101,7 +101,7 @@
                             };
                         @endphp
                         <tr class="hover:bg-slate-50/70">
-                            <td class="px-5 py-4">
+                            <td class="px-5 py-4 whitespace-nowrap">
                                 <div class="flex min-w-[220px] items-center gap-3">
                                     <span class="admin-theme-soft flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-extrabold">{{ strtoupper(substr($owner->name,0,1)) }}</span>
                                     <div class="min-w-0">
@@ -125,10 +125,23 @@
                                     <form method="POST" action="{{ route('admin.members.restore',$owner->id) }}">@csrf<button class="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">Restore</button></form>
                                 @else
                                     <div class="flex justify-end gap-2">
+                                        <x-admin.status-toggle
+                                            :active="!$owner->is_blocked"
+                                            active-label="Active"
+                                            inactive-label="Blocked"
+                                            :action="route('admin.owners.toggleBlock', $owner)"
+                                            :data-label="$owner->name"
+                                            method="POST"
+                                        />
                                         <a href="{{ route('admin.owners.detail',$owner) }}#direct-msg-card" title="Send Direct Notification / SMS" class="rounded-lg bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition"><i class="fas fa-paper-plane"></i></a>
                                         <a href="{{ route('admin.members.index',['q'=>$owner->email,'member_id'=>$owner->id]) }}" title="Member 360" class="admin-theme-soft rounded-lg px-3 py-2 text-xs font-bold"><i class="fas fa-chart-pie"></i></a>
-                                        <a href="{{ route('admin.owners.detail',$owner) }}" class="rounded-lg border px-3 py-2 text-xs font-bold text-slate-700">View</a>
-                                        <a href="{{ route('admin.owners.edit',$owner) }}" class="rounded-lg bg-slate-900 px-3 py-2 text-xs font-bold text-white">Edit</a>
+                                        <x-admin.action-icon variant="view" :href="route('admin.owners.detail',$owner)" />
+                                        <x-admin.action-icon variant="edit" :href="route('admin.owners.edit',$owner)" />
+                                        <form method="POST" action="{{ route('admin.owners.destroy',$owner) }}" class="admin-confirm" data-confirm-title="Delete {{ $owner->name }}?" data-confirm-text="The account will be soft deleted and can be restored from the Deleted filter. Listings are retained." data-confirm-button="Yes, delete owner">
+                                            @csrf
+                                            @method('DELETE')
+                                            <x-admin.action-icon variant="delete" type="submit" />
+                                        </form>
                                     </div>
 
                                 @endif

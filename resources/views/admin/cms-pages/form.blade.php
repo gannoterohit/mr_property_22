@@ -51,7 +51,7 @@
                         <div id="faqItems" class="space-y-4">
                             @forelse($faqItems as $index => $faq)
                                 <div class="faq-item rounded-xl border bg-slate-50 p-4">
-                                    <div class="flex justify-end"><button type="button" class="remove-faq text-xs font-bold text-red-600"><i class="fas fa-trash mr-1"></i>Remove</button></div>
+                                    <div class="flex justify-end"><x-admin.action-icon variant="remove" type="button" class="remove-faq" /></div>
                                     <label class="text-xs font-bold">Question</label>
                                     <input name="faqs[{{ $index }}][question]" value="{{ $faq['question'] ?? '' }}" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm">
                                     <label class="mt-4 block text-xs font-bold">Answer</label>
@@ -59,7 +59,7 @@
                                 </div>
                             @empty
                                 <div class="faq-item rounded-xl border bg-slate-50 p-4">
-                                    <div class="flex justify-end"><button type="button" class="remove-faq text-xs font-bold text-red-600"><i class="fas fa-trash mr-1"></i>Remove</button></div>
+                                    <div class="flex justify-end"><x-admin.action-icon variant="remove" type="button" class="remove-faq" /></div>
                                     <label class="text-xs font-bold">Question</label>
                                     <input name="faqs[0][question]" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm">
                                     <label class="mt-4 block text-xs font-bold">Answer</label>
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addFaq')?.addEventListener('click', () => {
         document.getElementById('faqItems')?.insertAdjacentHTML('beforeend', `
             <div class="faq-item rounded-xl border bg-slate-50 p-4">
-                <div class="flex justify-end"><button type="button" class="remove-faq text-xs font-bold text-red-600"><i class="fas fa-trash mr-1"></i>Remove</button></div>
+                <div class="flex justify-end"><x-admin.action-icon variant="remove" type="button" class="remove-faq" /></div>
                 <label class="text-xs font-bold">Question</label>
                 <input name="faqs[${faqIndex}][question]" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm">
                 <label class="mt-4 block text-xs font-bold">Answer</label>

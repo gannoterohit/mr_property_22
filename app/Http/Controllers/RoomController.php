@@ -30,9 +30,7 @@ class RoomController extends Controller {
         } 
         // Public/Explore view (default)
         else {
-            $query->where('status', 'active')
-                  ->where('listing_fee_paid', true)
-                  ->where('listing_status', 'approved');
+            $query->publicVisible();
         }
     
     // Search or Auto-Detect City
@@ -220,9 +218,8 @@ class RoomController extends Controller {
         }
     }
     
-    $propertyTypeCounts = Room::select('property_type_id', DB::raw('count(*) as total'))
-        ->where('status', 'active')
-        ->where('listing_status', 'approved')
+    $propertyTypeCounts = Room::publicVisible()
+        ->select('property_type_id', DB::raw('count(*) as total'))
         ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
         ->whereNotNull('property_type_id')
         ->groupBy('property_type_id')
@@ -230,13 +227,12 @@ class RoomController extends Controller {
         ->map(fn ($total) => (int) $total)
         ->toArray();
 
-    $propertyTypes = PropertyType::where('status', true)
+    $propertyTypes = PropertyType::active()
         ->orderBy('name')
         ->get(['id', 'name']);
 
-    $propertyCategoryCounts = Room::select('property_category_id', DB::raw('count(*) as total'))
-        ->where('status', 'active')
-        ->where('listing_status', 'approved')
+    $propertyCategoryCounts = Room::publicVisible()
+        ->select('property_category_id', DB::raw('count(*) as total'))
         ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
         ->whereNotNull('property_category_id')
         ->groupBy('property_category_id')
@@ -245,22 +241,20 @@ class RoomController extends Controller {
         ->toArray();
 
     $propertyCategories = PropertyCategory::with('propertyType:id,name')
-        ->where('status', true)
+        ->publicSelectable()
         ->orderBy('property_type_id')
         ->orderBy('name')
         ->get(['id', 'property_type_id', 'name']);
 
     // Dynamic rent bounds from actual DB data
-    $rentBounds = Room::where('status', 'active')
-        ->where('listing_status', 'approved')
+    $rentBounds = Room::publicVisible()
         ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
         ->selectRaw('MIN(rent) as min_rent, MAX(rent) as max_rent')
         ->first();
 
     // Tenant type counts (girls/boys/family/any)
-    $tenantTypeCounts = Room::select('tenant_option_id', DB::raw('count(*) as total'))
-        ->where('status', 'active')
-        ->where('listing_status', 'approved')
+    $tenantTypeCounts = Room::publicVisible()
+        ->select('tenant_option_id', DB::raw('count(*) as total'))
         ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
         ->whereNotNull('tenant_option_id')
         ->groupBy('tenant_option_id')
@@ -269,9 +263,8 @@ class RoomController extends Controller {
         ->toArray();
 
     // Furnishing counts from DB
-    $furnishingCounts = Room::select('furnishing_option_id', DB::raw('count(*) as total'))
-        ->where('status', 'active')
-        ->where('listing_status', 'approved')
+    $furnishingCounts = Room::publicVisible()
+        ->select('furnishing_option_id', DB::raw('count(*) as total'))
         ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
         ->whereNotNull('furnishing_option_id')
         ->groupBy('furnishing_option_id')
@@ -312,7 +305,7 @@ class RoomController extends Controller {
             'furnishing_type' => ['required', Rule::in(RoomOption::validIdsFor('furnishing_type'))],
             'tenant_type' => ['required', Rule::in(RoomOption::validIdsFor('tenant_type'))],
             'amenities' => 'nullable|array',
-            'amenities.*' => 'string',
+            'amenities.*' => ['string', Rule::in(RoomOption::activeLabelsFor('amenity')->all())],
             'landmarks' => 'nullable|array',
             'landmarks.*' => 'string',
             'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -592,7 +585,7 @@ class RoomController extends Controller {
         }
 
         if (!$isOwner && !$isAdmin) {
-            if ($room->status !== 'active' || $room->listing_status !== 'approved' || !$room->listing_fee_paid) {
+            if (! Room::publicVisible()->whereKey($room->getKey())->exists()) {
                 abort(404);
             }
         }
@@ -672,11 +665,9 @@ class RoomController extends Controller {
         
         $room->load(['owner', 'propertyType', 'propertyCategory', 'roomTypeOption', 'furnishingOption', 'tenantOption']);
 
-        $relatedRooms = Room::query()
+        $relatedRooms = Room::publicVisible()
             ->whereKeyNot($room->getKey())
             ->where('city', $room->city)
-            ->where('status', 'active')
-            ->where('listing_status', 'approved')
             ->when($room->property_category_id, fn ($query) => $query->where('property_category_id', $room->property_category_id))
             ->when(!$room->property_category_id && $room->property_type_id, fn ($query) => $query->where('property_type_id', $room->property_type_id))
             ->with(['owner', 'propertyType', 'propertyCategory'])
@@ -725,6 +716,7 @@ class RoomController extends Controller {
             'furnishing_type' => ['required', Rule::in(RoomOption::validIdsFor('furnishing_type'))],
             'tenant_type' => ['required', Rule::in(RoomOption::validIdsFor('tenant_type'))],
             'amenities' => 'nullable|array',
+            'amenities.*' => ['string', Rule::in(RoomOption::activeLabelsFor('amenity')->all())],
             'landmarks' => 'nullable|array',
             'listing_type' => 'required|in:owner,broker',
             'broker_fee' => 'nullable|numeric|min:0',

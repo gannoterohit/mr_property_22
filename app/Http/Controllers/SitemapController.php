@@ -12,7 +12,9 @@ class SitemapController extends Controller
 {
     public function index()
     {
-        $rooms = Room::where('status', 'active')->orderBy('updated_at', 'desc')->get();
+        $rooms = Room::publicVisible()
+            ->orderBy('updated_at', 'desc')
+            ->get(['id', 'slug', 'updated_at']);
         $baseUrl = $this->baseUrl();
         $publicUrl = fn (string $path) => $baseUrl . '/' . ltrim($path, '/');
 
@@ -40,14 +42,7 @@ class SitemapController extends Controller
             'priority' => '0.9'
         ];
 
-        $urls[] = [
-            'loc' => $publicUrl('plans'),
-            'lastmod' => now()->toAtomString(),
-            'changefreq' => 'weekly',
-            'priority' => '0.7'
-        ];
-
-        $latestBlog = Blog::where('is_published', true)->latest('updated_at')->first();
+        $latestBlog = Blog::published()->latest('updated_at')->first();
 
         $urls[] = [
             'loc' => $publicUrl('blog'),
@@ -56,7 +51,7 @@ class SitemapController extends Controller
             'priority' => '0.7',
         ];
 
-        foreach (Blog::where('is_published', true)->orderBy('updated_at', 'desc')->get() as $blog) {
+        foreach (Blog::published()->orderBy('updated_at', 'desc')->get() as $blog) {
             $urls[] = [
                 'loc' => $publicUrl('blog/' . $blog->slug),
                 'lastmod' => optional($blog->updated_at)->toAtomString() ?? now()->toAtomString(),
@@ -67,7 +62,7 @@ class SitemapController extends Controller
 
         foreach ($rooms as $room) {
             $urls[] = [
-                'loc' => $publicUrl('rooms/' . $room->id),
+                'loc' => $publicUrl('rooms/' . ($room->slug ?: $room->id)),
                 'lastmod' => optional($room->updated_at)->toAtomString() ?? now()->toAtomString(),
                 'changefreq' => 'weekly',
                 'priority' => '0.7'
@@ -98,7 +93,4 @@ class SitemapController extends Controller
         return rtrim($configuredUrl !== '' ? $configuredUrl : url('/'), '/');
     }
 }
-
-
-
 

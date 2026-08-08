@@ -104,6 +104,10 @@
                     <div class="flex justify-between gap-3"><dt class="text-slate-400">Created</dt><dd class="font-bold text-slate-700">{{ $plan->created_at?->format('d M Y') ?? 'Not available' }}</dd></div>
                     <div class="flex justify-between gap-3"><dt class="text-slate-400">Updated</dt><dd class="font-bold text-slate-700">{{ $plan->updated_at?->format('d M Y') ?? 'Not available' }}</dd></div>
                 </dl>
+                <label class="mt-4 flex items-center justify-between rounded-xl bg-slate-50 p-3 text-xs font-bold text-slate-700">
+                    <span>Active plan</span>
+                    <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $plan->is_active)) class="rounded admin-theme-text">
+                </label>
                 <button type="submit" class="admin-theme-bg mt-5 flex h-11 w-full items-center justify-center rounded-xl text-sm font-bold">
                     <i class="fas fa-save mr-2"></i>Update Plan
                 </button>

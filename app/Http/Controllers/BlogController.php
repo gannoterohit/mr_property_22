@@ -12,7 +12,7 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Blog::where('is_published', true);
+        $query = Blog::published();
 
         if ($request->has('search')) {
             $search = $request->get('search');
@@ -24,7 +24,7 @@ class BlogController extends Controller
 
         $blogs = $query->latest()->paginate(10);
                      
-        $recentBlogs = Blog::where('is_published', true)
+        $recentBlogs = Blog::published()
                            ->latest()
                            ->take(5)
                            ->get();
@@ -38,10 +38,10 @@ class BlogController extends Controller
     public function show($slug)
     {
         $blog = Blog::where('slug', $slug)
-                    ->where('is_published', true)
+                    ->published()
                     ->firstOrFail();
 
-        $recentBlogs = Blog::where('is_published', true)
+        $recentBlogs = Blog::published()
             ->where('id', '!=', $blog->id)
             ->latest()
             ->take(4)

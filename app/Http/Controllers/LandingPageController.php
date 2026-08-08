@@ -28,9 +28,7 @@ class LandingPageController extends Controller
     public function index(Request $request)
     {
         $query = Room::query()
-            ->where('status', 'active')
-            ->where('listing_fee_paid', true)
-            ->where('listing_status', 'approved')
+            ->publicVisible()
             ->with(['user:id,name,avatar', 'propertyType', 'propertyCategory']);
 
         $userCity = session('user_city');
@@ -89,10 +87,7 @@ class LandingPageController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        $otherRooms = Room::query()
-            ->where('status', 'active')
-            ->where('listing_fee_paid', true)
-            ->where('listing_status', 'approved')
+        $otherRooms = Room::publicVisible()
             ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
             ->with(['user:id,name,avatar', 'propertyType', 'propertyCategory'])
             ->orderBy('is_featured', 'desc')
@@ -131,20 +126,19 @@ class LandingPageController extends Controller
         $popularCities = CityOperations::selectorCities();
 
         // Room categories with dynamic counts from DB
-        $propertyTypes = \App\Models\PropertyType::where('status', true)
+        $propertyTypes = \App\Models\PropertyType::active()
             ->orderBy('name')
             ->get();
 
-        $propertyCategories = Room::select('property_category_id', \DB::raw('count(*) as total'))
-            ->where('status', 'active')
-            ->where('listing_status', 'approved')
+        $propertyCategories = Room::publicVisible()
+            ->select('property_category_id', \DB::raw('count(*) as total'))
             ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
             ->whereNotNull('property_category_id')
             ->groupBy('property_category_id')
             ->orderByDesc('total')
             ->get()
             ->map(function ($item) {
-                $category = \App\Models\PropertyCategory::find($item->property_category_id);
+                $category = \App\Models\PropertyCategory::publicSelectable()->find($item->property_category_id);
                 if (! $category) {
                     return null;
                 }
@@ -157,23 +151,22 @@ class LandingPageController extends Controller
             ->filter()
             ->values();
 
-        $latestBlogs = \App\Models\Blog::where('is_published', true)->orderBy('created_at', 'desc')->take(3)->get();
+        $latestBlogs = \App\Models\Blog::published()->orderBy('created_at', 'desc')->take(3)->get();
         $homeFeatures = HomeFeature::active()->orderBy('sort_order')->orderBy('id')->take(6)->get();
         $testimonials = Testimonial::active()->orderBy('sort_order')->orderByDesc('created_at')->take(6)->get();
 
         // Hero room — cheapest featured/active room in current city
-        $heroRoom = Room::where('status', 'active')
-            ->where('listing_status', 'approved')
+        $heroRoom = Room::publicVisible()
             ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
             ->orderByDesc('is_featured')
             ->orderBy('rent', 'asc')
             ->first();
 
         // DB-based stats for hero section
-        $totalRooms  = Room::where('status', 'active')->where('listing_status', 'approved')->count();
-        $totalOwners = Room::where('status', 'active')->where('listing_status', 'approved')->distinct('user_id')->count('user_id');
+        $totalRooms  = Room::publicVisible()->count();
+        $totalOwners = Room::publicVisible()->distinct('user_id')->count('user_id');
         $totalUsers  = User::where('role', 'user')->count();
-        $totalAreas  = Room::where('status', 'active')->where('listing_status', 'approved')
+        $totalAreas  = Room::publicVisible()
             ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
             ->distinct('city')->count('city');
 

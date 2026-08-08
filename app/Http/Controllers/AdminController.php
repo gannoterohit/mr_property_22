@@ -94,9 +94,19 @@ class AdminController extends Controller
             }
         }
         if ($access['content']) {
-            $data['contentStats'] = ['blogs' => \App\Models\Blog::count(), 'offers' => \App\Models\Offer::count(), 'pages' => \App\Models\CmsPage::count()];
+            $data['contentStats'] = [
+                'blogs' => \App\Models\Blog::count(),
+                'offers' => \App\Models\Offer::count(),
+                'pages' => \App\Models\CmsPage::where('slug', '!=', 'how-it-works')->count(),
+                'home_features' => \App\Models\HomeFeature::count(),
+                'how_it_works' => \App\Models\HowItWorksItem::count(),
+                'testimonials' => \App\Models\Testimonial::count(),
+            ];
             $data['quickLinks'][] = ['label' => 'Blogs', 'route' => route('admin.blogs.index'), 'icon' => 'fa-newspaper'];
             $data['quickLinks'][] = ['label' => 'Offers', 'route' => route('admin.offers.index'), 'icon' => 'fa-bullhorn'];
+            $data['quickLinks'][] = ['label' => 'Why Choose Us', 'route' => route('admin.home-features.index'), 'icon' => 'fa-circle-check'];
+            $data['quickLinks'][] = ['label' => 'How It Works', 'route' => route('admin.how-it-works.index'), 'icon' => 'fa-route'];
+            $data['quickLinks'][] = ['label' => 'Testimonials', 'route' => route('admin.testimonials.index'), 'icon' => 'fa-star'];
         }
         if ($access['reports']) {
             $data['reportStats'] = ['searches_today' => \App\Models\SearchLog::whereDate('created_at', today())->count(), 'unlocks_today' => \App\Models\Enquiry::where('unlocked', true)->whereDate('unlocked_at', today())->count()];
@@ -792,7 +802,7 @@ class AdminController extends Controller
             'furnishing_type' => ['required', Rule::in(RoomOption::validIdsFor('furnishing_type'))],
             'tenant_type' => ['required', Rule::in(RoomOption::validIdsFor('tenant_type'))],
             'amenities' => 'nullable|array',
-            'amenities.*' => 'string',
+            'amenities.*' => ['string', Rule::in(RoomOption::activeLabelsFor('amenity')->all())],
             'landmarks' => 'nullable|array',
             'landmarks.*' => 'string',
             'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -902,7 +912,7 @@ class AdminController extends Controller
             'furnishing_type' => ['required', Rule::in(RoomOption::validIdsFor('furnishing_type'))],
             'tenant_type' => ['required', Rule::in(RoomOption::validIdsFor('tenant_type'))],
             'amenities' => 'nullable|array',
-            'amenities.*' => 'string',
+            'amenities.*' => ['string', Rule::in(RoomOption::activeLabelsFor('amenity')->all())],
             'landmarks' => 'nullable|array',
             'landmarks.*' => 'string',
             'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
