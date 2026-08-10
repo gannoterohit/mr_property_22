@@ -133,14 +133,6 @@ class BusinessSettingsController extends Controller
                 $path = $request->file($fileKey)->store('settings', 'public');
                 $newFiles[] = $path;
                 $data[$fileKey] = $path;
-
-                $destDir = public_path('storage/'.dirname($path));
-                if (! is_dir($destDir)) {
-                    mkdir($destDir, 0755, true);
-                }
-                if (! copy(storage_path('app/public/'.$path), public_path('storage/'.$path))) {
-                    throw new \RuntimeException('Unable to publish the uploaded settings image.');
-                }
             }
 
             DB::transaction(function () use ($data, $request, &$oldFiles): void {
