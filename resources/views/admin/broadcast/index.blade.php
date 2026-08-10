@@ -3,25 +3,7 @@
 @section('title', 'Push Broadcast Announcement Center')
 
 @push('styles')
-<style>
-.audience-card.active {
-    border-color: #4f46e5 !important;
-    background-color: rgba(238, 242, 255, 0.75) !important;
-    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.15) !important;
-}
-.audience-card.active .check-icon {
-    opacity: 1 !important;
-}
-.audience-card.active .badge-icon {
-    background-color: #4f46e5 !important;
-    color: #ffffff !important;
-}
-.tab-btn[aria-selected="true"] {
-    border-bottom: 2px solid #4f46e5;
-    color: #4f46e5;
-    font-weight: 800;
-}
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-broadcast-index.css') }}">
 @endpush
 
 @section('admin-content')

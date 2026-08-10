@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title','Admin Dashboard')
-@push('styles')<style>.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.dash-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}@media(max-width:850px){.dash-two{grid-template-columns:1fr}}</style>@endpush
+@push('styles')<link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">@endpush
 @section('admin-content')
 <div class="space-y-5 p-5 lg:p-6">
     <header><p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Your workspace</p><h1 class="mt-1 text-2xl font-extrabold text-slate-900">Good {{ now()->hour<12?'morning':(now()->hour<17?'afternoon':'evening') }}, {{ Auth::user()->name }}</h1><p class="text-sm text-slate-500">Only the modules assigned to your role are shown here.</p></header>

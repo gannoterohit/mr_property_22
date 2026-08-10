@@ -1,38 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Complaint '.$complaint->ticket_number)
 @push('styles')
-<style>
-    .admin-complaint-detail-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 360px;
-        gap: 1.25rem;
-        align-items: start;
-        width: 100%;
-        min-width: 0;
-        max-width: 100%;
-    }
-    .admin-complaint-detail-grid > section,
-    .admin-complaint-detail-grid > aside,
-    .admin-complaint-detail-grid > section > *,
-    .admin-complaint-detail-grid > aside > * {
-        min-width: 0;
-        max-width: 100%;
-    }
-    .admin-complaint-detail-grid p,
-    .admin-complaint-detail-grid dd,
-    .admin-complaint-detail-grid a {
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
-    .admin-complaint-detail-grid textarea,
-    .admin-complaint-detail-grid select,
-    .admin-complaint-detail-grid input {
-        max-width: 100%;
-    }
-    @media (max-width: 1279px) {
-        .admin-complaint-detail-grid { grid-template-columns: minmax(0, 1fr); }
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-complaints-show.css') }}">
 @endpush
 @section('admin-content')
 <div class="min-w-0 max-w-full space-y-5 overflow-x-hidden">

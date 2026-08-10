@@ -3,15 +3,7 @@
 @section('title','Property Owners')
 
 @push('styles')
-<style>
-    .people-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-    .owner-filter{display:grid;grid-template-columns:minmax(240px,1fr) 180px 160px auto;gap:10px}
-    .people-table{width:100%;min-width:1260px}
-    .people-table th,.people-table td{text-align:left!important;vertical-align:middle!important}
-    .people-table th:last-child,.people-table td:last-child{text-align:right!important}
-    @media(max-width:1023px){.owner-filter{grid-template-columns:1fr 1fr}}
-    @media(max-width:767px){.people-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.owner-filter{grid-template-columns:1fr}}
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-members-owners.css') }}">
 @endpush
 
 @section('admin-content')

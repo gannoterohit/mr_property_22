@@ -3,14 +3,7 @@
 @section('title','Users')
 
 @push('styles')
-<style>
-    .people-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-    .people-filter{display:grid;grid-template-columns:minmax(260px,1fr) 180px auto;gap:10px}
-    .people-table{width:100%;min-width:1180px}
-    .people-table th,.people-table td{text-align:left!important;vertical-align:middle!important}
-    .people-table th:last-child,.people-table td:last-child{text-align:right!important}
-    @media(max-width:767px){.people-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.people-filter{grid-template-columns:1fr}}
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-members-users.css') }}">
 @endpush
 
 @section('admin-content')

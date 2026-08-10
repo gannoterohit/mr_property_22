@@ -1,0 +1,2 @@
+.report-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.report-main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(300px,.7fr);gap:16px}.report-cities{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}@media(max-width:1199px){.report-kpis{grid-template-columns:repeat(2,1fr)}.report-main{grid-template-columns:1fr}.report-cities{grid-template-columns:repeat(3,1fr)}}@media(max-width:639px){.report-kpis,.report-cities{grid-template-columns:1fr}}
+

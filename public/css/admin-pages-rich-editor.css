@@ -1,0 +1,10 @@
+    .cms-rich-editor .ql-toolbar { border-color:#dbe1ea; border-radius:10px 10px 0 0; background:#f8fafc; }
+    .cms-rich-editor .ql-container { min-height:420px; border-color:#dbe1ea; border-radius:0 0 10px 10px; font-size:15px; }
+    .cms-rich-editor .ql-editor { min-height:420px; line-height:1.7; }
+    .cms-rich-editor.cms-rich-editor-compact .ql-toolbar { padding:4px !important; }
+    .cms-rich-editor.cms-rich-editor-compact .ql-container { min-height:0 !important; height:120px !important; }
+    .cms-rich-editor.cms-rich-editor-compact .ql-editor { min-height:0 !important; height:120px !important; max-height:120px !important; overflow-y:auto !important; padding:10px 12px !important; }
+    .page-editor-fullscreen { position:fixed !important; inset:0 !important; z-index:99999 !important; background:#fff !important; padding:16px !important; overflow:auto !important; }
+    .page-editor-fullscreen .cms-rich-editor .ql-container,
+    .page-editor-fullscreen .cms-rich-editor .ql-editor { min-height:calc(100vh - 150px) !important; }
+

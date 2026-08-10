@@ -13,12 +13,7 @@
 @section('title', ($editing ? 'Edit ' : 'Add ') . $label)
 
 @push('styles')
-<style>
-    .member-form-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
-    .member-field{height:44px;width:100%;border:1px solid #e2e8f0!important;border-radius:12px!important;font-size:13px!important}
-    .member-field:focus{border-color:var(--admin-primary)!important;box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1)!important}
-    @media(max-width:1023px){.member-form-grid{grid-template-columns:1fr}}
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-members-form.css') }}">
 @endpush
 
 @section('admin-content')

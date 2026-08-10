@@ -3,12 +3,7 @@
 @section('title', 'List Your Property - RoomRental')
 
 @section('content')
-<style>
-    .toast-success { background-color: #51a351 !important; }
-    .toast-error { background-color: #bd362f !important; }
-    .toast-info { background-color: #2f96b4 !important; }
-    .toast-warning { background-color: #f89406 !important; }
-</style>
+<link rel="stylesheet" href="{{ asset('css/owner-rooms-create.css') }}">
 
 <div class="owner-workspace room-editor min-h-screen bg-slate-50">
     <!-- Mobile App Header -->

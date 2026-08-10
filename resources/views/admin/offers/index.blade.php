@@ -3,16 +3,7 @@
 @section('title', 'Offer Management')
 
 @push('styles')
-<style>
-    .offer-overview { display:grid!important; grid-template-columns:minmax(0,1fr) 300px!important; gap:16px; align-items:stretch; }
-    .offer-placement-grid { display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr))!important; gap:10px; }
-    .offer-filter-grid { display:grid!important; grid-template-columns:minmax(210px,1fr) 170px 140px 130px auto!important; gap:8px; align-items:center; width:min(100%,850px); }
-    .offer-table { min-width:1100px; width:100%; table-layout:fixed; }
-    .offer-table th,.offer-table td { text-align:left!important; vertical-align:middle!important; }
-    .offer-table th:nth-child(1),.offer-table td:nth-child(1){width:30%}.offer-table th:nth-child(2),.offer-table td:nth-child(2){width:15%}.offer-table th:nth-child(3),.offer-table td:nth-child(3){width:9%}.offer-table th:nth-child(4),.offer-table td:nth-child(4){width:17%}.offer-table th:nth-child(5),.offer-table td:nth-child(5){width:10%}.offer-table th:nth-child(6),.offer-table td:nth-child(6){width:19%;text-align:right!important}
-    @media(max-width:1199px){.offer-overview{grid-template-columns:1fr!important}.offer-filter-grid{grid-template-columns:1fr 1fr!important;width:100%}.offer-placement-grid{grid-template-columns:repeat(3,1fr)!important}}
-    @media(max-width:639px){.offer-filter-grid,.offer-placement-grid{grid-template-columns:1fr!important}}
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-offers-index.css') }}">
 @endpush
 
 @section('admin-content')

@@ -3,54 +3,7 @@
 @section('title', 'My Properties - ' . \App\Models\Setting::get('website_name', 'RoomRental'))
 
 @push('styles')
-<style>
-    .owner-rooms-page { background: #f8fafc; }
-    .owner-rooms-header-inner { padding-top: 2rem !important; padding-bottom: 2rem !important; }
-    .owner-rooms-content { padding-top: 2rem !important; padding-bottom: 3.5rem !important; }
-    .owner-room-stats {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem !important;
-    }
-    .owner-room-stat {
-        min-height: 88px;
-        padding: 1rem 1.125rem !important;
-        border: 1px solid #e2e8f0;
-        border-radius: 1rem;
-        background: #fff;
-        box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
-    }
-    .owner-listing-section { padding-top: .25rem; }
-    .owner-listing-heading { margin-bottom: 1.25rem !important; }
-    .owner-room-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1.5rem;
-        align-items: start;
-    }
-    .owner-room-card { min-width: 0; height: auto !important; align-self: start; }
-    .owner-room-media {
-        position: relative;
-        width: 100%;
-        height: 220px !important;
-        min-height: 220px;
-        max-height: 220px;
-        overflow: hidden;
-        background: linear-gradient(135deg, #eef2ff, #f8fafc);
-    }
-    .owner-room-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
-    .owner-room-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
-    @media (max-width: 1279px) { .owner-room-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 767px) {
-        .owner-rooms-header-inner { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
-        .owner-rooms-content { padding-top: 1.5rem !important; padding-bottom: 2.5rem !important; }
-        .owner-room-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin-bottom: 1.5rem !important; }
-        .owner-room-stat { min-height: 78px; padding: .875rem !important; }
-        .owner-room-grid { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
-        .owner-room-media { height: 200px !important; min-height: 200px; max-height: 200px; }
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/owner-rooms.css') }}">
 @endpush
 
 @section('content')

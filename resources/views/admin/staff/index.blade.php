@@ -134,19 +134,5 @@
 @endsection
 
 @push('styles')
-<style>
-    .staff-filters{display:grid;grid-template-columns:minmax(240px,1fr) 220px 160px auto auto;gap:10px;align-items:center}
-    .staff-table{width:100%;min-width:1040px;table-layout:fixed}
-    .staff-table th,.staff-table td{padding:16px 20px;text-align:left!important;vertical-align:middle!important}
-    .staff-table th{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#64748b;white-space:nowrap}
-    .staff-table td{height:72px}
-    .staff-table th:nth-child(1),.staff-table td:nth-child(1){width:34%}
-    .staff-table th:nth-child(2),.staff-table td:nth-child(2){width:18%}
-    .staff-table th:nth-child(3),.staff-table td:nth-child(3){width:16%}
-    .staff-table th:nth-child(4),.staff-table td:nth-child(4){width:17%}
-    .staff-table th:nth-child(5),.staff-table td:nth-child(5){width:15%;text-align:right!important}
-    .staff-table td:nth-child(5)>div{justify-content:flex-end}
-    @media(max-width:900px){.staff-filters{grid-template-columns:1fr 1fr}.staff-filters button,.staff-filters a{width:100%}}
-    @media(max-width:640px){.staff-filters{grid-template-columns:1fr}}
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-staff-index.css') }}">
 @endpush

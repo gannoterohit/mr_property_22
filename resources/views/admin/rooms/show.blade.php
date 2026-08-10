@@ -6,24 +6,7 @@
 @if($room->latitude && $room->longitude)
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 @endif
-<style>
-    .admin-room-show-grid { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:20px; align-items:start; }
-    .admin-room-gallery { display:grid; grid-template-columns:2fr 1fr; gap:10px; }
-    .admin-room-gallery img { width:100%; height:100%; object-fit:cover; border-radius:14px; border:1px solid #e2e8f0; background:#f8fafc; }
-    .admin-room-gallery-main { min-height:330px; }
-    .admin-room-gallery-side { display:grid; gap:10px; }
-    .admin-room-gallery-side img { min-height:160px; }
-    .admin-room-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
-    .admin-room-kpi { border:1px solid #e2e8f0; border-radius:14px; background:#fff; padding:14px; }
-    .admin-room-kpi span { display:block; color:#64748b; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }
-    .admin-room-kpi strong { display:block; margin-top:6px; color:#0f172a; font-size:15px; font-weight:900; }
-    .admin-room-aside { position:sticky; top:86px; }
-    #adminRoomMap { height:320px; border-radius:14px; border:1px solid #e2e8f0; overflow:hidden; z-index:10; }
-    .admin-address-map { width:100%; height:320px; border:0; border-radius:14px; background:#f8fafc; }
-    .admin-map-empty { min-height:180px; border:1px dashed #cbd5e1; border-radius:14px; background:#f8fafc; display:flex; align-items:center; justify-content:center; text-align:center; padding:24px; }
-    @media(max-width:1199px){ .admin-room-show-grid{grid-template-columns:1fr}.admin-room-aside{position:static} }
-    @media(max-width:767px){ .admin-room-gallery,.admin-room-kpis{grid-template-columns:1fr}.admin-room-gallery-main{min-height:240px}.admin-room-gallery-side{grid-template-columns:1fr 1fr}.admin-room-gallery-side img{min-height:110px} }
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-rooms-show.css') }}">
 @endpush
 
 @section('admin-content')

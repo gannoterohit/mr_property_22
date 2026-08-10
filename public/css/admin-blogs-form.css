@@ -1,0 +1,2 @@
+.blog-editor-grid{display:grid!important;grid-template-columns:minmax(0,1fr) 340px!important;gap:20px;align-items:start}.blog-publish{position:sticky;top:86px}.ck-editor__editable{min-height:420px}@media(max-width:1199px){.blog-editor-grid{grid-template-columns:1fr!important}.blog-publish{position:static}}
+

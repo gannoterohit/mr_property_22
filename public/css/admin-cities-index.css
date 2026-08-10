@@ -1,0 +1,9 @@
+    .cities-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .cities-table{width:100%;min-width:1050px}
+    .cities-table th,.cities-table td{vertical-align:middle!important;text-align:left!important}
+    .cities-table th:last-child,.cities-table td:last-child{text-align:right!important}
+    .city-field{height:40px;width:100%;border:1px solid #e2e8f0!important;border-radius:10px!important;background:#fff;font-size:12px!important}
+    .city-field:focus{border-color:var(--admin-primary)!important;box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1)!important}
+    @media(max-width:1023px){.cities-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:639px){.cities-kpis{grid-template-columns:1fr}.cities-table{min-width:960px}}
+

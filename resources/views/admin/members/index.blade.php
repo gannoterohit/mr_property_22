@@ -3,17 +3,7 @@
 @section('title', 'Member 360')
 
 @push('styles')
-<style>
-    .member-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-    .member-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
-    #memberSearchInput{padding-left:2.85rem!important;padding-right:1rem!important;line-height:1.25rem!important}
-    #memberSearchButton{min-width:170px;white-space:nowrap}
-    .history-panel{display:none}.history-panel.active{display:block}
-    .member-search-panel{border:1px solid #e2e8f0;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.04)}
-    .member-search-button{background:#0f172a;color:#fff}.member-search-button:hover{background:#1e293b}
-    @media(max-width:1199px){.member-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    @media(max-width:639px){.member-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.member-search-row{grid-template-columns:1fr}#memberSearchButton{width:100%;min-width:0}}
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-members-index.css') }}">
 @endpush
 
 @section('admin-content')

@@ -61,10 +61,5 @@
 @endsection
 
 @push('styles')
-<style>
-    .role-workspace{display:grid;grid-template-columns:240px minmax(0,1fr);gap:16px;align-items:start}.role-list-panel{position:sticky;top:80px;overflow:hidden;border:1px solid #e2e8f0;border-radius:16px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.04)}
-    .permission-head,.permission-row{display:grid;grid-template-columns:minmax(240px,1fr) 90px 90px;align-items:center}.permission-head{padding:9px 14px;background:#f8fafc;color:#64748b;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.permission-head span:not(:first-child){text-align:center}.permission-row{min-height:52px;padding:7px 14px}
-    .permission-check{display:inline-flex;cursor:pointer}.permission-check input{position:absolute;opacity:0;pointer-events:none}.permission-check span{display:flex;width:28px;height:28px;align-items:center;justify-content:center;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:transparent;font-size:10px}.permission-check input:checked+span{border-color:#4f46e5;background:#4f46e5;color:#fff}.permission-check.manage input:checked+span{border-color:#059669;background:#059669}
-    @media(max-width:900px){.role-workspace{grid-template-columns:1fr}.role-list-panel{position:static}.role-list-panel>div:nth-child(2){display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.permission-head,.permission-row{grid-template-columns:minmax(160px,1fr) 62px 62px}}
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-roles-index.css') }}">
 @endpush

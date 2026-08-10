@@ -3,11 +3,7 @@
 @section('title', $page->exists ? 'Edit CMS Page' : 'Create CMS Page')
 
 @push('styles')
-<style>
-    .cms-editor-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
-    .cms-publish{position:sticky;top:86px}
-    @media(max-width:1199px){.cms-editor-grid{grid-template-columns:1fr}.cms-publish{position:static}}
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin-cms-pages-form.css') }}">
 @endpush
 
 @section('admin-content')
