@@ -163,6 +163,28 @@ class LandingPageController extends Controller
             ->first();
 
         // DB-based stats for hero section
+        // Popular locations with listing counts
+        $popularLocations = Room::publicVisible()
+            ->select('city', \DB::raw('count(*) as total'))
+            ->groupBy('city')
+            ->orderByDesc('total')
+            ->limit(12)
+            ->get()
+            ->map(fn($item) => (object)[
+                'name' => $item->city,
+                'total' => $item->total,
+                'slug' => \Illuminate\Support\Str::slug($item->city),
+            ]);
+
+        $hiwItems = \App\Models\HowItWorksItem::active()
+            ->orderBy('group')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get()
+            ->groupBy('group');
+
+        $ownerCtaItems = $hiwItems['owner_cta'] ?? collect();
+
         $totalRooms  = Room::publicVisible()->count();
         $totalOwners = Room::publicVisible()->distinct('user_id')->count('user_id');
         $totalUsers  = User::where('role', 'user')->count();
@@ -171,10 +193,10 @@ class LandingPageController extends Controller
             ->distinct('city')->count('city');
 
         return view('home.index', compact(
-            'rooms', 'otherRooms', 'otherRoomGroups', 'popularCities', 'propertyTypes', 'propertyCategories', 'latestBlogs',
+            'rooms', 'otherRooms', 'otherRoomGroups', 'popularCities', 'popularLocations', 'propertyTypes', 'propertyCategories', 'latestBlogs',
             'homeFeatures', 'testimonials',
             'heroRoom', 'totalRooms', 'totalOwners', 'totalUsers', 'totalAreas',
-            'cityContext'
+            'cityContext', 'hiwItems', 'ownerCtaItems'
         ));
     }
 }

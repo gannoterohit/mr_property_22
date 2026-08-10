@@ -27,6 +27,9 @@
                             <h3>{{ $room->title }}</h3>
                             <p><i class="fas fa-location-dot"></i>{{ $room->city }}</p>
                             <span class="market-room-price">₹{{ number_format($room->rent) }} <small>/month</small></span>
+                            @if($room->deposit)
+                                <span class="market-room-price" style="font-size:12px;color:#64748b;margin-top:2px;display:block;">₹{{ number_format($room->deposit) }} deposit</span>
+                            @endif
                             <div class="market-room-meta">
                                 <span>{{ $room->roomTypeLabel() }}</span>
                                 @if($room->propertyType?->name)

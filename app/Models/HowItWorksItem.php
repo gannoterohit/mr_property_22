@@ -11,6 +11,7 @@ class HowItWorksItem extends Model
         'hero_feature' => 'Hero Cards',
         'seeker_step' => 'Seeker Steps',
         'owner_step' => 'Owner Steps',
+        'owner_cta' => 'Owner CTA Features',
     ];
 
     protected $fillable = [
