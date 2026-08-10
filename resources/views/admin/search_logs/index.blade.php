@@ -4,6 +4,7 @@
 
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-search_logs-index.css') }}">
 @endpush
 
@@ -104,7 +105,7 @@
                 </form>
             </div>
 
-            <div class="analytics-kpis">
+            <div class="analytics-kpis admin-kpis">
                 @foreach([
                     ['Page views',$visitorStats['page_views'],'fa-eye','admin-theme-text'],
                     ['Visitors',$visitorStats['unique_visitors'],'fa-users','text-sky-600'],

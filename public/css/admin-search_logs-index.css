@@ -1,8 +1,4 @@
-        .analytics-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-        .analytics-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.analytics-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
         .analytics-table{min-width:960px;width:100%}
-        .analytics-table th,.analytics-table td{text-align:left!important;vertical-align:middle!important}
-        .analytics-table th:last-child,.analytics-table td:last-child{text-align:right!important}
         @media(max-width:1023px){.analytics-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
         @media(max-width:767px){.analytics-list,.analytics-kpis{grid-template-columns:1fr}}
-

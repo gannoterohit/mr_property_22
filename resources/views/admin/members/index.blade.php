@@ -3,6 +3,7 @@
 @section('title', 'Member 360')
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-members-index.css') }}">
 @endpush
 
@@ -88,7 +89,7 @@
             </div>
         </section>
 
-        <section class="member-kpis">
+        <section class="member-kpis admin-kpis">
             @foreach([
                 ['Listings',$member->rooms_count,'fa-building','admin-theme-text'],
                 ['Payments',$member->payments_count,'fa-credit-card','text-emerald-600'],

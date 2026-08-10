@@ -3,6 +3,7 @@
 @section('title', 'Operational Cities')
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-cities-index.css') }}">
 @endpush
 
@@ -36,7 +37,7 @@
         </div>
     @endif
 
-    <section class="cities-kpis">
+    <section class="cities-kpis admin-kpis">
         <article class="rounded-2xl border bg-white p-4 shadow-sm">
             <div class="flex items-center justify-between">
                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Total cities</span>
@@ -84,7 +85,7 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="cities-table">
+            <table class="cities-table admin-table-base">
                 <thead class="bg-slate-50">
                     <tr class="border-b">
                         <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">City</th>

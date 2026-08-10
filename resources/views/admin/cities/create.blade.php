@@ -3,6 +3,7 @@
 @section('title', 'Add Operational City')
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-cities-create.css') }}">
 @endpush
 

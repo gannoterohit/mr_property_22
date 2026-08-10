@@ -1,8 +1,5 @@
-    .room-filter-main{display:grid!important;grid-template-columns:minmax(240px,1.35fr) repeat(4,minmax(150px,1fr)) auto!important;gap:10px}
+.room-filter-main{display:grid!important;grid-template-columns:minmax(240px,1.35fr) repeat(4,minmax(150px,1fr)) auto!important;gap:10px}
     .room-filter-advanced{display:grid!important;grid-template-columns:repeat(5,minmax(150px,1fr))!important;gap:10px}
     .room-table{min-width:1260px;width:100%}
-    .room-table th,.room-table td{text-align:left!important;vertical-align:middle!important}
-    .room-table th:last-child,.room-table td:last-child{text-align:right!important}
     @media(max-width:1279px){.room-filter-main{grid-template-columns:repeat(3,1fr)!important}.room-filter-advanced{grid-template-columns:repeat(3,1fr)!important}}
     @media(max-width:767px){.room-filter-main,.room-filter-advanced{grid-template-columns:1fr!important}}
-

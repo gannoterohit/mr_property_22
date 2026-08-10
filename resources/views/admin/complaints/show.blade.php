@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Complaint '.$complaint->ticket_number)
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-complaints-show.css') }}">
 @endpush
 @section('admin-content')

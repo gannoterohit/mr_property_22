@@ -61,5 +61,6 @@
 @endsection
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-roles-index.css') }}">
 @endpush

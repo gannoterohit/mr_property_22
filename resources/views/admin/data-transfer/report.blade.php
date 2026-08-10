@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <!doctype html>
 <html lang="en">
 <head>

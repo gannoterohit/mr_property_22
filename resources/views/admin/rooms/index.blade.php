@@ -4,6 +4,7 @@
 
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-rooms-index.css') }}">
 @endpush
 
@@ -108,7 +109,7 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="room-table">
+            <table class="room-table admin-table-base">
                 <thead>
                     <tr>
                         <th><input id="selectAllRooms" type="checkbox"></th>

@@ -1,4 +1,4 @@
-    .admin-complaint-detail-grid {
+.admin-complaint-detail-grid {
         display: grid;
         grid-template-columns: minmax(0, 1fr) 360px;
         gap: 1.25rem;
@@ -28,4 +28,3 @@
     @media (max-width: 1279px) {
         .admin-complaint-detail-grid { grid-template-columns: minmax(0, 1fr); }
     }
-

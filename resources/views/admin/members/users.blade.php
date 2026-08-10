@@ -3,6 +3,7 @@
 @section('title','Users')
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-members-users.css') }}">
 @endpush
 
@@ -24,7 +25,7 @@
 
     @include('admin.members.nav')
 
-    <section class="people-kpis">
+    <section class="people-kpis admin-kpis">
         @foreach([
             ['Total users',$memberStats['total'],'fa-users','admin-theme-text','admin-theme-soft'],
             ['Active',$memberStats['active'],'fa-circle-check','text-emerald-600','bg-emerald-50'],
@@ -67,7 +68,7 @@
             <span class="admin-theme-soft rounded-full px-3 py-1.5 text-[10px] font-extrabold">Page {{ $users->currentPage() }} / {{ max(1,$users->lastPage()) }}</span>
         </div>
         <div class="overflow-x-auto">
-            <table class="people-table">
+            <table class="people-table admin-table-base">
                 <thead class="bg-slate-50">
                     <tr>
                         <th class="px-5 py-3">User</th>

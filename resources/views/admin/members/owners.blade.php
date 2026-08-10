@@ -3,6 +3,7 @@
 @section('title','Property Owners')
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-members-owners.css') }}">
 @endpush
 
@@ -24,7 +25,7 @@
 
     @include('admin.members.nav')
 
-    <section class="people-kpis">
+    <section class="people-kpis admin-kpis">
         @foreach([
             ['Total owners',$memberStats['total'],'fa-user-tie','admin-theme-text','admin-theme-soft'],
             ['KYC verified',$memberStats['verified'],'fa-user-check','text-emerald-600','bg-emerald-50'],
@@ -73,7 +74,7 @@
             <span class="admin-theme-soft rounded-full px-3 py-1.5 text-[10px] font-extrabold">Page {{ $owners->currentPage() }} / {{ max(1,$owners->lastPage()) }}</span>
         </div>
         <div class="overflow-x-auto">
-            <table class="people-table">
+            <table class="people-table admin-table-base">
                 <thead class="bg-slate-50">
                     <tr>
                         <th class="px-5 py-3">Owner</th>

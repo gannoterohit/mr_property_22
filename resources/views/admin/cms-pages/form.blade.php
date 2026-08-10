@@ -3,6 +3,7 @@
 @section('title', $page->exists ? 'Edit CMS Page' : 'Create CMS Page')
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-cms-pages-form.css') }}">
 @endpush
 

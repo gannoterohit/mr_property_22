@@ -3,6 +3,7 @@
 @section('title', 'Offer Management')
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-offers-index.css') }}">
 @endpush
 
@@ -77,7 +78,7 @@
             </div>
         </div>
         <div class="overflow-x-auto">
-            <table class="offer-table divide-y divide-slate-200">
+            <table class="offer-table admin-table-base divide-y divide-slate-200">
                 <thead class="bg-slate-50"><tr>@foreach(['Offer','Placement','Audience','Schedule','Status','Actions'] as $heading)<th class="px-5 py-3 text-left text-[11px] font-extrabold uppercase tracking-wider text-slate-500">{{ $heading }}</th>@endforeach</tr></thead>
                 <tbody class="divide-y divide-slate-100">
                 @forelse($offers as $offer)

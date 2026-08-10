@@ -60,7 +60,7 @@
             <span class="rounded-full admin-theme-soft px-3 py-1.5 text-[10px] font-extrabold">Page {{ $staff->currentPage() }} / {{ max(1, $staff->lastPage()) }}</span>
         </div>
         <div class="overflow-x-auto">
-            <table class="staff-table">
+            <table class="staff-table admin-table-base">
                 <thead><tr><th>Staff member</th><th>Role</th><th>Status</th><th>Last admin login</th><th>Actions</th></tr></thead>
                 <tbody class="divide-y divide-slate-100">
                 @forelse($staff as $member)
@@ -134,5 +134,6 @@
 @endsection
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin-staff-index.css') }}">
 @endpush

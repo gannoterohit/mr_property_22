@@ -3,6 +3,7 @@
 @section('title', 'Property Details')
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
 @if($room->latitude && $room->longitude)
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 @endif
@@ -55,7 +56,7 @@
                 </div>
             </section>
 
-            <section class="admin-room-kpis">
+            <section class="admin-room-kpis admin-kpis">
                 <div class="admin-room-kpi"><span>Rent</span><strong>&#8377;{{ number_format((float) $room->rent) }}/mo</strong></div>
                 <div class="admin-room-kpi"><span>Deposit</span><strong>&#8377;{{ number_format((float) $room->deposit) }}</strong></div>
                 <div class="admin-room-kpi"><span>Property type</span><strong>{{ $room->propertyType?->name ?? 'Not set' }}</strong></div>
