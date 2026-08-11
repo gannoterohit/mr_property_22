@@ -44,7 +44,7 @@
                                     <!-- Wishlist heart -->
                                     <button onclick="toggleWishlist(event, {{ $room->id }})" id="wishlist-btn-{{ $room->id }}"
                                             class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-white/95 backdrop-blur-sm shadow-md text-slate-400 hover:text-red-500 active:scale-90 transition-all flex items-center justify-center">
-                                        <i class="{{ (Auth::check() && Auth::user()->hasInWishlist($room->id)) ? 'fas text-red-500' : 'far' }} fa-heart text-sm"></i>
+                                        <i class="{{ (Auth::check() && in_array($room->id, $userWishlistIds)) ? 'fas text-red-500' : 'far' }} fa-heart text-sm"></i>
                                     </button>
 
                                     <!-- Price tag overlay -->

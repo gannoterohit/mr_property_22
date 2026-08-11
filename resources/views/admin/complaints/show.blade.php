@@ -2,7 +2,8 @@
 @section('title', 'Complaint '.$complaint->ticket_number)
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
-<link rel="stylesheet" href="{{ asset('css/admin-complaints-show.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-list.css') }}">
+
 @endpush
 @section('admin-content')
 <div class="min-w-0 max-w-full space-y-5 overflow-x-hidden">

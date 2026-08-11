@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 @section('title','Payment Management')
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}"><link rel="stylesheet" href="{{ asset('css/admin-payments-index.css') }}">@endpush
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-list.css') }}">@endpush
 @section('admin-content')
 <div class="space-y-5 p-5 lg:p-6"><header class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Finance & collections</p><h1 class="mt-1 text-2xl font-extrabold">Payment Management</h1><p class="text-sm text-slate-500">Track collections, pending transactions and payment references.</p></div><div class="flex flex-wrap gap-2"><x-admin.data-actions dataset="payments" /><a href="{{ route('admin.reports') }}" class="rounded-xl border bg-white px-4 py-2.5 text-xs font-bold"><i class="fas fa-chart-line mr-2 admin-theme-text"></i>Financial reports</a></div></header>
 <section class="payment-kpis admin-kpis">@foreach([['Collected','₹'.number_format($paymentStats['collected'],2),'fa-indian-rupee-sign','text-emerald-600','bg-emerald-50'],['Transactions',$paymentStats['total'],'fa-receipt','admin-theme-text','admin-theme-soft'],['Completed',$paymentStats['completed'],'fa-circle-check','text-blue-600','bg-blue-50'],['Pending / failed',$paymentStats['pending'].' / '.$paymentStats['failed'],'fa-clock','text-amber-600','bg-amber-50']] as [$label,$value,$icon,$tone,$bg])<article class="rounded-2xl border bg-white p-4"><div class="flex items-center justify-between"><div><p class="text-[10px] font-bold uppercase text-slate-400">{{ $label }}</p><p class="mt-2 text-2xl font-extrabold">{{ $value }}</p></div><span class="flex h-10 w-10 items-center justify-center rounded-xl {{ $bg }} {{ $tone }}"><i class="fas {{ $icon }}"></i></span></div></article>@endforeach</section>

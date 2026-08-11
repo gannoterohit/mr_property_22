@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 @section('title','Create Property')
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}"><link rel="stylesheet" href="{{ asset('css/admin-rooms-create.css') }}">@endpush
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-form.css') }}">@endpush
 @section('admin-content')
 @php $amenities=\App\Models\RoomOption::optionsFor('amenity')->pluck('label'); @endphp
 <div class="space-y-5 p-5 lg:p-6">

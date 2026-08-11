@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 @section('title','Edit Property')
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}"><link rel="stylesheet" href="{{ asset('css/admin-rooms-edit.css') }}">@endpush
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-form.css') }}">@endpush
 @section('admin-content')
 @php $currentAmenities=is_array($room->amenities)?$room->amenities:(json_decode($room->amenities,true)??[]);$currentLandmarks=is_array($room->landmarks)?$room->landmarks:(json_decode($room->landmarks,true)??[]); @endphp
 <div class="space-y-5 p-5 lg:p-6"><div class="flex flex-wrap items-end justify-between gap-3"><div><a href="{{ route('admin.all-rooms') }}" class="text-xs font-bold admin-theme-text"><i class="fas fa-arrow-left mr-1"></i>All listings</a><p class="mt-3 text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Property management</p><h1 class="mt-1 text-2xl font-extrabold">Edit Property #{{ $room->id }}</h1><p class="text-sm text-slate-500">Update property information, media and publishing controls.</p></div><x-admin.action-icon variant="view" :href="route('admin.rooms.show',$room)" title="View listing" /></div>

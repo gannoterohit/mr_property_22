@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 @section('title',isset($blog)?'Edit Blog':'Create Blog')
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}"><link rel="stylesheet" href="{{ asset('css/admin-blogs-form.css') }}">@endpush
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-form.css') }}">@endpush
 @section('admin-content')
 <div class="space-y-5 p-5 lg:p-6"><header><a href="{{ route('admin.blogs.index') }}" class="text-xs font-bold admin-theme-text"><i class="fas fa-arrow-left mr-1"></i>All blog posts</a><p class="mt-3 text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Content management</p><h1 class="mt-1 text-2xl font-extrabold">{{ isset($blog)?'Edit blog post':'Create blog post' }}</h1><p class="text-sm text-slate-500">Write helpful room-rental content and prepare it for search engines.</p></header>
 @if(isset($errors)&&$errors->any())<div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"><strong>Please correct the form.</strong><ul class="mt-2 list-disc pl-5 text-xs">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif

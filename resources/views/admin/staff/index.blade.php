@@ -135,5 +135,6 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
-<link rel="stylesheet" href="{{ asset('css/admin-staff-index.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-list.css') }}">
+
 @endpush

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class City extends Model
 {
@@ -38,6 +39,11 @@ class City extends Model
             if ($city->is_default) {
                 static::whereKeyNot($city->getKey())->update(['is_default' => false]);
             }
+            Cache::forget('cities.selector.active');
+        });
+
+        static::deleted(function () {
+            Cache::forget('cities.selector.active');
         });
     }
 

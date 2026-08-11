@@ -1,3 +1,4 @@
+/* admin-business.css */
     /* Hide main site footer and mobile nav on settings page for better full-height layout */
     footer, .mobile-bottom-nav, #fixed-footer {
         display: none !important;
@@ -126,3 +127,4 @@
     [data-appearance-subpanel][hidden] {
         display: none !important;
     }
+

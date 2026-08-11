@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 @section('title','Business Reports')
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}"><link rel="stylesheet" href="{{ asset('css/admin-analytics-reports.css') }}">@endpush
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-misc.css') }}">@endpush
 @section('admin-content')
 @php $types=['listing'=>'Listing revenue','featured'=>'Featured revenue','subscription'=>'Subscription revenue','unlock'=>'Contact unlock revenue'];$totalRevenue=collect($types)->keys()->sum(fn($t)=>(float)($revenueByType[$t]??0));$max=max(1,(float)$dailyCollections->max('total')); @endphp
 <div class="space-y-5 p-5 lg:p-6"><header class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Financial intelligence</p><h1 class="mt-1 text-2xl font-extrabold">Reports & Performance</h1><p class="text-sm text-slate-500">Direct-contact revenue, conversion, demand and growth.</p></div><form class="flex flex-wrap gap-2 rounded-xl border bg-white p-2"><input type="date" name="from" value="{{ $from->format('Y-m-d') }}" class="h-10 rounded-lg text-xs"><input type="date" name="to" value="{{ $to->format('Y-m-d') }}" class="h-10 rounded-lg text-xs"><button class="rounded-lg admin-theme-bg px-4 text-xs font-bold text-white">Apply period</button></form></header>

@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
+    public const CACHE_KEY = 'settings.all';
+    public const CACHE_TTL = 3600; // 1 hour
+
     public const SECRET_KEYS = [
         'mail_password',
         'razorpay_secret',
@@ -65,9 +69,23 @@ class Setting extends Model
             return $default;
         }
 
-        $setting = self::where('key', $key)->first();
+        $settings = Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
+            try {
+                return self::all(['key', 'value'])->mapWithKeys(fn ($setting) => [$setting->key => $setting->value])->toArray();
+            } catch (\Throwable $e) {
+                return [];
+            }
+        });
 
-        return $setting && $setting->value !== null && $setting->value !== '' ? $setting->value : $default;
+        return $settings[$key] ?? $default;
+    }
+
+    /**
+     * Clear settings cache
+     */
+    public static function clearCache(): void
+    {
+        Cache::forget(self::CACHE_KEY);
     }
 
     public static function isEnabled(string $key, bool $default = true): bool
@@ -110,10 +128,14 @@ class Setting extends Model
             return null;
         }
 
-        return self::updateOrCreate(
+        $result = self::updateOrCreate(
             ['key' => $key],
             ['value' => $value]
         );
+
+        self::clearCache();
+
+        return $result;
     }
 
     /**

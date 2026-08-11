@@ -1,3 +1,0 @@
-.cms-editor-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
-    .cms-publish{position:sticky;top:86px}
-    @media(max-width:1199px){.cms-editor-grid{grid-template-columns:1fr}.cms-publish{position:static}}

@@ -248,16 +248,28 @@ class Room extends Model
 
     public function roomTypeLabel(): string
     {
+        if ($this->relationLoaded('roomTypeOption') && $this->roomTypeOption) {
+            return $this->roomTypeOption->label;
+        }
+
         return RoomOption::getLabel('room_type', $this->room_type_option_id);
     }
 
     public function furnishingTypeLabel(): string
     {
+        if ($this->relationLoaded('furnishingOption') && $this->furnishingOption) {
+            return $this->furnishingOption->label;
+        }
+
         return RoomOption::getLabel('furnishing_type', $this->furnishing_option_id);
     }
 
     public function tenantTypeLabel(): string
     {
+        if ($this->relationLoaded('tenantOption') && $this->tenantOption) {
+            return $this->tenantOption->label;
+        }
+
         return RoomOption::getLabel('tenant_type', $this->tenant_option_id);
     }
 

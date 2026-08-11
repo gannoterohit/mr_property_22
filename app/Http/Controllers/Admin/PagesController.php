@@ -177,6 +177,8 @@ class PagesController extends Controller
                 'group' => 'pages'
             ]);
         }
+
+        Setting::clearCache();
     }
 
     private function showEditor(string $key, string $pageTitle, string $routeName, ?string $previewRouteName = null)

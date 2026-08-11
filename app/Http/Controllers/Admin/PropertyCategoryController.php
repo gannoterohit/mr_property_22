@@ -20,7 +20,7 @@ class PropertyCategoryController extends Controller
 
     public function create()
     {
-        $propertyTypes = PropertyType::where('status', true)->orderBy('name')->get();
+        $propertyTypes = PropertyType::cachedActive();
 
         return view('admin.property-categories.create', compact('propertyTypes'));
     }
@@ -41,7 +41,7 @@ class PropertyCategoryController extends Controller
 
     public function edit(PropertyCategory $propertyCategory)
     {
-        $propertyTypes = PropertyType::where('status', true)->orderBy('name')->get();
+        $propertyTypes = PropertyType::cachedActive();
 
         return view('admin.property-categories.edit', compact('propertyCategory', 'propertyTypes'));
     }

@@ -4,7 +4,8 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
-<link rel="stylesheet" href="{{ asset('css/admin-members-index.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-list.css') }}">
+
 @endpush
 
 @section('admin-content')

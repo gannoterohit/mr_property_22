@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\City;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Cache;
 
 class CityOperations
 {
@@ -61,9 +62,11 @@ class CityOperations
             return collect();
         }
 
-        return City::where('is_active', true)
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->get();
+        return Cache::remember('cities.selector.active', 3600, function () {
+            return City::where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->get();
+        });
     }
 }

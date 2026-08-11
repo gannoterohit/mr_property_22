@@ -177,6 +177,8 @@ class RoomController extends Controller {
         $query->orderBy('created_at', 'desc');
     }
     
+    $userWishlistIds = Auth::check() ? Auth::user()->wishlists()->pluck('room_id')->toArray() : [];
+
     $rooms = $query->with(['user:id,name,avatar', 'propertyType', 'propertyCategory', 'roomTypeOption', 'furnishingOption', 'tenantOption'])
                    ->paginate(20)
                    ->withQueryString();
@@ -227,9 +229,7 @@ class RoomController extends Controller {
         ->map(fn ($total) => (int) $total)
         ->toArray();
 
-    $propertyTypes = PropertyType::active()
-        ->orderBy('name')
-        ->get(['id', 'name']);
+    $propertyTypes = PropertyType::cachedActive();
 
     $propertyCategoryCounts = Room::publicVisible()
         ->select('property_category_id', DB::raw('count(*) as total'))
@@ -274,7 +274,8 @@ class RoomController extends Controller {
 
     return view('rooms.index', compact(
         'rooms', 'popularCities', 'propertyTypes', 'propertyTypeCounts',
-        'propertyCategories', 'propertyCategoryCounts', 'rentBounds', 'tenantTypeCounts', 'furnishingCounts', 'cityContext'
+        'propertyCategories', 'propertyCategoryCounts', 'rentBounds',
+        'tenantTypeCounts', 'furnishingCounts', 'cityContext', 'userWishlistIds'
     ));
     }
     

@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 @section('title', 'Maintenance Controls')
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin-settings-maintenance.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-misc.css') }}">
+
 @endpush
 @section('admin-content')
 @php

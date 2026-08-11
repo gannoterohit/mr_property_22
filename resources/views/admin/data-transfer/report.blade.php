@@ -1,11 +1,12 @@
 <link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-misc.css') }}">
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }} Report</title>
-<link rel="stylesheet" href="{{ asset('css/admin-data-transfer-report.css') }}">
+
 </head>
 <body>
     <main class="report">

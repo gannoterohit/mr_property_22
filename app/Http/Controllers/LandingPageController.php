@@ -126,9 +126,7 @@ class LandingPageController extends Controller
         $popularCities = CityOperations::selectorCities();
 
         // Room categories with dynamic counts from DB
-        $propertyTypes = \App\Models\PropertyType::active()
-            ->orderBy('name')
-            ->get();
+        $propertyTypes = \App\Models\PropertyType::cachedActive();
 
         $propertyCategories = Room::publicVisible()
             ->select('property_category_id', \DB::raw('count(*) as total'))

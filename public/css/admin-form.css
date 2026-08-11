@@ -1,0 +1,31 @@
+/* admin-rooms-create.css */
+.upload-drop{min-height:130px;border:2px dashed #cbd5e1;transition:.2s}.upload-drop:hover{border-color:#6366f1;background:#eef2ff}.preview-image{height:80px;width:112px;object-fit:cover;border-radius:12px;border:1px solid #e2e8f0}
+
+
+/* admin-rooms-edit.css */
+/* Room edit page specific styles - structural rules are in admin-shared.css */
+
+
+/* admin-members-form.css */
+.member-form-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
+    .member-field{height:44px;width:100%;border:1px solid #e2e8f0!important;border-radius:12px!important;font-size:13px!important}
+    .member-field:focus{border-color:var(--admin-primary)!important;box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1)!important}
+    @media(max-width:1023px){.member-form-grid{grid-template-columns:1fr}}
+
+/* admin-cities-create.css */
+.city-create-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(340px,.65fr);gap:20px;align-items:start}
+    .city-input{height:44px;width:100%;border:1px solid #e2e8f0!important;border-radius:12px!important;font-size:13px!important}
+    .city-input:focus{border-color:var(--admin-primary)!important;box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1)!important}
+    #cityMap{height:560px;background:#f1f5f9}
+    .leaflet-control-container{font-size:11px}
+    @media(max-width:1199px){.city-create-grid{grid-template-columns:1fr}#cityMap{height:460px}}
+    @media(max-width:639px){#cityMap{height:380px}.city-search-group{display:grid;grid-template-columns:1fr}.city-search-group button{width:100%}}
+
+/* admin-cms-pages-form.css */
+.cms-editor-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+    .cms-publish{position:sticky;top:86px}
+    @media(max-width:1199px){.cms-editor-grid{grid-template-columns:1fr}.cms-publish{position:static}}
+
+/* admin-blogs-form.css */
+.blog-publish{position:sticky;top:86px}.ck-editor__editable{min-height:420px}@media(max-width:1199px){.blog-editor-grid{grid-template-columns:1fr!important}.blog-publish{position:static}}
+

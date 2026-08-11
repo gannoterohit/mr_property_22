@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 @section('title','City Alerts')
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}"><link rel="stylesheet" href="{{ asset('css/admin-city-alerts-index.css') }}">@endpush
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-list.css') }}">@endpush
 @section('admin-content')
 <div class="space-y-5 p-5 lg:p-6"><header class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Audience notifications</p><h1 class="mt-1 text-2xl font-extrabold">City Alert Subscriptions</h1><p class="text-sm text-slate-500">Users waiting for new properties in their preferred cities.</p></div><x-admin.data-actions dataset="city-alerts" /></header>
 <section class="city-stats admin-kpis">@forelse($cityStats as $stat)<div class="rounded-2xl border bg-white p-4"><div class="flex justify-between"><span class="flex h-9 w-9 items-center justify-center rounded-xl admin-theme-soft"><i class="fas fa-location-dot"></i></span><strong class="text-2xl">{{ $stat->total }}</strong></div><p class="mt-3 truncate text-xs font-bold">{{ $stat->city?:'Unknown city' }}</p><p class="text-[10px] text-slate-400">active alerts</p></div>@empty<div class="col-span-4 rounded-2xl border bg-white p-5 text-sm text-slate-500">No city alerts yet.</div>@endforelse</section>

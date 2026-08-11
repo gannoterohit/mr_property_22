@@ -4,7 +4,8 @@
 
 @section('admin-content')
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin-business.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-settings.css') }}">
+
 @endpush
 <div id="business-settings-tabs" class="flex flex-col min-h-0 bg-gray-50">
     

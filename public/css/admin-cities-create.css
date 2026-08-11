@@ -1,7 +1,0 @@
-.city-create-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(340px,.65fr);gap:20px;align-items:start}
-    .city-input{height:44px;width:100%;border:1px solid #e2e8f0!important;border-radius:12px!important;font-size:13px!important}
-    .city-input:focus{border-color:var(--admin-primary)!important;box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1)!important}
-    #cityMap{height:560px;background:#f1f5f9}
-    .leaflet-control-container{font-size:11px}
-    @media(max-width:1199px){.city-create-grid{grid-template-columns:1fr}#cityMap{height:460px}}
-    @media(max-width:639px){#cityMap{height:380px}.city-search-group{display:grid;grid-template-columns:1fr}.city-search-group button{width:100%}}

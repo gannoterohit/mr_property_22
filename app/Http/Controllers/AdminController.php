@@ -169,7 +169,7 @@ class AdminController extends Controller
         $allrooms = $query->latest()->paginate($perPage)->withQueryString();
         $rejectionReasons = RejectionReason::where('is_active', true)->get();
         $cities = Room::whereNotNull('city')->distinct()->orderBy('city')->pluck('city');
-        $propertyTypes = \App\Models\PropertyType::where('status', true)->orderBy('name')->get(['id', 'name']);
+        $propertyTypes = \App\Models\PropertyType::cachedActive();
         $propertyCategories = \App\Models\PropertyCategory::with('propertyType:id,name')->where('status', true)->orderBy('property_type_id')->orderBy('name')->get(['id', 'property_type_id', 'name']);
 
         return view('admin.rooms.index', compact('allrooms', 'rejectionReasons', 'cities', 'propertyTypes', 'propertyCategories'));
