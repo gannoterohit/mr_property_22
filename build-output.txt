@@ -1,0 +1,1295 @@
+2026-08-10T16:16:14.169Z vite:config config file loaded in 135.63ms
+2026-08-10T16:16:14.172Z vite:env loading env files: [
+  'C:/xampp/htdocs/apnanest/.env',
+  'C:/xampp/htdocs/apnanest/.env.local',
+  'C:/xampp/htdocs/apnanest/.env.production',
+  'C:/xampp/htdocs/apnanest/.env.production.local'
+]
+2026-08-10T16:16:14.174Z vite:env env files loaded in 1.89ms
+2026-08-10T16:16:14.179Z vite:env using resolved env: {
+  APP_NAME: 'Room Rental',
+  APP_ENV: 'local',
+  APP_KEY: 'base64:wS6N5cgDMIcsB+aNlRY145izeXtCuplj6w6Bh5tn/aU=',
+  APP_DEBUG: 'true',
+  APP_URL: 'http://localhost/apnanest/',
+  ASSET_URL: 'http://localhost/apnanest/public/',
+  APP_LOCALE: 'en',
+  APP_FALLBACK_LOCALE: 'en',
+  APP_FAKER_LOCALE: 'en_US',
+  APP_MAINTENANCE_DRIVER: 'file',
+  BCRYPT_ROUNDS: '12',
+  LOG_CHANNEL: 'stack',
+  LOG_STACK: 'single',
+  LOG_DEPRECATIONS_CHANNEL: 'null',
+  LOG_LEVEL: 'debug',
+  DB_CONNECTION: 'mysql',
+  DB_HOST: '127.0.0.1',
+  DB_PORT: '3306',
+  DB_DATABASE: 'new_roomrental',
+  DB_USERNAME: 'root',
+  DB_PASSWORD: '',
+  SESSION_DRIVER: 'database',
+  SESSION_LIFETIME: '120',
+  SESSION_ENCRYPT: 'false',
+  SESSION_PATH: '/apnanest',
+  SESSION_DOMAIN: 'null',
+  BROADCAST_CONNECTION: 'log',
+  FILESYSTEM_DISK: 'local',
+  QUEUE_CONNECTION: 'database',
+  CACHE_STORE: 'database',
+  MEMCACHED_HOST: '127.0.0.1',
+  REDIS_CLIENT: 'phpredis',
+  REDIS_HOST: '127.0.0.1',
+  REDIS_PASSWORD: 'null',
+  REDIS_PORT: '6379',
+  AWS_ACCESS_KEY_ID: '',
+  AWS_SECRET_ACCESS_KEY: '',
+  AWS_DEFAULT_REGION: 'us-east-1',
+  AWS_BUCKET: '',
+  AWS_USE_PATH_STYLE_ENDPOINT: 'false',
+  VITE_APP_NAME: 'Room Rental',
+  ACLOCAL_PATH: 'C:\\Program Files\\Git\\mingw64\\share\\aclocal;C:\\Program Files\\Git\\usr\\share\\aclocal',
+  AI_AGENT: 'github_copilot_vscode_agent',
+  ALLUSERSPROFILE: 'C:\\ProgramData',
+  APPDATA: 'C:\\Users\\Rohit\\AppData\\Roaming',
+  CHROME_CRASHPAD_PIPE_NAME: '\\\\.\\pipe\\crashpad_15868_FVJNAEUQQVYSDOAG',
+  COLOR: '0',
+  COLORTERM: 'truecolor',
+  COMMONPROGRAMFILES: 'C:\\Program Files\\Common Files',
+  'CommonProgramFiles(x86)': 'C:\\Program Files (x86)\\Common Files',
+  CommonProgramW6432: 'C:\\Program Files\\Common Files',
+  COMPUTERNAME: 'LAPTOP-8NVIA9LT',
+  COMSPEC: 'C:\\windows\\system32\\cmd.exe',
+  CONFIG_SITE: 'C:/Program Files/Git/etc/config.site',
+  COPILOT_AGENT: '1',
+  COPILOT_DEBUG_NONCE: '42757a6ec9e8fb379790ddbe3daf553f',
+  DEBIAN_FRONTEND: 'noninteractive',
+  DEBUG: 'vite:*',
+  DISPLAY: 'needs-to-be-defined',
+  DriverData: 'C:\\Windows\\System32\\Drivers\\DriverData',
+  EDITOR: 'C:\\WINDOWS\\notepad.exe',
+  EFC_8772_1592913036: '1',
+  EFC_8772_4126798990: '1',
+  EXEPATH: 'C:\\Program Files\\Git\\bin',
+  FPS_BROWSER_APP_PROFILE_STRING: 'Internet Explorer',
+  FPS_BROWSER_USER_PROFILE_STRING: 'Default',
+  GIT_ASKPASS: 'c:\\Users\\Rohit\\AppData\\Roaming\\Code\\User\\globalStorage\\vscode.git\\askpass\\70789581cae28aa7\\askpass.sh',
+  GIT_EDITOR: ':',
+  GIT_MERGE_AUTOEDIT: 'no',
+  GIT_PAGER: 'cat',
+  HISTCONTROL: 'ignorespace',
+  HOME: 'C:\\Users\\Rohit',
+  HOMEDRIVE: 'C:',
+  HOMEPATH: '\\Users\\Rohit',
+  HOSTNAME: 'LAPTOP-8NVIA9LT',
+  INFOPATH: 'C:\\Program Files\\Git\\mingw64\\local\\info;C:\\Program Files\\Git\\mingw64\\share\\info;C:\\Program Files\\Git\\usr\\local\\info;C:\\Program Files\\Git\\usr\\share\\info;C:\\Program Files\\Git\\usr\\info;C:\\Program Files\\Git\\share\\info',
+  INIT_CWD: 'C:\\xampp\\htdocs\\apnanest',
+  JAVA_HOME: 'C:\\Users\\Rohit\\AppData\\Local\\Programs\\Eclipse Adoptium\\jdk-17.0.17.10-hotspot',
+  LANG: 'en_US.UTF-8',
+  LOCALAPPDATA: 'C:\\Users\\Rohit\\AppData\\Local',
+  LOGONSERVER: '\\\\LAPTOP-8NVIA9LT',
+  MANPATH: 'C:\\Program Files\\Git\\mingw64\\local\\man;C:\\Program Files\\Git\\mingw64\\share\\man;C:\\Program Files\\Git\\usr\\local\\man;C:\\Program Files\\Git\\usr\\share\\man;C:\\Program Files\\Git\\usr\\man;C:\\Program Files\\Git\\share\\man',
+  MINGW_CHOST: 'x86_64-w64-mingw32',
+  MINGW_PACKAGE_PREFIX: 'mingw-w64-x86_64',
+  MINGW_PREFIX: 'C:/Program Files/Git/mingw64',
+  MSYSTEM: 'MINGW64',
+  MSYSTEM_CARCH: 'x86_64',
+  MSYSTEM_CHOST: 'x86_64-w64-mingw32',
+  MSYSTEM_PREFIX: 'C:/Program Files/Git/mingw64',
+  NODE: 'C:\\Program Files\\nodejs\\node.exe',
+  NODE_ENV: 'production',
+  npm_command: 'exec',
+  npm_config_cache: 'C:\\Users\\Rohit\\AppData\\Local\\npm-cache',
+  npm_config_globalconfig: 'C:\\Users\\Rohit\\AppData\\Roaming\\npm\\etc\\npmrc',
+  npm_config_global_prefix: 'C:\\Users\\Rohit\\AppData\\Roaming\\npm',
+  npm_config_init_module: 'C:\\Users\\Rohit\\.npm-init.js',
+  npm_config_local_prefix: 'C:\\xampp\\htdocs\\apnanest',
+  npm_config_node_gyp: 'C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js',
+  npm_config_noproxy: '',
+  npm_config_npm_version: '10.9.2',
+  npm_config_prefix: 'C:\\Users\\Rohit\\AppData\\Roaming\\npm',
+  npm_config_userconfig: 'C:\\Users\\Rohit\\.npmrc',
+  npm_config_user_agent: 'npm/10.9.2 node/v22.16.0 win32 x64 workspaces/false',
+  npm_execpath: 'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+  npm_lifecycle_event: 'npx',
+  npm_lifecycle_script: 'vite',
+  npm_node_execpath: 'C:\\Program Files\\nodejs\\node.exe',
+  npm_package_json: 'C:\\xampp\\htdocs\\apnanest\\package.json',
+  NUMBER_OF_PROCESSORS: '12',
+  OLDPWD: 'C:/xampp/htdocs/apnanest',
+  OneDrive: 'C:\\Users\\Rohit\\OneDrive',
+  OneDriveConsumer: 'C:\\Users\\Rohit\\OneDrive',
+  OnlineServices: 'Online Services',
+  ORIGINAL_PATH: 'C:\\Program Files\\Git\\mingw64\\bin;C:\\Program Files\\Git\\usr\\bin;C:\\Users\\Rohit\\bin;C:\\Users\\Rohit\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand;C:\\Users\\Rohit\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\copilotCli;C:\\windows\\system32;C:\\windows;C:\\windows\\System32\\Wbem;C:\\windows\\System32\\WindowsPowerShell\\v1.0;C:\\windows\\System32\\OpenSSH;C:\\xampp\\php;C:\\composer;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0;C:\\WINDOWS\\System32\\OpenSSH;C:\\Program Files\\Git\\cmd;C:\\Program Files\\nodejs;C:\\Users\\Rohit\\AppData\\Local\\Programs\\Eclipse Adoptium\\jdk-17.0.17.10-hotspot\\bin;C:\\Program Files\\MongoDB\\Server\\8.2\\bin;C:\\Users\\Rohit\\AppData\\Local\\Programs\\Eclipse Adoptium\\jdk-17.0.17.10-hotspot\\bin;C:\\Users\\Rohit\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Rohit\\AppData\\Roaming\\Composer\\vendor\\bin;C:\\Users\\Rohit\\Downloads\\flutter_windows_3.27.1-stable\\flutter\\bin;C:\\Users\\Rohit\\AppData\\Roaming\\npm;C:\\Users\\Rohit\\AppData\\Local\\Programs\\Antigravity\\bin;C:\\Users\\Rohit\\AppData\\Local\\Programs\\Antigravity IDE\\bin;C:\\Users\\Rohit\\AppData\\Local\\Programs\\Microsoft VS Code\\bin',
+  ORIGINAL_TEMP: 'C:/Users/Rohit/AppData/Local/Temp',
+  ORIGINAL_TMP: 'C:/Users/Rohit/AppData/Local/Temp',
+  OS: 'Windows_NT',
+  PATH: 'C:\\xampp\\htdocs\\apnanest\\node_modules\\.bin;C:\\xampp\\htdocs\\apnanest\\node_modules\\.bin;C:\\xampp\\htdocs\\node_modules\\.bin;C:\\xampp\\node_modules\\.bin;C:\\node_modules\\.bin;C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\@npmcli\\run-script\\lib\\node-gyp-bin;C:\\Users\\Rohit\\bin;C:\\Program Files\\Git\\mingw64\\bin;C:\\Program Files\\Git\\usr\\local\\bin;C:\\Program Files\\Git\\usr\\bin;C:\\Program Files\\Git\\usr\\bin;C:\\Program Files\\Git\\mingw64\\bin;C:\\Program Files\\Git\\usr\\bin;C:\\Users\\Rohit\\bin;C:\\Users\\Rohit\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand;C:\\Users\\Rohit\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\copilotCli;C:\\windows\\system32;C:\\windows;C:\\windows\\System32\\Wbem;C:\\windows\\System32\\WindowsPowerShell\\v1.0;C:\\windows\\System32\\OpenSSH;C:\\xampp\\php;C:\\composer;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0;C:\\WINDOWS\\System32\\OpenSSH;C:\\Program Files\\Git\\cmd;C:\\Program Files\\nodejs;C:\\Users\\Rohit\\AppData\\Local\\Programs\\Eclipse Adoptium\\jdk-17.0.17.10-hotspot\\bin;C:\\Program Files\\MongoDB\\Server\\8.2\\bin;C:\\Users\\Rohit\\AppData\\Local\\Programs\\Eclipse Adoptium\\jdk-17.0.17.10-hotspot\\bin;C:\\Users\\Rohit\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Rohit\\AppData\\Roaming\\Composer\\vendor\\bin;C:\\Users\\Rohit\\Downloads\\flutter_windows_3.27.1-stable\\flutter\\bin;C:\\Users\\Rohit\\AppData\\Roaming\\npm;C:\\Users\\Rohit\\AppData\\Local\\Programs\\Antigravity\\bin;C:\\Users\\Rohit\\AppData\\Local\\Programs\\Antigravity IDE\\bin;C:\\Users\\Rohit\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Program Files\\Git\\usr\\bin\\vendor_perl;C:\\Program Files\\Git\\usr\\bin\\core_perl',
+  PATHEXT: '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC',
+  PKG_CONFIG_PATH: 'C:\\Program Files\\Git\\mingw64\\lib\\pkgconfig;C:\\Program Files\\Git\\mingw64\\share\\pkgconfig',
+  PKG_CONFIG_SYSTEM_INCLUDE_PATH: 'C:/Program Files/Git/mingw64/include',
+  PKG_CONFIG_SYSTEM_LIBRARY_PATH: 'C:/Program Files/Git/mingw64/lib',
+  platformcode: 'KV',
+  PLINK_PROTOCOL: 'ssh',
+  PROCESSOR_ARCHITECTURE: 'AMD64',
+  PROCESSOR_IDENTIFIER: 'AMD64 Family 23 Model 104 Stepping 1, AuthenticAMD',
+  PROCESSOR_LEVEL: '23',
+  PROCESSOR_REVISION: '6801',
+  ProgramData: 'C:\\ProgramData',
+  PROGRAMFILES: 'C:\\Program Files',
+  'ProgramFiles(x86)': 'C:\\Program Files (x86)',
+  ProgramW6432: 'C:\\Program Files',
+  PROMPT: '$P$G',
+  PSModulePath: 'C:\\Program Files\\WindowsPowerShell\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules',
+  PUBLIC: 'C:\\Users\\Public',
+  PWD: 'C:/xampp/htdocs/apnanest',
+  RegionCode: 'APJ',
+  SESSIONNAME: 'Console',
+  SHELL: 'C:\\Program Files\\Git\\usr\\bin\\bash.exe',
+  SHLVL: '2',
+  SSH_ASKPASS: 'C:/Program Files/Git/mingw64/bin/git-askpass.exe',
+  SYSTEMDRIVE: 'C:',
+  SYSTEMROOT: 'C:\\WINDOWS',
+  TEMP: 'C:\\Users\\Rohit\\AppData\\Local\\Temp',
+  TERM: 'xterm-256color',
+  TERM_PROGRAM: 'vscode',
+  TERM_PROGRAM_VERSION: '1.132.0',
+  TMP: 'C:\\Users\\Rohit\\AppData\\Local\\Temp',
+  TMPDIR: 'C:\\Users\\Rohit\\AppData\\Local\\Temp',
+  USERDOMAIN: 'LAPTOP-8NVIA9LT',
+  USERDOMAIN_ROAMINGPROFILE: 'LAPTOP-8NVIA9LT',
+  USERNAME: 'Rohit',
+  USERPROFILE: 'C:\\Users\\Rohit',
+  VSCODE_GIT_ASKPASS_EXTRA_ARGS: '',
+  VSCODE_GIT_ASKPASS_MAIN: 'c:\\Users\\Rohit\\AppData\\Roaming\\Code\\User\\globalStorage\\vscode.git\\askpass\\70789581cae28aa7\\askpass-main.js',
+  VSCODE_GIT_ASKPASS_NODE: 'C:\\Users\\Rohit\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe',
+  VSCODE_GIT_IPC_HANDLE: '\\\\.\\pipe\\vscode-git-b946ae150b-sock',
+  VSCODE_PYTHON_AUTOACTIVATE_GUARD: '1',
+  WINDIR: 'C:\\WINDOWS',
+  _: 'C:/Program Files/nodejs/node.exe'
+}
+2026-08-10T16:16:14.184Z vite:env loading env files: [
+  'C:/xampp/htdocs/apnanest/.env',
+  'C:/xampp/htdocs/apnanest/.env.local',
+  'C:/xampp/htdocs/apnanest/.env.production',
+  'C:/xampp/htdocs/apnanest/.env.production.local'
+]
+2026-08-10T16:16:14.185Z vite:env env files loaded in 0.93ms
+2026-08-10T16:16:14.189Z vite:env using resolved env: { VITE_APP_NAME: 'Room Rental' }
+2026-08-10T16:16:14.244Z vite:config using resolved config: {
+  plugins: [
+    'vite:build-metadata',
+    'vite:watch-package-data',
+    'alias',
+    'vite:modulepreload-polyfill',
+    'vite:resolve',
+    'vite:html-inline-proxy',
+    'vite:css',
+    'vite:esbuild',
+    'vite:json',
+    'vite:wasm-helper',
+    'vite:worker',
+    'vite:asset',
+    'vite:wasm-fallback',
+    'vite:define',
+    'vite:css-post',
+    'vite:build-html',
+    'vite:worker-import-meta-url',
+    'vite:asset-import-meta-url',
+    'vite:force-amd-wrap-require',
+    'vite:force-systemjs-wrap-complete',
+    'vite:prepare-out-dir',
+    'commonjs',
+    'vite:data-uri',
+    'vite:rollup-options-plugins',
+    'vite:dynamic-import-vars',
+    'vite:import-glob',
+    'laravel',
+    'vite:build-import-analysis',
+    'vite:esbuild-transpile',
+    'vite:terser',
+    'vite:license',
+    'vite:manifest',
+    'vite:ssr-manifest',
+    'vite:reporter',
+    'vite:load-fallback'
+  ],
+  build: {
+    target: [ 'chrome107', 'edge107', 'firefox104', 'safari16' ],
+    polyfillModulePreload: true,
+    modulePreload: { polyfill: true },
+    outDir: 'public\\build',
+    assetsDir: 'assets',
+    assetsInlineLimit: 0,
+    sourcemap: false,
+    terserOptions: {},
+    rollupOptions: {
+      output: { manualChunks: { vendor: [ 'axios' ] } },
+      input: [
+        'resources/css/app.css',
+        'resources/js/app.js',
+        'resources/css/mobile-app.css'
+      ]
+    },
+    commonjsOptions: { include: [ /node_modules/ ], extensions: [ '.js', '.cjs' ] },
+    dynamicImportVarsOptions: { warnOnError: true, exclude: [ /node_modules/ ] },
+    write: true,
+    emptyOutDir: null,
+    copyPublicDir: true,
+    license: false,
+    manifest: 'manifest.json',
+    lib: false,
+    ssrManifest: false,
+    ssrEmitAssets: false,
+    reportCompressedSize: true,
+    chunkSizeWarningLimit: 1000,
+    watch: null,
+    cssCodeSplit: true,
+    minify: 'esbuild',
+    ssr: false,
+    emitAssets: true,
+    createEnvironment: [Function: createEnvironment],
+    cssTarget: [ 'chrome107', 'edge107', 'firefox104', 'safari16' ],
+    cssMinify: true
+  },
+  base: 'http://localhost/apnanest/public/build/',
+  publicDir: '',
+  server: {
+    port: 5173,
+    strictPort: false,
+    host: undefined,
+    allowedHosts: [
+      '__laravel_vite_placeholder__.test',
+      '__laravel_vite_placeholder__.test'
+    ],
+    https: undefined,
+    open: false,
+    proxy: undefined,
+    cors: {
+      origin: [
+        /^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/,
+        'http://localhost/apnanest/',
+        /^https?:\/\/.*\.test(:\d+)?$/
+      ]
+    },
+    headers: {},
+    warmup: { clientFiles: [], ssrFiles: [] },
+    middlewareMode: false,
+    fs: {
+      strict: true,
+      deny: [ '.env', '.env.*', '*.{crt,pem}', '**/.git/**' ],
+      allow: [ 'C:/xampp/htdocs/apnanest' ]
+    },
+    preTransformRequests: true,
+    perEnvironmentStartEndDuringDev: false,
+    perEnvironmentWatchChangeDuringDev: false,
+    sourcemapIgnoreList: [Function: isInNodeModules],
+    origin: 'http://__laravel_vite_placeholder__.test'
+  },
+  resolve: {
+    externalConditions: [ 'node', 'module-sync' ],
+    extensions: [
+      '.mjs',  '.js',
+      '.mts',  '.ts',
+      '.jsx',  '.tsx',
+      '.json'
+    ],
+    dedupe: [],
+    noExternal: [],
+    external: [],
+    preserveSymlinks: false,
+    alias: [
+      { find: '@', replacement: '/resources/js' },
+      {
+        find: /^\/?@vite\/env/,
+        replacement: '/@fs/C:/xampp/htdocs/apnanest/node_modules/vite/dist/client/env.mjs'
+      },
+      {
+        find: /^\/?@vite\/client/,
+        replacement: '/@fs/C:/xampp/htdocs/apnanest/node_modules/vite/dist/client/client.mjs'
+      }
+    ],
+    mainFields: [ 'browser', 'module', 'jsnext:main', 'jsnext' ],
+    conditions: [ 'module', 'browser', 'development|production' ],
+    builtins: []
+  },
+  ssr: {
+    target: 'node',
+    optimizeDeps: {
+      esbuildOptions: { preserveSymlinks: false },
+      include: [],
+      exclude: [],
+      needsInterop: [],
+      extensions: [],
+      holdUntilCrawlEnd: true,
+      force: false,
+      noDiscovery: true
+    },
+    noExternal: [ 'laravel-vite-plugin' ],
+    external: [],
+    resolve: {
+      conditions: [ 'module', 'node', 'development|production' ],
+      externalConditions: [ 'node', 'module-sync' ]
+    }
+  },
+  environments: {
+    client: {
+      define: undefined,
+      resolve: {
+        externalConditions: [ 'node', 'module-sync' ],
+        extensions: [
+          '.mjs',  '.js',
+          '.mts',  '.ts',
+          '.jsx',  '.tsx',
+          '.json'
+        ],
+        dedupe: [],
+        noExternal: [],
+        external: [],
+        preserveSymlinks: false,
+        alias: [
+          { find: '@', replacement: '/resources/js' },
+          {
+            find: /^\/?@vite\/env/,
+            replacement: '/@fs/C:/xampp/htdocs/apnanest/node_modules/vite/dist/client/env.mjs'
+          },
+          {
+            find: /^\/?@vite\/client/,
+            replacement: '/@fs/C:/xampp/htdocs/apnanest/node_modules/vite/dist/client/client.mjs'
+          }
+        ],
+        mainFields: [ 'browser', 'module', 'jsnext:main', 'jsnext' ],
+        conditions: [ 'module', 'browser', 'development|production' ],
+        builtins: []
+      },
+      keepProcessEnv: false,
+      consumer: 'client',
+      optimizeDeps: {
+        include: [],
+        exclude: [],
+        needsInterop: [],
+        extensions: [],
+        disabled: undefined,
+        holdUntilCrawlEnd: true,
+        force: false,
+        noDiscovery: false,
+        esbuildOptions: { preserveSymlinks: false }
+      },
+      dev: {
+        warmup: [],
+        sourcemap: { js: true },
+        sourcemapIgnoreList: [Function: isInNodeModules],
+        preTransformRequests: true,
+        createEnvironment: [Function: defaultCreateClientDevEnvironment],
+        recoverable: true,
+        moduleRunnerTransform: false
+      },
+      build: {
+        target: [ 'chrome107', 'edge107', 'firefox104', 'safari16' ],
+        polyfillModulePreload: true,
+        modulePreload: { polyfill: true },
+        outDir: 'public\\build',
+        assetsDir: 'assets',
+        assetsInlineLimit: 0,
+        sourcemap: false,
+        terserOptions: {},
+        rollupOptions: {
+          output: { manualChunks: { vendor: [ 'axios' ] } },
+          input: [
+            'resources/css/app.css',
+            'resources/js/app.js',
+            'resources/css/mobile-app.css'
+          ]
+        },
+        commonjsOptions: { include: [ /node_modules/ ], extensions: [ '.js', '.cjs' ] },
+        dynamicImportVarsOptions: { warnOnError: true, exclude: [ /node_modules/ ] },
+        write: true,
+        emptyOutDir: null,
+        copyPublicDir: true,
+        license: false,
+        manifest: 'manifest.json',
+        lib: false,
+        ssrManifest: false,
+        ssrEmitAssets: false,
+        reportCompressedSize: true,
+        chunkSizeWarningLimit: 1000,
+        watch: null,
+        cssCodeSplit: true,
+        minify: 'esbuild',
+        ssr: false,
+        emitAssets: true,
+        createEnvironment: [Function: createEnvironment],
+        cssTarget: [ 'chrome107', 'edge107', 'firefox104', 'safari16' ],
+        cssMinify: true
+      },
+      plugins: [
+        {
+          name: 'vite:build-metadata',
+          renderChunk: [AsyncFunction: renderChunk]
+        },
+        {
+          name: 'vite:watch-package-data',
+          buildStart: [Function: buildStart],
+          buildEnd: [Function: buildEnd],
+          watchChange: [Function: watchChange]
+        },
+        {
+          name: 'alias',
+          buildStart: [AsyncFunction: buildStart],
+          resolveId: [Function: resolveId]
+        },
+        {
+          name: 'vite:modulepreload-polyfill',
+          resolveId: {
+            filter: { id: /^vite\/modulepreload\-polyfill$/ },
+            handler: [Function: handler]
+          },
+          load: {
+            filter: { id: /^ vite\/modulepreload\-polyfill\.js$/ },
+            handler: [Function: handler]
+          }
+        },
+        {
+          name: 'vite:resolve',
+          resolveId: {
+            filter: { id: { exclude: /^(?:\0|\/?virtual:)/ } },
+            handler: [AsyncFunction: handler]
+          },
+          load: {
+            filter: {
+              id: [
+                /^__vite\-browser\-external/,
+                /^__vite\-optional\-peer\-dep/
+              ]
+            },
+            handler: [Function: handler]
+          }
+        },
+        {
+          name: 'vite:html-inline-proxy',
+          resolveId: {
+            filter: { id: /[?&]html-proxy\b/ },
+            handler: [Function: handler]
+          },
+          load: {
+            filter: { id: /[?&]html-proxy\b/ },
+            handler: [Function: handler]
+          }
+        },
+        {
+          name: 'vite:css',
+          buildStart: [Function: buildStart],
+          buildEnd: [Function: buildEnd],
+          load: {
+            filter: {
+              id: /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/
+            },
+            handler: [AsyncFunction: handler]
+          },
+          transform: {
+            filter: {
+              id: {
+                include: /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/,
+                exclude: [
+                  /[?&]commonjs-proxy/,
+                  /[?&](?:worker|sharedworker|raw|url)\b/
+                ]
+              }
+            },
+            handler: [AsyncFunction: handler]
+          }
+        },
+        {
+          name: 'vite:esbuild',
+          configureServer: [Function: configureServer],
+          transform: [AsyncFunction: transform]
+        },
+        {
+          name: 'vite:json',
+          transform: {
+            filter: {
+              id: {
+                include: /\.json(?:$|\?)(?!commonjs-(?:proxy|external))/,
+                exclude: /[?&](?:worker|sharedworker|raw|url)\b/
+              }
+            },
+            handler: [Function: handler]
+          }
+        },
+        {
+          name: 'vite:wasm-helper',
+          resolveId: {
+            filter: { id: /^ vite\/wasm\-helper\.js$/ },
+            handler: [Function: handler]
+          },
+          load: {
+            filter: {
+              id: [
+                /^ vite\/wasm\-helper\.js$/,
+                /(?<![?#].*)\.wasm\?init/
+              ]
+            },
+            handler: [AsyncFunction: handler]
+          }
+        },
+        {
+          name: 'vite:worker',
+          buildStart: [Function: buildStart],
+          load: {
+            filter: { id: /(?:\?|&)(worker|sharedworker)(?:&|$)/ },
+            handler: [AsyncFunction: handler]
+          },
+          transform: {
+            filter: { id: /(?:\?|&)worker_file&type=(\w+)(?:&|$)/ },
+            handler: [AsyncFunction: handler]
+          },
+          renderChunk: [Function: renderChunk],
+          generateBundle: [Function: generateBundle],
+          watchChange: [Function: watchChange]
+        },
+        {
+          name: 'vite:asset',
+          perEnvironmentStartEndDuringDev: true,
+          buildStart: [Function: buildStart],
+          resolveId: { handler: [Function: handler] },
+          load: {
+            filter: { id: { exclude: /^\0/ } },
+            handler: [AsyncFunction: handler]
+          },
+          renderChunk: [Function: renderChunk],
+          generateBundle: [Function: generateBundle]
+        },
+        {
+          name: 'vite:wasm-fallback',
+          load: { filter: { id: /\.wasm$/ }, handler: [Function: handler] }
+        },
+        {
+          name: 'vite:define',
+          transform: { handler: [AsyncFunction: handler] }
+        },
+        {
+          name: 'vite:css-post',
+          renderStart: [Function: renderStart],
+          transform: {
+            filter: {
+              id: {
+                include: /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/,
+                exclude: [
+                  /[?&]commonjs-proxy/,
+                  /[?&](?:worker|sharedworker|raw|url)\b/
+                ]
+              }
+            },
+            handler: [AsyncFunction: handler]
+          },
+          renderChunk: [AsyncFunction: renderChunk],
+          augmentChunkHash: [Function: augmentChunkHash],
+          generateBundle: [AsyncFunction: generateBundle]
+        },
+        {
+          name: 'vite:build-html',
+          transform: {
+            filter: { id: /\.html$/ },
+            handler: [AsyncFunction: handler]
+          },
+          generateBundle: [AsyncFunction: generateBundle]
+        },
+        {
+          name: 'vite:worker-import-meta-url',
+          applyToEnvironment: [Function: applyToEnvironment],
+          transform: {
+            filter: {
+              code: /new\s+(?:Worker|SharedWorker)\s*\(\s*new\s+URL.+?import\.meta\.url/s
+            },
+            handler: [AsyncFunction: handler]
+          }
+        },
+        {
+          name: 'vite:asset-import-meta-url',
+          applyToEnvironment: [Function: applyToEnvironment],
+          transform: {
+            filter: {
+              id: {
+                exclude: [
+                  /^ vite\/preload\-helper\.js$/,
+                  /^C:\\xampp\\htdocs\\apnanest\\node_modules\\vite\\dist\\client\\client\.mjs$/
+                ]
+              },
+              code: /new\s+URL.+import\.meta\.url/s
+            },
+            handler: [AsyncFunction: handler]
+          }
+        },
+        {
+          name: 'vite:force-amd-wrap-require',
+          renderChunk: [Function: renderChunk]
+        },
+        {
+          name: 'vite:force-systemjs-wrap-complete',
+          renderChunk: [Function: renderChunk]
+        },
+        {
+          name: 'vite:prepare-out-dir',
+          options: [Function: options],
+          renderStart: { order: 'pre', handler: [Function: handler] }
+        },
+        {
+          name: 'commonjs',
+          version: '28.0.6',
+          options: [Function: options],
+          buildStart: [Function: buildStart],
+          buildEnd: [Function: buildEnd],
+          load: [AsyncFunction: load],
+          shouldTransformCachedModule: [Function: shouldTransformCachedModule],
+          transform: [Function: transform]
+        },
+        {
+          name: 'vite:data-uri',
+          buildStart: [Function: buildStart],
+          resolveId: [Function: resolveId],
+          load: [Function: load]
+        },
+        {
+          name: 'vite:dynamic-import-vars',
+          resolveId: {
+            filter: { id: /^ vite\/dynamic\-import\-helper\.js$/ },
+            handler: [Function: handler]
+          },
+          load: {
+            filter: { id: /^ vite\/dynamic\-import\-helper\.js$/ },
+            handler: [Function: handler]
+          },
+          transform: {
+            filter: {
+              id: {
+                exclude: /^C:\\xampp\\htdocs\\apnanest\\node_modules\\vite\\dist\\client\\client\.mjs$/
+              },
+              code: /\bimport\s*[(/]/
+            },
+            handler: [AsyncFunction: handler]
+          }
+        },
+        {
+          name: 'vite:import-glob',
+          buildStart: [Function: buildStart],
+          transform: {
+            filter: { code: 'import.meta.glob' },
+            handler: [AsyncFunction: handler]
+          },
+          hotUpdate: [Function: hotUpdate]
+        },
+        {
+          name: 'laravel',
+          enforce: 'post',
+          config: [Function: config],
+          configResolved: [Function: configResolved],
+          transform: [Function: transform],
+          configureServer: [Function: configureServer]
+        },
+        {
+          name: 'vite:build-import-analysis',
+          resolveId: {
+            filter: { id: /^ vite\/preload\-helper\.js$/ },
+            handler: [Function: handler]
+          },
+          load: {
+            filter: { id: /^ vite\/preload\-helper\.js$/ },
+            handler: [Function: handler]
+          },
+          transform: {
+            filter: { code: /import\s*\(/ },
+            handler: [AsyncFunction: handler]
+          },
+          renderChunk: [Function: renderChunk],
+          generateBundle: [Function: generateBundle]
+        },
+        {
+          name: 'vite:esbuild-transpile',
+          applyToEnvironment: [Function: applyToEnvironment],
+          renderChunk: [AsyncFunction: renderChunk]
+        },
+        {
+          name: 'vite:terser',
+          applyToEnvironment: [Function: applyToEnvironment],
+          renderChunk: [AsyncFunction: renderChunk],
+          closeBundle: [Function: closeBundle]
+        },
+        {
+          name: 'vite:license',
+          generateBundle: [AsyncFunction: generateBundle]
+        },
+        {
+          name: 'vite:manifest',
+          perEnvironmentStartEndDuringDev: true,
+          applyToEnvironment: [Function: applyToEnvironment],
+          buildStart: [Function: buildStart],
+          generateBundle: [Function: generateBundle]
+        },
+        {
+          name: 'vite:reporter',
+          sharedDuringBuild: true,
+          perEnvironmentStartEndDuringDev: true,
+          transform: [Function: transform],
+          buildStart: [Function: buildStart],
+          buildEnd: [Function: buildEnd],
+          renderStart: [Function: renderStart],
+          renderChunk: [Function: renderChunk],
+          generateBundle: [Function: generateBundle],
+          writeBundle: [AsyncFunction: writeBundle]
+        },
+        {
+          name: 'vite:load-fallback',
+          load: { handler: [AsyncFunction: handler] }
+        }
+      ]
+    },
+    ssr: {
+      define: undefined,
+      resolve: {
+        externalConditions: [ 'node', 'module-sync' ],
+        extensions: [
+          '.mjs',  '.js',
+          '.mts',  '.ts',
+          '.jsx',  '.tsx',
+          '.json'
+        ],
+        dedupe: [],
+        noExternal: [ 'laravel-vite-plugin' ],
+        external: [],
+        preserveSymlinks: false,
+        alias: [
+          { find: '@', replacement: '/resources/js' },
+          {
+            find: /^\/?@vite\/env/,
+            replacement: '/@fs/C:/xampp/htdocs/apnanest/node_modules/vite/dist/client/env.mjs'
+          },
+          {
+            find: /^\/?@vite\/client/,
+            replacement: '/@fs/C:/xampp/htdocs/apnanest/node_modules/vite/dist/client/client.mjs'
+          }
+        ],
+        mainFields: [ 'module', 'jsnext:main', 'jsnext' ],
+        conditions: [ 'module', 'node', 'development|production' ],
+        builtins: [
+          '_http_agent',         '_http_client',        '_http_common',
+          '_http_incoming',      '_http_outgoing',      '_http_server',
+          '_stream_duplex',      '_stream_passthrough', '_stream_readable',
+          '_stream_transform',   '_stream_wrap',        '_stream_writable',
+          '_tls_common',         '_tls_wrap',           'assert',
+          'assert/strict',       'async_hooks',         'buffer',
+          'child_process',       'cluster',             'console',
+          'constants',           'crypto',              'dgram',
+          'diagnostics_channel', 'dns',                 'dns/promises',
+          'domain',              'events',              'fs',
+          'fs/promises',         'http',                'http2',
+          'https',               'inspector',           'inspector/promises',
+          'module',              'net',                 'os',
+          'path',                'path/posix',          'path/win32',
+          'perf_hooks',          'process',             'punycode',
+          'querystring',         'readline',            'readline/promises',
+          'repl',                'stream',              'stream/consumers',
+          'stream/promises',     'stream/web',          'string_decoder',
+          'sys',                 'timers',              'timers/promises',
+          'tls',                 'trace_events',        'tty',
+          'url',                 'util',                'util/types',
+          'v8',                  'vm',                  'wasi',
+          'worker_threads',      'zlib',                /^node:/,
+          /^bun:/
+        ]
+      },
+      keepProcessEnv: true,
+      consumer: 'server',
+      optimizeDeps: {
+        include: [],
+        exclude: [],
+        needsInterop: [],
+        extensions: [],
+        disabled: undefined,
+        holdUntilCrawlEnd: true,
+        force: false,
+        noDiscovery: true,
+        esbuildOptions: { preserveSymlinks: false }
+      },
+      dev: {
+        warmup: [],
+        sourcemap: { js: true },
+        sourcemapIgnoreList: [Function: isInNodeModules],
+        preTransformRequests: false,
+        createEnvironment: [Function: defaultCreateDevEnvironment],
+        recoverable: false,
+        moduleRunnerTransform: true
+      },
+      build: {
+        target: [ 'chrome107', 'edge107', 'firefox104', 'safari16' ],
+        polyfillModulePreload: true,
+        modulePreload: { polyfill: true },
+        outDir: 'public\\build',
+        assetsDir: 'assets',
+        assetsInlineLimit: 0,
+        sourcemap: false,
+        terserOptions: {},
+        rollupOptions: {
+          output: { manualChunks: { vendor: [ 'axios' ] } },
+          input: [
+            'resources/css/app.css',
+            'resources/js/app.js',
+            'resources/css/mobile-app.css'
+          ]
+        },
+        commonjsOptions: { include: [ /node_modules/ ], extensions: [ '.js', '.cjs' ] },
+        dynamicImportVarsOptions: { warnOnError: true, exclude: [ /node_modules/ ] },
+        write: true,
+        emptyOutDir: null,
+        copyPublicDir: true,
+        license: false,
+        manifest: 'manifest.json',
+        lib: false,
+        ssrManifest: false,
+        ssrEmitAssets: false,
+        reportCompressedSize: true,
+        chunkSizeWarningLimit: 1000,
+        watch: null,
+        cssCodeSplit: true,
+        minify: false,
+        ssr: true,
+        emitAssets: true,
+        createEnvironment: [Function: createEnvironment],
+        cssTarget: [ 'chrome107', 'edge107', 'firefox104', 'safari16' ],
+        cssMinify: 'esbuild'
+      },
+      plugins: [
+        {
+          name: 'vite:build-metadata',
+          renderChunk: [AsyncFunction: renderChunk]
+        },
+        {
+          name: 'vite:watch-package-data',
+          buildStart: [Function: buildStart],
+          buildEnd: [Function: buildEnd],
+          watchChange: [Function: watchChange]
+        },
+        {
+          name: 'alias',
+          buildStart: [AsyncFunction: buildStart],
+          resolveId: [Function: resolveId]
+        },
+        {
+          name: 'vite:modulepreload-polyfill',
+          resolveId: {
+            filter: { id: /^vite\/modulepreload\-polyfill$/ },
+            handler: [Function: handler]
+          },
+          load: {
+            filter: { id: /^ vite\/modulepreload\-polyfill\.js$/ },
+            handler: [Function: handler]
+          }
+        },
+        {
+          name: 'vite:resolve',
+          resolveId: {
+            filter: { id: { exclude: /^(?:\0|\/?virtual:)/ } },
+            handler: [AsyncFunction: handler]
+          },
+          load: {
+            filter: {
+              id: [
+                /^__vite\-browser\-external/,
+                /^__vite\-optional\-peer\-dep/
+              ]
+            },
+            handler: [Function: handler]
+          }
+        },
+        {
+          name: 'vite:html-inline-proxy',
+          resolveId: {
+            filter: { id: /[?&]html-proxy\b/ },
+            handler: [Function: handler]
+          },
+          load: {
+            filter: { id: /[?&]html-proxy\b/ },
+            handler: [Function: handler]
+          }
+        },
+        {
+          name: 'vite:css',
+          buildStart: [Function: buildStart],
+          buildEnd: [Function: buildEnd],
+          load: {
+            filter: {
+              id: /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/
+            },
+            handler: [AsyncFunction: handler]
+          },
+          transform: {
+            filter: {
+              id: {
+                include: /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/,
+                exclude: [
+                  /[?&]commonjs-proxy/,
+                  /[?&](?:worker|sharedworker|raw|url)\b/
+                ]
+              }
+            },
+            handler: [AsyncFunction: handler]
+          }
+        },
+        {
+          name: 'vite:esbuild',
+          configureServer: [Function: configureServer],
+          transform: [AsyncFunction: transform]
+        },
+        {
+          name: 'vite:json',
+          transform: {
+            filter: {
+              id: {
+                include: /\.json(?:$|\?)(?!commonjs-(?:proxy|external))/,
+                exclude: /[?&](?:worker|sharedworker|raw|url)\b/
+              }
+            },
+            handler: [Function: handler]
+          }
+        },
+        {
+          name: 'vite:wasm-helper',
+          resolveId: {
+            filter: { id: /^ vite\/wasm\-helper\.js$/ },
+            handler: [Function: handler]
+          },
+          load: {
+            filter: {
+              id: [
+                /^ vite\/wasm\-helper\.js$/,
+                /(?<![?#].*)\.wasm\?init/
+              ]
+            },
+            handler: [AsyncFunction: handler]
+          }
+        },
+        {
+          name: 'vite:worker',
+          buildStart: [Function: buildStart],
+          load: {
+            filter: { id: /(?:\?|&)(worker|sharedworker)(?:&|$)/ },
+            handler: [AsyncFunction: handler]
+          },
+          transform: {
+            filter: { id: /(?:\?|&)worker_file&type=(\w+)(?:&|$)/ },
+            handler: [AsyncFunction: handler]
+          },
+          renderChunk: [Function: renderChunk],
+          generateBundle: [Function: generateBundle],
+          watchChange: [Function: watchChange]
+        },
+        {
+          name: 'vite:asset',
+          perEnvironmentStartEndDuringDev: true,
+          buildStart: [Function: buildStart],
+          resolveId: { handler: [Function: handler] },
+          load: {
+            filter: { id: { exclude: /^\0/ } },
+            handler: [AsyncFunction: handler]
+          },
+          renderChunk: [Function: renderChunk],
+          generateBundle: [Function: generateBundle]
+        },
+        {
+          name: 'vite:wasm-fallback',
+          load: { filter: { id: /\.wasm$/ }, handler: [Function: handler] }
+        },
+        {
+          name: 'vite:define',
+          transform: { handler: [AsyncFunction: handler] }
+        },
+        {
+          name: 'vite:css-post',
+          renderStart: [Function: renderStart],
+          transform: {
+            filter: {
+              id: {
+                include: /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/,
+                exclude: [
+                  /[?&]commonjs-proxy/,
+                  /[?&](?:worker|sharedworker|raw|url)\b/
+                ]
+              }
+            },
+            handler: [AsyncFunction: handler]
+          },
+          renderChunk: [AsyncFunction: renderChunk],
+          augmentChunkHash: [Function: augmentChunkHash],
+          generateBundle: [AsyncFunction: generateBundle]
+        },
+        {
+          name: 'vite:build-html',
+          transform: {
+            filter: { id: /\.html$/ },
+            handler: [AsyncFunction: handler]
+          },
+          generateBundle: [AsyncFunction: generateBundle]
+        },
+        {
+          name: 'vite:force-amd-wrap-require',
+          renderChunk: [Function: renderChunk]
+        },
+        {
+          name: 'vite:force-systemjs-wrap-complete',
+          renderChunk: [Function: renderChunk]
+        },
+        {
+          name: 'vite:prepare-out-dir',
+          options: [Function: options],
+          renderStart: { order: 'pre', handler: [Function: handler] }
+        },
+        {
+          name: 'commonjs',
+          version: '28.0.6',
+          options: [Function: options],
+          buildStart: [Function: buildStart],
+          buildEnd: [Function: buildEnd],
+          load: [AsyncFunction: load],
+          shouldTransformCachedModule: [Function: shouldTransformCachedModule],
+          transform: [Function: transform]
+        },
+        {
+          name: 'vite:data-uri',
+          buildStart: [Function: buildStart],
+          resolveId: [Function: resolveId],
+          load: [Function: load]
+        },
+        {
+          name: 'vite:dynamic-import-vars',
+          resolveId: {
+            filter: { id: /^ vite\/dynamic\-import\-helper\.js$/ },
+            handler: [Function: handler]
+          },
+          load: {
+            filter: { id: /^ vite\/dynamic\-import\-helper\.js$/ },
+            handler: [Function: handler]
+          },
+          transform: {
+            filter: {
+              id: {
+                exclude: /^C:\\xampp\\htdocs\\apnanest\\node_modules\\vite\\dist\\client\\client\.mjs$/
+              },
+              code: /\bimport\s*[(/]/
+            },
+            handler: [AsyncFunction: handler]
+          }
+        },
+        {
+          name: 'vite:import-glob',
+          buildStart: [Function: buildStart],
+          transform: {
+            filter: { code: 'import.meta.glob' },
+            handler: [AsyncFunction: handler]
+          },
+          hotUpdate: [Function: hotUpdate]
+        },
+        {
+          name: 'laravel',
+          enforce: 'post',
+          config: [Function: config],
+          configResolved: [Function: configResolved],
+          transform: [Function: transform],
+          configureServer: [Function: configureServer]
+        },
+        {
+          name: 'vite:build-import-analysis',
+          resolveId: {
+            filter: { id: /^ vite\/preload\-helper\.js$/ },
+            handler: [Function: handler]
+          },
+          load: {
+            filter: { id: /^ vite\/preload\-helper\.js$/ },
+            handler: [Function: handler]
+          },
+          transform: {
+            filter: { code: /import\s*\(/ },
+            handler: [AsyncFunction: handler]
+          },
+          renderChunk: [Function: renderChunk],
+          generateBundle: [Function: generateBundle]
+        },
+        {
+          name: 'vite:esbuild-transpile',
+          applyToEnvironment: [Function: applyToEnvironment],
+          renderChunk: [AsyncFunction: renderChunk]
+        },
+        {
+          name: 'vite:license',
+          generateBundle: [AsyncFunction: generateBundle]
+        },
+        {
+          name: 'vite:manifest',
+          perEnvironmentStartEndDuringDev: true,
+          applyToEnvironment: [Function: applyToEnvironment],
+          buildStart: [Function: buildStart],
+          generateBundle: [Function: generateBundle]
+        },
+        {
+          name: 'vite:reporter',
+          sharedDuringBuild: true,
+          perEnvironmentStartEndDuringDev: true,
+          transform: [Function: transform],
+          buildStart: [Function: buildStart],
+          buildEnd: [Function: buildEnd],
+          renderStart: [Function: renderStart],
+          renderChunk: [Function: renderChunk],
+          generateBundle: [Function: generateBundle],
+          writeBundle: [AsyncFunction: writeBundle]
+        },
+        {
+          name: 'vite:load-fallback',
+          load: { handler: [AsyncFunction: handler] }
+        }
+      ]
+    }
+  },
+  configFile: 'C:/xampp/htdocs/apnanest/vite.config.js',
+  configFileDependencies: [ 'C:/xampp/htdocs/apnanest/vite.config.js' ],
+  inlineConfig: {
+    root: undefined,
+    base: undefined,
+    mode: undefined,
+    configFile: undefined,
+    configLoader: undefined,
+    logLevel: undefined,
+    clearScreen: undefined,
+    build: {}
+  },
+  root: 'C:/xampp/htdocs/apnanest',
+  decodedBase: 'http://localhost/apnanest/public/build/',
+  rawBase: 'http://localhost/apnanest/public/build/',
+  cacheDir: 'C:/xampp/htdocs/apnanest/node_modules/.vite',
+  command: 'build',
+  mode: 'production',
+  isWorker: false,
+  mainConfig: null,
+  bundleChain: [],
+  isProduction: true,
+  css: {
+    transformer: 'postcss',
+    preprocessorMaxWorkers: true,
+    devSourcemap: false
+  },
+  json: { namedExports: true, stringify: 'auto' },
+  esbuild: { jsxDev: false, charset: 'utf8', legalComments: 'none' },
+  builder: undefined,
+  preview: {
+    port: 4173,
+    strictPort: false,
+    host: undefined,
+    allowedHosts: [
+      '__laravel_vite_placeholder__.test',
+      '__laravel_vite_placeholder__.test'
+    ],
+    https: undefined,
+    open: false,
+    proxy: undefined,
+    cors: {
+      origin: [
+        /^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/,
+        'http://localhost/apnanest/',
+        /^https?:\/\/.*\.test(:\d+)?$/
+      ]
+    },
+    headers: {}
+  },
+  envDir: 'C:/xampp/htdocs/apnanest',
+  env: {
+    VITE_APP_NAME: 'Room Rental',
+    BASE_URL: 'http://localhost/apnanest/public/build/',
+    MODE: 'production',
+    DEV: false,
+    PROD: true
+  },
+  assetsInclude: [Function: assetsInclude],
+  logger: {
+    hasWarned: false,
+    info: [Function: info],
+    warn: [Function: warn],
+    warnOnce: [Function: warnOnce],
+    error: [Function: error],
+    clearScreen: [Function: clearScreen],
+    hasErrorLogged: [Function: hasErrorLogged]
+  },
+  packageCache: Map(1) {
+    'fnpd_C:/xampp/htdocs/apnanest' => {
+      dir: 'C:/xampp/htdocs/apnanest',
+      data: {
+        '$schema': 'https://json.schemastore.org/package.json',
+        private: true,
+        type: 'module',
+        scripts: { build: 'vite build', dev: 'vite' },
+        devDependencies: {
+          '@tailwindcss/forms': '^0.5.2',
+          '@tailwindcss/vite': '^4.0.0',
+          alpinejs: '^3.4.2',
+          autoprefixer: '^10.4.2',
+          axios: '^1.11.0',
+          concurrently: '^9.0.1',
+          'laravel-vite-plugin': '^2.0.0',
+          postcss: '^8.4.31',
+          tailwindcss: '^3.1.0',
+          vite: '^7.0.7'
+        }
+      },
+      hasSideEffects: [Function: hasSideEffects],
+      setResolvedCache: [Function: setResolvedCache],
+      getResolvedCache: [Function: getResolvedCache]
+    },
+    set: [Function (anonymous)]
+  },
+  worker: { format: 'iife', plugins: '() => plugins', rollupOptions: {} },
+  appType: 'spa',
+  experimental: {
+    importGlobRestoreExtension: false,
+    renderBuiltUrl: undefined,
+    hmrPartialAccept: false
+  },
+  future: undefined,
+  optimizeDeps: {
+    include: [],
+    exclude: [],
+    needsInterop: [],
+    extensions: [],
+    disabled: undefined,
+    holdUntilCrawlEnd: true,
+    force: false,
+    noDiscovery: false,
+    esbuildOptions: { preserveSymlinks: false }
+  },
+  dev: {
+    warmup: [],
+    sourcemap: { js: true },
+    sourcemapIgnoreList: [Function: isInNodeModules],
+    preTransformRequests: false,
+    createEnvironment: [Function: defaultCreateDevEnvironment],
+    recoverable: false,
+    moduleRunnerTransform: false
+  },
+  webSocketToken: 'Z9EXiB8zpbRo',
+  getSortedPlugins: [Function: getSortedPlugins],
+  getSortedPluginHooks: [Function: getSortedPluginHooks],
+  createResolver: [Function: createResolver],
+  fsDenyGlob: [Function: arrayMatcher],
+  safeModulePaths: Set(0) {},
+  [Symbol(vite:resolved-config)]: true
+}
+[36mvite v7.2.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[32m✓[39m 55 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mpublic/build/[22m[32mmanifest.json                   [39m[1m[2m  0.70 kB[22m[1m[22m[2m │ gzip:  0.24 kB[22m
+[2mpublic/build/[22m[35massets/mobile-app-Be4Nh3en.css  [39m[1m[2m 11.13 kB[22m[1m[22m[2m │ gzip:  2.72 kB[22m
+[2mpublic/build/[22m[35massets/app-AwKuNtkN.css         [39m[1m[2m105.06 kB[22m[1m[22m[2m │ gzip: 16.91 kB[22m
+[2mpublic/build/[22m[36massets/vendor-B9ygI19o.js       [39m[1m[2m 36.28 kB[22m[1m[22m[2m │ gzip: 14.69 kB[22m
+[2mpublic/build/[22m[36massets/app-51fcKXVs.js          [39m[1m[2m 44.44 kB[22m[1m[22m[2m │ gzip: 16.13 kB[22m
+[32m✓ built in 4.90s[39m
