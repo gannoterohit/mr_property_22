@@ -86,23 +86,23 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="cities-table admin-table-base">
+                <table class="cities-table admin-table-base">
                 <thead class="bg-slate-50">
                     <tr class="border-b">
-                        <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">City</th>
-                        <th class="px-3 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">State</th>
-                        <th class="px-3 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Hero image</th>
-                        <th class="px-3 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Map coordinates</th>
-                        <th class="px-3 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Launch status</th>
-                        <th class="px-3 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Fallback</th>
-                        <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Action</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Hero image</th>
+                        <th>Map coordinates</th>
+                        <th>Launch status</th>
+                        <th>Fallback</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="cityTableBody" class="divide-y divide-slate-100">
                     @forelse($cities as $city)
                         @php($formId = 'city-form-'.$city->id)
                         <tr class="city-row transition hover:bg-slate-50/70" data-search="{{ Str::lower($city->name.' '.$city->state) }}">
-                            <td class="px-5 py-4">
+                            <td>
                                 <form id="{{ $formId }}" method="POST" action="{{ route('admin.cities.update', $city) }}" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
@@ -113,10 +113,10 @@
                                     <input form="{{ $formId }}" name="name" value="{{ $city->name }}" required class="city-field min-w-[145px] font-bold text-slate-800">
                                 </div>
                             </td>
-                            <td class="px-3 py-4">
+                            <td>
                                 <input form="{{ $formId }}" name="state" value="{{ $city->state }}" placeholder="Add state" class="city-field min-w-[140px]">
                             </td>
-                            <td class="px-3 py-4">
+                            <td>
                                 <div class="min-w-[180px] space-y-2">
                                     <input form="{{ $formId }}" name="image" type="file" accept="image/*" class="block w-full cursor-pointer rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-[10px] text-slate-600 file:mr-2 file:rounded-md file:border-0 file:bg-slate-900 file:px-2 file:py-1 file:text-[10px] file:font-bold file:text-white">
                                     @if($city->image_url)
@@ -124,7 +124,7 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-3 py-4">
+                            <td>
                                 <div class="grid min-w-[230px] grid-cols-2 gap-2">
                                     <div class="relative">
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-bold text-slate-400">LAT</span>
@@ -136,7 +136,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-3 py-4">
+                            <td>
                                 <x-admin.status-toggle
                                     :active="$city->is_active"
                                     inactive-label="Inactive"
@@ -144,14 +144,14 @@
                                     :data-label="$city->name"
                                 />
                             </td>
-                            <td class="px-3 py-4">
+                            <td>
                                 <label class="inline-flex min-w-max cursor-pointer items-center gap-2 text-xs font-bold {{ $city->is_default ? 'admin-theme-text' : 'text-slate-500' }}">
                                     <input form="{{ $formId }}" type="checkbox" name="is_default" value="1" @checked($city->is_default) class="rounded border-slate-300 admin-theme-text">
                                     <i class="{{ $city->is_default ? 'fas' : 'far' }} fa-star text-amber-400"></i>
                                     {{ $city->is_default ? 'Default' : 'Set default' }}
                                 </label>
                             </td>
-                            <td class="px-5 py-4 text-right">
+                            <td class="text-right">
                                 <div class="flex justify-end gap-2">
                                     <button form="{{ $formId }}" class="inline-flex h-9 items-center gap-2 rounded-lg bg-slate-900 px-4 text-xs font-extrabold text-white transition admin-theme-hover-bg">
                                         <i class="fas fa-floppy-disk"></i> Save

@@ -69,12 +69,15 @@
         <div class="border-b border-slate-200 px-5 py-4">
             <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
                 <div><h2 class="font-bold text-slate-900">All offers</h2><p class="text-xs text-slate-500">{{ $offers->total() }} promotion{{ $offers->total() === 1 ? '' : 's' }} found</p></div>
-                <form method="GET" action="{{ route('admin.offers.index') }}" class="offer-filter-grid">
+                <form method="GET" action="{{ route('admin.offers.index') }}" class="offer-filter-grid items-end">
                     <div class="relative"><i class="fas fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i><input name="search" value="{{ request('search') }}" placeholder="Search offers..." class="h-10 w-full rounded-xl border-slate-200 pl-9 pr-3 text-xs font-semibold /20"></div>
                     <select name="placement" class="h-10 rounded-xl border-slate-200 text-xs font-semibold /20"><option value="">All placements</option>@foreach(\App\Models\Offer::PLACEMENTS as $key => $label)<option value="{{ $key }}" @selected(request('placement') === $key)>{{ $label }}</option>@endforeach</select>
                     <select name="audience" class="h-10 rounded-xl border-slate-200 text-xs font-semibold /20"><option value="">All audiences</option><option value="both" @selected(request('audience') === 'both')>Both</option><option value="user" @selected(request('audience') === 'user')>Users</option><option value="owner" @selected(request('audience') === 'owner')>Owners</option></select>
                     <select name="status" class="h-10 rounded-xl border-slate-200 text-xs font-semibold /20"><option value="">Any status</option><option value="active" @selected(request('status') === 'active')>Active</option><option value="inactive" @selected(request('status') === 'inactive')>Inactive</option></select>
-                    <div class="flex gap-2"><button class="h-10 rounded-xl admin-theme-bg px-4 text-xs font-bold text-white ">Filter</button>@if(request()->hasAny(['search','placement','audience','status']))<a href="{{ route('admin.offers.index') }}" title="Clear filters" class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50"><i class="fas fa-rotate-left text-xs"></i></a>@endif</div>
+                    <div class="flex gap-2 justify-end">
+                        <button class="h-10 rounded-xl admin-theme-bg px-4 text-xs font-bold text-white ">Filter</button>
+                        @if(request()->hasAny(['search','placement','audience','status']))<a href="{{ route('admin.offers.index') }}" title="Clear filters" class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50"><i class="fas fa-rotate-left text-xs"></i></a>@endif
+                    </div>
                 </form>
             </div>
         </div>

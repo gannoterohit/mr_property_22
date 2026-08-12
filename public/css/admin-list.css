@@ -60,10 +60,17 @@
 @media(max-width:639px){.complaint-kpis{grid-template-columns:1fr!important}}
 
 /* admin-cities-index.css */
-.cities-table{width:100%;min-width:1050px}
+.cities-table{width:100%;min-width:1050px;table-layout:fixed!important}
 .cities-table th,.cities-table td{vertical-align:middle!important;text-align:left!important;padding:12px 16px!important;box-sizing:border-box!important}
-.city-field{height:40px;width:100%;border:1px solid #e2e8f0!important;border-radius:10px!important;background:#fff;font-size:12px!important}
-.city-field:focus{border-color:var(--admin-primary)!important;box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1)!important}
+.cities-table th:nth-child(1),.cities-table td:nth-child(1){width:22%!important}
+.cities-table th:nth-child(2),.cities-table td:nth-child(2){width:12%!important}
+.cities-table th:nth-child(3),.cities-table td:nth-child(3){width:15%!important}
+.cities-table th:nth-child(4),.cities-table td:nth-child(4){width:17%!important}
+.cities-table th:nth-child(5),.cities-table td:nth-child(5){width:12%!important}
+.cities-table th:nth-child(6),.cities-table td:nth-child(6){width:12%!important}
+.cities-table th:nth-child(7),.cities-table td:nth-child(7){width:10%!important;text-align:right!important}
+.cities-table .city-field{height:40px;width:100%;border:1px solid #e2e8f0!important;border-radius:10px!important;background:#fff;font-size:12px!important}
+.cities-table .city-field:focus{border-color:var(--admin-primary)!important;box-shadow:0 0 0 3px rgba(var(--admin-primary-rgb),.1)!important}
 @media(max-width:1023px){.cities-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:639px){.cities-kpis{grid-template-columns:1fr}.cities-table{min-width:960px}}
 
@@ -94,17 +101,38 @@
 
 /* admin-payments-index.css */
 .payment-table{width:100%;min-width:1100px}
-.payment-table th,.payment-table td{padding:12px 16px!important;box-sizing:border-box!important}
-.payment-table th:nth-child(1),.payment-table td:nth-child(1){width:22%!important}.payment-table th:nth-child(2),.payment-table td:nth-child(2){width:10%!important}.payment-table th:nth-child(3),.payment-table td:nth-child(3){width:11%!important}.payment-table th:nth-child(4),.payment-table td:nth-child(4){width:11%!important}.payment-table th:nth-child(5),.payment-table td:nth-child(5){width:21%!important}.payment-table th:nth-child(6),.payment-table td:nth-child(6){width:11%!important}.payment-table th:nth-child(7),.payment-table td:nth-child(7){width:14%!important}@media(max-width:1199px){.payment-filters{grid-template-columns:repeat(3,1fr)}.payment-kpis{grid-template-columns:repeat(2,1fr)}}@media(max-width:639px){.payment-filters,.payment-kpis{grid-template-columns:1fr}}
+.payment-table th,.payment-table td{padding:12px 16px!important;box-sizing:border-box!important;vertical-align:middle!important}
+.payment-table th:nth-child(1),.payment-table td:nth-child(1){width:22%!important}
+.payment-table th:nth-child(2),.payment-table td:nth-child(2){width:10%!important}
+.payment-table th:nth-child(3),.payment-table td:nth-child(3){width:11%!important}
+.payment-table th:nth-child(4),.payment-table td:nth-child(4){width:11%!important}
+.payment-table th:nth-child(5),.payment-table td:nth-child(5){width:21%!important}
+.payment-table th:nth-child(6),.payment-table td:nth-child(6){width:11%!important}
+.payment-table th:nth-child(7),.payment-table td:nth-child(7){width:14%!important}
+.payment-filters{display:flex!important;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.payment-filters>input,.payment-filters>select{flex:1 1 minmax(120px,1fr)}
+.payment-filters>.flex{flex:0 0 auto}
+@media(max-width:1199px){.payment-kpis{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:639px){.payment-kpis{grid-template-columns:1fr!important}}
 
 /* admin-offers-index.css */
 .offer-overview { display:grid!important; grid-template-columns:minmax(0,1fr) 300px!important; gap:16px; align-items:stretch; }
 .offer-placement-grid { display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr))!important; gap:10px; }
-.offer-table{width:100%;min-width:1000px}
-.offer-table th,.offer-table td{padding:12px 16px!important;box-sizing:border-box!important}
-.offer-table th:nth-child(1),.offer-table td:nth-child(1){width:30%!important}.offer-table th:nth-child(2),.offer-table td:nth-child(2){width:15%!important}.offer-table th:nth-child(3),.offer-table td:nth-child(3){width:9%!important}.offer-table th:nth-child(4),.offer-table td:nth-child(4){width:17%!important}.offer-table th:nth-child(5),.offer-table td:nth-child(5){width:10%!important}.offer-table th:nth-child(6),.offer-table td:nth-child(6){width:19%!important;text-align:right!important}
-@media(max-width:1199px){.offer-overview{grid-template-columns:1fr!important}.offer-filter-grid{grid-template-columns:1fr 1fr!important;width:100%}.offer-placement-grid{grid-template-columns:repeat(3,1fr)!important}}
-@media(max-width:639px){.offer-filter-grid,.offer-placement-grid{grid-template-columns:1fr!important}}
+.offer-table{width:100%;min-width:1000px;table-layout:fixed!important}
+.offer-table thead th:nth-child(1),.offer-table tbody td:nth-child(1){width:30%!important}
+.offer-table thead th:nth-child(2),.offer-table tbody td:nth-child(2){width:15%!important}
+.offer-table thead th:nth-child(3),.offer-table tbody td:nth-child(3){width:9%!important}
+.offer-table thead th:nth-child(4),.offer-table tbody td:nth-child(4){width:17%!important}
+.offer-table thead th:nth-child(5),.offer-table tbody td:nth-child(5){width:10%!important}
+.offer-table thead th:nth-child(6),.offer-table tbody td:nth-child(6){width:19%!important;text-align:right!important}
+.offer-table th,.offer-table td{padding:12px 16px!important;box-sizing:border-box!important;vertical-align:middle!important}
+.offer-table td{overflow:hidden;text-overflow:ellipsis}
+.offer-table td:first-child{white-space:normal!important;overflow:visible}
+.offer-filter-grid{display:flex!important;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.offer-filter-grid>input,.offer-filter-grid>select{flex:1 1 minmax(150px,1fr)}
+.offer-filter-grid>.flex{flex:0 0 auto}
+@media(max-width:1199px){.offer-overview{grid-template-columns:1fr!important}.offer-placement-grid{grid-template-columns:repeat(3,1fr)!important}}
+@media(max-width:639px){.offer-placement-grid{grid-template-columns:1fr!important}}
 
 /* admin-members-index.css */
 .member-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}

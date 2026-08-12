@@ -98,6 +98,9 @@
     }
     .availability-switch.is-on .availability-switch-knob { transform: translateX(24px) !important; }
     .availability-state { width: 28px; text-align: right; font-size: 11px; font-weight: 800; }
+    .toggle-btn-danger { border-color: #dc2626 !important; background-color: #fef2f2 !important; color: #b91c1c !important; }
+    .toggle-btn-danger:hover { border-color: #fca5a5 !important; background-color: #fee2e2 !important; }
+    .toggle-track-danger { background-color: #ef4444 !important; }
 
 
 
