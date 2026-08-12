@@ -112,12 +112,12 @@
                                             </div>
                                         @else
                                             <a href="{{ route('rooms.show', $room->id) }}" class="room-theme-primary-button w-full py-2 font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1 text-xs mt-auto">
-                                                View Details <i class="fas fa-arrow-right text-[10px]"></i>
+                                                Contact Owner <i class="fas fa-arrow-right text-[10px]"></i>
                                             </a>
                                         @endif
                                     @else
                                         <a href="{{ route('rooms.show', $room->id) }}" class="room-theme-primary-button w-full py-2 font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1 text-xs mt-auto">
-                                            View Details <i class="fas fa-arrow-right text-[10px]"></i>
+                                            Contact Owner <i class="fas fa-arrow-right text-[10px]"></i>
                                         </a>
                                     @endauth
                                 </div>
