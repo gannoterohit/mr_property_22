@@ -1,23 +1,32 @@
 @extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
-@section('title','Refer & Earn | ApnaNest')
+
+@section('title','Refer & Earn | ' . \App\Models\Setting::get('website_name', 'ApnaNest'))
+
+@if(Auth::user()->role === 'owner')
+    @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/owner-theme.css') }}">
+    @endpush
+@endif
+
 @section('content')
-<div class="{{ $user->role==='owner'?'owner-workspace flex':'' }} min-h-screen">
+<div class="{{ $user->role==='owner'?'owner-workspace referral-page':'referral-page' }} min-h-screen">
     @if($user->role==='owner') @include('owner.partials.sidebar',['active'=>'referral']) @endif
-    <main class="account-main">
+    <main class="{{ $user->role==='owner'?'flex-1 min-w-0':'account-main' }}">
         <header class="account-header">
             <div class="account-container">
                 <div>
                     <span class="account-eyebrow">Rewards program</span>
                     <h1>Refer & Earn</h1>
-                    <p>Invite friends to ApnaNest and get free contact unlocks when they join.</p>
+                    <p>Invite friends to {{ \App\Models\Setting::get('website_name', 'ApnaNest') }} and get free contact unlocks when they join.</p>
                 </div>
+                <a href="{{ route('owner.rooms') }}" class="account-action secondary {{ $user->role==='owner'?'owner-theme-bg owner-theme-hover-bg':'' }}">My Properties</a>
             </div>
         </header>
         <div class="account-container account-body">
             <section class="referral-hero">
                 <div class="referral-copy">
-                    <span>1 Referral = 1 Free Unlock</span>
-                    <h2>Share ApnaNest.<br>Unlock Contacts Free.</h2>
+                    <span><i class="fas fa-bolt"></i> 1 Referral = 1 Free Unlock</span>
+                    <h2>Share {{ \App\Models\Setting::get('website_name', 'ApnaNest') }}.<br>Unlock Contacts Free.</h2>
                     <p>Your friend receives 1 Free Contact Unlock joining bonus, and you receive 1 Free Contact Unlock after they sign up.</p>
                     <div class="reward-pair">
                         <div>
@@ -40,7 +49,7 @@
                         </button>
                     </div>
                     <p id="copy-status" aria-live="polite"></p>
-                    <a href="https://wa.me/?text={{ urlencode('Join ApnaNest using my referral link and get 1 Free Contact Unlock to connect with home owners: '.$referralLink) }}" target="_blank" rel="noopener">
+                    <a href="https://wa.me/?text={{ urlencode('Join ' . \App\Models\Setting::get('website_name', 'ApnaNest') . ' using my referral link and get 1 Free Contact Unlock to connect with home owners: ' . $referralLink) }}" target="_blank" rel="noopener">
                         <i class="fa-brands fa-whatsapp"></i> Share on WhatsApp
                     </a>
                 </div>
@@ -52,20 +61,20 @@
                     ['Friends joined', $referrals->count(), 'fa-user-group', 'green'],
                     ['Total Earned Unlocks', $referrals->count(), 'fa-gift', 'blue']
                 ] as $stat)
-                    <article class="account-card">
+                    <article>
                         <span class="{{ $stat[3] }} bg-{{ $stat[3] }}-50 text-{{ $stat[3] }}-600">
                             <i class="fas {{ $stat[2] }}"></i>
                         </span>
                         <div>
-                            <small class="text-slate-500 text-xs">{{ $stat[0] }}</small>
-                            <strong class="text-slate-900 font-extrabold text-xl">{{ $stat[1] }}</strong>
+                            <small>{{ $stat[0] }}</small>
+                            <strong>{{ $stat[1] }}</strong>
                         </div>
                     </article>
                 @endforeach
             </section>
             
             <section class="referral-layout">
-                <article class="account-card">
+                <article class="account-card referral-history">
                     <div class="account-card-head">
                         <div>
                             <h2>Referral history</h2>

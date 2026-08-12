@@ -2,6 +2,15 @@
 
 @section('title', (Auth::user()->role === 'owner' ? 'Room Listing Plans' : 'Contact Unlock Plans') . ' - ' . \App\Models\Setting::get('website_name', 'RoomRental'))
 
+@if(Auth::user()->role === 'owner')
+    @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/owner-theme.css') }}">
+    @endpush
+@endif
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/account-plans.css') }}">
+@endpush
+
 @section('content')
 @php
     $isOwner = Auth::user()->role === 'owner';
@@ -82,13 +91,13 @@
                             $regularCost = $limit === -1 ? null : $limit * $singleFee;
                             $saving = $regularCost === null ? null : max(0, $regularCost - $plan->price);
                         @endphp
-                        <article class="relative flex flex-col rounded-2xl border {{ $loop->iteration === 2 ? 'border-indigo-500 ring-4 ring-indigo-50' : 'border-slate-200' }} bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                        <article class="plan-card {{ $loop->iteration === 2 ? 'popular' : '' }}">
                             @if($loop->iteration === 2)
-                                <span class="absolute right-5 top-0 -translate-y-1/2 rounded-full bg-indigo-600 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white">Most popular</span>
+                                <span class="plan-badge">Most popular</span>
                             @endif
                             <div class="flex items-start justify-between gap-3">
                                 <div><h3 class="font-heading text-lg font-bold text-slate-950">{{ $plan->name }}</h3><p class="mt-1 text-sm text-slate-500">{{ $plan->duration_days }} days validity</p></div>
-                                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"><i class="fas {{ $isOwner ? 'fa-house-circle-check' : 'fa-address-card' }}"></i></span>
+                                 <span class="plan-icon"><i class="fas {{ $isOwner ? 'fa-house-circle-check' : 'fa-address-card' }}"></i></span>
                             </div>
                             <div class="mt-6 flex items-end gap-2"><span class="text-4xl font-extrabold tracking-tight text-slate-950">&#8377;{{ number_format($plan->price) }}</span><span class="pb-1 text-sm text-slate-500">one time</span></div>
                             <div class="mt-5 rounded-xl bg-slate-50 p-4">
@@ -104,29 +113,30 @@
                                     <li class="flex gap-3"><i class="fas fa-check mt-1 text-emerald-600"></i><span>{{ $benefit }}</span></li>
                                 @endforeach
                             </ul>
-                            <button type="button" onclick='openPlanPayment({{ $plan->id }}, @js($plan->name), {{ (float) $plan->price }})' class="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-xl {{ $loop->iteration === 2 ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-slate-900 hover:bg-slate-800 text-white' }} px-5 py-3.5 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-indigo-100">
-                                Choose plan <i class="fas fa-arrow-right text-xs"></i>
-                            </button>
+                             <button type="button" data-plan='@json(['id' => $plan->id, 'name' => $plan->name, 'price' => (float) $plan->price])' class="plan-btn {{ $loop->iteration === 2 ? 'primary' : 'secondary' }}">
+                                 Choose plan <i class="fas fa-arrow-right text-xs"></i>
+                             </button>
                         </article>
                     @endforeach
                 </div>
             @endif
 
             <div class="mt-8 grid sm:grid-cols-3 gap-3 text-sm text-slate-600">
-                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4"><i class="fas fa-lock text-indigo-600"></i> Secure checkout</div>
-                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4"><i class="fas fa-receipt text-indigo-600"></i> Payment history saved</div>
-                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4"><i class="fas fa-headset text-indigo-600"></i> Support available</div>
+                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4"><i class="fas fa-lock plan-trust-icon"></i> Secure checkout</div>
+                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4"><i class="fas fa-receipt plan-trust-icon"></i> Payment history saved</div>
+                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4"><i class="fas fa-headset plan-trust-icon"></i> Support available</div>
             </div>
         </div>
     </main>
 </div>
-
+@include('account.partials.page-styles')
+<link rel="stylesheet" href="{{ asset('css/account-plans.css') }}">
 <div id="planPaymentModal" class="fixed inset-0 z-[1100] hidden items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-sm" role="dialog" aria-modal="true">
     <div class="w-full max-w-md rounded-t-3xl sm:rounded-2xl bg-white p-6 shadow-2xl">
-        <div class="flex items-start justify-between gap-4"><div><p class="text-xs font-bold uppercase tracking-wider text-indigo-600">Complete purchase</p><h3 id="selectedPlanName" class="mt-1 font-heading text-xl font-bold text-slate-950"></h3><p id="selectedPlanPrice" class="mt-1 text-sm text-slate-500"></p></div><button onclick="closePlanPayment()" class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200"><i class="fas fa-xmark"></i></button></div>
+        <div class="flex items-start justify-between gap-4"><div><p class="plan-modal-title">Complete purchase</p><h3 id="selectedPlanName" class="mt-1 font-heading text-xl font-bold text-slate-950"></h3><p id="selectedPlanPrice" class="mt-1 text-sm text-slate-500"></p></div><button onclick="closePlanPayment()" class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200"><i class="fas fa-xmark"></i></button></div>
         <div class="mt-6 space-y-3">
-            <button onclick="purchasePlan('online')" class="flex w-full items-center justify-between rounded-xl bg-indigo-600 p-4 text-left text-white hover:bg-indigo-700"><span class="flex items-center gap-3"><i class="fas fa-credit-card"></i><span><strong class="block text-sm">Pay online</strong><small class="text-indigo-100">UPI, card or net banking</small></span></span><i class="fas fa-arrow-right text-xs"></i></button>
-            <button onclick="purchasePlan('wallet')" class="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left text-slate-900 hover:bg-slate-50"><span class="flex items-center gap-3"><i class="fas fa-wallet text-indigo-600"></i><span><strong class="block text-sm">Use wallet balance</strong><small class="text-slate-500">Available &#8377;{{ number_format(Auth::user()->wallet_balance ?? 0, 2) }}</small></span></span><i class="fas fa-arrow-right text-xs text-slate-400"></i></button>
+            <button onclick="purchasePlan('online')" class="plan-pay-online flex w-full items-center justify-between rounded-xl p-4 text-left"><span class="flex items-center gap-3"><i class="fas fa-credit-card"></i><span><strong class="block text-sm">Pay online</strong><small class="text-indigo-100">UPI, card or net banking</small></span></span><i class="fas fa-arrow-right text-xs"></i></button>
+            <button onclick="purchasePlan('wallet')" class="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left text-slate-900 hover:bg-slate-50"><span class="flex items-center gap-3"><i class="fas fa-wallet plan-trust-icon"></i><span><strong class="block text-sm">Use wallet balance</strong><small class="text-slate-500">Available &#8377;{{ number_format(Auth::user()->wallet_balance ?? 0, 2) }}</small></span></span><i class="fas fa-arrow-right text-xs text-slate-400"></i></button>
         </div>
     </div>
 </div>
@@ -170,9 +180,20 @@ async function payForPlan(paymentId) {
             const verified = await verifyResponse.json();
             if (!verifyResponse.ok || verified.status !== 'success') return toastr.error(verified.message || 'Payment verification failed');
             toastr.success('Plan activated successfully'); setTimeout(() => location.reload(), 1000);
-        }, theme:{color:'#4f46e5'}, prefill:{name:@js(Auth::user()->name), email:@js(Auth::user()->email)} }).open();
+        }, theme:{color: '{{ \App\Models\Setting::get("primary_color", "#4F46E5") }}'}, prefill:{name:@js(Auth::user()->name), email:@js(Auth::user()->email)} }).open();
 }
 
 document.getElementById('planPaymentModal').addEventListener('click', e => { if (e.target.id === 'planPaymentModal') closePlanPayment(); });
+
+document.querySelectorAll('[data-plan]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        try {
+            const plan = JSON.parse(btn.dataset.plan);
+            openPlanPayment(plan.id, plan.name, plan.price);
+        } catch (err) {
+            console.error('Invalid plan data', err);
+        }
+    });
+});
 </script>
 @endpush
