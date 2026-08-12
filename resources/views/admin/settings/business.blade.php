@@ -5,7 +5,7 @@
 @section('admin-content')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/admin-settings.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('css/status-toggle.css') }}">
 @endpush
 <div id="business-settings-tabs" class="flex flex-col min-h-0 bg-gray-50">
     
@@ -374,10 +374,8 @@
                                     <h4 class="text-sm font-bold text-slate-800">Referral System</h4>
                                     <p class="text-xs text-slate-500 mt-1">Allow renters to refer friends and get 1 Free Contact Unlock per join</p>
                                 </div>
-                                <select name="referral_enabled" class="rounded-lg border-slate-200 text-xs font-bold text-slate-700 bg-white">
-                                    <option value="1" @selected(\App\Models\Setting::isEnabled('referral_enabled', true))>Active (ON)</option>
-                                    <option value="0" @selected(!\App\Models\Setting::isEnabled('referral_enabled', true))>Inactive (OFF)</option>
-                                </select>
+                                <input type="hidden" name="referral_enabled" value="{{ \App\Models\Setting::isEnabled('referral_enabled', true) ? '1' : '0' }}">
+                                <button type="button" class="toggle-btn feature-toggle" data-target="referral_enabled" data-default="1" :class="document.querySelector('[name=referral_enabled]').value === '1' ? 'toggle-btn-active' : 'toggle-btn-inactive'"><span class="toggle-track" :class="document.querySelector('[name=referral_enabled]').value === '1' ? 'toggle-track-active' : 'toggle-track-inactive'"><span class="toggle-knob" :class="document.querySelector('[name=referral_enabled]').value === '1' ? 'toggle-knob-active' : 'toggle-knob-inactive'"></span></span><span class="toggle-label" :text="document.querySelector('[name=referral_enabled]').value === '1' ? 'ON' : 'OFF'">ON</span></button>
                             </div>
 
                             <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
@@ -385,10 +383,8 @@
                                     <h4 class="text-sm font-bold text-slate-800">Wallet System</h4>
                                     <p class="text-xs text-slate-500 mt-1">Allow renters to use balance and view logs</p>
                                 </div>
-                                <select name="wallet_enabled" class="rounded-lg border-slate-200 text-xs font-bold text-slate-700 bg-white">
-                                    <option value="1" @selected(\App\Models\Setting::isEnabled('wallet_enabled', true))>Active (ON)</option>
-                                    <option value="0" @selected(!\App\Models\Setting::isEnabled('wallet_enabled', true))>Inactive (OFF)</option>
-                                </select>
+                                <input type="hidden" name="wallet_enabled" value="{{ \App\Models\Setting::isEnabled('wallet_enabled', true) ? '1' : '0' }}">
+                                <button type="button" class="toggle-btn feature-toggle" data-target="wallet_enabled" data-default="1" :class="document.querySelector('[name=wallet_enabled]').value === '1' ? 'toggle-btn-active' : 'toggle-btn-inactive'"><span class="toggle-track" :class="document.querySelector('[name=wallet_enabled]').value === '1' ? 'toggle-track-active' : 'toggle-track-inactive'"><span class="toggle-knob" :class="document.querySelector('[name=wallet_enabled]').value === '1' ? 'toggle-knob-active' : 'toggle-knob-inactive'"></span></span><span class="toggle-label" :text="document.querySelector('[name=wallet_enabled]').value === '1' ? 'ON' : 'OFF'">ON</span></button>
                             </div>
 
                             <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
@@ -396,10 +392,8 @@
                                     <h4 class="text-sm font-bold text-slate-800">Promo Codes</h4>
                                     <p class="text-xs text-slate-500 mt-1">Allow users to enter coupons during payments</p>
                                 </div>
-                                <select name="promo_enabled" class="rounded-lg border-slate-200 text-xs font-bold text-slate-700 bg-white">
-                                    <option value="1" @selected(\App\Models\Setting::isEnabled('promo_enabled', true))>Active (ON)</option>
-                                    <option value="0" @selected(!\App\Models\Setting::isEnabled('promo_enabled', true))>Inactive (OFF)</option>
-                                </select>
+                                <input type="hidden" name="promo_enabled" value="{{ \App\Models\Setting::isEnabled('promo_enabled', true) ? '1' : '0' }}">
+                                <button type="button" class="toggle-btn feature-toggle" data-target="promo_enabled" data-default="1" :class="document.querySelector('[name=promo_enabled]').value === '1' ? 'toggle-btn-active' : 'toggle-btn-inactive'"><span class="toggle-track" :class="document.querySelector('[name=promo_enabled]').value === '1' ? 'toggle-track-active' : 'toggle-track-inactive'"><span class="toggle-knob" :class="document.querySelector('[name=promo_enabled]').value === '1' ? 'toggle-knob-active' : 'toggle-knob-inactive'"></span></span><span class="toggle-label" :text="document.querySelector('[name=promo_enabled]').value === '1' ? 'ON' : 'OFF'">ON</span></button>
                             </div>
                         </div>
                     </div>
@@ -943,6 +937,23 @@ document.addEventListener('DOMContentLoaded', () => {
     activateAppearanceTab('branding');
 
     activateTab(location.hash.replace('#', '') || 'general', false);
+
+    document.querySelectorAll('.feature-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var targetName = btn.dataset.target;
+            var input = document.querySelector('input[name="' + targetName + '"]');
+            if (!input) return;
+            var next = input.value === '1' ? '0' : '1';
+            input.value = next;
+            var track = btn.querySelector('.toggle-track');
+            var knob = btn.querySelector('.toggle-knob');
+            var label = btn.querySelector('.toggle-label');
+            if (track) track.className = 'toggle-track ' + (next === '1' ? 'toggle-track-active' : 'toggle-track-inactive');
+            if (knob) knob.className = 'toggle-knob ' + (next === '1' ? 'toggle-knob-active' : 'toggle-knob-inactive');
+            if (label) label.textContent = next === '1' ? 'ON' : 'OFF';
+            btn.className = 'toggle-btn feature-toggle ' + (next === '1' ? 'toggle-btn-active' : 'toggle-btn-inactive');
+        });
+    });
 });
 </script>
 @endpush
