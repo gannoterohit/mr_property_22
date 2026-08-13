@@ -7,7 +7,7 @@
                     <i class="far fa-envelope-open text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="text-slate-900 font-bold text-lg leading-tight">Stay Updated</h4>
+                     <h3 class="text-slate-900 font-bold text-lg leading-tight">Stay Updated</h3>
                     <p class="text-slate-600 text-sm">Subscribe to get updates on new rooms and offers.</p>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                 <!-- Columns -->
                 <!-- Discover -->
                 <div class="lg:col-span-2">
-                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Discover</h4>
+                    <h3 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Discover</h3>
                     <ul class="space-y-2.5 text-xs font-semibold">
                         <li><a href="{{ route('rooms.index') }}" class="text-slate-400 hover:text-white transition-all">Browse Properties</a></li>
                         @php
@@ -90,7 +90,7 @@
 
                 <!-- Company -->
                 <div class="lg:col-span-2">
-                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Company</h4>
+                    <h3 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Company</h3>
                     <ul class="space-y-2.5 text-xs font-semibold">
                         @if($cmsPageLive('about-us'))<li><a href="{{ route('pages.about') }}" class="text-slate-400 hover:text-white transition-all">About Us</a></li>@endif
                         @if($cmsPageLive('careers'))<li><a href="{{ route('pages.careers') }}" class="text-slate-400 hover:text-white transition-all">Careers</a></li>@endif
@@ -104,7 +104,7 @@
 
                 <!-- Support -->
                 <div class="lg:col-span-2">
-                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Support</h4>
+                    <h3 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Support</h3>
                     <ul class="space-y-2.5 text-xs font-semibold">
                         @if($cmsPageLive('faq'))<li><a href="{{ route('pages.faq') }}" class="text-slate-400 hover:text-white transition-all">Help Center</a></li>@endif
                         @if($cmsPageLive('how-it-works'))<li><a href="{{ route('pages.how-it-works') }}" class="text-slate-400 hover:text-white transition-all">How It Works</a></li>@endif
@@ -119,7 +119,7 @@
                 @endphp
                 @if($playStoreUrl || $appStoreUrl)
                 <div class="lg:col-span-3">
-                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Download Our App</h4>
+                    <h3 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Download Our App</h3>
                     <p class="mb-4 text-xs font-medium leading-relaxed text-slate-400">Get the ApnaNest app for a better room-search experience.</p>
                     <div class="flex flex-wrap gap-2">
                         @if($playStoreUrl)
@@ -137,7 +137,7 @@
                 @else
                 <!-- Contact -->
                 <div class="lg:col-span-3">
-                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Contact</h4>
+                    <h3 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Contact</h3>
                     <ul class="space-y-3 text-xs font-semibold">
                         <li class="flex items-center gap-2 text-white">
                             <i class="theme-footer-accent fas fa-phone-alt"></i>
@@ -147,10 +147,10 @@
                             <i class="theme-footer-accent far fa-envelope"></i>
                             <a href="mailto:{{ \App\Models\Setting::get('contact_email', 'support@apnanest.com') }}" class="hover:text-white transition-all">{{ \App\Models\Setting::get('contact_email', 'support@apnanest.com') }}</a>
                         </li>
-                        <li class="flex items-center gap-2 text-slate-500">
-                            <i class="theme-footer-accent far fa-clock"></i>
-                            <span>{{ \App\Models\Setting::get('business_hours', 'Mon - Sun: 9AM - 8PM') }}</span>
-                        </li>
+                         <li class="flex items-center gap-2 text-slate-300">
+                             <i class="theme-footer-accent far fa-clock"></i>
+                             <span>{{ \App\Models\Setting::get('business_hours', 'Mon - Sun: 9AM - 8PM') }}</span>
+                         </li>
                     </ul>
                 </div>
                 @endif
@@ -158,14 +158,14 @@
 
             <!-- Footer Bottom -->
             <div class="pt-6 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-xs text-slate-500 font-semibold">
+                <p class="text-xs text-slate-300 font-semibold">
                     &copy; {{ date('Y') }} {{ \App\Models\Setting::get('website_name', 'ApnaNest') }}. All rights reserved.
                 </p>
                 <div class="flex items-center gap-4">
-                    <span class="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
+                    <span class="flex items-center gap-1.5 text-[11px] font-bold text-slate-300">
                         <i class="fas fa-shield-alt text-emerald-500" aria-hidden="true"></i> Secure Payments
                     </span>
-                    <span class="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
+                    <span class="flex items-center gap-1.5 text-[11px] font-bold text-slate-300">
                         <i class="theme-footer-accent fas fa-check-circle" aria-hidden="true"></i> Verified Listings
                     </span>
                 </div>
