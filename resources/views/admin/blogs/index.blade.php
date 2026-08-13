@@ -38,7 +38,7 @@
                                     <div class="flex items-center gap-4">
                                         <div class="h-12 w-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                                             @if($blog->image)
-                                                <img src="{{ $blog->featured_image }}" class="h-full w-full object-cover">
+                                                <img src="{{ $blog->featured_image }}" width="400" height="300" class="h-full w-full object-cover">
                                             @else
                                                 <div class="h-full w-full flex items-center justify-center text-gray-300">
                                                     <i class="fas fa-image"></i>

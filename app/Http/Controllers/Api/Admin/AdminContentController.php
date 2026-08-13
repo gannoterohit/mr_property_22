@@ -62,7 +62,7 @@ class AdminContentController extends BaseApiController
         unset($data['image']);
         $data['content'] = app(HtmlSanitizer::class)->clean($data['content']);
         $data['is_published'] = $request->boolean('is_published');
-        if ($request->hasFile('image')) $data['image'] = $request->file('image')->store('blogs', 'public');
+        if ($request->hasFile('image')) $data['image'] = \App\Services\ImageOptimizer::optimize($request->file('image'), 'blog_image');
         $blog = Blog::create($data);
         return $this->sendSuccess(new BlogResource($blog), 'Blog created', 201);
     }
@@ -82,7 +82,7 @@ class AdminContentController extends BaseApiController
         unset($data['image']);
         if (isset($data['content'])) $data['content'] = app(HtmlSanitizer::class)->clean($data['content']);
         if ($request->has('is_published')) $data['is_published'] = $request->boolean('is_published');
-        if ($request->hasFile('image')) $data['image'] = $request->file('image')->store('blogs', 'public');
+        if ($request->hasFile('image')) $data['image'] = \App\Services\ImageOptimizer::optimize($request->file('image'), 'blog_image');
         $blog->update($data);
         return $this->sendSuccess(new BlogResource($blog), 'Blog updated');
     }
@@ -110,7 +110,7 @@ class AdminContentController extends BaseApiController
     }
     public function storeOffer(Request $request) {
         $data = $this->offerData($request);
-        if ($request->hasFile('image')) $data['image_path'] = $request->file('image')->store('offers', 'public');
+        if ($request->hasFile('image')) $data['image_path'] = \App\Services\ImageOptimizer::optimize($request->file('image'), 'offer_image');
         $offer = Offer::create($data);
         return $this->sendSuccess($offer, 'Offer created', 201);
     }
@@ -120,7 +120,7 @@ class AdminContentController extends BaseApiController
         $data = $this->offerData($request, true);
         if ($request->hasFile('image')) {
             if ($offer->image_path) Storage::disk('public')->delete($offer->image_path);
-            $data['image_path'] = $request->file('image')->store('offers', 'public');
+            $data['image_path'] = \App\Services\ImageOptimizer::optimize($request->file('image'), 'offer_image');
         }
         $offer->update($data);
         return $this->sendSuccess($offer, 'Offer updated');

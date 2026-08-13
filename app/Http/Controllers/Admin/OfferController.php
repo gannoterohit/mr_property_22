@@ -62,7 +62,7 @@ class OfferController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $validated['image_path'] = $request->file('image')->store('offers', 'public');
+            $validated['image_path'] = \App\Services\ImageOptimizer::optimize($request->file('image'), 'offer_image');
         }
 
         $validated['is_active'] = $request->has('is_active');
@@ -98,11 +98,10 @@ class OfferController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            // Delete old image
             if ($offer->image_path) {
                 Storage::disk('public')->delete($offer->image_path);
             }
-            $validated['image_path'] = $request->file('image')->store('offers', 'public');
+            $validated['image_path'] = \App\Services\ImageOptimizer::optimize($request->file('image'), 'offer_image');
         }
 
         $validated['is_active'] = $request->has('is_active');

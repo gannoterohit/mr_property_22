@@ -47,7 +47,7 @@ class ApiProfileController extends BaseApiController
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
-            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = \App\Services\ImageOptimizer::optimize($request->file('avatar'), 'avatar');
         }
 
         $user->save();

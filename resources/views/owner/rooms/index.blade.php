@@ -34,7 +34,7 @@
                             <div class="owner-room-media">
                                 <div class="owner-room-placeholder"><i class="fas fa-house text-3xl"></i></div>
                                 @if($room->photo_url)
-                                    <img src="{{ $room->photo_url }}" alt="{{ $room->title }}" loading="lazy" onerror="this.style.display='none'">
+                                     <img src="{{ $room->photo_url }}" alt="{{ $room->title }}" width="400" height="300" loading="lazy" onerror="this.style.display='none'">
                                 @endif
                                 <span class="absolute right-3 top-3 z-10 rounded-full bg-white px-2.5 py-1 text-[10px] font-extrabold uppercase shadow-sm {{ $room->status === 'active' ? 'text-emerald-700' : ($room->status === 'pending' ? 'text-amber-700' : 'text-slate-700') }}">{{ $room->status }}</span>
                             </div>

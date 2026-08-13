@@ -7,7 +7,6 @@
     <meta name="format-detection" content="telephone=no">
 
     @vite(['resources/css/app.css', 'resources/css/mobile-app.css', 'resources/js/app.js'])
-    <!-- SEO Meta Tags -->
     <title>@yield('title', \App\Models\Setting::get('website_name', 'RoomRental') . ' - Find Your Perfect Room')</title>
     <meta name="description" content="@yield('description', \App\Models\Setting::get('seo_meta_description', 'Find your perfect room in your city. Browse verified room listings.'))">
     <meta name="keywords" content="@yield('keywords', \App\Models\Setting::get('seo_meta_keywords', 'room rental, apartment, house, property'))">
@@ -113,18 +112,8 @@
     <!-- Defer Heavy Assets (Non-blocking) - Mobile Optimized -->
     <link rel="preload" href="{{ asset('assets/css/all.min.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="{{ asset('assets/css/all.min.css') }}"></noscript>
-    <script>
-        // Load Font Awesome asynchronously for better mobile performance
-        (function() {
-            var link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = '{{ asset('assets/css/all.min.css') }}';
-            link.media = 'print';
-            link.onload = function() { this.media = 'all'; };
-            document.head.appendChild(link);
-        })();
-    </script>
-    <link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}" media="print" onload="this.media='all'">
+    <link rel="preload" href="{{ asset('assets/css/toastr.min.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}"></noscript>
 
     <!-- Custom Styles -->
 
@@ -279,8 +268,6 @@
 
         document.addEventListener('DOMContentLoaded', () => detectUserLocation());
     </script>
-    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/js/toastr.min.js') }}"></script>
 
     <script>
         window.renderFormErrors = function (form, errors) {
@@ -357,46 +344,48 @@
             });
         };
 
-        toastr.options = {
-            "closeButton": true,
-            "debug": false,
-            "newestOnTop": true,
-            "progressBar": true,
-            "positionClass": "toast-top-right",
-            "preventDuplicates": false,
-            "onclick": null,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "5000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        };
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof toastr === 'undefined') return;
 
-        @if(Session::has('success'))
-            toastr.success(@json(session('success')), 'Success');
-        @endif
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
 
-        @if(Session::has('error'))
-            toastr.error(@json(session('error')), 'Error');
-        @endif
+            @if(Session::has('success'))
+                toastr.success(@json(session('success')), 'Success');
+            @endif
 
-        @if(Session::has('info'))
-            toastr.info(@json(session('info')), 'Info');
-        @endif
+            @if(Session::has('error'))
+                toastr.error(@json(session('error')), 'Error');
+            @endif
 
-        @if(Session::has('warning'))
-            toastr.warning(@json(session('warning')), 'Warning');
-        @endif
+            @if(Session::has('info'))
+                toastr.info(@json(session('info')), 'Info');
+            @endif
 
-        @if(isset($errors) && $errors->any())
-            @foreach($errors->all() as $validationError)
-                toastr.error(@json($validationError), 'Please check the form');
-            @endforeach
+            @if(Session::has('warning'))
+                toastr.warning(@json(session('warning')), 'Warning');
+            @endif
 
-            document.addEventListener('DOMContentLoaded', () => {
+            @if(isset($errors) && $errors->any())
+                @foreach($errors->all() as $validationError)
+                    toastr.error(@json($validationError), 'Please check the form');
+                @endforeach
+
                 const validationErrors = @json($errors->toArray());
                 const oldInput = @json(session()->getOldInput());
                 window.restoreOldFormInput(oldInput);
@@ -411,8 +400,8 @@
                     });
                     window.renderFormErrors(form, relevantErrors);
                 });
-            });
-        @endif
+            @endif
+        });
     </script>
     <script>
         (() => {
@@ -653,10 +642,13 @@
             }
         });
     } catch(e) {}
-})();
-</script>
-@endif
-@endif
-@endauth
+    })();
+    </script>
+    @endif
+    @endif
+    @endauth
+
+    <script defer src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <script defer src="{{ asset('assets/js/toastr.min.js') }}"></script>
 </body>
 </html>

@@ -44,11 +44,13 @@
                     @php
                         $navbarLogo = \App\Models\Setting::get('navbar_logo');
                     @endphp
-                    @if($navbarLogo)
-                        <img src="{{ asset('storage/' . $navbarLogo) }}"
-                             alt="ApnaNest Logo"
-                             class="navbar-brand-logo">
-                    @else
+                     @if($navbarLogo)
+                         <img src="{{ asset('storage/' . $navbarLogo) }}"
+                              alt="ApnaNest Logo"
+                              width="200"
+                              height="50"
+                              class="navbar-brand-logo">
+                     @else
                         <div class="flex items-center gap-2">
                             <div class="theme-brand-mark w-10 h-10 rounded-xl flex items-center justify-center shadow-md">
                                 <i class="fas fa-home text-lg"></i>

@@ -40,7 +40,7 @@
                         @endphp
                         <article class="enquiry-row">
                             <a href="{{ $room ? route('rooms.show', $room) : '#' }}" class="enquiry-room-image">
-                                @if($room)<img src="{{ $room->photo_url }}" alt="{{ $room->title }}" loading="lazy" onerror="this.src='{{ asset('storage/default-room.jpg') }}'">@else<i class="fas fa-house-circle-xmark"></i>@endif
+                                 @if($room)<img src="{{ $room->photo_url }}" alt="{{ $room->title }}" width="400" height="300" loading="lazy" onerror="this.src='{{ asset('storage/default-room.jpg') }}'">@else<i class="fas fa-house-circle-xmark"></i>@endif
                             </a>
                             <div class="min-w-0">
                                 <p class="text-[9px] font-extrabold uppercase tracking-wider text-indigo-600">Contact unlocked</p>

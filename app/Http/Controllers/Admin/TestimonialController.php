@@ -80,7 +80,7 @@ class TestimonialController extends Controller
         ]);
 
         if ($request->hasFile('avatar')) {
-            $data['avatar'] = $request->file('avatar')->store('testimonials', 'public');
+            $data['avatar'] = \App\Services\ImageOptimizer::optimize($request->file('avatar'), 'testimonial_avatar');
         } else {
             unset($data['avatar']);
         }

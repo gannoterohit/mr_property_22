@@ -8,7 +8,7 @@
             @foreach($relatedRooms as $relatedRoom)
             <a href="{{ route('rooms.show', $relatedRoom) }}" class="related-room-card">
                 <div class="related-room-image">
-                    <img src="{{ $relatedRoom->photo_url }}" alt="{{ $relatedRoom->title }} in {{ $relatedRoom->city }}" loading="lazy" onerror="this.src='{{ asset('storage/default-room.jpg') }}'">
+                     <img src="{{ $relatedRoom->photo_url }}" alt="{{ $relatedRoom->title }} in {{ $relatedRoom->city }}" width="400" height="300" loading="lazy" onerror="this.src='{{ asset('storage/default-room.jpg') }}'">
                     @if($relatedRoom->is_featured)
                         <span>Featured</span>
                     @endif

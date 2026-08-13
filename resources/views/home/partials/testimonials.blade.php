@@ -13,7 +13,7 @@
                 <article class="market-testimonial">
                     <div class="market-testimonial-person">
                         @if($testimonial->avatar_url)
-                            <img src="{{ $testimonial->avatar_url }}" alt="{{ $testimonial->name }}" loading="lazy">
+                            <img src="{{ $testimonial->avatar_url }}" alt="{{ $testimonial->name }}" width="200" height="200" loading="lazy">
                         @else
                             <span>{{ strtoupper(substr($testimonial->name, 0, 1)) }}</span>
                         @endif

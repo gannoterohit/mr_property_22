@@ -337,19 +337,7 @@ class RoomController extends Controller {
             if ($req->hasFile('photos')) {
                 $photos = [];
                 foreach ($req->file('photos') as $photo) {
-                    $filename = uniqid('room_') . '.jpg';
-                    $path = 'rooms/' . $filename;
-                    $fullPath = storage_path('app/public/' . $path);
-                    
-                    // Create directory if not exists
-                    if (!file_exists(storage_path('app/public/rooms'))) {
-                        mkdir(storage_path('app/public/rooms'), 0755, true);
-                    }
-
-                    // Compress and save
-                    if (! \App\Helpers\ImageHelper::compressImage($photo->getRealPath(), $fullPath, 70)) {
-                        throw new \RuntimeException('One of the selected images could not be processed. Please use JPG, PNG or WebP files.');
-                    }
+                    $path = \App\Services\ImageOptimizer::optimize($photo, 'room_photo');
                     $photos[] = $path;
                     $newPhotoPaths[] = $path;
                 }
@@ -739,19 +727,7 @@ class RoomController extends Controller {
             if ($req->hasFile('photos')) {
                 $photos = [];
                 foreach ($req->file('photos') as $photo) {
-                    $filename = uniqid('room_') . '.jpg';
-                    $path = 'rooms/' . $filename;
-                    $fullPath = storage_path('app/public/' . $path);
-                    
-                    // Create directory if not exists
-                    if (!file_exists(storage_path('app/public/rooms'))) {
-                        mkdir(storage_path('app/public/rooms'), 0755, true);
-                    }
-
-                    // Compress and save
-                    if (!\App\Helpers\ImageHelper::compressImage($photo->getRealPath(), $fullPath, 70)) {
-                        throw new \RuntimeException('One of the selected images could not be processed. Please use JPG, PNG or WebP files.');
-                    }
+                    $path = \App\Services\ImageOptimizer::optimize($photo, 'room_photo');
                     $photos[] = $path;
                     $newPhotoPaths[] = $path;
                 }

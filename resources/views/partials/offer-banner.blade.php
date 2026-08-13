@@ -70,7 +70,7 @@
                         <div class="relative min-h-[160px] md:min-h-[240px] flex items-center">
                             <!-- Background Layer -->
                             @if($offer->image_path)
-                                <img src="{{ $offer->image_url }}" alt="{{ $offer->title }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] group-hover/banner:scale-105">
+                                <img src="{{ $offer->image_url }}" alt="{{ $offer->title }}" width="1200" height="630" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] group-hover/banner:scale-105">
                                 <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/40 to-transparent"></div>
                             @else
                                 <div class="absolute inset-0" style="background: linear-gradient(135deg, {{ $offer->banner_color }}, var(--secondary));"></div>
@@ -139,7 +139,7 @@
                             <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                             
                             @if($offer->image_path)
-                                <img src="{{ $offer->image_url }}" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay" loading="lazy" decoding="async" alt="Offer Background">
+                                <img src="{{ $offer->image_url }}" width="1200" height="630" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay" loading="lazy" decoding="async" alt="Offer Background">
                             @endif
 
                             <div class="relative z-10 flex flex-row items-center justify-between w-full gap-4">
@@ -189,7 +189,7 @@
                              style="background: linear-gradient(135deg, {{ $offer->banner_color }}, {{ $offer->banner_color }}dd);">
                             
                             @if($offer->image_path)
-                                <img src="{{ $offer->image_url }}" class="absolute inset-0 w-full h-full object-cover opacity-20">
+                                <img src="{{ $offer->image_url }}" width="1200" height="630" class="absolute inset-0 w-full h-full object-cover opacity-20">
                             @endif
 
                             <div class="relative z-10 flex flex-col md:flex-row items-center justify-between w-full gap-6">
@@ -230,7 +230,7 @@
                 <div class="rounded-2xl overflow-hidden shadow-sm border border-gray-100 group bg-white hover:shadow-md transition">
                     @if($offer->link_url)<a href="{{ $offer->link_url }}">@endif
                     @if($offer->image_path || isset($offer->image_url))
-                        <img src="{{ $offer->image_url }}" alt="{{ $offer->title }}" class="w-full h-auto object-cover aspect-[4/3] group-hover:scale-105 transition duration-500">
+                        <img src="{{ $offer->image_url }}" alt="{{ $offer->title }}" width="800" height="600" class="w-full h-auto object-cover aspect-[4/3] group-hover:scale-105 transition duration-500">
                     @endif
                     <div class="p-4">
                         @if($offer->discount_text)
@@ -271,7 +271,7 @@
 
                     @if($popupOffer->image_path)
                         <div class="h-40 md:h-56 relative overflow-hidden">
-                            <img src="{{ $popupOffer->image_url }}" alt="{{ $popupOffer->title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                            <img src="{{ $popupOffer->image_url }}" alt="{{ $popupOffer->title }}" width="800" height="600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                             <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
                             
                             @if($popupOffer->discount_text)

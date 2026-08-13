@@ -113,18 +113,13 @@ class CityController extends Controller
         if ($request->hasFile('image')) {
             $this->deleteStoredCityImage($city?->image_url);
 
-            $file = $request->file('image');
-            $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
-            $filename = Str::uuid() . '.' . $extension;
-            $destination = public_path('uploads/cities');
+            $path = \App\Services\ImageOptimizer::optimizeToPublicPath(
+                $request->file('image'),
+                'city_hero',
+                'uploads/cities'
+            );
 
-            if (!is_dir($destination)) {
-                mkdir($destination, 0755, true);
-            }
-
-            $file->move($destination, $filename);
-
-            return 'uploads/cities/' . $filename;
+            return $path;
         }
 
         if ($request->filled('image_url')) {

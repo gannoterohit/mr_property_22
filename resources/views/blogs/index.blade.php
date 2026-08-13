@@ -46,7 +46,7 @@
                     @foreach($blogs->take(4) as $trending)
                         <a href="{{ route('blogs.show', $trending->slug) }}" class="blog-trending-card flex-shrink-0 w-64 md:w-full group relative block h-40 rounded-3xl overflow-hidden shadow-lg transition active:scale-95">
                              @if($trending->image)
-                                <img src="{{ $trending->featured_image }}" alt="{{ $trending->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+                                <img src="{{ $trending->featured_image }}" alt="{{ $trending->title }}" width="400" height="300" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
                              @else
                                 <div class="w-full h-full blog-theme-gradient" aria-hidden="true"></div>
                              @endif
@@ -87,7 +87,7 @@
                                 <!-- Image -->
                                 <a href="{{ route('blogs.show', $blog->slug) }}" class="block relative aspect-[16/10] overflow-hidden">
                                      @if($blog->image)
-                                        <img src="{{ $blog->featured_image }}" alt="{{ $blog->title }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" loading="lazy">
+                                        <img src="{{ $blog->featured_image }}" alt="{{ $blog->title }}" width="400" height="300" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" loading="lazy">
                                      @else
                                         <div class="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300" aria-hidden="true">
                                             <i class="fas fa-image text-3xl"></i>
@@ -140,7 +140,7 @@
                                 <a href="{{ route('blogs.show', $pop->slug) }}" class="blog-popular-link flex gap-4 group">
                                     <div class="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0">
                                         @if($pop->image)
-                                            <img src="{{ $pop->featured_image }}" alt="{{ $pop->title }}" class="w-full h-full object-cover" loading="lazy">
+                                            <img src="{{ $pop->featured_image }}" alt="{{ $pop->title }}" width="400" height="300" class="w-full h-full object-cover" loading="lazy">
                                         @else
                                             <div class="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300 text-xs" aria-hidden="true">
                                                 <i class="fas fa-image"></i>

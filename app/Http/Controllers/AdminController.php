@@ -523,7 +523,7 @@ class AdminController extends Controller
 
         $imageUrl = null;
         if ($request->hasFile('banner_image')) {
-            $path = $request->file('banner_image')->store('broadcasts', 'public');
+            $path = \App\Services\ImageOptimizer::optimize($request->file('banner_image'), 'banner');
             $imageUrl = asset('storage/' . $path);
             try {
                 $destDir = public_path('storage/' . dirname($path));
@@ -839,15 +839,7 @@ class AdminController extends Controller
         if ($request->hasFile('photos')) {
             $photos = [];
             foreach ($request->file('photos') as $photo) {
-                $filename = uniqid('room_').'.jpg';
-                $path = 'rooms/'.$filename;
-                $fullPath = storage_path('app/public/'.$path);
-                if (! file_exists(storage_path('app/public/rooms'))) {
-                    mkdir(storage_path('app/public/rooms'), 0755, true);
-                }
-                if (! \App\Helpers\ImageHelper::compressImage($photo->getRealPath(), $fullPath, 70)) {
-                    throw new \RuntimeException('One of the selected images could not be processed.');
-                }
+                $path = \App\Services\ImageOptimizer::optimize($photo, 'room_photo');
                 $photos[] = $path;
                 $newPhotoPaths[] = $path;
             }
@@ -958,15 +950,7 @@ class AdminController extends Controller
             }
             $photos = [];
             foreach ($request->file('photos') as $photo) {
-                $filename = uniqid('room_').'.jpg';
-                $path = 'rooms/'.$filename;
-                $fullPath = storage_path('app/public/'.$path);
-                if (! file_exists(storage_path('app/public/rooms'))) {
-                    mkdir(storage_path('app/public/rooms'), 0755, true);
-                }
-                if (! \App\Helpers\ImageHelper::compressImage($photo->getRealPath(), $fullPath, 70)) {
-                    throw new \RuntimeException('One of the selected images could not be processed.');
-                }
+                $path = \App\Services\ImageOptimizer::optimize($photo, 'room_photo');
                 $photos[] = $path;
                 $newPhotoPaths[] = $path;
             }

@@ -9,7 +9,7 @@
                             <a href="{{ route('rooms.show',$room) }}" class="market-room" style="position:relative">
                                 <div class="market-room-photo relative">
                                 @if($room->photo_url)
-                                    <img src="{{ $room->photo_url }}" alt="{{ $room->title }}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('storage/default-room.jpg') }}'">
+                                    <img src="{{ $room->photo_url }}" alt="{{ $room->title }}" width="400" height="300" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('storage/default-room.jpg') }}'">
                                 @endif
                                 <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
                                     @if($room->propertyType?->name)

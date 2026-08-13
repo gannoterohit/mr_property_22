@@ -230,68 +230,14 @@ class BusinessSettingsController extends Controller
 
     private function optimizeImage($file, string $type): string
     {
-        $sizes = [
-            'navbar_logo'     => [40, 40],
-            'footer_logo'     => [48, 48],
-            'website_logo'    => [200, 50],
-            'website_favicon' => [64, 64],
-        ];
+        $preset = match ($type) {
+            'navbar_logo' => 'logo',
+            'footer_logo' => 'logo',
+            'website_logo' => 'logo',
+            'website_favicon' => 'favicon',
+            default => 'logo',
+        };
 
-        [$maxWidth, $maxHeight] = $sizes[$type] ?? [200, 200];
-
-        $image = imagecreatefromstring(file_get_contents($file->getRealPath()));
-        if (!$image) {
-            return $file->store('settings', 'public');
-        }
-
-        $width = imagesx($image);
-        $height = imagesy($image);
-
-        if ($width <= $maxWidth && $height <= $maxHeight) {
-            return $file->store('settings', 'public');
-        }
-
-        $ratio = min($maxWidth / $width, $maxHeight / $height);
-        $newWidth = (int) round($width * $ratio);
-        $newHeight = (int) round($height * $ratio);
-
-        $resized = imagecreatetruecolor($newWidth, $newHeight);
-
-        if ($type === 'website_favicon') {
-            imagesavealpha($resized, true);
-            $transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
-            imagefill($resized, 0, 0, $transparent);
-        }
-
-        imagecopyresampled($resized, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-
-        $filename = uniqid($type . '_', true) . '.' . $file->getClientOriginalExtension();
-        $path = 'settings/' . $filename;
-        $fullPath = storage_path('app/public/' . $path);
-
-        $dir = dirname($fullPath);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
-        switch ($file->getClientOriginalExtension()) {
-            case 'png':
-                imagepng($resized, $fullPath);
-                break;
-            case 'webp':
-                imagewebp($resized, $fullPath);
-                break;
-            case 'jpg':
-            case 'jpeg':
-                imagejpeg($resized, $fullPath, 85);
-                break;
-            default:
-                imagepng($resized, $fullPath);
-        }
-
-        imagedestroy($image);
-        imagedestroy($resized);
-
-        return $path;
+        return \App\Services\ImageOptimizer::optimize($file, $preset);
     }
 }

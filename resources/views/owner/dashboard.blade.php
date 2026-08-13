@@ -53,7 +53,7 @@
                         <div class="flex items-center gap-4 px-5 py-4 border-b border-slate-100 last:border-0">
                             <div class="owner-recent-image">
                                 <div class="owner-recent-placeholder"><i class="fas fa-house"></i></div>
-                                @if($room->photo_url)<img src="{{ $room->photo_url }}" alt="" loading="lazy" onerror="this.style.display='none'">@endif
+                                 @if($room->photo_url)<img src="{{ $room->photo_url }}" alt="" width="400" height="300" loading="lazy" onerror="this.style.display='none'">@endif
                             </div>
                             <div class="min-w-0 flex-1"><h3 class="truncate text-sm font-bold text-slate-900">{{ $room->title }}</h3><p class="mt-1 truncate text-xs text-slate-500"><i class="fas fa-location-dot mr-1 text-slate-400"></i>{{ $room->city }}</p><p class="mt-1 text-sm font-extrabold text-slate-900">&#8377;{{ number_format($room->rent) }}<span class="text-xs font-normal text-slate-400">/month</span></p></div>
                             <span class="hidden sm:inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase {{ $room->status === 'active' ? 'bg-emerald-50 text-emerald-700' : ($room->status === 'pending' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600') }}">{{ $room->status === 'booked' ? 'Rented' : $room->status }}</span>

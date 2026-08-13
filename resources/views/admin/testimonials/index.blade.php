@@ -41,7 +41,7 @@
                             <td class="p-4"><p class="max-w-xl text-sm leading-6 text-slate-700">{{ $testimonial->message }}</p></td>
                             <td class="p-4">
                                 <div class="flex items-center gap-3">
-                                    @if($testimonial->avatar_url)<img src="{{ $testimonial->avatar_url }}" alt="{{ $testimonial->name }}" class="h-10 w-10 rounded-xl object-cover">@else<span class="flex h-10 w-10 items-center justify-center rounded-xl admin-theme-soft text-xs font-extrabold admin-theme-text">{{ strtoupper(substr($testimonial->name,0,1)) }}</span>@endif
+                                    @if($testimonial->avatar_url)<img src="{{ $testimonial->avatar_url }}" alt="{{ $testimonial->name }}" width="200" height="200" class="h-10 w-10 rounded-xl object-cover">@else<span class="flex h-10 w-10 items-center justify-center rounded-xl admin-theme-soft text-xs font-extrabold admin-theme-text">{{ strtoupper(substr($testimonial->name,0,1)) }}</span>@endif
                                     <div><p class="text-sm font-extrabold text-slate-900">{{ $testimonial->name }}</p><p class="text-xs text-slate-500">{{ collect([$testimonial->role, $testimonial->city])->filter()->join(' - ') }}</p></div>
                                 </div>
                             </td>

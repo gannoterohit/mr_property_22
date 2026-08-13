@@ -36,7 +36,7 @@
                     <div><label class="text-xs font-bold">Sort order</label><input type="number" name="sort_order" min="0" value="{{ old('sort_order', $testimonial->sort_order ?? 0) }}" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm"></div>
                     <div>
                         <label class="text-xs font-bold">Avatar</label>
-                        @if($testimonial->avatar_url)<img src="{{ $testimonial->avatar_url }}" alt="{{ $testimonial->name }}" class="mt-2 h-20 w-20 rounded-2xl object-cover">@endif
+                        @if($testimonial->avatar_url)<img src="{{ $testimonial->avatar_url }}" alt="{{ $testimonial->name }}" width="200" height="200" class="mt-2 h-20 w-20 rounded-2xl object-cover">@endif
                         <input type="file" name="avatar" accept="image/*" class="mt-3 block w-full rounded-xl border border-slate-200 p-2 text-xs">
                         <p class="mt-1 text-[10px] text-slate-400">Optional JPG or PNG, max 2 MB.</p>
                     </div>

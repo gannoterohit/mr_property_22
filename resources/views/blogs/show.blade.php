@@ -50,7 +50,7 @@
     <div class="article-wrap">
         <figure class="article-feature">
             @if($blog->featured_image)
-                <img src="{{ $blog->featured_image }}" alt="{{ $blog->title }}" fetchpriority="high">
+                <img src="{{ $blog->featured_image }}" alt="{{ $blog->title }}" width="1200" height="800" fetchpriority="high">
             @else
                 <div class="article-feature-empty"><i class="fas fa-newspaper"></i></div>
             @endif

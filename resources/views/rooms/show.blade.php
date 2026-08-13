@@ -48,7 +48,8 @@
     }
 @endphp
 <script type="application/ld+json">{!! json_encode($ld, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE) !!}</script>
-<link rel="stylesheet" href="{{ asset('css/room-show.css') }}">
+<link rel="preload" href="{{ asset('css/room-show.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{{ asset('css/room-show.css') }}"></noscript>
 </push>
 
 @section('content')
@@ -74,6 +75,8 @@
                              <img src="{{ $room->photo_url }}"
                                   alt="{{ $room->title }} in {{ $room->city }} - Property Details"
                                   id="mainImage"
+                                  width="800"
+                                  height="600"
                                   class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                   loading="eager"
                                   decoding="async"

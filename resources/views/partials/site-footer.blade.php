@@ -32,7 +32,7 @@
                     <a href="{{ route('home') }}" class="flex items-center gap-2 group" aria-label="RoomRental Home">
                         @php $footerLogo = \App\Models\Setting::get('footer_logo'); @endphp
                         @if($footerLogo)
-                            <img src="{{ asset('storage/' . $footerLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="footer-brand-logo">
+                            <img src="{{ asset('storage/' . $footerLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" width="200" height="50" class="footer-brand-logo">
                         @else
                             <div class="flex items-center gap-2">
                                 <div class="theme-brand-mark w-10 h-10 rounded-xl flex items-center justify-center shadow-md">

@@ -48,7 +48,7 @@ class BlogController extends Controller
         $data['is_published'] = $request->has('is_published');
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('blogs', 'public');
+            $path = \App\Services\ImageOptimizer::optimize($request->file('image'), 'blog_image');
             $data['image'] = $path;
         }
 
@@ -85,11 +85,10 @@ class BlogController extends Controller
         $data['is_published'] = $request->has('is_published');
 
         if ($request->hasFile('image')) {
-            // Delete old image
             if ($blog->image) {
                 Storage::disk('public')->delete($blog->image);
             }
-            $path = $request->file('image')->store('blogs', 'public');
+            $path = \App\Services\ImageOptimizer::optimize($request->file('image'), 'blog_image');
             $data['image'] = $path;
         }
 

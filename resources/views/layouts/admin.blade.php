@@ -1,7 +1,8 @@
 @extends('layouts.base')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+<link rel="preload" href="{{ asset('css/admin.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{{ asset('css/admin.css') }}"></noscript>
 @endpush
 
 @push('sweetalert')

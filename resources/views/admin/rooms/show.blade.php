@@ -45,10 +45,10 @@
         <main class="min-w-0 space-y-5">
             <section class="rounded-2xl border bg-white p-5 shadow-sm">
                 <div class="admin-room-gallery">
-                     <img class="admin-room-gallery-main" src="{{ $mainPhoto }}" alt="{{ $room->title }}" loading="eager" decoding="async" onerror="this.onerror=null;this.src='{{ asset('storage/default-room.jpg') }}'">
+                     <img class="admin-room-gallery-main" src="{{ $mainPhoto }}" alt="{{ $room->title }}" width="800" height="600" loading="eager" decoding="async" onerror="this.onerror=null;this.src='{{ asset('storage/default-room.jpg') }}'">
                      <div class="admin-room-gallery-side">
                          @foreach($photos->skip(1)->take(2) as $photo)
-                             <img src="{{ $photo }}" alt="{{ $room->title }} photo {{ $loop->iteration + 1 }}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('storage/default-room.jpg') }}'">
+                             <img src="{{ $photo }}" alt="{{ $room->title }} photo {{ $loop->iteration + 1 }}" width="400" height="300" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('storage/default-room.jpg') }}'">
                          @endforeach
                         @if($photos->count() < 2)
                             <div class="flex min-h-[160px] items-center justify-center rounded-2xl border bg-slate-50 text-slate-300"><i class="fas fa-image text-2xl"></i></div>

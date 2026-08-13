@@ -52,7 +52,7 @@
                     <section class="profile-card">
                         <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Account overview</p>
                         <div class="mt-4 flex items-center gap-4">
-                            <img src="{{ $user->avatar ? asset('storage/'.$user->avatar) : asset('assets/images/default-avatar.svg') }}" onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'" alt="{{ $user->name }} profile" class="h-14 w-14 rounded-full object-cover ring-4 ring-slate-50 bg-indigo-50">
+                            <img src="{{ $user->avatar ? asset('storage/'.$user->avatar) : asset('assets/images/default-avatar.svg') }}" width="200" height="200" onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'" alt="{{ $user->name }} profile" class="h-14 w-14 rounded-full object-cover ring-4 ring-slate-50 bg-indigo-50">
                             <div class="min-w-0"><h2 class="truncate font-bold text-slate-950">{{ $user->name }}</h2><p class="truncate text-xs text-slate-500">{{ $user->email }}</p><span class="mt-1 inline-block text-[10px] font-bold uppercase text-indigo-600">{{ $user->role }}</span></div>
                         </div>
                         <div class="mt-5 space-y-3 border-t border-slate-100 pt-4 text-sm">

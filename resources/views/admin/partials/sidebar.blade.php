@@ -172,7 +172,7 @@
     <div id="adminSidebarFooter" class="shrink-0 p-2.5 border-t border-slate-200 bg-white shadow-[0_-6px_18px_rgba(15,23,42,0.04)]">
         <div class="flex items-center gap-2.5 px-2 py-1.5 mb-1.5 rounded-lg bg-slate-50 border border-slate-100">
             @if(Auth::user()->avatar)
-                <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 rounded-lg object-cover ring-2 ring-white shadow-sm">
+                <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" width="200" height="200" class="w-8 h-8 rounded-lg object-cover ring-2 ring-white shadow-sm">
             @else
                 <div class="admin-theme-avatar w-8 h-8 shrink-0 rounded-lg flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
             @endif

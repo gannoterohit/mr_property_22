@@ -120,7 +120,7 @@
                                 <div class="min-w-[180px] space-y-2">
                                     <input form="{{ $formId }}" name="image" type="file" accept="image/*" class="block w-full cursor-pointer rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-[10px] text-slate-600 file:mr-2 file:rounded-md file:border-0 file:bg-slate-900 file:px-2 file:py-1 file:text-[10px] file:font-bold file:text-white">
                                     @if($city->image_url)
-                                        <img src="{{ \App\Models\City::resolveHeroImage($city->name) }}" alt="{{ $city->name }} hero image" class="h-12 w-full rounded-lg border object-cover">
+                                        <img src="{{ \App\Models\City::resolveHeroImage($city->name) }}" alt="{{ $city->name }} hero image" width="1920" height="800" class="h-12 w-full rounded-lg border object-cover">
                                     @endif
                                 </div>
                             </td>
