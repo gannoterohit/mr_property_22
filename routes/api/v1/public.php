@@ -15,6 +15,7 @@ Route::get('/settings', [ApiSettingsController::class, 'index']);
 Route::post('/auth/send-otp',  [ApiAuthController::class, 'sendOtp'])->middleware('throttle:strict_otp');
 Route::post('/auth/register',  [ApiAuthController::class, 'register'])->middleware('throttle:strict_login');
 Route::post('/auth/login',     [ApiAuthController::class, 'login'])->middleware('throttle:strict_login');
+Route::post('/auth/social-login', [ApiAuthController::class, 'socialLogin'])->middleware('throttle:strict_login');
 
 // ── Rooms (Public Browse) ─────────────────
 Route::get('/rooms',                   [ApiRoomController::class, 'index']);

@@ -71,12 +71,13 @@
                     {{-- Image Section - Reduced Height --}}
                     @if($room->photos && count($room->photos) > 0)
                         <div class="relative h-[300px] lg:h-[450px] overflow-hidden group cursor-zoom-in" onclick="openLightbox(0)">
-                            <img src="{{ $room->photo_url }}"
-                                 alt="{{ $room->title }} in {{ $room->city }} - Property Details"
-                                 id="mainImage"
-                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                 loading="eager"
-                                 onerror="this.onerror=null; this.src='https://placehold.co/800x400?text=No+Image';">
+                             <img src="{{ $room->photo_url }}"
+                                  alt="{{ $room->title }} in {{ $room->city }} - Property Details"
+                                  id="mainImage"
+                                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                  loading="eager"
+                                  decoding="async"
+                                  onerror="this.onerror=null; this.src='https://placehold.co/800x400?text=No+Image';">
                              
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                              

@@ -6,7 +6,9 @@ use App\Http\Controllers\Api\BaseApiController;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Otp;
+use App\Models\SocialAccount;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
@@ -15,6 +17,7 @@ use App\Models\Setting;
 use App\Mail\OtpMail;
 use App\Services\SmsService;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
 
 class ApiAuthController extends BaseApiController
 {
@@ -273,6 +276,97 @@ class ApiAuthController extends BaseApiController
     public function user(Request $request)
     {
         return $this->sendSuccess(new UserResource($request->user()));
+    }
+
+    /**
+     * Social login — accepts provider + access_token/id_token
+     * and returns a Sanctum API token for the mobile app.
+     */
+    public function socialLogin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'provider' => 'required|in:google,facebook',
+            'token' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Invalid input.', $validator->errors(), 422);
+        }
+
+        $provider = $request->input('provider');
+        $token = $request->input('token');
+
+        $enabledKey = $provider . '_login_enabled';
+        if (!filter_var(Setting::get($enabledKey, '0'), FILTER_VALIDATE_BOOLEAN)) {
+            return $this->sendError(ucfirst($provider) . ' login is currently disabled.', [], 403);
+        }
+
+        $clientId = Setting::get($provider . '_client_id');
+        $clientSecret = Setting::get($provider . '_client_secret');
+        $redirectUrl = Setting::get($provider . '_redirect_url');
+
+        if (!$clientId || !$clientSecret || !$redirectUrl) {
+            return $this->sendError(ucfirst($provider) . ' login is not configured properly.', [], 500);
+        }
+
+        config(['services.' . $provider => [
+            'client_id' => $clientId,
+            'client_secret' => $clientSecret,
+            'redirect' => $redirectUrl,
+        ]]);
+
+        try {
+            $socialUser = Socialite::driver($provider)->userFromToken($token);
+        } catch (\Exception $e) {
+            return $this->sendError('Invalid social token. Please try again.', [], 401);
+        }
+
+        if (empty($socialUser->email)) {
+            return $this->sendError('Email is required for social login. Please enable email access from your account.', [], 422);
+        }
+
+        $socialAccount = SocialAccount::where('provider', $provider)
+            ->where('provider_id', $socialUser->getId())
+            ->first();
+
+        if ($socialAccount) {
+            $user = $socialAccount->user;
+        } else {
+            $user = User::where('email', $socialUser->getEmail())->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'name' => $socialUser->getName() ?: $socialUser->getNickname() ?: 'User',
+                    'email' => $socialUser->getEmail(),
+                    'password' => Hash::make(Str::random(32)),
+                    'role' => 'user',
+                    'avatar' => $socialUser->getAvatar() ?: null,
+                    'provider' => $provider,
+                    'provider_id' => $socialUser->getId(),
+                ]);
+            } else {
+                $user->update([
+                    'provider' => $provider,
+                    'provider_id' => $socialUser->getId(),
+                ]);
+            }
+
+            SocialAccount::create([
+                'user_id' => $user->id,
+                'provider' => $provider,
+                'provider_id' => $socialUser->getId(),
+                'name' => $socialUser->getName(),
+                'email' => $socialUser->getEmail(),
+                'avatar' => $socialUser->getAvatar(),
+            ]);
+        }
+
+        $tokenResult = $user->createToken('flutter_app')->plainTextToken;
+
+        return $this->sendSuccess([
+            'token' => $tokenResult,
+            'user' => new UserResource($user),
+        ], 'Social login successful.');
     }
 
     /**
