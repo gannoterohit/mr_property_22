@@ -102,6 +102,15 @@ class BusinessSettingsController extends Controller
             'sms_api_key'   => ['nullable', 'string', 'max:500'],
             'sms_sender_id' => ['nullable', 'string', 'max:100'],
             'sms_dlt_te_id' => ['nullable', 'string', 'max:100'],
+            // Social Login
+            'google_login_enabled' => ['nullable', 'boolean'],
+            'google_client_id' => ['nullable', 'string', 'max:255'],
+            'google_client_secret' => ['nullable', 'string', 'max:500'],
+            'google_redirect_url' => ['nullable', 'url', 'max:500'],
+            'facebook_login_enabled' => ['nullable', 'boolean'],
+            'facebook_client_id' => ['nullable', 'string', 'max:255'],
+            'facebook_client_secret' => ['nullable', 'string', 'max:500'],
+            'facebook_redirect_url' => ['nullable', 'url', 'max:500'],
         ]);
 
         foreach ([
@@ -111,6 +120,8 @@ class BusinessSettingsController extends Controller
             'listing_fee_enabled',
             'unlock_fee_enabled',
             'firebase_push_enabled',
+            'google_login_enabled',
+            'facebook_login_enabled',
         ] as $booleanKey) {
             $data[$booleanKey] = $request->boolean($booleanKey) ? '1' : '0';
         }

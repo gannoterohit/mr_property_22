@@ -44,4 +44,12 @@
 .terms-row{display:flex;align-items:flex-start;gap:9px;color:#64748b;font-size:11px;line-height:1.55}.terms-row input{margin-top:2px;accent-color:var(--primary,#2563eb)}.terms-row a{color:var(--primary,#2563eb);font-weight:700}
 .auth-shell-register{max-width:1120px}.auth-shell-register .auth-panel{padding-top:38px;padding-bottom:38px}
 @media(max-width:850px){.auth-page{padding:28px 14px 24px}.auth-shell{grid-template-columns:1fr;max-width:600px}.auth-story{padding:28px 30px}.auth-brand{margin-bottom:25px}.auth-story h1{font-size:27px}.auth-story>p,.auth-benefits{display:none}.auth-panel{padding:36px 30px}}
-@media(max-width:520px){.auth-page{padding:12px 10px 10px;background:#fff;align-items:flex-start}.auth-shell{border:0;border-radius:0;box-shadow:none}.auth-story{margin:-10px -10px 0;padding:22px 24px 26px}.auth-story h1{font-size:23px}.auth-panel{padding:30px 14px}.auth-grid,.role-options{grid-template-columns:1fr}.auth-panel h2{font-size:25px}.auth-shell-register .auth-panel{padding-top:28px}.auth-brand{font-size:22px}.auth-kicker{font-size:9px}}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0 16px;color:#64748b;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}.auth-divider:before,.auth-divider:after{content:"";flex:1;height:1px;background:#e2e8f0}
+.auth-social{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.auth-social-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:46px;border-radius:11px;border:1px solid #e2e8f0;background:#fff;color:#0f172a;font-size:13px;font-weight:800;cursor:pointer;transition:.2s;text-decoration:none}
+.auth-social-btn:hover{border-color:#cbd5e1;background:#f8fafc;transform:translateY(-1px)}
+.auth-social-google svg{flex-shrink:0}
+.auth-social-facebook{background:#1877F2;color:#fff;border-color:#1877F2}
+.auth-social-facebook:hover{background:#166fe5;border-color:#166fe5}
+.auth-social-facebook svg path{fill:#fff}
+@media(max-width:520px){.auth-social{grid-template-columns:1fr}.auth-social-btn{height:48px}}

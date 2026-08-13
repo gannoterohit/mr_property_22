@@ -109,6 +109,64 @@ class SettingsSeeder extends Seeder
                 'description' => 'Google Maps API Key for location services'
             ],
 
+            // Social Login
+            [
+                'key' => 'google_login_enabled',
+                'value' => '0',
+                'type' => 'boolean',
+                'group' => 'social',
+                'description' => 'Enable Google login'
+            ],
+            [
+                'key' => 'google_client_id',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'social',
+                'description' => 'Google OAuth Client ID'
+            ],
+            [
+                'key' => 'google_client_secret',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'social',
+                'description' => 'Google OAuth Client Secret'
+            ],
+            [
+                'key' => 'google_redirect_url',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'social',
+                'description' => 'Google OAuth Redirect URL'
+            ],
+            [
+                'key' => 'facebook_login_enabled',
+                'value' => '0',
+                'type' => 'boolean',
+                'group' => 'social',
+                'description' => 'Enable Facebook login'
+            ],
+            [
+                'key' => 'facebook_client_id',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'social',
+                'description' => 'Facebook OAuth App ID'
+            ],
+            [
+                'key' => 'facebook_client_secret',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'social',
+                'description' => 'Facebook OAuth App Secret'
+            ],
+            [
+                'key' => 'facebook_redirect_url',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'social',
+                'description' => 'Facebook OAuth Redirect URL'
+            ],
+
             // SEO & Analytics
             [
                 'key' => 'google_search_console_code',

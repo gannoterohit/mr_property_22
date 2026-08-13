@@ -7,9 +7,9 @@
                             <div class="room-listing-card group bg-white rounded-2xl border transition-all duration-300 overflow-hidden flex flex-col h-full hover:-translate-y-1">
                                 <!-- Image Area -->
                                 <a href="{{ route('rooms.show', $room->id) }}" class="room-image relative block overflow-hidden bg-slate-100">
-                                    @if($room->photo_url)
-                                        <img src="{{ $room->photo_url }}" alt="{{ $room->title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                                    @else
+                                     @if($room->photo_url)
+                                         <img src="{{ $room->photo_url }}" alt="{{ $room->title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('storage/default-room.jpg') }}'">
+                                     @else
                                         <div class="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-300">
                                             <i class="fas fa-image text-3xl mb-1"></i>
                                             <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">No Image</span>

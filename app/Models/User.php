@@ -43,6 +43,8 @@ class User extends Authenticatable
         'referred_by_id',
         'fcm_token',
         'web_push_token',
+        'provider',
+        'provider_id',
     ];
 
     protected static function booted()
@@ -147,5 +149,10 @@ class User extends Authenticatable
     public function hasInWishlist($roomId)
     {
         return $this->wishlists()->where('room_id', $roomId)->exists();
+    }
+
+    public function socialAccounts()
+    {
+        return $this->hasMany(SocialAccount::class);
     }
 }

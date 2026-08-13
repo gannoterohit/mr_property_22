@@ -34,6 +34,14 @@ Route::post('/admin-login', [\App\Http\Controllers\Auth\AuthenticatedSessionCont
     ->middleware('throttle:strict_login')
     ->name('admin.login.submit');
 
+Route::get('auth/{provider}/redirect', [\App\Http\Controllers\SocialAuthController::class, 'redirect'])
+    ->where('provider', 'google|facebook')
+    ->name('social.redirect');
+
+Route::get('auth/{provider}/callback', [\App\Http\Controllers\SocialAuthController::class, 'callback'])
+    ->where('provider', 'google|facebook')
+    ->name('social.callback');
+
 Route::get('/', [LandingPageController::class, 'index'])->name('home');
 Route::get('/set-city', [RoomController::class, 'setCity'])->name('set-city');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

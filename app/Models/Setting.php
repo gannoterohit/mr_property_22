@@ -20,6 +20,8 @@ class Setting extends Model
         'google_maps_api_key',
         'firebase_server_key',
         'sms_api_key',
+        'google_client_secret',
+        'facebook_client_secret',
     ];
 
     protected $fillable = [

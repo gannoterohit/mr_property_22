@@ -130,7 +130,7 @@
                                 <div class="flex min-w-[220px] items-center gap-3">
                                     <div class="h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-slate-100">
                                         @if($room->photo_url)
-                                            <img src="{{ $room->photo_url }}" class="h-full w-full object-cover" alt="{{ $room->title }}">
+                                             <img src="{{ $room->photo_url }}" class="h-full w-full object-cover" alt="{{ $room->title }}" loading="lazy" decoding="async" onerror="this.style.display='none'">
                                         @endif
                                     </div>
                                     <div class="min-w-0">

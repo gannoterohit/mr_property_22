@@ -53,6 +53,8 @@ class ApiSettingsController extends BaseApiController
                 'referral_enabled' => filter_var(Setting::get('referral_enabled', '1'), FILTER_VALIDATE_BOOLEAN),
                 'promo_enabled' => filter_var(Setting::get('promo_enabled', '1'), FILTER_VALIDATE_BOOLEAN),
                 'subscriptions_enabled' => filter_var(Setting::get('payments_enabled', '1'), FILTER_VALIDATE_BOOLEAN),
+                'google_login_enabled' => filter_var(Setting::get('google_login_enabled', '0'), FILTER_VALIDATE_BOOLEAN),
+                'facebook_login_enabled' => filter_var(Setting::get('facebook_login_enabled', '0'), FILTER_VALIDATE_BOOLEAN),
             ],
             'maintenance' => [
                 'title' => Setting::get('maintenance_title', 'Website is currently under maintenance'),

@@ -259,6 +259,7 @@
                         </div>
                     </div>
 
+                    @if(filter_var(\App\Models\Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))
                     <!-- Payment Method -->
                     <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 space-y-4">
                         <h3 class="text-xl font-black text-gray-900 border-b pb-4 mb-2">Payment Method</h3>
@@ -292,6 +293,7 @@
                             </label>
                         </div>
                     </div>
+                    @endif
 
                     <!-- Submit Button -->
                     <div class="owner-form-wide pt-2">

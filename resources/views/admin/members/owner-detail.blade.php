@@ -64,7 +64,7 @@
                         <a href="{{ route('admin.rooms.show',$room) }}" class="admin-theme-hover-card group flex min-w-0 gap-3 rounded-xl border p-3 transition">
                             <div class="h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-slate-100">
                                 @if($room->photo_url)
-                                    <img src="{{ $room->photo_url }}" class="h-full w-full object-cover" alt="{{ $room->title }}">
+                                    <img src="{{ $room->photo_url }}" class="h-full w-full object-cover" alt="{{ $room->title }}" loading="lazy" decoding="async" onerror="this.style.display='none'">
                                 @else
                                     <div class="flex h-full items-center justify-center text-slate-300"><i class="fas fa-building"></i></div>
                                 @endif

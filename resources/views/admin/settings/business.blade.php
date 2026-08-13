@@ -23,9 +23,9 @@
                         <i class="fas fa-satellite-dish mr-2"></i> Ping Search Engines
                     </button>
                 </form>
-            </div>
-        </div>
-    </div>
+                      </div>
+     </div>
+
 
     <!-- Horizontal Settings Navigation -->
     <div class="sticky top-16 z-20 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:px-6">
@@ -429,46 +429,122 @@
                     </div>
                 </div>
                 
-                 <!-- Integrations (Maps) Section -->
-                <div data-settings-panel="integrations" class="space-y-6" hidden>
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                 <!-- Integrations Section -->
+                 <div data-settings-panel="integrations" class="space-y-6" hidden>
+                     <div class="settings-subtabs" role="tablist" aria-label="Integrations settings sections">
+                         <button type="button" data-integrations-tab="maps" aria-selected="true"><i class="fas fa-map-marked-alt"></i>Google Maps</button>
+                         <button type="button" data-integrations-tab="mobile_app" aria-selected="false"><i class="fas fa-mobile-screen-button"></i>Mobile App</button>
+                         <button type="button" data-integrations-tab="social_login" aria-selected="false"><i class="fas fa-share-nodes"></i>Social Login</button>
+                     </div>
+
+                     <div data-integrations-subpanel="maps" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                          <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
                              <div class="h-10 w-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center mr-4">
-                                <i class="fas fa-map-marked-alt text-xl"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-800">Google Maps Integration</h2>
-                                <p class="text-sm text-gray-500">For location services and maps</p>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">API Key</label>
-                            <input type="text" name="google_maps_api_key" value="{{ \App\Models\Setting::get('google_maps_api_key') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono">
-                        </div>
-                    </div>
+                                 <i class="fas fa-map-marked-alt text-xl"></i>
+                             </div>
+                             <div>
+                                 <h2 class="text-xl font-bold text-gray-800">Google Maps Integration</h2>
+                                 <p class="text-sm text-gray-500">For location services and maps</p>
+                             </div>
+                         </div>
+                         <div>
+                             <label class="block text-sm font-semibold text-gray-700 mb-2">API Key</label>
+                             <input type="text" name="google_maps_api_key" value="{{ \App\Models\Setting::get('google_maps_api_key') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono">
+                         </div>
+                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                        <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
-                            <div class="h-10 w-10 rounded-lg admin-theme-soft flex items-center justify-center mr-4">
-                                <i class="fas fa-mobile-screen-button text-xl"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-800">Mobile App Links</h2>
-                                <p class="text-sm text-gray-500">Footer buttons appear only after a store link is saved</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Google Play Store Link</label>
-                                <input type="url" name="play_store_url" value="{{ \App\Models\Setting::get('play_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors  focus:bg-white focus:ring-0" placeholder="https://play.google.com/store/apps/details?id=...">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Apple App Store Link</label>
-                                <input type="url" name="app_store_url" value="{{ \App\Models\Setting::get('app_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors  focus:bg-white focus:ring-0" placeholder="https://apps.apple.com/app/...">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                     <div data-integrations-subpanel="mobile_app" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                         <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
+                             <div class="h-10 w-10 rounded-lg admin-theme-soft flex items-center justify-center mr-4">
+                                 <i class="fas fa-mobile-screen-button text-xl"></i>
+                             </div>
+                             <div>
+                                 <h2 class="text-xl font-bold text-gray-800">Mobile App Links</h2>
+                                 <p class="text-sm text-gray-500">Footer buttons appear only after a store link is saved</p>
+                             </div>
+                         </div>
+                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                             <div>
+                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Google Play Store Link</label>
+                                 <input type="url" name="play_store_url" value="{{ \App\Models\Setting::get('play_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors  focus:bg-white focus:ring-0" placeholder="https://play.google.com/store/apps/details?id=...">
+                             </div>
+                             <div>
+                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Apple App Store Link</label>
+                                 <input type="url" name="app_store_url" value="{{ \App\Models\Setting::get('app_store_url') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-colors  focus:bg-white focus:ring-0" placeholder="https://apps.apple.com/app/...">
+                             </div>
+                         </div>
+                     </div>
+
+                     <div data-integrations-subpanel="social_login" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                         <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
+                             <div class="h-10 w-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mr-4">
+                                 <i class="fas fa-share-nodes text-xl"></i>
+                             </div>
+                             <div>
+                                 <h2 class="text-xl font-bold text-gray-800">Social Login</h2>
+                                 <p class="text-sm text-gray-500">Enable Google / Facebook quick login for users</p>
+                             </div>
+                         </div>
+
+                         <div class="grid grid-cols-1 gap-6">
+                             <div class="rounded-xl border border-gray-200 p-5">
+                                 <div class="flex items-center justify-between mb-4">
+                                     <div>
+                                         <span class="block text-sm font-bold text-gray-800">Google Login</span>
+                                         <span class="mt-1 block text-xs text-gray-500">Allow users to sign in with their Google account</span>
+                                     </div>
+                                     <span class="relative inline-flex shrink-0 items-center">
+                                         <input type="checkbox" name="google_login_enabled" value="1" class="peer sr-only" @checked(\App\Models\Setting::isEnabled('google_login_enabled', false))>
+                                         <span class="admin-switch-track h-6 w-11 rounded-full bg-gray-200 transition"></span>
+                                         <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                     </span>
+                                 </div>
+                                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                     <div>
+                                         <label class="block text-xs font-semibold text-gray-600 mb-1">Client ID</label>
+                                         <input type="text" name="google_client_id" value="{{ \App\Models\Setting::get('google_client_id') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-3 py-2.5 text-sm transition-colors focus:bg-white focus:ring-0 font-mono" placeholder="xxxx.apps.googleusercontent.com">
+                                     </div>
+                                     <div>
+                                         <label class="block text-xs font-semibold text-gray-600 mb-1">Client Secret</label>
+                                         <input type="password" name="google_client_secret" value="" autocomplete="new-password" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-3 py-2.5 text-sm transition-colors focus:bg-white focus:ring-0 font-mono" placeholder="Leave blank to keep current secret">
+                                     </div>
+                                 </div>
+                                 <div class="mt-3">
+                                     <label class="block text-xs font-semibold text-gray-600 mb-1">Redirect URL</label>
+                                     <input type="url" name="google_redirect_url" value="{{ \App\Models\Setting::get('google_redirect_url', url('/auth/google/callback')) }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-3 py-2.5 text-sm transition-colors focus:bg-white focus:ring-0 font-mono" placeholder="https://yourdomain.com/auth/google/callback">
+                                 </div>
+                             </div>
+
+                             <div class="rounded-xl border border-gray-200 p-5">
+                                 <div class="flex items-center justify-between mb-4">
+                                     <div>
+                                         <span class="block text-sm font-bold text-gray-800">Facebook Login</span>
+                                         <span class="mt-1 block text-xs text-gray-500">Allow users to sign in with their Facebook account</span>
+                                     </div>
+                                     <span class="relative inline-flex shrink-0 items-center">
+                                         <input type="checkbox" name="facebook_login_enabled" value="1" class="peer sr-only" @checked(\App\Models\Setting::isEnabled('facebook_login_enabled', false))>
+                                         <span class="admin-switch-track h-6 w-11 rounded-full bg-gray-200 transition"></span>
+                                         <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                     </span>
+                                 </div>
+                                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                     <div>
+                                         <label class="block text-xs font-semibold text-gray-600 mb-1">App ID</label>
+                                         <input type="text" name="facebook_client_id" value="{{ \App\Models\Setting::get('facebook_client_id') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-3 py-2.5 text-sm transition-colors focus:bg-white focus:ring-0 font-mono" placeholder="Facebook App ID">
+                                     </div>
+                                     <div>
+                                         <label class="block text-xs font-semibold text-gray-600 mb-1">App Secret</label>
+                                         <input type="password" name="facebook_client_secret" value="" autocomplete="new-password" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-3 py-2.5 text-sm transition-colors focus:bg-white focus:ring-0 font-mono" placeholder="Leave blank to keep current secret">
+                                     </div>
+                                 </div>
+                                 <div class="mt-3">
+                                     <label class="block text-xs font-semibold text-gray-600 mb-1">Redirect URL</label>
+                                     <input type="url" name="facebook_redirect_url" value="{{ \App\Models\Setting::get('facebook_redirect_url', url('/auth/facebook/callback')) }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-3 py-2.5 text-sm transition-colors focus:bg-white focus:ring-0 font-mono" placeholder="https://yourdomain.com/auth/facebook/callback">
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
 
                 <!-- Firebase Push Notification Section -->
                 <div data-settings-panel="firebase" class="space-y-6" hidden>
@@ -894,6 +970,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const integrationsTabs = [...root.querySelectorAll('[data-integrations-tab]')];
+    const integrationsPanels = [...root.querySelectorAll('[data-integrations-subpanel]')];
+    const validIntegrationsTabs = integrationsTabs.map((tab) => tab.dataset.integrationsTab);
+
+    const activateIntegrationsTab = (tabName) => {
+        const activeIntegrationsTab = validIntegrationsTabs.includes(tabName) ? tabName : 'maps';
+
+        integrationsTabs.forEach((tab) => {
+            tab.setAttribute('aria-selected', tab.dataset.integrationsTab === activeIntegrationsTab ? 'true' : 'false');
+        });
+
+        integrationsPanels.forEach((panel) => {
+            panel.hidden = panel.dataset.integrationsSubpanel !== activeIntegrationsTab;
+        });
+    };
+
     const activateTab = (tabName, updateUrl = true) => {
         const activeTab = validTabs.includes(tabName) ? tabName : 'general';
 
@@ -915,6 +1007,10 @@ document.addEventListener('DOMContentLoaded', () => {
             activateAppearanceTab(appearanceTabs.find((tab) => tab.getAttribute('aria-selected') === 'true')?.dataset.appearanceTab || 'branding');
         }
 
+        if (activeTab === 'integrations') {
+            activateIntegrationsTab(integrationsTabs.find((tab) => tab.getAttribute('aria-selected') === 'true')?.dataset.integrationsTab || 'maps');
+        }
+
         if (updateUrl) {
             history.replaceState(null, '', `${location.pathname}${location.search}#${activeTab}`);
         }
@@ -922,6 +1018,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     tabs.forEach((tab) => {
         tab.addEventListener('click', () => activateTab(tab.dataset.settingsTab));
+    });
+
+    integrationsTabs.forEach((tab) => {
+        tab.addEventListener('click', () => activateIntegrationsTab(tab.dataset.integrationsTab));
     });
 
     seoTabs.forEach((tab) => {
@@ -935,6 +1035,8 @@ document.addEventListener('DOMContentLoaded', () => {
     activateSeoTab('basics');
 
     activateAppearanceTab('branding');
+
+    activateIntegrationsTab('maps');
 
     activateTab(location.hash.replace('#', '') || 'general', false);
 
