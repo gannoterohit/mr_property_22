@@ -33,7 +33,7 @@
 
                         <article class="unlock-card">
                             <div class="unlock-media">
-                                 <img src="{{ $room->photo_url }}" alt="{{ $room->title }}" width="400" height="300" loading="lazy" onerror="this.src='{{ asset('storage/default-room.jpg') }}'">
+                                 <img src="{{ $room->photo_url }}" alt="{{ $room->title }}" width="400" height="300" loading="lazy" onerror="this.src='{{ asset('assets/images/default-room.svg') }}'">
                                 <em class="{{ $isAvailable ? 'available' : 'unavailable' }}">
                                     {{ $isAvailable ? 'Available' : 'Rented / unavailable' }}
                                 </em>

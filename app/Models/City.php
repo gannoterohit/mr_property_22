@@ -68,7 +68,7 @@ class City extends Model
         $normalizedName = trim((string) $cityName);
 
         if ($normalizedName === '') {
-            return asset('assets/images/indore-hero-v2.webp');
+            return asset('assets/images/hero-bg.webp');
         }
 
         $city = static::whereRaw('LOWER(name) = ?', [Str::lower($normalizedName)])
@@ -79,13 +79,13 @@ class City extends Model
             return static::resolveImageUrl($city->image_url);
         }
 
-        return asset('assets/images/indore-hero-v2.png');
+        return asset('assets/images/hero-bg.webp');
     }
 
     public static function resolveImageUrl(?string $value): string
     {
         if (empty($value)) {
-            return asset('assets/images/indore-hero-v2.webp');
+            return asset('assets/images/hero-bg.webp');
         }
 
         if (filter_var($value, FILTER_VALIDATE_URL)) {
@@ -122,6 +122,6 @@ class City extends Model
             return asset('storage/' . ltrim($normalized, '/'));
         }
 
-        return asset('assets/images/indore-hero-v2.png');
+        return asset('assets/images/hero-bg.webp');
     }
 }

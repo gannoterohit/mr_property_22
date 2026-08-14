@@ -8,6 +8,20 @@ use Illuminate\Support\Str;
 
 class ImageOptimizer
 {
+    public static function hasImageProcessingSupport(): bool
+    {
+        return extension_loaded('gd')
+            && function_exists('imagecreatefromjpeg')
+            && function_exists('imagecreatefrompng')
+            && function_exists('imagecreatefromwebp')
+            && function_exists('imagecreatefromgif')
+            && function_exists('imagecreatetruecolor')
+            && function_exists('imagecopyresampled')
+            && function_exists('imagewebp')
+            && function_exists('imagepng')
+            && function_exists('imagejpeg');
+    }
+
     private static array $presets = [
         'room_photo' => [
             'max_width' => 1920,
@@ -92,6 +106,10 @@ class ImageOptimizer
 
     public static function optimize(UploadedFile $file, string $preset = 'default', string $disk = 'public'): string
     {
+        if (!self::hasImageProcessingSupport()) {
+            return $file->store($preset, $disk);
+        }
+
         $config = self::$presets[$preset] ?? self::$presets['default'];
         $maxWidth = $config['max_width'] ?? 1920;
         $maxHeight = $config['max_height'] ?? 1080;
@@ -153,6 +171,16 @@ class ImageOptimizer
 
     public static function optimizeToPublicPath(UploadedFile $file, string $preset, string $publicDirectory, int $quality = 75, string $format = 'webp'): string
     {
+        if (!self::hasImageProcessingSupport()) {
+            $filename = self::generateFilename($preset, pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION));
+            $destination = public_path($publicDirectory);
+            if (!is_dir($destination)) {
+                mkdir($destination, 0755, true);
+            }
+            $file->move($destination, $filename);
+            return $publicDirectory . '/' . $filename;
+        }
+
         $mimeType = $file->getMimeType();
 
         $image = match ($mimeType) {
@@ -261,6 +289,10 @@ class ImageOptimizer
 
     private static function generateThumbnail(UploadedFile $file, string $preset, string $thumbName, array $config, string $format, int $quality, int $originalWidth, int $originalHeight, string $disk = 'public'): void
     {
+        if (!self::hasImageProcessingSupport()) {
+            return;
+        }
+
         $thumbWidth = $config['width'];
         $thumbHeight = $config['height'];
         $thumbQuality = $config['quality'] ?? $quality;
@@ -321,7 +353,7 @@ class ImageOptimizer
     public static function getOptimizedUrl(string $path, string $preset = 'default'): string
     {
         if (empty($path) || !Storage::disk('public')->exists(ltrim($path, '/'))) {
-            return asset('storage/default-room.jpg');
+            return asset('assets/images/default-room.svg');
         }
 
         return asset('storage/' . ltrim($path, '/'));
@@ -330,7 +362,7 @@ class ImageOptimizer
     public static function getThumbnailUrl(string $basePath, string $thumbName): string
     {
         if (empty($basePath)) {
-            return asset('storage/default-room.jpg');
+            return asset('assets/images/default-room.svg');
         }
 
         $pathInfo = pathinfo($basePath);

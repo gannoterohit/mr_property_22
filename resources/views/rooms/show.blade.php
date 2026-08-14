@@ -18,7 +18,7 @@
         "@type" => "Accommodation",
         "name" => ($room->title ?? 'Room') . ' in ' . $room->city,
         "description" => Str::limit($room->description ?? '', 200),
-        "image" => $room->photo_url ?: asset('storage/default-room.jpg'),
+        "image" => $room->photo_url ?: asset('assets/images/default-room.svg'),
         "address" => [
             "@type" => "PostalAddress",
             "addressLocality" => $room->city ?? '',

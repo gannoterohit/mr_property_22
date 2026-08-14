@@ -171,7 +171,7 @@ class Room extends Model
             if ($this->photos && count($this->photos) > 0) {
                 $url = $this->photos[0];
             } else {
-                return asset('storage/default-room.jpg');
+                return asset('assets/images/default-room.svg');
             }
         } else {
             $url = $this->photo;
@@ -227,7 +227,7 @@ class Room extends Model
     private function resolvePublicMediaUrl(?string $path): string
     {
         if (!$path) {
-            return asset('storage/default-room.jpg');
+            return asset('assets/images/default-room.svg');
         }
 
         if (preg_match('/^https?:\/\//', $path)) {
@@ -240,7 +240,7 @@ class Room extends Model
         }
 
         if (!\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
-            return asset('storage/default-room.jpg');
+            return asset('assets/images/default-room.svg');
         }
 
         return asset('storage/' . $path);
