@@ -1,6 +1,8 @@
 @php
     try {
-        $publishedCmsSlugs = \App\Models\CmsPage::published()->pluck('slug')->flip();
+        $publishedCmsSlugs = \Illuminate\Support\Facades\Cache::remember('cms.published_slugs', 3600, function () {
+            return \App\Models\CmsPage::published()->pluck('slug')->flip();
+        });
     } catch (\Throwable $exception) {
         $publishedCmsSlugs = collect();
     }

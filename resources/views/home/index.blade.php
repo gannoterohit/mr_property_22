@@ -17,8 +17,7 @@
 @push('styles')
 @include('partials.listings-ld')
 <link rel="preload" href="{{ $heroImage }}" as="image" fetchpriority="high">
-<link rel="preload" href="{{ asset('css/home.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="{{ asset('css/home.css') }}"></noscript>
+<link rel="stylesheet" href="{{ asset('css/home.css') }}">
 @endpush
 
 @section('content')
@@ -120,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         dropdown.append(trigger, menu);
-        select.insertAdjacentElement('afterend', dropdown);
+        requestAnimationFrame(() => select.insertAdjacentElement('afterend', dropdown));
     });
 
     document.addEventListener('click', () => closeDropdowns());
@@ -163,6 +162,13 @@ document.addEventListener('DOMContentLoaded', function () {
     let isDragging = false;
     let startX = 0;
     let startScrollLeft = 0;
+    let cardOffsets = [];
+    let sliderOffsetLeft = 0;
+
+    const measureLayout = () => {
+        sliderOffsetLeft = slider.offsetLeft;
+        cardOffsets = cards.map(card => card.offsetLeft);
+    };
 
     const dots = cards.map((card, index) => {
         const dot = document.createElement('button');
@@ -170,7 +176,8 @@ document.addEventListener('DOMContentLoaded', function () {
         dot.className = 'market-testimonial-dot';
         dot.setAttribute('aria-label', `Show testimonial ${index + 1}`);
         dot.addEventListener('click', () => {
-            slider.scrollTo({ left: card.offsetLeft - slider.offsetLeft, behavior: 'smooth' });
+            measureLayout();
+            slider.scrollTo({ left: cardOffsets[index] - sliderOffsetLeft, behavior: 'smooth' });
         });
         dotsWrap.appendChild(dot);
         return dot;
@@ -178,8 +185,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const updateDots = () => {
         const activeIndex = cards.reduce((closestIndex, card, index) => {
-            const currentDistance = Math.abs(card.offsetLeft - slider.offsetLeft - slider.scrollLeft);
-            const closestDistance = Math.abs(cards[closestIndex].offsetLeft - slider.offsetLeft - slider.scrollLeft);
+            const currentDistance = Math.abs(cardOffsets[index] - sliderOffsetLeft - slider.scrollLeft);
+            const closestDistance = Math.abs(cardOffsets[closestIndex] - sliderOffsetLeft - slider.scrollLeft);
             return currentDistance < closestDistance ? index : closestIndex;
         }, 0);
 
@@ -188,6 +195,9 @@ document.addEventListener('DOMContentLoaded', function () {
             dot.setAttribute('aria-current', index === activeIndex ? 'true' : 'false');
         });
     };
+
+    measureLayout();
+    window.addEventListener('resize', measureLayout);
 
     slider.addEventListener('scroll', () => window.requestAnimationFrame(updateDots), { passive: true });
     slider.addEventListener('wheel', event => {
@@ -217,7 +227,6 @@ document.addEventListener('DOMContentLoaded', function () {
     slider.addEventListener('pointerup', stopDrag);
     slider.addEventListener('pointercancel', stopDrag);
     slider.addEventListener('pointerleave', stopDrag);
-    window.addEventListener('resize', updateDots);
     updateDots();
 });
 </script>

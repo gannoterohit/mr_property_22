@@ -87,13 +87,15 @@ class LandingPageController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        $otherRooms = Room::publicVisible()
-            ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
-            ->with(['user:id,name,avatar', 'propertyType', 'propertyCategory'])
-            ->orderBy('is_featured', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->take(32)
-            ->get();
+        $otherRooms = FacadesCache::remember('home.other_rooms.' . md5($cityContext['activeCityName'] ?? 'all'), 600, function () use ($cityContext) {
+            return Room::publicVisible()
+                ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
+                ->with(['user:id,name,avatar', 'propertyType', 'propertyCategory'])
+                ->orderBy('is_featured', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->take(32)
+                ->get();
+        });
 
         $otherRoomGroups = $otherRooms->filter(fn($room) => $room->propertyType?->id)
             ->groupBy(fn($room) => $room->propertyType->id)
@@ -128,67 +130,83 @@ class LandingPageController extends Controller
         // Room categories with dynamic counts from DB
         $propertyTypes = \App\Models\PropertyType::cachedActive();
 
-        $propertyCategories = Room::publicVisible()
-            ->select('property_category_id', \DB::raw('count(*) as total'))
-            ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
-            ->whereNotNull('property_category_id')
-            ->groupBy('property_category_id')
-            ->orderByDesc('total')
-            ->get()
-            ->map(function ($item) {
-                $category = \App\Models\PropertyCategory::publicSelectable()->find($item->property_category_id);
-                if (! $category) {
-                    return null;
-                }
+        $propertyCategories = FacadesCache::remember('home.property_categories.' . md5($cityContext['activeCityName'] ?? 'all'), 600, function () use ($cityContext) {
+            return Room::publicVisible()
+                ->select('property_category_id', \DB::raw('count(*) as total'))
+                ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
+                ->whereNotNull('property_category_id')
+                ->groupBy('property_category_id')
+                ->orderByDesc('total')
+                ->get()
+                ->map(function ($item) {
+                    $category = \App\Models\PropertyCategory::publicSelectable()->find($item->property_category_id);
+                    if (! $category) {
+                        return null;
+                    }
 
-                $item->label = $category->name;
-                $item->property_type_id = $category->property_type_id;
-                $item->icon = 'fas fa-building';
-                return $item;
-            })
-            ->filter()
-            ->values();
+                    $item->label = $category->name;
+                    $item->property_type_id = $category->property_type_id;
+                    $item->icon = 'fas fa-building';
+                    return $item;
+                })
+                ->filter()
+                ->values();
+        });
 
-        $latestBlogs = \App\Models\Blog::published()->orderBy('created_at', 'desc')->take(3)->get();
-        $homeFeatures = HomeFeature::active()->orderBy('sort_order')->orderBy('id')->take(6)->get();
-        $testimonials = Testimonial::active()->orderBy('sort_order')->orderByDesc('created_at')->take(6)->get();
+        $latestBlogs = FacadesCache::remember('home.latest_blogs', 600, function () {
+            return \App\Models\Blog::published()->orderBy('created_at', 'desc')->take(3)->get();
+        });
+        $homeFeatures = FacadesCache::remember('home.home_features', 600, function () {
+            return HomeFeature::active()->orderBy('sort_order')->orderBy('id')->take(6)->get();
+        });
+        $testimonials = FacadesCache::remember('home.testimonials', 600, function () {
+            return Testimonial::active()->orderBy('sort_order')->orderByDesc('created_at')->take(6)->get();
+        });
 
         // Hero room — cheapest featured/active room in current city
-        $heroRoom = Room::publicVisible()
-            ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
-            ->orderByDesc('is_featured')
-            ->orderBy('rent', 'asc')
-            ->first();
+        $heroRoom = FacadesCache::remember('home.hero_room.' . md5($cityContext['activeCityName'] ?? 'all'), 600, function () use ($cityContext) {
+            return Room::publicVisible()
+                ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
+                ->orderByDesc('is_featured')
+                ->orderBy('rent', 'asc')
+                ->first();
+        });
 
         // DB-based stats for hero section
         // Popular locations with listing counts
-        $popularLocations = Room::publicVisible()
-            ->select('city', \DB::raw('count(*) as total'))
-            ->groupBy('city')
-            ->orderByDesc('total')
-            ->limit(12)
-            ->get()
-            ->map(fn($item) => (object)[
-                'name' => $item->city,
-                'total' => $item->total,
-                'slug' => \Illuminate\Support\Str::slug($item->city),
-            ]);
+        $popularLocations = FacadesCache::remember('home.popular_locations', 3600, function () {
+            return Room::publicVisible()
+                ->select('city', \DB::raw('count(*) as total'))
+                ->groupBy('city')
+                ->orderByDesc('total')
+                ->limit(12)
+                ->get()
+                ->map(fn($item) => (object)[
+                    'name' => $item->city,
+                    'total' => $item->total,
+                    'slug' => \Illuminate\Support\Str::slug($item->city),
+                ]);
+        });
 
-        $hiwItems = \App\Models\HowItWorksItem::active()
-            ->orderBy('group')
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get()
-            ->groupBy('group');
+        $hiwItems = FacadesCache::remember('home.hiw_items', 3600, function () {
+            return \App\Models\HowItWorksItem::active()
+                ->orderBy('group')
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get()
+                ->groupBy('group');
+        });
 
         $ownerCtaItems = $hiwItems['owner_cta'] ?? collect();
 
-        $totalRooms  = Room::publicVisible()->count();
-        $totalOwners = Room::publicVisible()->distinct('user_id')->count('user_id');
-        $totalUsers  = User::where('role', 'user')->count();
-        $totalAreas  = Room::publicVisible()
-            ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
-            ->distinct('city')->count('city');
+        $totalRooms  = FacadesCache::remember('home.stats.total_rooms', 3600, fn() => Room::publicVisible()->count());
+        $totalOwners = FacadesCache::remember('home.stats.total_owners', 3600, fn() => Room::publicVisible()->distinct('user_id')->count('user_id'));
+        $totalUsers  = FacadesCache::remember('home.stats.total_users', 3600, fn() => User::where('role', 'user')->count());
+        $totalAreas  = FacadesCache::remember('home.stats.total_areas.' . md5($cityContext['activeCityName'] ?? 'all'), 3600, function () use ($cityContext) {
+            return Room::publicVisible()
+                ->when($cityContext['activeCityName'], fn($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
+                ->distinct('city')->count('city');
+        });
 
         return view('home.index', compact(
             'rooms', 'otherRooms', 'otherRoomGroups', 'popularCities', 'popularLocations', 'propertyTypes', 'propertyCategories', 'latestBlogs',

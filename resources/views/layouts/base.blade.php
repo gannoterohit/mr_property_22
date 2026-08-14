@@ -40,7 +40,8 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"></noscript>
     
     <style>
         :root {
@@ -106,14 +107,16 @@
         }
         .loading-overlay { position: fixed; inset: 0; background: #fff; z-index: 9999; display: flex; align-items: center; justify-content: center; }
         @font-face { font-family: 'Font Awesome 6 Free'; font-display: swap; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-premium); color: var(--text-main); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; }
+        html, body { display: flex; flex-direction: column; min-height: 100vh; }
+        main { flex: 1; }
+        footer { margin-top: auto; }
     </style>
     <link rel="stylesheet" href="{{ asset('css/base.css') }}">
     
-    <!-- Defer Heavy Assets (Non-blocking) - Mobile Optimized -->
-    <link rel="preload" href="{{ asset('assets/css/all.min.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="{{ asset('assets/css/all.min.css') }}"></noscript>
-    <link rel="preload" href="{{ asset('assets/css/toastr.min.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}"></noscript>
+    <link rel="stylesheet" href="{{ asset('assets/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}">
 
     <!-- Custom Styles -->
 
@@ -648,7 +651,6 @@
     @endif
     @endauth
 
-    <script defer src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script defer src="{{ asset('assets/js/toastr.min.js') }}"></script>
 </body>
 </html>
