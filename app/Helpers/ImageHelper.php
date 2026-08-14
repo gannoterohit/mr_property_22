@@ -14,14 +14,21 @@ class ImageHelper
      */
     public static function compressImage($source, $destination, $quality = 75)
     {
+        if (! function_exists('imagecreatefromjpeg') || ! function_exists('imagecreatefrompng')) {
+            return copy($source, $destination);
+        }
+
         $info = getimagesize($source);
         if (!$info || empty($info['mime'])) {
-            return false;
+            return copy($source, $destination);
         }
 
         if ($info['mime'] == 'image/jpeg') {
             $image = imagecreatefromjpeg($source);
         } elseif ($info['mime'] == 'image/gif') {
+            if (! function_exists('imagecreatefromgif')) {
+                return copy($source, $destination);
+            }
             $image = imagecreatefromgif($source);
         } elseif ($info['mime'] == 'image/png') {
             $image = imagecreatefrompng($source);
@@ -32,14 +39,14 @@ class ImageHelper
         } elseif ($info['mime'] == 'image/webp' && function_exists('imagecreatefromwebp')) {
             $image = imagecreatefromwebp($source);
         } else {
-            return false;
+            return copy($source, $destination);
         }
 
         if (!$image) {
-            return false;
+            return copy($source, $destination);
         }
 
-        // Save the image
+        // Save the image as JPEG for compatibility.
         $saved = imagejpeg($image, $destination, $quality);
         imagedestroy($image);
 
