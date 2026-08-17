@@ -183,6 +183,10 @@ class BusinessSettingsController extends Controller
             'general','appearance','payment','integrations','firebase','sms','seo','mail','referral'
         ]) ? $request->input('_active_tab') : 'general';
 
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Settings updated successfully!']);
+        }
+
         return redirect(route('admin.settings') . '#' . $tab)->with('success', 'Settings updated successfully!');
 
     }

@@ -8,8 +8,16 @@
         }
         $cmsPageLive = fn (string $slug): bool => $publishedCmsSlugs->has($slug);
     }
-@endphp
-<div id="mobile-app-menu" class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[350px] bg-white z-[2000] shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out lg:hidden h-full flex flex-col">
+    @endphp
+    <style>
+        #mobile-app-menu .text-indigo-500 { color: var(--primary) !important; }
+        #mobile-app-menu .text-indigo-600 { color: var(--primary) !important; }
+        #mobile-app-menu .text-indigo-900 { color: var(--primary) !important; }
+        #mobile-app-menu .bg-indigo-50 { background-color: rgba(var(--primary-rgb), 0.06) !important; }
+        #mobile-app-menu .hover\:bg-indigo-50:hover { background-color: rgba(var(--primary-rgb), 0.08) !important; }
+        #mobile-app-menu .bg-indigo-100 { background-color: rgba(var(--primary-rgb), 0.1) !important; }
+    </style>
+    <div id="mobile-app-menu" class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[350px] bg-white z-[2000] shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out lg:hidden h-full flex flex-col">
     <!-- Drawer Header with App Branding -->
     <div class="p-6 text-white relative flex flex-col items-center text-center" style="background-color: var(--primary);">
         <button id="close-mobile-menu" 

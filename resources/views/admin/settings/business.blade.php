@@ -386,6 +386,7 @@
                                 <h2 class="text-xl font-bold text-gray-800">Feature Toggles</h2>
                                 <p class="text-sm text-gray-500">Control active platform components</p>
                             </div>
+                            <span id="toggle-save-status" class="hidden text-xs font-bold text-emerald-600 ml-auto"></span>
                         </div>
                         
                         <div class="space-y-5">
@@ -395,7 +396,7 @@
                                     <p class="text-xs text-slate-500 mt-1">Allow renters to refer friends and get 1 Free Contact Unlock per join</p>
                                 </div>
                                 <input type="hidden" name="referral_enabled" value="{{ \App\Models\Setting::isEnabled('referral_enabled', true) ? '1' : '0' }}">
-                                <button type="button" class="toggle-btn feature-toggle" data-target="referral_enabled" data-default="1" :class="document.querySelector('[name=referral_enabled]').value === '1' ? 'toggle-btn-active' : 'toggle-btn-inactive'"><span class="toggle-track" :class="document.querySelector('[name=referral_enabled]').value === '1' ? 'toggle-track-active' : 'toggle-track-inactive'"><span class="toggle-knob" :class="document.querySelector('[name=referral_enabled]').value === '1' ? 'toggle-knob-active' : 'toggle-knob-inactive'"></span></span><span class="toggle-label" :text="document.querySelector('[name=referral_enabled]').value === '1' ? 'ON' : 'OFF'">ON</span></button>
+                                <button type="button" class="toggle-btn feature-toggle" data-target="referral_enabled" data-default="1"><span class="toggle-track"><span class="toggle-knob"></span></span><span class="toggle-label">ON</span></button>
                             </div>
 
                             <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
@@ -404,7 +405,7 @@
                                     <p class="text-xs text-slate-500 mt-1">Allow renters to use balance and view logs</p>
                                 </div>
                                 <input type="hidden" name="wallet_enabled" value="{{ \App\Models\Setting::isEnabled('wallet_enabled', true) ? '1' : '0' }}">
-                                <button type="button" class="toggle-btn feature-toggle" data-target="wallet_enabled" data-default="1" :class="document.querySelector('[name=wallet_enabled]').value === '1' ? 'toggle-btn-active' : 'toggle-btn-inactive'"><span class="toggle-track" :class="document.querySelector('[name=wallet_enabled]').value === '1' ? 'toggle-track-active' : 'toggle-track-inactive'"><span class="toggle-knob" :class="document.querySelector('[name=wallet_enabled]').value === '1' ? 'toggle-knob-active' : 'toggle-knob-inactive'"></span></span><span class="toggle-label" :text="document.querySelector('[name=wallet_enabled]').value === '1' ? 'ON' : 'OFF'">ON</span></button>
+                                <button type="button" class="toggle-btn feature-toggle" data-target="wallet_enabled" data-default="1"><span class="toggle-track"><span class="toggle-knob"></span></span><span class="toggle-label">ON</span></button>
                             </div>
 
                             <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
@@ -413,7 +414,7 @@
                                     <p class="text-xs text-slate-500 mt-1">Allow users to enter coupons during payments</p>
                                 </div>
                                 <input type="hidden" name="promo_enabled" value="{{ \App\Models\Setting::isEnabled('promo_enabled', true) ? '1' : '0' }}">
-                                <button type="button" class="toggle-btn feature-toggle" data-target="promo_enabled" data-default="1" :class="document.querySelector('[name=promo_enabled]').value === '1' ? 'toggle-btn-active' : 'toggle-btn-inactive'"><span class="toggle-track" :class="document.querySelector('[name=promo_enabled]').value === '1' ? 'toggle-track-active' : 'toggle-track-inactive'"><span class="toggle-knob" :class="document.querySelector('[name=promo_enabled]').value === '1' ? 'toggle-knob-active' : 'toggle-knob-inactive'"></span></span><span class="toggle-label" :text="document.querySelector('[name=promo_enabled]').value === '1' ? 'ON' : 'OFF'">ON</span></button>
+                                <button type="button" class="toggle-btn feature-toggle" data-target="promo_enabled" data-default="1"><span class="toggle-track"><span class="toggle-knob"></span></span><span class="toggle-label">ON</span></button>
                             </div>
                         </div>
                     </div>
@@ -1060,22 +1061,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
     activateTab(location.hash.replace('#', '') || 'general', false);
 
+    function initToggle(btn) {
+        var targetName = btn.dataset.target;
+        var input = document.querySelector('input[name="' + targetName + '"]');
+        if (!input) return;
+        var track = btn.querySelector('.toggle-track');
+        var knob = btn.querySelector('.toggle-knob');
+        var label = btn.querySelector('.toggle-label');
+        var current = input.value;
+        btn.className = 'toggle-btn feature-toggle ' + (current === '1' ? 'toggle-btn-active' : 'toggle-btn-inactive');
+        if (track) track.className = 'toggle-track ' + (current === '1' ? 'toggle-track-active' : 'toggle-track-inactive');
+        if (knob) knob.className = 'toggle-knob ' + (current === '1' ? 'toggle-knob-active' : 'toggle-knob-inactive');
+        if (label) label.textContent = current === '1' ? 'ON' : 'OFF';
+    }
+
     document.querySelectorAll('.feature-toggle').forEach(function (btn) {
+        initToggle(btn);
         btn.addEventListener('click', function () {
             var targetName = btn.dataset.target;
             var input = document.querySelector('input[name="' + targetName + '"]');
             if (!input) return;
             var next = input.value === '1' ? '0' : '1';
             input.value = next;
+            btn.className = 'toggle-btn feature-toggle ' + (next === '1' ? 'toggle-btn-active' : 'toggle-btn-inactive');
             var track = btn.querySelector('.toggle-track');
             var knob = btn.querySelector('.toggle-knob');
             var label = btn.querySelector('.toggle-label');
             if (track) track.className = 'toggle-track ' + (next === '1' ? 'toggle-track-active' : 'toggle-track-inactive');
             if (knob) knob.className = 'toggle-knob ' + (next === '1' ? 'toggle-knob-active' : 'toggle-knob-inactive');
             if (label) label.textContent = next === '1' ? 'ON' : 'OFF';
-            btn.className = 'toggle-btn feature-toggle ' + (next === '1' ? 'toggle-btn-active' : 'toggle-btn-inactive');
+            autoSaveToggle(targetName, next);
         });
     });
+
+    var saveTimeout = null;
+    function autoSaveToggle(key, value) {
+        var statusEl = document.getElementById('toggle-save-status');
+        if (statusEl) {
+            statusEl.textContent = 'Saving...';
+            statusEl.classList.remove('hidden');
+        }
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(function () {
+            var form = document.getElementById('settings-form');
+            if (!form) return;
+            var formData = new FormData(form);
+            formData.set(key, value);
+            formData.set('_active_tab', 'referral');
+            fetch(form.action, {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' },
+                body: formData,
+            }).then(function (r) { return r.json(); })
+              .then(function (data) {
+                  if (statusEl) {
+                      statusEl.textContent = 'Saved';
+                      setTimeout(function () { statusEl.classList.add('hidden'); }, 1200);
+                  }
+              })
+              .catch(function () {
+                  if (statusEl) {
+                      statusEl.textContent = 'Error';
+                      setTimeout(function () { statusEl.classList.add('hidden'); }, 2000);
+                  }
+              });
+        }, 400);
+    }
 });
 
 function setupImagePreview(inputName) {
