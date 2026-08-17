@@ -365,11 +365,16 @@
         }
         
         .bottom-nav-item.active {
-            color: var(--secondary);
+            color: var(--primary);
         }
         
         .bottom-nav-item.active i {
             transform: translateY(-2px);
+        }
+
+        /* Override hardcoded red active state in bottom nav */
+        .bottom-nav a.text-red-600 {
+            color: var(--primary) !important;
         }
 
         /* Mobile Header */

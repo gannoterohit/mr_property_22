@@ -164,7 +164,7 @@
 }
 
 .bottom-nav-item.active {
-    color: var(--secondary);
+    color: var(--primary);
 }
 
 .bottom-nav-item.active i {
@@ -177,8 +177,13 @@
     top: 4px;
     width: 4px;
     height: 4px;
-    background: var(--secondary);
+    background: var(--primary);
     border-radius: 50%;
+}
+
+/* Override hardcoded red active state in bottom nav */
+.bottom-nav a.text-red-600 {
+    color: var(--primary) !important;
 }
 
 /* Floating Action Button - Material Design */

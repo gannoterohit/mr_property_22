@@ -39,20 +39,65 @@
         <span class="text-slate-600">Rooms in {{ $displayCity ?? 'India' }}</span>
     </div>
 
-    <!-- Outer container (Flexbox for robust layout) -->
-    <div class="flex flex-col lg:flex-row gap-6 xl:gap-7 items-start">
+    <!-- ===== DESKTOP / TABLET LAYOUT ===== -->
+    <div class="hidden md:block">
+        <!-- Outer container (Flexbox for robust layout) -->
+        <div class="flex flex-col lg:flex-row gap-6 xl:gap-7 items-start">
 
-        @include('rooms.partials.index.filter-sidebar')
+            @include('rooms.partials.index.filter-sidebar')
 
-        <!-- ===== RIGHT COLUMN (ROOMS GRID) ===== -->
-        <div class="flex-grow min-w-0">
-            @include('rooms.partials.index.results-header')
+            <!-- ===== RIGHT COLUMN (ROOMS GRID) ===== -->
+            <div class="flex-grow min-w-0">
+                @include('rooms.partials.index.results-header')
 
-            @include('rooms.partials.index.rooms-list')
+                @include('rooms.partials.index.rooms-list')
+
+            </div>
 
         </div>
-
     </div>
+
+    <!-- ===== MOBILE LAYOUT ===== -->
+    <div class="md:hidden">
+        <!-- Mobile Filter Button -->
+        <div class="px-4 mb-3">
+            <button id="mobile-filter-toggle" class="w-full flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl shadow-sm">
+                <span class="flex items-center gap-2 text-sm font-bold text-slate-700">
+                    <i class="fas fa-sliders text-indigo-500"></i>
+                    Filters
+                </span>
+                <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Filter Drawer -->
+        <div id="mobile-filter-drawer" class="hidden px-4 mb-4">
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                <form action="{{ route('rooms.index') }}" method="GET" class="space-y-4">
+                    <div>
+                        <label class="text-xs font-black text-slate-700 uppercase tracking-wider block mb-2">Location</label>
+                        <input type="text" name="city" value="{{ request('city') }}" placeholder="Enter locality or area..."
+                               class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-black text-slate-700 uppercase tracking-wider block mb-2">Property Type</label>
+                        <select name="property_type_id" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none">
+                            <option value="">Any Type</option>
+                            @foreach($propertyTypes as $type)
+                                <option value="{{ $type->id }}" {{ request('property_type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg active:scale-[0.98] transition-all">
+                        Apply Filters
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        @include('rooms.partials.listing-mobile')
+    </div>
+
 </div>
 </div>
 
@@ -67,6 +112,20 @@ document.addEventListener('DOMContentLoaded', () => {
             search_string: @json(request('city') ?? session('user_city') ?? ''),
             city: @json($displayCity ?? ''),
             content_type: 'room'
+        });
+    }
+
+    // Mobile filter toggle
+    const filterToggle = document.getElementById('mobile-filter-toggle');
+    const filterDrawer = document.getElementById('mobile-filter-drawer');
+    if (filterToggle && filterDrawer) {
+        filterToggle.addEventListener('click', () => {
+            filterDrawer.classList.toggle('hidden');
+            const icon = filterToggle.querySelector('.fa-chevron-down, .fa-chevron-up');
+            if (icon) {
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            }
         });
     }
 });
