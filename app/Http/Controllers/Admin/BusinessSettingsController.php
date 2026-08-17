@@ -238,69 +238,6 @@ class BusinessSettingsController extends Controller
             default => 'logo',
         };
 
-<<<<<<< Updated upstream
         return \App\Services\ImageOptimizer::optimize($file, $preset);
-=======
-        [$maxWidth, $maxHeight] = $sizes[$type] ?? [200, 200];
-
-        if (! function_exists('imagecreatefromstring')) {
-            return $file->store('settings', 'public');
-        }
-
-        $image = imagecreatefromstring(file_get_contents($file->getRealPath()));
-        if (! $image) {
-            return $file->store('settings', 'public');
-        }
-
-        $width = imagesx($image);
-        $height = imagesy($image);
-
-        if ($width <= $maxWidth && $height <= $maxHeight) {
-            return $file->store('settings', 'public');
-        }
-
-        $ratio = min($maxWidth / $width, $maxHeight / $height);
-        $newWidth = (int) round($width * $ratio);
-        $newHeight = (int) round($height * $ratio);
-
-        $resized = imagecreatetruecolor($newWidth, $newHeight);
-
-        if ($type === 'website_favicon') {
-            imagesavealpha($resized, true);
-            $transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
-            imagefill($resized, 0, 0, $transparent);
-        }
-
-        imagecopyresampled($resized, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-
-        $filename = uniqid($type . '_', true) . '.' . $file->getClientOriginalExtension();
-        $path = 'settings/' . $filename;
-        $fullPath = storage_path('app/public/' . $path);
-
-        $dir = dirname($fullPath);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
-        switch ($file->getClientOriginalExtension()) {
-            case 'png':
-                imagepng($resized, $fullPath);
-                break;
-            case 'webp':
-                imagewebp($resized, $fullPath);
-                break;
-            case 'jpg':
-            case 'jpeg':
-                imagejpeg($resized, $fullPath, 85);
-                break;
-            default:
-                imagepng($resized, $fullPath);
-        }
-
-        imagedestroy($image);
-        imagedestroy($resized);
-
-        return $path;
->>>>>>> Stashed changes
     }
 }
