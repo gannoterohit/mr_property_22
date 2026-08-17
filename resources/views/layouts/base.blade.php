@@ -651,6 +651,7 @@
     @endif
     @endauth
 
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script defer src="{{ asset('assets/js/toastr.min.js') }}"></script>
 </body>
 </html>

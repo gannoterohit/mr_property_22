@@ -61,6 +61,7 @@ return new class extends Migration
             'owner_cta_title' => 'Have a property to rent?',
             'owner_cta_description' => 'List your room, flat, PG, shop or office on ApnaNest and connect with genuine tenants or buyers directly. No middlemen, no delays.',
             'owner_cta_button_label' => 'List Your Property',
+            'owner_cta_image' => '',
         ];
 
         foreach ($settings as $key => $value) {

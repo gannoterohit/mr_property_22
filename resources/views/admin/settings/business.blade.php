@@ -232,9 +232,29 @@
                                         <p class="mt-1 text-xs admin-theme-text"><i class="fas fa-info-circle mr-1"></i>Shows in browser tab next to page title</p>
                                     </div>
                                 </div>
-                            </div>
-                            
-                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             </div>
+                             
+                             <div>
+                                 <label class="block text-sm font-semibold text-gray-700 mb-3">Owner CTA Section Image</label>
+                                 <div class="flex items-start gap-6">
+                                     <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
+                                         @if(\App\Models\Setting::get('owner_cta_image'))
+                                             <img src="{{ asset('storage/' . \App\Models\Setting::get('owner_cta_image')) }}" class="h-full w-full object-cover">
+                                         @else
+                                             <i class="fas fa-image text-gray-300 text-3xl"></i>
+                                         @endif
+                                     </div>
+                                     <div class="flex-1">
+                                          <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
+                                             <i class="fas fa-upload mr-2"></i> Upload Owner CTA Image
+                                             <input type="file" name="owner_cta_image" class="hidden">
+                                         </label>
+                                         <p class="mt-2 text-xs text-gray-500">Shown in the "For Property Owners" section. Recommended: 600x400px. Max: 2MB.</p>
+                                     </div>
+                                 </div>
+                             </div>
+                             
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                  <div>
                                      <label class="block text-sm font-semibold text-gray-700 mb-2">Website Name</label>
                                      <input type="text" name="website_name" value="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
@@ -1057,5 +1077,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+function setupImagePreview(inputName) {
+    const input = document.querySelector(`input[name="${inputName}"]`);
+    if (!input) return;
+
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const container = input.closest('.flex').querySelector('.rounded-xl');
+            if (container) {
+                container.innerHTML = `<img src="${e.target.result}" class="h-full w-full object-cover">`;
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+setupImagePreview('navbar_logo');
+setupImagePreview('footer_logo');
+setupImagePreview('website_logo');
+setupImagePreview('website_favicon');
+setupImagePreview('owner_cta_image');
+
+const settingsForm = document.getElementById('settings-form');
+if (settingsForm) {
+    settingsForm.addEventListener('submit', () => {
+        const btn = settingsForm.querySelector('button[type="submit"]');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+        }
+        console.log('Settings form submitted');
+    });
+}
+
 </script>
 @endpush
