@@ -8,7 +8,8 @@
                 <p>{{ $heroDescription }}</p>
                 <div class="market-benefits">@foreach([1,2,3] as $benefit)<span><i class="fas {{ $text('home_why_'.$benefit.'_icon',['fa-shield-halved','fa-ban','fa-user-check'][$benefit-1]) }}"></i>{{ $text('home_why_'.$benefit.'_title',['Verified Listings','No Brokerage','Direct Owner Contact'][$benefit-1]) }}</span>@endforeach</div>
             </div>
-            <div class="market-city-card"><small><i class="fas fa-location-arrow"></i> Currently available in</small><strong>{{ $displayCity ?: 'Your city' }}</strong><span>More cities coming soon!</span></div>
+            <div class="market-city-card hidden md:flex"><small><i class="fas fa-location-arrow"></i> Currently available in</small><strong>{{ $displayCity ?: 'Your city' }}</strong><span>More cities coming soon!</span></div>
+            <div class="hidden md:block">
             <form action="{{ route('rooms.index') }}" method="GET" class="market-search">
                 <div class="market-search-grid">
                      <div class="market-field market-field-location"><i class="market-field-icon fas fa-location-dot"></i><label for="city">Location</label><input id="city" name="city" value="{{ $displayCity }}" placeholder="City or locality"></div>
@@ -18,6 +19,7 @@
                     <button type="submit"><i class="fas fa-magnifying-glass"></i>{{ $text('home_search_button','Search Properties') }}</button>
                 </div>
             </form>
+            </div>
         </div>
         @include('partials.offer-banner', ['placement' => 'home_hero'])
         @include('partials.adsense-slot', ['placement' => 'home_top'])

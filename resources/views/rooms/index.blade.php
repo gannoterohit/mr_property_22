@@ -64,7 +64,7 @@
             <form action="{{ route('rooms.index') }}" method="GET" class="relative">
                 <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                 <input type="text" name="city" value="{{ request('city') }}" placeholder="Search locality, area or city..."
-                       class="w-full py-3 pl-10 pr-10 bg-white border border-slate-200 text-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none shadow-sm">
+                       class="w-full py-3 pl-10 pr-10 bg-white border border-slate-200 text-slate-800 rounded-xl text-sm font-semibold focus:ring-2 outline-none shadow-sm" style="--tw-ring-color: rgba(var(--primary-rgb), 0.2); border-color: var(--primary);">
                 @if(request('city'))
                     <a href="{{ route('rooms.index', ['clear' => 1]) }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500">
                         <i class="fas fa-times-circle text-sm"></i>
@@ -77,7 +77,7 @@
         <div class="px-4 mb-3">
             <button id="mobile-filter-toggle" class="w-full flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl shadow-sm">
                 <span class="flex items-center gap-2 text-sm font-bold text-slate-700">
-                    <i class="fas fa-sliders text-indigo-500"></i>
+                    <i class="fas fa-sliders" style="color: var(--primary);"></i>
                     Filters
                 </span>
                 <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform"></i>
@@ -91,18 +91,18 @@
                     <div>
                         <label class="text-xs font-black text-slate-700 uppercase tracking-wider block mb-2">Location</label>
                         <input type="text" name="city" value="{{ request('city') }}" placeholder="Enter locality or area..."
-                               class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                               class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-sm font-semibold focus:ring-2 outline-none" style="--tw-ring-color: rgba(var(--primary-rgb), 0.2); border-color: var(--primary);">
                     </div>
                     <div>
                         <label class="text-xs font-black text-slate-700 uppercase tracking-wider block mb-2">Property Type</label>
-                        <select name="property_type_id" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none">
+                        <select name="property_type_id" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-sm font-semibold focus:ring-2 outline-none appearance-none" style="--tw-ring-color: rgba(var(--primary-rgb), 0.2); border-color: var(--primary);">
                             <option value="">Any Type</option>
                             @foreach($propertyTypes as $type)
                                 <option value="{{ $type->id }}" {{ request('property_type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg active:scale-[0.98] transition-all">
+                    <button type="submit" class="w-full text-white py-3 rounded-xl font-bold text-sm shadow-lg active:scale-[0.98] transition-all" style="background: var(--primary);">
                         Apply Filters
                     </button>
                 </form>

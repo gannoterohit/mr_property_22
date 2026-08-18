@@ -9,16 +9,29 @@
                     </a>
                 </div>
 
+                <style>
+                    .rooms-filter-panel .hover-text-primary:hover { color: var(--primary) !important; }
+                    .rooms-filter-panel .text-primary { color: var(--primary) !important; }
+                    .rooms-filter-panel .bg-primary-soft { background: rgba(var(--primary-rgb), 0.08) !important; }
+                    .rooms-filter-panel .text-primary-soft { color: var(--primary) !important; }
+                    .rooms-filter-panel input[type="checkbox"]:checked { background-color: var(--primary); border-color: var(--primary); }
+                    .rooms-filter-panel input[type="radio"]:checked { background-color: var(--primary); border-color: var(--primary); }
+                    .rooms-filter-panel input:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15) !important; }
+                    .rooms-filter-panel select:focus { border-color: var(--primary) !important; }
+                    .room-theme-primary-button { background: var(--primary); color: #fff; }
+                    .room-theme-primary-button:hover { background: var(--primary-dark); }
+                </style>
+
                 <form action="{{ route('rooms.index') }}" method="GET" class="rooms-filter-form space-y-4">
                     <!-- Locality Input -->
                     <div class="space-y-2">
                         <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Location</label>
                         <input type="text" name="city" value="{{ request('city') }}" placeholder="Enter locality or area..."
-                               class="w-full py-2 px-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                               class="w-full py-2 px-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 outline-none transition-all">
                         
                         {{-- City dropdown — fully dynamic from DB popular cities --}}
                         <select name="city_dropdown" onchange="if(this.value){ document.querySelector('input[name=city]').value = this.value; }"
-                                class="w-full py-2 px-3 bg-slate-50 border border-slate-200 text-slate-600 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none transition-all">
+                                class="w-full py-2 px-3 bg-slate-50 border border-slate-200 text-slate-600 rounded-xl text-xs font-semibold focus:ring-2 outline-none appearance-none transition-all">
                             <option value="">Select City</option>
                             @foreach($popularCities as $pCity)
                                 <option value="{{ $pCity->name }}" {{ $displayCity === $pCity->name ? 'selected' : '' }}>
@@ -37,10 +50,10 @@
                                     $count = $propertyTypeCounts[$type->id] ?? 0;
                                     $isChecked = in_array($type->id, (array)request('property_type_id'));
                                 @endphp
-                                <label class="flex items-center justify-between text-xs text-slate-600 font-semibold cursor-pointer hover:text-indigo-600 transition-colors">
+                                <label class="flex items-center justify-between text-xs text-slate-600 font-semibold cursor-pointer hover-text-primary transition-colors">
                                     <span class="flex items-center gap-2">
                                         <input type="checkbox" name="property_type_id[]" value="{{ $type->id }}" {{ $isChecked ? 'checked' : '' }}
-                                               class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20">
+                                               class="rounded border-slate-300">
                                         <span>{{ $type->name }}</span>
                                     </span>
                                     <span class="text-[9px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded-full">{{ $count }}</span>
@@ -62,10 +75,10 @@
                                     $isChecked = in_array($category->id, (array)request('property_category_id'));
                                 @endphp
                                 @if($count > 0 || $isChecked)
-                                    <label class="flex items-center justify-between text-xs text-slate-600 font-semibold cursor-pointer hover:text-indigo-600 transition-colors">
+                                    <label class="flex items-center justify-between text-xs text-slate-600 font-semibold cursor-pointer hover-text-primary transition-colors">
                                         <span class="flex items-center gap-2">
                                             <input type="checkbox" name="property_category_id[]" value="{{ $category->id }}" {{ $isChecked ? 'checked' : '' }}
-                                                   class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20">
+                                                   class="rounded border-slate-300">
                                             <span>{{ $category->name }}</span>
                                         </span>
                                         <span class="text-[9px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded-full">{{ $count }}</span>
@@ -96,10 +109,10 @@
                                 @php
                                     $isSel = request('min_rent') == $range['min'] && request('max_rent') == $range['max'];
                                 @endphp
-                                <label class="flex items-center gap-2 text-xs text-slate-600 font-semibold cursor-pointer hover:text-indigo-600 transition-colors">
+                                <label class="flex items-center gap-2 text-xs text-slate-600 font-semibold cursor-pointer hover-text-primary transition-colors">
                                     <input type="radio" name="budget_range" onchange="document.querySelector('input[name=min_rent]').value='{{ $range['min'] }}'; document.querySelector('input[name=max_rent]').value='{{ $range['max'] }}';"
                                            {{ $isSel ? 'checked' : '' }}
-                                           class="text-indigo-600 focus:ring-indigo-500/20 border-slate-300">
+                                           class="rounded border-slate-300">
                                     <span>{{ $range['label'] }}</span>
                                 </label>
                             @endforeach
@@ -110,12 +123,12 @@
                             <div class="space-y-1">
                                 <span class="text-[9px] font-bold text-slate-400 uppercase">Min</span>
                                 <input type="number" name="min_rent" value="{{ request('min_rent') }}" placeholder="₹ Min"
-                                       class="w-full py-1.5 px-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                                       class="w-full py-1.5 px-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 outline-none transition-all">
                             </div>
                             <div class="space-y-1">
                                 <span class="text-[9px] font-bold text-slate-400 uppercase">Max</span>
                                 <input type="number" name="max_rent" value="{{ request('max_rent') }}" placeholder="₹ Max"
-                                       class="w-full py-1.5 px-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                                       class="w-full py-1.5 px-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 outline-none transition-all">
                             </div>
                         </div>
                     </div>
@@ -127,12 +140,12 @@
                             <div class="space-y-1">
                                 <span class="text-[9px] font-bold text-slate-400 uppercase">Min</span>
                                 <input type="number" name="min_area_sqft" value="{{ request('min_area_sqft') }}" placeholder="Min sqft"
-                                       class="w-full py-1.5 px-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                                       class="w-full py-1.5 px-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 outline-none transition-all">
                             </div>
                             <div class="space-y-1">
                                 <span class="text-[9px] font-bold text-slate-400 uppercase">Max</span>
                                 <input type="number" name="max_area_sqft" value="{{ request('max_area_sqft') }}" placeholder="Max sqft"
-                                       class="w-full py-1.5 px-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                                       class="w-full py-1.5 px-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 outline-none transition-all">
                             </div>
                         </div>
                     </div>
@@ -146,10 +159,10 @@
                                     $tChecked = in_array($option->id, (array)request('tenant_type'));
                                 @endphp
                                 @if($tCount > 0 || $tChecked)
-                                    <label class="flex items-center justify-between text-xs text-slate-600 font-semibold cursor-pointer hover:text-indigo-600">
+                                    <label class="flex items-center justify-between text-xs text-slate-600 font-semibold cursor-pointer hover-text-primary transition-colors">
                                         <span class="flex items-center gap-2">
                                             <input type="checkbox" name="tenant_type[]" value="{{ $option->id }}" {{ $tChecked ? 'checked' : '' }}
-                                                   class="rounded border-slate-300 text-indigo-600">
+                                                   class="rounded border-slate-300">
                                             <span>{{ $option->label }}</span>
                                         </span>
                                         <span class="text-[9px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded-full">{{ $tCount }}</span>
@@ -169,10 +182,10 @@
                                     $fChecked = in_array($option->id, (array)request('furnishing_type'));
                                 @endphp
                                 @if($fCount > 0 || $fChecked)
-                                    <label class="flex items-center justify-between text-xs text-slate-600 font-semibold cursor-pointer hover:text-indigo-600">
+                                    <label class="flex items-center justify-between text-xs text-slate-600 font-semibold cursor-pointer hover-text-primary transition-colors">
                                         <span class="flex items-center gap-2">
                                             <input type="checkbox" name="furnishing_type[]" value="{{ $option->id }}" {{ $fChecked ? 'checked' : '' }}
-                                                   class="rounded border-slate-300 text-indigo-600">
+                                                   class="rounded border-slate-300">
                                             <span>{{ $option->label }}</span>
                                         </span>
                                         <span class="text-[9px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded-full">{{ $fCount }}</span>
@@ -190,7 +203,7 @@
                         <div class="flex items-center justify-between gap-2">
                             <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Facilities</label>
                             @if(count($selectedAmenities))
-                                <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-black text-indigo-600">{{ count($selectedAmenities) }} selected</span>
+                                <span class="rounded-full bg-primary-soft px-2 py-0.5 text-[9px] font-black text-primary-soft">{{ count($selectedAmenities) }} selected</span>
                             @endif
                         </div>
                         <div class="rooms-amenities-scroll space-y-2">
@@ -200,9 +213,9 @@
                                     ->all();
                             @endphp
                             @foreach($amenityOpts as $key => $lbl)
-                                <label class="flex items-center gap-2 text-xs text-slate-600 font-semibold cursor-pointer hover:text-indigo-600">
+                                <label class="flex items-center gap-2 text-xs text-slate-600 font-semibold cursor-pointer hover-text-primary transition-colors">
                                     <input type="checkbox" name="amenities[]" value="{{ $key }}" {{ in_array($key, (array)request('amenities')) ? 'checked' : '' }}
-                                           class="rounded border-slate-300 text-indigo-600">
+                                           class="rounded border-slate-300">
                                     <span>{{ $lbl }}</span>
                                 </label>
                             @endforeach
@@ -213,16 +226,16 @@
                     <div class="space-y-2">
                         <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Availability</label>
                         <div class="space-y-2">
-                            <label class="flex items-center gap-2 text-xs text-slate-600 font-semibold cursor-pointer hover:text-indigo-600">
+                            <label class="flex items-center gap-2 text-xs text-slate-600 font-semibold cursor-pointer hover-text-primary transition-colors">
                                 <input type="checkbox" name="available_now" value="1" {{ request('available_now') == '1' ? 'checked' : '' }}
-                                       class="rounded border-slate-300 text-indigo-600">
+                                       class="rounded border-slate-300">
                                 <span>Available Now</span>
                             </label>
                             
                             <div class="space-y-1">
                                 <span class="text-[9px] font-bold text-slate-400 uppercase">Available From</span>
                                 <input type="date" name="availability_from" value="{{ request('availability_from') }}"
-                                       class="w-full py-1.5 px-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                                       class="w-full py-1.5 px-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs font-semibold focus:ring-2 outline-none transition-all">
                             </div>
                         </div>
                     </div>
