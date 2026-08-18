@@ -130,8 +130,8 @@
             </div>
             
             <a href="{{ route('rooms.show', $room->id) }}" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-xs shadow-lg active:scale-95 transition-all flex items-center gap-2">
-                Details
-                <i class="fas fa-arrow-right text-[10px]"></i>
+                Contact Owner
+                <i class="fas fa-phone text-[10px]"></i>
             </a>
         </div>
     </div>

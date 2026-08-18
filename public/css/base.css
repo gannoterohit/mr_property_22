@@ -365,15 +365,18 @@
         }
         
         .bottom-nav-item.active {
-            color: var(--primary);
+            color: var(--primary) !important;
         }
         
         .bottom-nav-item.active i {
             transform: translateY(-2px);
         }
 
-        /* Override hardcoded red active state in bottom nav */
-        .bottom-nav a.text-red-600 {
+        /* Override any hardcoded active color in bottom nav */
+        .bottom-nav a.text-red-600,
+        .bottom-nav a.text-blue-600,
+        .bottom-nav a.text-green-600,
+        .bottom-nav a.text-indigo-600 {
             color: var(--primary) !important;
         }
 

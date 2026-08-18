@@ -122,23 +122,24 @@
     gap: 4px;
 }
 
-/* App Bottom Navigation - Modern iOS/Android style */
+/* App Bottom Navigation - Native iOS/Android style */
 .bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
     display: flex;
     justify-content: space-around;
-    padding: 8px 0 0 0;
+    align-items: center;
+    padding: 6px 0 0 0;
     z-index: 1000;
-    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.03);
-    padding-bottom: env(safe-area-inset-bottom, 16px);
-    height: 70px;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06), 0 -1px 2px rgba(0, 0, 0, 0.04);
+    padding-bottom: env(safe-area-inset-bottom, 14px);
+    height: 64px;
     box-sizing: border-box;
 }
 
@@ -151,72 +152,146 @@
     text-decoration: none;
     font-size: 10px;
     font-weight: 600;
-    transition: all 0.2s;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     flex: 1;
-    padding: 4px 0;
+    padding: 6px 0;
     position: relative;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.bottom-nav-item:active {
+    transform: scale(0.92);
 }
 
 .bottom-nav-item i {
     font-size: 22px;
-    margin-bottom: 4px;
-    transition: all 0.2s;
+    margin-bottom: 3px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: transparent;
 }
 
 .bottom-nav-item.active {
-    color: var(--primary);
+    color: var(--primary) !important;
 }
 
 .bottom-nav-item.active i {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.1);
+    background: rgba(var(--primary-rgb), 0.1);
 }
 
 .bottom-nav-item.active::after {
     content: '';
     position: absolute;
-    top: 4px;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 4px;
     height: 4px;
-    background: var(--primary);
+    background: var(--primary) !important;
     border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+    animation: dot-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Override hardcoded red active state in bottom nav */
-.bottom-nav a.text-red-600 {
+@keyframes dot-appear {
+    from {
+        transform: translateX(-50%) scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Ripple effect */
+.bottom-nav-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(var(--primary-rgb), 0.12) 0%, transparent 70%);
+    border-radius: 16px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.4s ease;
+    pointer-events: none;
+}
+
+.bottom-nav-item:active::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Override any hardcoded red/blue/green active state */
+.bottom-nav a.text-red-600,
+.bottom-nav a.text-blue-600,
+.bottom-nav a.text-green-600,
+.bottom-nav a.text-indigo-600 {
     color: var(--primary) !important;
 }
 
-/* Floating Action Button - Material Design */
+/* Floating Action Button - Native App Style */
 .app-fab {
     position: fixed;
-    bottom: 80px;
-    right: 20px;
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    bottom: 84px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 85%, #000) 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 15px color-mix(in srgb, var(--primary) 30%, transparent);
+    box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.35), 0 0 0 4px rgba(var(--primary-rgb), 0.1);
     color: white;
     border: none;
     cursor: pointer;
     z-index: 999;
-    transition: all 0.3s;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .app-fab:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 40%, transparent);
+    transform: translateX(-50%) scale(1.08);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.4), 0 0 0 6px rgba(var(--primary-rgb), 0.12);
 }
 
 .app-fab:active {
-    transform: scale(0.95);
+    transform: translateX(-50%) scale(0.95);
+    transition: all 0.1s ease;
 }
 
 .app-fab i {
-    font-size: 24px;
+    font-size: 22px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* Bottom nav item specific styles */
+.bottom-nav .nav-icon {
+    font-size: 20px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bottom-nav .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.25s ease;
+}
+
+/* Content padding for bottom nav */
+@media (max-width: 1023px) {
+    main {
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 14px) + 16px);
+    }
 }
 
 /* App Card - Modern iOS style */

@@ -59,6 +59,20 @@
 
     <!-- ===== MOBILE LAYOUT ===== -->
     <div class="md:hidden">
+        <!-- Mobile Search Bar -->
+        <div class="px-4 mb-3">
+            <form action="{{ route('rooms.index') }}" method="GET" class="relative">
+                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" name="city" value="{{ request('city') }}" placeholder="Search locality, area or city..."
+                       class="w-full py-3 pl-10 pr-10 bg-white border border-slate-200 text-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none shadow-sm">
+                @if(request('city'))
+                    <a href="{{ route('rooms.index', ['clear' => 1]) }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500">
+                        <i class="fas fa-times-circle text-sm"></i>
+                    </a>
+                @endif
+            </form>
+        </div>
+
         <!-- Mobile Filter Button -->
         <div class="px-4 mb-3">
             <button id="mobile-filter-toggle" class="w-full flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl shadow-sm">
