@@ -653,5 +653,48 @@
 
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script defer src="{{ asset('assets/js/toastr.min.js') }}"></script>
+    
+    <script>
+    // Lazy load images with blur effect
+    document.addEventListener('DOMContentLoaded', function() {
+        const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+        
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if (img.complete) {
+                            img.classList.add('loaded');
+                        } else {
+                            img.addEventListener('load', function() {
+                                img.classList.add('loaded');
+                            });
+                        }
+                        imageObserver.unobserve(img);
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px',
+                threshold: 0.01
+            });
+            
+            lazyImages.forEach(function(img) {
+                imageObserver.observe(img);
+            });
+        } else {
+            // Fallback for browsers without IntersectionObserver
+            lazyImages.forEach(function(img) {
+                if (img.complete) {
+                    img.classList.add('loaded');
+                } else {
+                    img.addEventListener('load', function() {
+                        img.classList.add('loaded');
+                    });
+                }
+            });
+        }
+    });
+    </script>
 </body>
 </html>

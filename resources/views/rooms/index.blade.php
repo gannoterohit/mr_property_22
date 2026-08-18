@@ -142,6 +142,48 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Pull to refresh for mobile rooms listing
+    if (window.innerWidth < 1024) {
+        let startY = 0;
+        let currentY = 0;
+        let isPulling = false;
+        const roomsList = document.getElementById('mobile-room-list');
+        const loader = document.getElementById('infinite-loader');
+        
+        if (roomsList && loader) {
+            document.addEventListener('touchstart', (e) => {
+                if (window.scrollY === 0) {
+                    startY = e.touches[0].clientY;
+                    isPulling = true;
+                }
+            }, { passive: true });
+            
+            document.addEventListener('touchmove', (e) => {
+                if (!isPulling) return;
+                currentY = e.touches[0].clientY;
+                const diff = currentY - startY;
+                if (diff > 0 && window.scrollY === 0) {
+                    loader.style.transform = `translateY(${Math.min(diff * 0.3, 60)}px)`;
+                    loader.style.opacity = Math.min(diff / 100, 1);
+                }
+            }, { passive: true });
+            
+            document.addEventListener('touchend', () => {
+                if (!isPulling) return;
+                isPulling = false;
+                const diff = currentY - startY;
+                if (diff > 80 && window.scrollY === 0) {
+                    window.location.reload();
+                } else {
+                    loader.style.transform = 'translateY(0)';
+                    loader.style.opacity = '1';
+                }
+                startY = 0;
+                currentY = 0;
+            });
+        }
+    }
 });
 </script>
 @auth

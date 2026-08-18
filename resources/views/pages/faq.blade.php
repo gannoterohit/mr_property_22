@@ -15,11 +15,13 @@
             @endif
         </div>
 
-        <div class="space-y-3">
+        <div class="space-y-2">
             @forelse($faqs as $index => $faq)
                 <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                    <button class="flex w-full items-center justify-between gap-4 px-4 py-3 text-left transition-colors duration-200 hover:bg-slate-50 focus:outline-none"
-                            onclick="toggleFaq('faq-{{ $index }}')">
+                    <button class="flex w-full items-center justify-between gap-4 px-4 py-3 text-left transition-colors duration-200 hover:bg-slate-50 focus:outline-none active:bg-slate-100"
+                            onclick="toggleFaq('faq-{{ $index }}')"
+                            aria-expanded="false"
+                            aria-controls="faq-{{ $index }}">
                         <span class="text-sm font-extrabold text-slate-900">{{ $faq['question'] }}</span>
                         <i id="icon-faq-{{ $index }}" class="fas fa-chevron-down shrink-0 text-xs text-slate-400 transition-transform duration-200"></i>
                     </button>
@@ -52,12 +54,17 @@
     function toggleFaq(id) {
         const element = document.getElementById(id);
         const icon = document.getElementById('icon-' + id);
-        if (element.classList.contains('hidden')) {
+        const button = element.previousElementSibling;
+        const isHidden = element.classList.contains('hidden');
+        
+        if (isHidden) {
             element.classList.remove('hidden');
             icon.classList.add('rotate-180');
+            button.setAttribute('aria-expanded', 'true');
         } else {
             element.classList.add('hidden');
             icon.classList.remove('rotate-180');
+            button.setAttribute('aria-expanded', 'false');
         }
     }
 </script>

@@ -568,5 +568,50 @@
                 -webkit-text-size-adjust: 100%;
                 text-size-adjust: 100%;
             }
+            
+            /* Lazy load image placeholder */
+            .lazy-placeholder {
+                background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .lazy-placeholder::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                animation: shimmer 1.5s infinite;
+            }
+            
+            @keyframes shimmer {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+            }
+            
+            .lazy-img {
+                transition: opacity 0.4s ease, filter 0.4s ease;
+                opacity: 0;
+                filter: blur(10px);
+            }
+            
+            .lazy-img.loaded {
+                opacity: 1;
+                filter: blur(0);
+            }
+            
+            /* Pull to refresh indicator */
+            .pull-to-refresh {
+                position: fixed;
+                top: -50px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 9999;
+                transition: top 0.2s ease;
+            }
+            
+            .pull-to-refresh.visible {
+                top: 10px;
+            }
         }
 

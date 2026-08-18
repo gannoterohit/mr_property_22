@@ -11,8 +11,6 @@
 @section('admin-content')
 @php
     $currentTemplate = old('template', $page->template ?: 'default');
-    $faqItems = $currentTemplate === 'faq' ? json_decode((string) old('content', $page->content), true) : [];
-    if (!is_array($faqItems)) $faqItems = [];
 @endphp
 <div class="space-y-5 p-5 lg:p-6">
     <header class="flex flex-wrap items-end justify-between gap-3">
@@ -39,36 +37,7 @@
             <section class="rounded-2xl border bg-white p-5">
                 <div><label class="text-xs font-bold">Page title *</label><input name="title" value="{{ old('title', $page->title) }}" required maxlength="255" class="mt-2 h-12 w-full rounded-xl border-slate-200 text-base font-bold"></div>
                 <div class="mt-5"><label class="text-xs font-bold">Slug *</label><input name="slug" value="{{ old('slug', $page->slug) }}" required maxlength="255" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm font-semibold" placeholder="refund-policy"></div>
-                @if($currentTemplate === 'faq')
-                    <input type="hidden" name="content" value="{{ old('content', $page->content) }}">
-                    <div class="mt-5">
-                        <div class="mb-3 flex items-center justify-between">
-                            <label class="text-xs font-bold">FAQ questions</label>
-                            <button type="button" id="addFaq" class="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white"><i class="fas fa-plus mr-1"></i>Add FAQ</button>
-                        </div>
-                        <div id="faqItems" class="space-y-4">
-                            @forelse($faqItems as $index => $faq)
-                                <div class="faq-item rounded-xl border bg-slate-50 p-4">
-                                    <div class="flex justify-end"><x-admin.action-icon variant="remove" type="button" class="remove-faq" /></div>
-                                    <label class="text-xs font-bold">Question</label>
-                                    <input name="faqs[{{ $index }}][question]" value="{{ $faq['question'] ?? '' }}" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm">
-                                    <label class="mt-4 block text-xs font-bold">Answer</label>
-                                    <textarea name="faqs[{{ $index }}][answer]" rows="4" class="faq-answer mt-2 w-full rounded-xl border-slate-200">{{ $faq['answer'] ?? '' }}</textarea>
-                                </div>
-                            @empty
-                                <div class="faq-item rounded-xl border bg-slate-50 p-4">
-                                    <div class="flex justify-end"><x-admin.action-icon variant="remove" type="button" class="remove-faq" /></div>
-                                    <label class="text-xs font-bold">Question</label>
-                                    <input name="faqs[0][question]" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm">
-                                    <label class="mt-4 block text-xs font-bold">Answer</label>
-                                    <textarea name="faqs[0][answer]" rows="4" class="faq-answer mt-2 w-full rounded-xl border-slate-200"></textarea>
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
-                @else
-                    <div class="mt-5"><label class="text-xs font-bold">Content</label><textarea id="cmsContent" name="content" rows="18" class="mt-2 w-full rounded-xl border-slate-200">{{ old('content', $page->content) }}</textarea></div>
-                @endif
+                <div class="mt-5"><label class="text-xs font-bold">Content</label><textarea id="cmsContent" name="content" rows="18" class="mt-2 w-full rounded-xl border-slate-200">{{ old('content', $page->content) }}</textarea></div>
             </section>
             <section class="rounded-2xl border bg-white p-5">
                 <h2 class="text-sm font-extrabold">SEO</h2>
@@ -83,7 +52,7 @@
                 <h2 class="text-sm font-extrabold">Publishing</h2>
                 <div class="mt-4 space-y-4">
                     <div><label class="text-xs font-bold">Status</label><select name="status" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm"><option value="published" @selected(old('status',$page->status)==='published')>Published</option><option value="draft" @selected(old('status',$page->status)==='draft')>Draft</option></select></div>
-                    <div><label class="text-xs font-bold">Template</label><select name="template" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm"><option value="default" @selected($currentTemplate==='default')>Default</option><option value="faq" @selected($currentTemplate==='faq')>FAQ</option><option value="contact" @selected($currentTemplate==='contact')>Contact</option></select><p class="mt-1 text-[10px] text-slate-400">Changing template reloads after save.</p></div>
+                    <div><label class="text-xs font-bold">Template</label><select name="template" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm"><option value="default" @selected($currentTemplate==='default')>Default</option><option value="contact" @selected($currentTemplate==='contact')>Contact</option></select><p class="mt-1 text-[10px] text-slate-400">Changing template reloads after save.</p></div>
                     <div><label class="text-xs font-bold">Sort order</label><input type="number" name="sort_order" min="0" value="{{ old('sort_order',$page->sort_order ?? 0) }}" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm"></div>
                 </div>
                 <button class="mt-5 w-full rounded-xl admin-theme-bg py-3 text-sm font-bold text-white"><i class="fas fa-save mr-2"></i>{{ $page->exists ? 'Save Page' : 'Create Page' }}</button>
@@ -100,28 +69,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const content = document.querySelector('#cmsContent');
     if (content) createRichEditor(content).catch(() => {});
-    document.querySelectorAll('.faq-answer').forEach(textarea => createRichEditor(textarea).catch(() => {}));
-    let faqIndex = {{ max(count($faqItems), 1) }};
-    document.getElementById('addFaq')?.addEventListener('click', () => {
-        document.getElementById('faqItems')?.insertAdjacentHTML('beforeend', `
-            <div class="faq-item rounded-xl border bg-slate-50 p-4">
-                <div class="flex justify-end"><x-admin.action-icon variant="remove" type="button" class="remove-faq" /></div>
-                <label class="text-xs font-bold">Question</label>
-                <input name="faqs[${faqIndex}][question]" class="mt-2 h-11 w-full rounded-xl border-slate-200 text-sm">
-                <label class="mt-4 block text-xs font-bold">Answer</label>
-                <textarea name="faqs[${faqIndex}][answer]" rows="4" class="faq-answer mt-2 w-full rounded-xl border-slate-200"></textarea>
-            </div>
-        `);
-        const textarea = document.querySelector('#faqItems .faq-item:last-child .faq-answer');
-        createRichEditor(textarea).catch(() => {});
-        faqIndex++;
-    });
-    document.getElementById('faqItems')?.addEventListener('click', event => {
-        const button = event.target.closest('.remove-faq');
-        if (!button) return;
-        const items = document.querySelectorAll('#faqItems .faq-item');
-        if (items.length > 1) button.closest('.faq-item')?.remove();
-    });
     document.querySelector('form.cms-editor-grid')?.addEventListener('submit', () => window.syncRichEditors?.());
 });
 </script>

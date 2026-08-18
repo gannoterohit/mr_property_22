@@ -83,8 +83,6 @@
                         @endphp
                         <li><a href="{{ $pgTypeId ? route('rooms.index', ['property_type_id' => $pgTypeId]) : route('rooms.index') }}" class="text-slate-400 hover:text-white transition-all">PG</a></li>
                         <li><a href="{{ $flatTypeId ? route('rooms.index', ['property_type_id' => $flatTypeId]) : route('rooms.index') }}" class="text-slate-400 hover:text-white transition-all">Apartments</a></li>
-                        @if($cmsPageLive('how-it-works'))<li><a href="{{ route('pages.how-it-works') }}" class="text-slate-400 hover:text-white transition-all">How It Works</a></li>@endif
-                        <li><a href="{{ route('plans') }}" class="text-slate-400 hover:text-white transition-all">Pricing</a></li>
                     </ul>
                 </div>
 
@@ -106,7 +104,7 @@
                 <div class="lg:col-span-2">
                     <h3 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Support</h3>
                     <ul class="space-y-2.5 text-xs font-semibold">
-                        @if($cmsPageLive('faq'))<li><a href="{{ route('pages.faq') }}" class="text-slate-400 hover:text-white transition-all">Help Center</a></li>@endif
+                        <li><a href="{{ route('pages.faq') }}" class="text-slate-400 hover:text-white transition-all">Help Center</a></li>
                         @if($cmsPageLive('how-it-works'))<li><a href="{{ route('pages.how-it-works') }}" class="text-slate-400 hover:text-white transition-all">How It Works</a></li>@endif
                         @if($cmsPageLive('safety-tips'))<li><a href="{{ route('pages.safety-tips') }}" class="text-slate-400 hover:text-white transition-all">Safety Tips</a></li>@endif
                         <li><a href="{{ Auth::check() ? route('complaints.create') : route('login') }}" class="text-slate-400 hover:text-white transition-all">Report an Issue</a></li>

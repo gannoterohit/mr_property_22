@@ -209,6 +209,8 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::post('/settings/ping', [BusinessSettingsController::class, 'pingSearchEngines'])->name('settings.ping');
     Route::patch('cms-pages/{cmsPage}/toggle-status', [CmsPageController::class, 'toggleStatus'])->name('cms-pages.toggle-status');
     Route::resource('cms-pages', CmsPageController::class)->except(['show']);
+    Route::get('pages/faq', [\App\Http\Controllers\Admin\PagesController::class, 'faq'])->name('pages.faq');
+    Route::put('pages/faq', [\App\Http\Controllers\Admin\PagesController::class, 'updateFaq'])->name('pages.faq.update');
     Route::patch('home-features/{homeFeature}/toggle-status', [HomeFeatureController::class, 'toggleStatus'])->name('home-features.toggle-status');
     Route::resource('home-features', HomeFeatureController::class)->except(['show']);
     Route::get('how-it-works', [HowItWorksController::class, 'index'])->name('how-it-works.index');

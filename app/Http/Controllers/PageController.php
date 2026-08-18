@@ -78,22 +78,13 @@ class PageController extends Controller
 
     public function faq()
     {
-        $page = $this->page('faq');
-        if ($page && !$page->isPublished()) {
-            abort(404);
-        }
-
-        $json = $page?->content ?: Setting::get('faq_content', '[]');
-        // Ensure it's valid JSON, if not (legacy text), might break. 
-        // Logic: Try decode. If array, good. If string, maybe legacy text?
-        // But since we just switched system, assuming JSON.
+        $json = Setting::get('faq_content', '[]');
         $faqs = json_decode($json, true);
         if (!is_array($faqs)) {
-            // Fallback if legacy text was stored
-            $faqs = []; 
+            $faqs = [];
         }
         
-        $title = $page?->title ?: 'Frequently Asked Questions';
+        $title = 'Frequently Asked Questions';
         return view('pages.faq', compact('faqs', 'title'));
     }
 
@@ -130,11 +121,6 @@ class PageController extends Controller
         $updatedAt = $page->updated_at;
         if (($forcedView ?: $page->template) === 'contact' || $page->template === 'contact') {
             return view('pages.contact', compact('content', 'title', 'pageTitle', 'metaDescription', 'updatedAt'));
-        }
-        if (($forcedView ?: $page->template) === 'faq' || $page->template === 'faq') {
-            $faqs = json_decode((string) $page->content, true);
-            if (!is_array($faqs)) $faqs = [];
-            return view('pages.faq', compact('faqs', 'title', 'pageTitle', 'metaDescription', 'updatedAt'));
         }
         $view = $forcedView ?: 'pages.show';
         return view($view, compact('content', 'title', 'pageTitle', 'metaDescription', 'updatedAt'));

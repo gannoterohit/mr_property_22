@@ -1,0 +1,89 @@
+/* Admin CMS Rich Editor - Compact FAQ Answer Styling */
+.cms-rich-editor {
+    margin-bottom: 16px;
+}
+
+.cms-rich-editor .ql-toolbar {
+    border-radius: 8px 8px 0 0;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 6px;
+}
+
+.cms-rich-editor .ql-container {
+    border-radius: 0 0 8px 8px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    min-height: 120px;
+}
+
+.cms-rich-editor .ql-editor {
+    min-height: 100px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Compact version for FAQ answers */
+.cms-rich-editor-compact {
+    margin-bottom: 12px;
+}
+
+.cms-rich-editor-compact .ql-toolbar {
+    border-radius: 6px 6px 0 0;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 4px 6px;
+    min-height: 32px;
+}
+
+.cms-rich-editor-compact .ql-toolbar .ql-formats {
+    margin-right: 4px;
+}
+
+.cms-rich-editor-compact .ql-toolbar button {
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+}
+
+.cms-rich-editor-compact .ql-toolbar .ql-stroke {
+    stroke-width: 1.5;
+}
+
+.cms-rich-editor-compact .ql-toolbar .ql-fill {
+    fill-opacity: 0.8;
+}
+
+.cms-rich-editor-compact .ql-container {
+    border-radius: 0 0 6px 6px;
+    border: 1px solid #e2e8f0;
+    font-size: 13px;
+    min-height: 60px;
+}
+
+.cms-rich-editor-compact .ql-editor {
+    min-height: 50px;
+    padding: 6px 10px;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.cms-rich-editor-compact .ql-editor.ql-blank::before {
+    font-style: normal;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.cms-rich-editor-compact .ql-tooltip {
+    font-size: 12px;
+}
+
+.cms-rich-editor-compact .ql-snow .ql-picker {
+    font-size: 12px;
+}
+
+.cms-rich-editor-compact .ql-snow .ql-picker-options {
+    font-size: 12px;
+    padding: 4px;
+}
