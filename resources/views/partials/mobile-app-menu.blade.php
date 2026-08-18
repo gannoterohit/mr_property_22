@@ -26,7 +26,7 @@
             <i class="fas fa-times text-white" aria-hidden="true"></i>
         </button>
         
-        @php $menuLogo = \App\Models\Setting::get('website_logo'); @endphp
+        @php $menuLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo'); @endphp
         @if($menuLogo)
             <a href="{{ route('home') }}" class="mb-3">
                 <img src="{{ asset('storage/' . $menuLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="h-14 w-auto rounded-xl shadow-lg">
@@ -84,6 +84,14 @@
                 <a href="{{ route('blogs.index') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('blogs.*') ? 'bg-indigo-50 text-indigo-600' : '' }}">
                     <i class="fas fa-newspaper w-5 text-indigo-500"></i> Blog
                 </a>
+                @if($cmsPageLive('how-it-works'))
+                <a href="{{ route('pages.how-it-works') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('pages.how-it-works') ? 'bg-indigo-50 text-indigo-600' : '' }}">
+                    <i class="fas fa-lightbulb w-5 text-indigo-500"></i> How It Works
+                </a>
+                @endif
+                <a href="{{ route('register', ['role' => 'owner']) }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('register') && request('role') === 'owner' ? 'bg-indigo-50 text-indigo-600' : '' }}">
+                    <i class="fas fa-user-plus w-5 text-indigo-500"></i> For Owners
+                </a>
                 @auth
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'owner')
                         <a href="{{ route('dashboard') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-600' : '' }}">
@@ -128,11 +136,8 @@
                         <i class="fas fa-shield-halved w-5 text-red-500"></i> My Complaints
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
-                        <i class="fas fa-sign-in-alt w-5 text-indigo-500"></i> Login
-                    </a>
-                    <a href="{{ route('register') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
-                        <i class="fas fa-user-plus w-5 text-indigo-500"></i> Sign Up
+                    <a href="{{ route('register') }}?role=owner" class="flex items-center gap-4 p-3 rounded-xl hover:bg-green-50 transition text-gray-700 font-bold">
+                        <i class="fas fa-plus-circle w-5 text-green-500"></i> Post Property
                     </a>
                 @endauth
             </div>
@@ -145,9 +150,9 @@
                 @if($cmsPageLive('about-us'))<a href="{{ route('pages.about') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
                     <i class="fas fa-info-circle w-5 text-indigo-500"></i> About Us
                 </a>@endif
-                @if($cmsPageLive('faq'))<a href="{{ route('pages.faq') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
+                <a href="{{ route('pages.faq') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
                     <i class="fas fa-question-circle w-5 text-purple-500"></i> FAQ
-                </a>@endif
+                </a>
                 @if($cmsPageLive('contact-us'))<a href="{{ route('pages.contact') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
                     <i class="fas fa-headset w-5 text-blue-500"></i> Support Center
                 </a>@endif

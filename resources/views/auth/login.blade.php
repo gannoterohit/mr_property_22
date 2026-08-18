@@ -10,7 +10,14 @@
 <section class="auth-page">
     <div class="auth-shell auth-shell-login">
         <aside class="auth-story">
-            <a href="{{ route('home') }}" class="auth-brand">Apna<span>Nest</span></a>
+            <a href="{{ route('home') }}" class="auth-brand">
+                @php $authLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo'); @endphp
+                @if($authLogo)
+                    <img src="{{ asset('storage/' . $authLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'ApnaNest') }}" class="auth-brand-img">
+                @else
+                    Apna<span>Nest</span>
+                @endif
+            </a>
             <span class="auth-kicker"><i class="fas fa-shield-alt"></i> Password-free access</span>
             <h1>Welcome back to your rental workspace.</h1>
             <p>Access saved rooms, enquiries and your property dashboard with a secure verification code.</p>

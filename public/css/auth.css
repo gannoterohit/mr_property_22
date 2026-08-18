@@ -4,6 +4,7 @@
 .auth-story:after{content:"";position:absolute;width:330px;height:330px;border:70px solid rgba(var(--primary-rgb,37,99,235),.14);border-radius:50%;right:-190px;bottom:-170px}
 .auth-brand{display:inline-block;color:#fff;text-decoration:none;font-size:25px;font-weight:900;letter-spacing:-1px;margin-bottom:70px}
 .auth-brand span{color:var(--secondary,var(--primary,#60a5fa))}
+.auth-brand-img{height:38px;width:auto;max-width:180px;object-fit:contain;}
 .auth-kicker{display:flex;align-items:center;gap:8px;width:max-content;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.13);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
 .auth-story h1{max-width:430px;margin:18px 0 14px;font-size:36px;line-height:1.16;letter-spacing:-1.3px;font-weight:850}
 .auth-story>p{color:#cbd5e1;line-height:1.7;font-size:14px;max-width:420px}

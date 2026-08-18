@@ -15,7 +15,14 @@
 <section class="auth-page">
     <div class="auth-shell auth-shell-register">
         <aside class="auth-story">
-            <a href="{{ route('home') }}" class="auth-brand">Apna<span>Nest</span></a>
+            <a href="{{ route('home') }}" class="auth-brand">
+                @php $authLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo'); @endphp
+                @if($authLogo)
+                    <img src="{{ asset('storage/' . $authLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'ApnaNest') }}" class="auth-brand-img">
+                @else
+                    Apna<span>Nest</span>
+                @endif
+            </a>
             <span class="auth-kicker"><i class="fas fa-home"></i> Built for renters and owners</span>
             <h1>Your next room or tenant starts here.</h1>
             <p>Create one secure account, choose how you want to use ApnaNest and connect without unnecessary middlemen.</p>
