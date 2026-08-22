@@ -37,7 +37,7 @@
 .otp-input{width:100%;height:58px;border:1px solid #cbd5e1;border-radius:11px;text-align:center;font:800 26px monospace;letter-spacing:.45em;padding-left:.45em;outline:none}
 .otp-actions{display:flex;justify-content:space-between;margin-top:10px;color:#64748b;font-size:11px}.otp-actions button{border:0;background:transparent;color:var(--primary,#2563eb);font-weight:800;cursor:pointer}
 .auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.auth-field-group{margin-bottom:16px}
-.role-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.role-card{cursor:pointer}.role-card input{position:absolute;opacity:0}
+.role-options{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.role-card{cursor:pointer}.role-card input{position:absolute;opacity:0}
 .role-card>span{min-height:72px;padding:13px;border:1px solid #cbd5e1;border-radius:12px;display:flex;align-items:center;gap:11px;color:#475569;transition:.2s}
 .role-card i{width:36px;height:36px;border-radius:10px;background:#f1f5f9;color:#64748b;display:grid;place-items:center}.role-card b{display:block;color:#0f172a;font-size:13px}.role-card small{font-size:10px}
 .role-card input:checked+span{border-color:var(--primary,#2563eb);background:rgba(var(--primary-rgb,37,99,235),.08);box-shadow:0 0 0 3px rgba(var(--primary-rgb,37,99,235),.08)}
@@ -54,3 +54,4 @@
 .auth-social-facebook:hover{background:#166fe5;border-color:#166fe5}
 .auth-social-facebook svg path{fill:#fff}
 @media(max-width:520px){.auth-social{grid-template-columns:1fr}.auth-social-btn{height:48px}}
+@media(max-width:600px){.role-options{grid-template-columns:1fr}}

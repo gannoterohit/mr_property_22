@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Setting;
+use App\Models\BrokerSetting;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,6 +61,15 @@ class PlatformAvailability
             return $this->unavailable($request, 'user_panel');
         }
 
+        if ($user?->role === 'broker' && !BrokerSetting::isEnabled('broker_module_enabled', true)
+            && $this->isBrokerWorkspace($request)) {
+            return $this->unavailable($request, 'broker_module');
+        }
+
+        if (!$this->enabled('broker_module_enabled', true) && $this->isBrokerPublicRoute($request)) {
+            return $this->unavailable($request, 'broker_module');
+        }
+
         return $next($request);
     }
 
@@ -104,6 +114,18 @@ class PlatformAvailability
             'api/v1/referral-stats', 'api/v1/complaints*', 'api/v1/complaint-options');
     }
 
+    private function isBrokerWorkspace(Request $request): bool
+    {
+        return $request->routeIs(
+            'agent.*', 'register.broker'
+        ) || $request->is('api/v1/broker*');
+    }
+
+    private function isBrokerPublicRoute(Request $request): bool
+    {
+        return $request->routeIs('register.broker');
+    }
+
     private function unavailable(Request $request, string $reason): Response
     {
         $messages = [
@@ -114,6 +136,7 @@ class PlatformAvailability
             'referral' => ['Referral system is temporarily unavailable', 'Referral rewards and referral statistics are currently disabled by the administrator.'],
             'owner_panel' => ['Owner panel is temporarily unavailable', 'Owner workspace access is paused while we complete essential maintenance.'],
             'user_panel' => ['User panel is temporarily unavailable', 'User workspace access is paused while we complete essential maintenance.'],
+            'broker_module' => ['Broker module is temporarily unavailable', 'Broker registration, dashboard and listings are currently disabled by the administrator.'],
         ];
 
         $title = $reason === 'maintenance'

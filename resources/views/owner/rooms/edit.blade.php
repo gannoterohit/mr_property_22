@@ -2,7 +2,7 @@
 
 @section('title', 'Edit Property - RoomRental')
 
-@section('content')
+@section('owner-content')
   @php
                     $logo = \App\Models\Setting::get('website_logo');
                 @endphp
@@ -19,7 +19,6 @@
     </div>
 
     <div class="owner-form-shell">
-        @include('owner.partials.sidebar', ['active' => 'rooms'])
 
         <!-- Main Content -->
         <main class="flex-1">

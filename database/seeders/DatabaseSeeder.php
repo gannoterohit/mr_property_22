@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PropertyCatalogSeeder::class);
         $this->call(AdminUserSeeder::class);
         $this->call(BlogSeeder::class);
+        $this->call(BrokerSettingsSeeder::class);
     }
 }

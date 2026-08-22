@@ -2,20 +2,17 @@
 
 @section('title', 'Property Enquiries - ' . \App\Models\Setting::get('website_name', 'ApnaNest'))
 
-@section('content')
-<div class="owner-workspace min-h-screen bg-slate-50">
-    @include('owner.partials.sidebar', ['active' => 'enquiries'])
-
-    <main class="flex-1 min-w-0 pb-24 lg:pb-12">
-        <header class="border-b border-slate-200 bg-white">
-            <div class="max-w-7xl mx-auto px-4 py-7 sm:px-6 lg:px-8">
-                <p class="text-[10px] font-extrabold uppercase tracking-[.18em] text-indigo-600">Customer interest</p>
-                <div class="mt-1 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                    <div><h1 class="text-2xl font-extrabold text-slate-950">Property Enquiries</h1><p class="mt-2 text-sm text-slate-500">See when a property seeker unlocks contact details for one of your listings.</p></div>
-                    <a href="{{ route('owner.rooms') }}" class="inline-flex h-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-700"><i class="fas fa-building mr-2 text-indigo-600"></i>My Properties</a>
-                </div>
+@section('owner-content')
+<div class="min-h-screen bg-slate-50">
+    <header class="border-b border-slate-200 bg-white">
+        <div class="max-w-7xl mx-auto px-4 py-7 sm:px-6 lg:px-8">
+            <p class="text-[10px] font-extrabold uppercase tracking-[.18em] text-indigo-600">Customer interest</p>
+            <div class="mt-1 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div><h1 class="text-2xl font-extrabold text-slate-950">Property Enquiries</h1><p class="mt-2 text-sm text-slate-500">See when a property seeker unlocks contact details for one of your listings.</p></div>
+                <a href="{{ route('owner.rooms') }}" class="inline-flex h-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-700"><i class="fas fa-building mr-2 text-indigo-600"></i>My Properties</a>
             </div>
-        </header>
+        </div>
+    </header>
 
         <div class="max-w-7xl mx-auto px-4 py-7 sm:px-6 lg:px-8">
             <section class="enquiry-stats">

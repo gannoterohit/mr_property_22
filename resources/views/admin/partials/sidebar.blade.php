@@ -12,6 +12,7 @@
         'people' => ['label' => 'People Management', 'icon' => 'fa-users', 'items' => [
             ['route' => 'admin.members.index', 'match' => 'admin.members.index', 'icon' => 'fa-magnifying-glass-chart', 'label' => 'Member 360'],
             ['route' => 'admin.owners', 'match' => 'admin.owners*', 'icon' => 'fa-user-tie', 'label' => 'Owners'],
+            ['route' => 'admin.brokers.index', 'match' => 'admin.brokers*', 'icon' => 'fa-handshake', 'label' => 'Brokers'],
             ['route' => 'admin.users', 'match' => 'admin.users*', 'icon' => 'fa-users', 'label' => 'Users'],
         ]],
         'support' => ['label' => 'Support & Push', 'icon' => 'fa-headset', 'items' => [
@@ -100,7 +101,7 @@
                     if (!$adminUser || !$adminUser->admin_role_id) return true;
                     return match ($groupKey) {
                         'property' => $adminUser->hasAdminPermission('listings.view') || $adminUser->hasAdminPermission('listings.manage'),
-                        'people' => $adminUser->hasAdminPermission('people.view') || $adminUser->hasAdminPermission('people.manage'),
+                        'people' => $adminUser->hasAdminPermission('people.view') || $adminUser->hasAdminPermission('people.manage') || $adminUser->hasAdminPermission('brokers.view') || $adminUser->hasAdminPermission('brokers.manage'),
                         'support' => $adminUser->hasAdminPermission('support.view') || $adminUser->hasAdminPermission('support.manage'),
                         'finance' => str_starts_with($item['route'], 'admin.offers')
                             ? ($adminUser->hasAdminPermission('content.view') || $adminUser->hasAdminPermission('content.manage'))

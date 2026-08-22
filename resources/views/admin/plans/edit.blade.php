@@ -62,6 +62,7 @@
                     <select name="type" id="type" onchange="toggleLimitFields()" class="admin-plan-field mt-2">
                         <option value="user" @selected(old('type', $plan->type) === 'user')>User (Contact Unlocks)</option>
                         <option value="owner" @selected(old('type', $plan->type) === 'owner')>Owner (Property Listings)</option>
+                        <option value="broker" @selected(old('type', $plan->type) === 'broker')>Broker (Property Listings)</option>
                     </select>
                 </div>
 
@@ -121,7 +122,7 @@
     function toggleLimitFields() {
         const type = document.getElementById('type').value;
         document.getElementById('contacts_limit_group').classList.toggle('hidden', type !== 'user');
-        document.getElementById('listing_limit_group').classList.toggle('hidden', type !== 'owner');
+        document.getElementById('listing_limit_group').classList.toggle('hidden', type !== 'owner' && type !== 'broker');
     }
 
     function addBenefitField() {

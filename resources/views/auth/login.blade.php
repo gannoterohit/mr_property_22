@@ -22,7 +22,7 @@
             <h1>Welcome back to your rental workspace.</h1>
             <p>Access saved rooms, enquiries and your property dashboard with a secure verification code.</p>
             <div class="auth-benefits">
-                <div><i class="fas fa-check"></i><span><strong>One account</strong><small>For room seekers and property owners</small></span></div>
+                <div><i class="fas fa-check"></i><span><strong>One account</strong><small>For room seekers, owners and brokers</small></span></div>
                 <div><i class="fas fa-check"></i><span><strong>No password to remember</strong><small>A fresh 6-digit code protects every login</small></span></div>
                 <div><i class="fas fa-check"></i><span><strong>Direct connections</strong><small>Manage listings, favourites and contact unlocks</small></span></div>
             </div>

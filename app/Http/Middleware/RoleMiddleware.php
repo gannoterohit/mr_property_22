@@ -22,7 +22,10 @@ class RoleMiddleware
             return redirect('/login');
         }
 
-        if (Auth::user()->role != $role) {
+        $allowedRoles = array_map('trim', explode(',', $role));
+        $hasRole = in_array(Auth::user()->role, $allowedRoles, true);
+
+        if (!$hasRole) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'status'  => 'error',

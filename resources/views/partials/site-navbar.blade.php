@@ -117,9 +117,12 @@
                         <!-- Account Dropdown - Fixed position via JS to avoid clipping -->
                         @php
                             $isRenter = Auth::user()->role === 'user';
-                            $accountHome = Auth::user()->role === 'owner'
-                                ? route('owner.dashboard')
-                                : (Auth::user()->role === 'admin' ? route('admin.dashboard') : route('home'));
+                            $accountHome = match(Auth::user()->role) {
+                                'owner' => route('owner.dashboard'),
+                                'broker' => route('agent.dashboard'),
+                                'admin' => route('admin.dashboard'),
+                                default => route('home'),
+                            };
                         @endphp
 
                         <div x-data="{

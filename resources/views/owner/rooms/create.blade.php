@@ -2,7 +2,7 @@
 
 @section('title', 'List Your Property - RoomRental')
 
-@section('content')
+@section('owner-content')
 <link rel="stylesheet" href="{{ asset('css/owner-rooms-create.css') }}">
 
 <div class="owner-workspace room-editor min-h-screen bg-slate-50">
@@ -18,8 +18,6 @@
     </div>
 
     <div class="owner-form-shell">
-        @include('owner.partials.sidebar', ['active' => 'create'])
-
         <!-- Main Content Area -->
         <main class="flex-1">
             <!-- Desktop Header -->

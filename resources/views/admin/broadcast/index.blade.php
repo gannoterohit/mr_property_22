@@ -19,7 +19,7 @@
             <h1 class="mt-1 text-2xl font-black text-slate-900 tracking-tight">Push Broadcast Announcement</h1>
             <p class="text-xs font-semibold text-slate-500 mt-0.5">Send targeted push notifications, offer banners, and email blasts to renters & property owners.</p>
         </div>
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <div class="rounded-2xl border bg-white px-3.5 py-2.5 shadow-sm text-center">
                 <span class="block text-[9px] font-bold text-slate-400 uppercase">Renters</span>
                 <span class="text-base font-black text-slate-800">{{ number_format($totalUsers) }}</span>
@@ -28,9 +28,13 @@
                 <span class="block text-[9px] font-bold text-slate-400 uppercase">Owners</span>
                 <span class="text-base font-black text-slate-800">{{ number_format($totalOwners) }}</span>
             </div>
+            <div class="rounded-2xl border bg-white px-3.5 py-2.5 shadow-sm text-center">
+                <span class="block text-[9px] font-bold text-slate-400 uppercase">Brokers</span>
+                <span class="text-base font-black text-slate-800">{{ number_format($totalBrokers) }}</span>
+            </div>
             <div class="rounded-2xl border bg-indigo-900 px-3.5 py-2.5 text-center text-white shadow-md">
                 <span class="block text-[9px] font-bold text-indigo-300 uppercase">Total Targetable</span>
-                <span class="text-base font-black">{{ number_format($totalUsers + $totalOwners) }}</span>
+                <span class="text-base font-black">{{ number_format($totalUsers + $totalOwners + $totalBrokers) }}</span>
             </div>
         </div>
     </header>
@@ -97,6 +101,13 @@
                             <span class="badge-icon h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base mb-2 group-hover:scale-110 transition shadow-sm"><i class="fas fa-user-tie"></i></span>
                             <span class="text-xs font-black text-slate-800">Owners Only</span>
                             <span class="text-[10px] font-semibold text-slate-400 mt-0.5">Property owners</span>
+                        </label>
+                        <label class="audience-card relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all border-slate-200 bg-white hover:border-slate-300 group">
+                            <input type="radio" name="target_audience" value="broker" class="peer sr-only">
+                            <span class="check-icon absolute top-2.5 right-2.5 text-indigo-600 opacity-0 transition-opacity"><i class="fas fa-check-circle text-sm"></i></span>
+                            <span class="badge-icon h-10 w-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-base mb-2 group-hover:scale-110 transition shadow-sm"><i class="fas fa-handshake"></i></span>
+                            <span class="text-xs font-black text-slate-800">Brokers Only</span>
+                            <span class="text-[10px] font-semibold text-slate-400 mt-0.5">Broker accounts</span>
                         </label>
                     </div>
 

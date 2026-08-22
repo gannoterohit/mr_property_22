@@ -1,24 +1,23 @@
 @php
-    $activeOwnerSection = $active ?? '';
     $owner = Auth::user();
     $ownerItems = [
-        ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'fa-chart-pie', 'href' => route('owner.dashboard')],
-    ['key' => 'create', 'label' => 'Add New Property', 'icon' => 'fa-square-plus', 'href' => route('rooms.create')],
-    ['key' => 'rooms', 'label' => 'My Properties', 'icon' => 'fa-building', 'href' => route('owner.rooms')],
-        ['key' => 'enquiries', 'label' => 'Enquiries', 'icon' => 'fa-address-card', 'href' => route('owner.enquiries')],
-        ['key' => 'plans', 'label' => 'Plans & Pricing', 'icon' => 'fa-tags', 'href' => route('plans')],
+        ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'fa-chart-pie', 'href' => route('owner.dashboard'), 'match' => 'owner.dashboard'],
+        ['key' => 'create', 'label' => 'Add New Property', 'icon' => 'fa-square-plus', 'href' => route('rooms.create'), 'match' => 'rooms.create'],
+        ['key' => 'rooms', 'label' => 'My Properties', 'icon' => 'fa-building', 'href' => route('owner.rooms'), 'match' => 'owner.rooms'],
+        ['key' => 'enquiries', 'label' => 'Enquiries', 'icon' => 'fa-address-card', 'href' => route('owner.enquiries'), 'match' => 'owner.enquiries'],
+        ['key' => 'plans', 'label' => 'Plans & Pricing', 'icon' => 'fa-tags', 'href' => route('plans'), 'match' => 'plans'],
     ];
 
     if (\App\Models\Setting::isEnabled('wallet_enabled', true)) {
-        $ownerItems[] = ['key' => 'wallet', 'label' => 'My Wallet', 'icon' => 'fa-wallet', 'href' => route('wallet')];
+        $ownerItems[] = ['key' => 'wallet', 'label' => 'My Wallet', 'icon' => 'fa-wallet', 'href' => route('wallet'), 'match' => 'wallet'];
     }
 
     if (\App\Models\Setting::isEnabled('referral_enabled', true)) {
-        $ownerItems[] = ['key' => 'referral', 'label' => 'Refer & Earn', 'icon' => 'fa-gift', 'href' => route('referral.index')];
+        $ownerItems[] = ['key' => 'referral', 'label' => 'Refer & Earn', 'icon' => 'fa-gift', 'href' => route('referral.index'), 'match' => 'referral.*'];
     }
 
-    $ownerItems[] = ['key' => 'complaints', 'label' => 'My Complaints', 'icon' => 'fa-shield-halved', 'href' => route('complaints.index')];
-    $ownerItems[] = ['key' => 'profile', 'label' => 'Profile Settings', 'icon' => 'fa-user-gear', 'href' => route('profile.edit')];
+    $ownerItems[] = ['key' => 'complaints', 'label' => 'My Complaints', 'icon' => 'fa-shield-halved', 'href' => route('complaints.index'), 'match' => 'complaints.*'];
+    $ownerItems[] = ['key' => 'profile', 'label' => 'Profile Settings', 'icon' => 'fa-user-gear', 'href' => route('profile.edit'), 'match' => 'profile.*'];
     $ownerLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo');
 @endphp
 
@@ -27,7 +26,7 @@
 <link rel="stylesheet" href="{{ asset('css/owner-theme.css') }}">
 @endonce
 
-<aside class="owner-sidebar hidden lg:flex bg-white border-r border-slate-200 flex-col sticky top-16 h-[calc(100vh-4rem)]">
+<aside class="owner-sidebar hidden lg:flex bg-white border-r border-slate-200 flex-col sticky top-0 h-screen">
     <div class="px-5 py-5 border-b border-slate-100">
         <a href="{{ route('owner.dashboard') }}" class="flex items-center gap-3">
             @if($ownerLogo)
@@ -46,7 +45,7 @@
 
     <nav class="flex-1 overflow-y-auto p-3 space-y-1.5" aria-label="Owner navigation">
         @foreach($ownerItems as $item)
-            @php $isActive = $activeOwnerSection === $item['key']; @endphp
+            @php $isActive = request()->routeIs($item['match']); @endphp
             <a href="{{ $item['href'] }}"
                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors {{ $isActive ? 'owner-sidebar-active' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
                @if($isActive) aria-current="page" @endif>

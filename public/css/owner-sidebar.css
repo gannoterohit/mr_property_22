@@ -1,3 +1,13 @@
+    body > nav, body > footer, body > .mobile-app-header, body > .mobile-bottom-nav,
+    body > #mobile-app-menu { display: none !important; }
+    body { background: #f8fafc !important; color: #1f2937; }
+    body > main { padding-top: 0 !important; }
+    .owner-shell {
+        --owner-primary: var(--primary, #4f46e5);
+        --owner-secondary: var(--secondary, #10b981);
+        --owner-primary-rgb: var(--primary-rgb, 79,70,229);
+        --owner-secondary-rgb: var(--secondary-rgb, 16,185,129);
+    }
     .owner-workspace {
         display: flex !important;
         flex-direction: row !important;
@@ -12,13 +22,13 @@
         width: 16rem !important;
         max-width: 16rem !important;
         position: fixed !important;
-        top: 4rem !important;
+        top: 0 !important;
         bottom: 0 !important;
         left: 0 !important;
         z-index: 35 !important;
-        height: calc(100vh - 4rem) !important;
+        height: 100vh !important;
         min-height: 0 !important;
-        max-height: calc(100vh - 4rem) !important;
+        max-height: 100vh !important;
         overflow: hidden !important;
     }
     .owner-workspace .owner-sidebar nav { display: block !important; flex: 1 1 auto; min-height: 0; overflow: hidden !important; }
@@ -35,7 +45,7 @@
     }
     .owner-workspace:has(> .owner-form-shell) { height: auto !important; min-height: 100vh; overflow: visible !important; align-items: flex-start !important; }
     .owner-workspace > .owner-form-shell { display: flex !important; align-items: flex-start !important; width: 100% !important; min-width: 0; height: auto !important; min-height: 100vh; overflow: visible !important; }
-    .owner-workspace > .owner-form-shell > .owner-sidebar { display: flex !important; flex: 0 0 16rem !important; width: 16rem !important; max-width: 16rem !important; position: fixed !important; top: 4rem !important; bottom: 0 !important; left: 0 !important; z-index: 35 !important; height: calc(100vh - 4rem) !important; }
+    .owner-workspace > .owner-form-shell > .owner-sidebar { display: flex !important; flex: 0 0 16rem !important; width: 16rem !important; max-width: 16rem !important; position: fixed !important; top: 0 !important; bottom: 0 !important; left: 0 !important; z-index: 35 !important; height: 100vh !important; }
     .owner-workspace > .owner-form-shell > main { display: block; flex: 1 1 auto !important; width: calc(100% - 16rem); margin-left: 16rem !important; min-width: 0; height: auto !important; max-height: none !important; overflow: visible !important; padding-bottom: 5rem !important; }
     .owner-workspace .owner-page-header {
         background: #fff !important;

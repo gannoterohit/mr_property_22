@@ -16,6 +16,10 @@ Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');
 
+    Route::get('register/broker', function () {
+        return redirect()->route('register', ['role' => 'broker']);
+    })->name('register.broker');
+
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');
 

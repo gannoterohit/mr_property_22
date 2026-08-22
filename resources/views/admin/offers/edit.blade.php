@@ -103,6 +103,7 @@
                             <option value="both" {{ old('target_audience', $offer->target_audience) == 'both' ? 'selected' : '' }}>Both (Users & Owners)</option>
                             <option value="user" {{ old('target_audience', $offer->target_audience) == 'user' ? 'selected' : '' }}>Users Only</option>
                             <option value="owner" {{ old('target_audience', $offer->target_audience) == 'owner' ? 'selected' : '' }}>Owners Only</option>
+                            <option value="broker" {{ old('target_audience', $offer->target_audience) == 'broker' ? 'selected' : '' }}>Brokers Only</option>
                         </select>
                         @error('target_audience')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
                     </div>

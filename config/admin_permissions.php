@@ -18,6 +18,10 @@ return [
         'settings.manage' => ['Settings', 'Manage business, integration and maintenance settings'],
         'staff.manage' => ['Staff & roles', 'Create staff and manage role permissions'],
         'activity.view' => ['Activity logs', 'View administrative activity history'],
+        'brokers.view' => ['Brokers: view', 'View broker profiles and listings'],
+        'brokers.manage' => ['Brokers: manage', 'Approve, reject, suspend or activate brokers'],
+        'brokers.settings' => ['Brokers: settings', 'Manage broker module settings and pricing'],
+        'brokers.plans.manage' => ['Brokers: plans', 'Manage broker subscription plans'],
     ],
     'roles' => [
         'super_admin' => ['Super Admin', 'Full platform access', ['*']],

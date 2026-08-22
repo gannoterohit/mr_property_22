@@ -93,8 +93,8 @@
                     <i class="fas fa-user-plus w-5 text-indigo-500"></i> For Owners
                 </a>
                 @auth
-                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'owner')
-                        <a href="{{ route('dashboard') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-600' : '' }}">
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'owner' || Auth::user()->role === 'broker')
+                        <a href="{{ match(Auth::user()->role) { 'owner' => route('owner.dashboard'), 'broker' => route('agent.dashboard'), 'admin' => route('admin.dashboard'), default => route('dashboard') } }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('dashboard', 'agent.dashboard', 'owner.dashboard', 'admin.dashboard') ? 'bg-indigo-50 text-indigo-600' : '' }}">
                             <i class="fas fa-tachometer-alt w-5 text-indigo-500"></i> Dashboard
                         </a>
                     @else

@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 @section('title', 'Create Account | ApnaNest')
-@section('description', 'Create an ApnaNest account to find a room or list your property and connect directly.')
+@section('description', 'Create an ApnaNest account to find a room, list your property, or register as a broker.')
 
 @section('content')
 @php
@@ -23,12 +23,12 @@
                     Apna<span>Nest</span>
                 @endif
             </a>
-            <span class="auth-kicker"><i class="fas fa-home"></i> Built for renters and owners</span>
-            <h1>Your next room or tenant starts here.</h1>
-            <p>Create one secure account, choose how you want to use ApnaNest and connect without unnecessary middlemen.</p>
+            <span class="auth-kicker"><i class="fas fa-home"></i> Built for renters, owners and brokers</span>
+            <h1>Your next room, tenant, or deal starts here.</h1>
+            <p>Create one secure account. Choose how you want to use ApnaNest — find a room, list a property, or manage listings as a broker.</p>
             <div class="auth-benefits">
                 <div><i class="fas fa-check"></i><span><strong>Browse verified listings</strong><small>Compare rooms, locations and monthly rent</small></span></div>
-                <div><i class="fas fa-check"></i><span><strong>List and manage properties</strong><small>Owners control listings from one workspace</small></span></div>
+                <div><i class="fas fa-check"></i><span><strong>List and manage properties</strong><small>Owners and brokers control listings from one workspace</small></span></div>
                 <div><i class="fas fa-check"></i><span><strong>Secure email verification</strong><small>No password is stored or required</small></span></div>
             </div>
         </aside>
@@ -45,9 +45,16 @@
                     </div>
                     <div class="auth-field-group"><label class="auth-label" for="email">Email address</label><div class="auth-input-wrap"><i class="far fa-envelope"></i><input type="email" id="email" name="email" autocomplete="email" required placeholder="name@example.com"></div></div>
                     <div class="auth-field-group"><label class="auth-label">How will you use ApnaNest?</label><div class="role-options">
-                        <label class="role-card"><input type="radio" name="role" value="user" {{ request('role') !== 'owner' ? 'checked' : '' }}><span><i class="fas fa-search"></i><span><b>Find a room</b><small>Browse and contact owners</small></span></span></label>
+                        <label class="role-card"><input type="radio" name="role" value="user" {{ request('role') !== 'owner' && request('role') !== 'broker' ? 'checked' : '' }}><span><i class="fas fa-search"></i><span><b>Find a room</b><small>Browse and contact owners</small></span></span></label>
                         <label class="role-card"><input type="radio" name="role" value="owner" {{ request('role') === 'owner' ? 'checked' : '' }}><span><i class="fas fa-building"></i><span><b>List a property</b><small>Manage rooms and enquiries</small></span></span></label>
+                        <label class="role-card"><input type="radio" name="role" value="broker" {{ request('role') === 'broker' ? 'checked' : '' }}><span><i class="fas fa-handshake"></i><span><b>Broker / Agent</b><small>List multiple properties and manage leads</small></span></span></label>
                     </div></div>
+                    <div id="broker-fields" class="hidden space-y-4">
+                        <div class="auth-grid">
+                            <div class="auth-field-group"><label class="auth-label" for="agency_name">Agency Name <span style="font-weight:500;color:#94a3b8">(optional)</span></label><input class="auth-field" type="text" id="agency_name" name="agency_name" placeholder="Your agency name"></div>
+                            <div class="auth-field-group"><label class="auth-label" for="broker_license">Broker License <span style="font-weight:500;color:#94a3b8">(optional)</span></label><input class="auth-field" type="text" id="broker_license" name="broker_license" placeholder="License number"></div>
+                        </div>
+                    </div>
                     <div class="auth-field-group"><label class="auth-label" for="referral_code_input">Referral code <span style="font-weight:500;color:#94a3b8">(optional)</span></label><input class="auth-field" type="text" id="referral_code_input" name="referral_code" autocomplete="off" value="{{ old('referral_code', session('referral_code')) }}" placeholder="Enter referral code"></div>
                     <label class="terms-row">
                         <input type="checkbox" id="terms_checkbox" required>
@@ -100,4 +107,14 @@
 </section>
 @include('auth.partials.auth-styles')
 @include('auth.partials.otp-script', ['mode' => 'register'])
+<script>
+document.querySelectorAll('input[name="role"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        const brokerFields = document.getElementById('broker-fields');
+        if (brokerFields) {
+            brokerFields.classList.toggle('hidden', this.value !== 'broker');
+        }
+    });
+});
+</script>
 @endsection

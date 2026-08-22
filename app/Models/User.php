@@ -45,6 +45,21 @@ class User extends Authenticatable
         'web_push_token',
         'provider',
         'provider_id',
+        'agency_name',
+        'agency_address',
+        'agency_gst',
+        'broker_license',
+        'broker_verification_status',
+        'broker_verified_at',
+        'is_broker_active',
+        'broker_approved_at',
+        'broker_rejected_reason',
+        'broker_total_listings',
+        'broker_active_listings',
+        'broker_featured_listings',
+        'broker_subscription_expires_at',
+        'broker_subscription_listings_limit',
+        'broker_subscription_listings_used',
     ];
 
     protected static function booted()
@@ -100,6 +115,10 @@ class User extends Authenticatable
             'is_staff_active' => 'boolean',
             'last_admin_login_at' => 'datetime',
             'verified_at' => 'datetime',
+            'broker_verified_at' => 'datetime',
+            'is_broker_active' => 'boolean',
+            'broker_approved_at' => 'datetime',
+            'broker_subscription_expires_at' => 'datetime',
         ];
     }
 
@@ -154,5 +173,50 @@ class User extends Authenticatable
     public function socialAccounts()
     {
         return $this->hasMany(SocialAccount::class);
+    }
+
+    public function brokerProperties()
+    {
+        return $this->hasMany(Room::class, 'broker_id');
+    }
+
+    public function brokerSubscription()
+    {
+        return $this->hasOne(BrokerSubscription::class, 'broker_id')->where('status', 'active')->latest();
+    }
+
+    public function brokerListingCredits()
+    {
+        return $this->hasMany(BrokerListingCredit::class, 'broker_id');
+    }
+
+    public function brokerPayments()
+    {
+        return $this->hasMany(BrokerPayment::class, 'broker_id');
+    }
+
+    public function brokerTransactions()
+    {
+        return $this->hasMany(BrokerTransaction::class, 'broker_id');
+    }
+
+    public function brokerWallet()
+    {
+        return $this->hasOne(BrokerWallet::class, 'broker_id');
+    }
+
+    public function brokerRanking()
+    {
+        return $this->hasOne(BrokerRanking::class, 'broker_id');
+    }
+
+    public function isBroker(): bool
+    {
+        return $this->role === 'broker';
+    }
+
+    public function getBrokerVerificationStatusAttribute($value)
+    {
+        return $value ?: $this->broker_verification_status;
     }
 }

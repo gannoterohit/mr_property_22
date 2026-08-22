@@ -32,6 +32,7 @@ class AdminController extends Controller
             'listings_manage' => $allowed('listings.manage'), 'people_manage' => $allowed('people.manage'),
             'support_manage' => $allowed('support.manage'), 'finance_manage' => $allowed('finance.manage'),
             'content_manage' => $allowed('content.manage'), 'reports_manage' => $allowed('reports.manage'),
+            'brokers' => $allowed('brokers.view'), 'brokers_manage' => $allowed('brokers.manage'),
         ];
         $data = ['access' => $access, 'actionQueues' => [], 'quickLinks' => [], 'revenueData' => array_fill(0, 12, 0)];
 
@@ -62,6 +63,16 @@ class AdminController extends Controller
             if ($access['people_manage']) {
                 $data['quickLinks'][] = ['label' => 'Add owner', 'route' => route('admin.owners.create'), 'icon' => 'fa-user-plus'];
             }
+        }
+        if ($access['brokers']) {
+            $data += [
+                'brokers' => User::where('role', 'broker')->count(),
+                'pendingBrokers' => User::where('role', 'broker')->where('broker_verification_status', 'pending')->count(),
+                'approvedBrokers' => User::where('role', 'broker')->where('broker_verification_status', 'approved')->count(),
+                'recentBrokers' => User::where('role', 'broker')->latest()->limit(5)->get(),
+            ];
+            $data['actionQueues'][] = ['label' => 'Pending broker verification', 'count' => $data['pendingBrokers'], 'route' => route('admin.brokers.index', ['verification_status' => 'pending']), 'icon' => 'fa-user-tie'];
+            $data['quickLinks'][] = ['label' => 'Brokers', 'route' => route('admin.brokers.index'), 'icon' => 'fa-user-tie'];
         }
         if ($access['support']) {
             $data['openComplaints'] = \App\Models\Complaint::whereNotIn('status', ['resolved', 'rejected', 'closed'])->count();

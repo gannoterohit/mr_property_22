@@ -322,6 +322,15 @@ class RoomController extends Controller {
         DB::beginTransaction();
         try {
             $data['user_id'] = Auth::id();
+
+            // Set broker_id and listed_by based on role
+            if (Auth::user()->role === 'broker') {
+                $data['broker_id'] = Auth::id();
+                $data['listed_by'] = 'broker';
+            } else {
+                $data['listed_by'] = 'owner';
+            }
+
             $data['status'] = 'pending';
             $data['listing_fee_paid'] = false;
             
@@ -372,10 +381,20 @@ class RoomController extends Controller {
             // Free-launch mode: skip subscriptions, wallet and Razorpay while
             // keeping the configured listing amount saved for future use.
             $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+
+            // Broker-specific listing fee logic
+            $isBroker = Auth::user()->role === 'broker';
+            $brokerListingChargesEnabled = \App\Models\BrokerSetting::isEnabled('broker_listing_charges_enabled', false);
+            $brokerSubscriptionEnabled = \App\Models\BrokerSetting::isEnabled('broker_subscription_enabled', false);
+
+            if ($isBroker && !$brokerListingChargesEnabled) {
+                $listingFeeEnabled = false;
+            }
+
             if (!$listingFeeEnabled) {
                 $payment = Payment::create([
                     'user_id' => Auth::id(),
-                    'type' => 'listing',
+                    'type' => $isBroker ? 'broker_listing' : 'listing',
                     'amount' => 0,
                     'gateway' => 'free',
                     'reference_id' => $room->id,
@@ -397,7 +416,65 @@ class RoomController extends Controller {
                 ]);
             }
 
-            // Check owner subscription for room listing - count based, not date based
+            // Check broker subscription or credits for room listing
+            $useSubscription = false;
+            $useCredits = false;
+
+            if ($isBroker && $brokerSubscriptionEnabled) {
+                $activeSubscription = \App\Models\BrokerSubscription::where('broker_id', Auth::id())
+                    ->where('status', 'active')
+                    ->where('expires_at', '>=', now())
+                    ->lockForUpdate()
+                    ->with('plan')
+                    ->first();
+
+                if ($activeSubscription && $activeSubscription->is_active) {
+                    if ($activeSubscription->remaining_listings > 0) {
+                        $activeSubscription->increment('listings_used');
+                        $room->update([
+                            'listing_fee_paid' => true,
+                            'status' => 'active',
+                            'listing_payment_id' => null,
+                        ]);
+                        $useSubscription = true;
+                    }
+                }
+            }
+
+            if (!$useSubscription && $isBroker) {
+                $credits = \App\Models\BrokerListingCredit::where('broker_id', Auth::id())
+                    ->where('credits_remaining', '>', 0)
+                    ->where(function ($q) {
+                        $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                    })
+                    ->where('type', 'listing')
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($credits) {
+                    $credits->decrement('credits_remaining');
+                    $room->update([
+                        'listing_fee_paid' => true,
+                        'status' => 'active',
+                        'listing_payment_id' => null,
+                    ]);
+                    $useCredits = true;
+                }
+            }
+
+            if ($useSubscription || $useCredits) {
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'room_id' => $room->id,
+                    'subscription_used' => $useSubscription,
+                    'credits_used' => $useCredits,
+                    'message' => 'Room listed successfully!',
+                ]);
+            }
+
+            // Owner subscription check or broker payment required
             $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())
                 ->where('status', 'active')
                 ->whereDate('end_date', '>=', today())
@@ -438,7 +515,12 @@ class RoomController extends Controller {
 
             if (!$useSubscription) {
                 // Create payment record for listing fee
-                $listingFee = Setting::get('listing_fee', 199);
+                $isBroker = Auth::user()->role === 'broker';
+                if ($isBroker) {
+                    $listingFee = \App\Models\BrokerSetting::get('broker_per_listing_charge', 199);
+                } else {
+                    $listingFee = Setting::get('listing_fee', 199);
+                }
 
                 // Check if user has enough balance in wallet
                 $user = Auth::user();
@@ -451,7 +533,7 @@ class RoomController extends Controller {
                         // Create payment record for wallet usage
                         $payment = Payment::create([
                             'user_id' => $user->id,
-                            'type' => 'listing',
+                            'type' => $isBroker ? 'broker_listing' : 'listing',
                             'amount' => $listingFee,
                             'gateway' => 'wallet',
                             'reference_id' => $room->id,
@@ -512,7 +594,7 @@ class RoomController extends Controller {
 
                 $payment = Payment::create([
                     'user_id' => Auth::id(),
-                    'type' => 'listing',
+                    'type' => $isBroker ? 'broker_listing' : 'listing',
                     'amount' => $listingFee,
                     'gateway' => 'razorpay',
                     'reference_id' => $room->id,
@@ -569,7 +651,7 @@ class RoomController extends Controller {
         $isOwner = false;
         $isAdmin = false;
         if (Auth::check()) {
-            $isOwner = Auth::id() === $room->user_id && Auth::user()->role === 'owner';
+            $isOwner = Auth::id() === $room->user_id && in_array(Auth::user()->role, ['owner', 'broker']);
             $isAdmin = Auth::user()->role === 'admin';
         }
 
@@ -587,12 +669,12 @@ class RoomController extends Controller {
             if (
                 Auth::check() &&
                 (
-                    (Auth::id() === $room->user_id && Auth::user()->role === 'owner')
+                    (Auth::id() === $room->user_id && in_array(Auth::user()->role, ['owner', 'broker']))
                     || Auth::user()->role === 'admin'
                 )
             ) {
                 $isOwner = true;
-                $isUnlocked = true; // Owner can see their own room contact
+                $isUnlocked = true; // Owner/broker can see their own room contact
             } else {
                 // Check subscription first - count based, not date based
                 $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())
@@ -669,14 +751,14 @@ class RoomController extends Controller {
     }
 
     public function edit(Room $room) {
-        if ($room->user_id !== Auth::id()) {
+        if ($room->user_id !== Auth::id() || !in_array(Auth::user()->role, ['owner', 'broker'])) {
             abort(403, 'Unauthorized');
         }
         return view('owner.rooms.edit', compact('room'));
     }
 
     public function update(Request $req, Room $room) {
-        if ($room->user_id !== Auth::id()) {
+        if ($room->user_id !== Auth::id() || !in_array(Auth::user()->role, ['owner', 'broker'])) {
             abort(403, 'Unauthorized');
         }
 
@@ -783,7 +865,7 @@ class RoomController extends Controller {
     }
 
     public function destroy(Room $room) {
-        if ($room->user_id !== Auth::id()) {
+        if ($room->user_id !== Auth::id() || !in_array(Auth::user()->role, ['owner', 'broker'])) {
             abort(403, 'Unauthorized');
         }
 
@@ -821,7 +903,7 @@ class RoomController extends Controller {
     }
 
     public function makeFeatured(Request $request, Room $room) {
-        if ($room->user_id !== Auth::id()) {
+        if ($room->user_id !== Auth::id() || !in_array(Auth::user()->role, ['owner', 'broker'])) {
             return back()->with('error', 'Unauthorized');
         }
 
@@ -829,9 +911,20 @@ class RoomController extends Controller {
             return back()->with('info', 'Room is already featured');
         }
 
+        $isBroker = Auth::user()->role === 'broker';
+
+        // Check broker featured toggle
+        if ($isBroker && !\App\Models\BrokerSetting::isEnabled('broker_featured_enabled', true)) {
+            return back()->with('error', 'Featured listing is currently disabled for brokers.');
+        }
+
         DB::beginTransaction();
         try {
-            $featuredFee = Setting::get('featured_fee', 99);
+            if ($isBroker) {
+                $featuredFee = \App\Models\BrokerSetting::get('broker_featured_charge', 99);
+            } else {
+                $featuredFee = Setting::get('featured_fee', 99);
+            }
             $user = Auth::user();
 
             // Wallet Payment
@@ -841,7 +934,7 @@ class RoomController extends Controller {
                     
                     $payment = Payment::create([
                         'user_id' => $user->id,
-                        'type' => 'featured',
+                        'type' => $isBroker ? 'broker_featured' : 'featured',
                         'amount' => $featuredFee,
                         'gateway' => 'wallet',
                         'reference_id' => $room->id,
@@ -869,7 +962,7 @@ class RoomController extends Controller {
             if ($featuredFee <= 0) {
                 $payment = Payment::create([
                     'user_id' => Auth::id(),
-                    'type' => 'featured',
+                    'type' => $isBroker ? 'broker_featured' : 'featured',
                     'amount' => 0,
                     'gateway' => 'free',
                     'reference_id' => $room->id,
@@ -889,7 +982,7 @@ class RoomController extends Controller {
 
             $payment = Payment::create([
                 'user_id' => Auth::id(),
-                'type' => 'featured',
+                'type' => $isBroker ? 'broker_featured' : 'featured',
                 'amount' => $featuredFee,
                 'gateway' => 'razorpay',
                 'reference_id' => $room->id,
@@ -913,7 +1006,7 @@ class RoomController extends Controller {
     }
 
     public function markBooked(Room $room) {
-        if ($room->user_id !== Auth::id()) {
+        if ($room->user_id !== Auth::id() || !in_array(Auth::user()->role, ['owner', 'broker'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized'
@@ -936,7 +1029,7 @@ class RoomController extends Controller {
     }
 
     public function markAvailable(Request $request, Room $room) {
-        if ($room->user_id !== Auth::id()) {
+        if ($room->user_id !== Auth::id() || !in_array(Auth::user()->role, ['owner', 'broker'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized'
@@ -947,8 +1040,36 @@ class RoomController extends Controller {
         if ($room->status === 'booked') {
             DB::beginTransaction();
             try {
+                $isBroker = Auth::user()->role === 'broker';
+                $brokerListingChargesEnabled = \App\Models\BrokerSetting::isEnabled('broker_listing_charges_enabled', false);
+                $brokerSubscriptionEnabled = \App\Models\BrokerSetting::isEnabled('broker_subscription_enabled', false);
+
+                // For brokers, check broker-specific settings
+                if ($isBroker && !$brokerListingChargesEnabled) {
+                    $payment = Payment::create([
+                        'user_id' => Auth::id(),
+                        'type' => 'broker_listing',
+                        'amount' => 0,
+                        'gateway' => 'free',
+                        'reference_id' => $room->id,
+                        'status' => 'completed',
+                    ]);
+                    $room->update([
+                        'status' => 'active',
+                        'listing_fee_paid' => true,
+                        'listing_payment_id' => $payment->id,
+                    ]);
+                    DB::commit();
+
+                    return response()->json([
+                        'success' => true,
+                        'free_listing' => true,
+                        'message' => 'Room marked as available successfully.',
+                    ]);
+                }
+
                 $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
-                if (!$listingFeeEnabled) {
+                if (!$isBroker && !$listingFeeEnabled) {
                     $payment = Payment::create([
                         'user_id' => Auth::id(),
                         'type' => 'listing',
@@ -980,7 +1101,7 @@ class RoomController extends Controller {
                     ->first();
                 
                 $useSubscription = false;
-                if ($activeSubscription && $activeSubscription->plan && $activeSubscription->plan->type === 'owner') {
+                if (!$isBroker && $activeSubscription && $activeSubscription->plan && $activeSubscription->plan->type === 'owner') {
                     // Count rooms listed using subscription (listing_payment_id is null)
                     $usedListings = Room::where('user_id', Auth::id())
                         ->where('listing_fee_paid', true)
@@ -1008,8 +1129,33 @@ class RoomController extends Controller {
                     }
                 }
 
+                // Check broker subscription for room listing
+                if ($isBroker && $brokerSubscriptionEnabled) {
+                    $activeBrokerSubscription = \App\Models\BrokerSubscription::where('broker_id', Auth::id())
+                        ->where('status', 'active')
+                        ->where('expires_at', '>=', now())
+                        ->with('plan')
+                        ->first();
+
+                    if ($activeBrokerSubscription && $activeBrokerSubscription->is_active) {
+                        if ($activeBrokerSubscription->remaining_listings > 0) {
+                            $activeBrokerSubscription->increment('listings_used');
+                            $room->update([
+                                'listing_fee_paid' => true,
+                                'status' => 'active',
+                                'listing_payment_id' => null,
+                            ]);
+                            $useSubscription = true;
+                        }
+                    }
+                }
+
                 if (!$useSubscription) {
-                    $listingFee = Setting::get('listing_fee', 199);
+                    if ($isBroker) {
+                        $listingFee = \App\Models\BrokerSetting::get('broker_per_listing_charge', 199);
+                    } else {
+                        $listingFee = Setting::get('listing_fee', 199);
+                    }
                     
                     // Check if payment method is wallet
                     if ($request->payment_method === 'wallet') {
@@ -1022,7 +1168,7 @@ class RoomController extends Controller {
                             // Create payment record for wallet usage
                             $payment = Payment::create([
                                 'user_id' => $user->id,
-                                'type' => 'listing',
+                                'type' => $isBroker ? 'broker_listing' : 'listing',
                                 'amount' => $listingFee,
                                 'gateway' => 'wallet',
                                 'reference_id' => $room->id,
@@ -1056,7 +1202,7 @@ class RoomController extends Controller {
                     if ($listingFee <= 0) {
                         $payment = Payment::create([
                             'user_id' => Auth::id(),
-                            'type' => 'listing',
+                            'type' => $isBroker ? 'broker_listing' : 'listing',
                             'amount' => 0,
                             'gateway' => 'free',
                             'reference_id' => $room->id,
@@ -1082,7 +1228,7 @@ class RoomController extends Controller {
                     // Create payment record
                     $payment = Payment::create([
                         'user_id' => Auth::id(),
-                        'type' => 'listing',
+                        'type' => $isBroker ? 'broker_listing' : 'listing',
                         'amount' => $listingFee,
                         'gateway' => 'razorpay',
                         'reference_id' => $room->id,

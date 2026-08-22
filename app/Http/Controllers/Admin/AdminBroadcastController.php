@@ -26,6 +26,7 @@ class AdminBroadcastController extends Controller
 
         $totalUsers  = User::where('role', 'user')->count();
         $totalOwners = User::where('role', 'owner')->count();
+        $totalBrokers = User::where('role', 'broker')->count();
 
         // Get distinct active operational cities
         $dbCities = \App\Models\City::where('is_active', true)->pluck('name')->toArray();
@@ -33,7 +34,7 @@ class AdminBroadcastController extends Controller
         $cities = array_values(array_unique(array_filter(array_merge($dbCities, $roomCities))));
         sort($cities);
 
-        return view('admin.broadcast.index', compact('pastBroadcasts', 'totalUsers', 'totalOwners', 'cities'));
+        return view('admin.broadcast.index', compact('pastBroadcasts', 'totalUsers', 'totalOwners', 'totalBrokers', 'cities'));
     }
 
     /**
@@ -42,7 +43,7 @@ class AdminBroadcastController extends Controller
     public function send(Request $request)
     {
         $request->validate([
-            'target_audience' => 'required|in:all,user,owner',
+            'target_audience' => 'required|in:all,user,owner,broker',
             'target_city'     => 'nullable|string|max:100',
             'channels'        => 'required|array|min:1',
             'channels.*'      => 'in:bell,firebase,email',
@@ -75,6 +76,8 @@ class AdminBroadcastController extends Controller
             $query->where('role', 'user');
         } elseif ($request->target_audience === 'owner') {
             $query->where('role', 'owner');
+        } elseif ($request->target_audience === 'broker') {
+            $query->where('role', 'broker');
         } else {
             $query->where('role', '!=', 'admin');
         }
@@ -157,6 +160,7 @@ class AdminBroadcastController extends Controller
         $audienceLabel = match ($request->target_audience) {
             'user'  => 'Renters only',
             'owner' => 'Owners only',
+            'broker' => 'Brokers only',
             default => 'All Users & Owners',
         };
 

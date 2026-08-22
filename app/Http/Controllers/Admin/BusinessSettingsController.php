@@ -38,6 +38,10 @@ class BusinessSettingsController extends Controller
             Setting::set($key, $request->boolean($key) ? '1' : '0');
         }
 
+        foreach (['broker_module_enabled', 'broker_verification_enabled', 'broker_listing_charges_enabled', 'broker_subscription_enabled', 'broker_featured_enabled', 'broker_future_brokerage_enabled'] as $key) {
+            \App\Models\BrokerSetting::set($key, $request->boolean($key) ? '1' : '0');
+        }
+
         return back()->with('success', 'Platform availability settings updated.');
     }
 
@@ -114,6 +118,9 @@ class BusinessSettingsController extends Controller
             'facebook_redirect_url' => ['nullable', 'url', 'max:500'],
         ]);
 
+        $brokerFeeEnabled = $request->boolean('broker_listing_fee_enabled');
+        $brokerListingFee = $request->input('broker_listing_fee');
+
         foreach ([
             'google_ads_enabled',
             'adsense_enabled',
@@ -125,6 +132,11 @@ class BusinessSettingsController extends Controller
             'facebook_login_enabled',
         ] as $booleanKey) {
             $data[$booleanKey] = $request->boolean($booleanKey) ? '1' : '0';
+        }
+
+        \App\Models\BrokerSetting::set('broker_listing_charges_enabled', $request->boolean('broker_listing_fee_enabled') ? '1' : '0');
+        if ($request->filled('broker_listing_fee')) {
+            \App\Models\BrokerSetting::set('broker_per_listing_charge', $request->input('broker_listing_fee'));
         }
 
         foreach (['mail_password', 'razorpay_secret', 'razorpay_webhook_secret', 'firebase_server_key', 'sms_api_key'] as $secretKey) {

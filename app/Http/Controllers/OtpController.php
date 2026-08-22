@@ -179,7 +179,14 @@ class OtpController extends Controller
 
         auth()->login($user);
 
-        return response()->json(['success' => true, 'message' => 'Login successful', 'redirect' => route('dashboard')]);
+        $redirect = match ($user->role) {
+            'admin' => route('admin.dashboard'),
+            'broker' => $user->is_broker_active ? route('agent.dashboard') : route('agent.pending'),
+            'owner' => route('owner.dashboard'),
+            default => route('home'),
+        };
+
+        return response()->json(['success' => true, 'message' => 'Login successful', 'redirect' => $redirect]);
     }
 
     /**
@@ -191,7 +198,7 @@ class OtpController extends Controller
             'name'  => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'phone' => 'nullable|string',
-            'role'  => 'nullable|in:user,owner',
+            'role'  => 'nullable|in:user,owner,broker',
             'otp'   => 'required|string|min:6|max:6',
         ]);
 
@@ -228,8 +235,7 @@ class OtpController extends Controller
             }
         }
 
-        // Create the user
-        $user = User::create([
+        $userData = [
             'name'              => $request->name,
             'email'             => $request->email,
             'phone'             => $request->phone,
@@ -239,7 +245,18 @@ class OtpController extends Controller
             'referred_by_id'    => $referredBy,
             'wallet'            => 0,
             'free_unlocks'      => $initialFreeUnlocks,
-        ]);
+        ];
+
+        if ($request->role === 'broker') {
+            $userData['broker_verification_status'] = \App\Models\BrokerSetting::isEnabled('broker_verification_enabled', true) ? 'pending' : 'approved';
+            if ($userData['broker_verification_status'] === 'approved') {
+                $userData['is_broker_active'] = true;
+                $userData['broker_verified_at'] = now();
+                $userData['broker_approved_at'] = now();
+            }
+        }
+
+        $user = User::create($userData);
 
         // Clear referral session
         session()->forget('referral_code');
@@ -255,10 +272,22 @@ class OtpController extends Controller
         // Flash signup success for Google Ads tracking
         session(['signup_success' => true]);
 
+        // Role-based redirect
+        $redirect = route('home');
+        if ($user->role === 'broker') {
+            if ($user->is_broker_active) {
+                $redirect = route('agent.dashboard');
+            } else {
+                $redirect = route('agent.pending');
+            }
+        } elseif ($user->role === 'owner') {
+            $redirect = route('owner.dashboard');
+        }
+
         return response()->json([
             'success'  => true,
             'message'  => $msg,
-            'redirect' => route('home')
+            'redirect' => $redirect,
         ]);
     }
 }

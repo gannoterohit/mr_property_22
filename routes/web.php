@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminBroadcastController;
+use App\Http\Controllers\Admin\AdminBrokerController;
+use App\Http\Controllers\Admin\AdminBrokerPlanController;
+use App\Http\Controllers\Admin\AdminBrokerSettingsController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\BusinessSettingsController;
 use App\Http\Controllers\Admin\CityController;
@@ -15,6 +19,7 @@ use App\Http\Controllers\Admin\RoomOptionController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnalyticsEventController;
+use App\Http\Controllers\BrokerDashboardController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PlanController;
@@ -56,9 +61,10 @@ Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'tra
 Route::get('/dashboard', function () {
     $user = auth()->user();
 
-    // Redirect based on role
     if ($user->role === 'admin') {
         return redirect()->route('admin.dashboard');
+    } elseif ($user->role === 'broker') {
+        return redirect()->route('agent.dashboard');
     } elseif ($user->role === 'owner') {
         return redirect()->route('owner.dashboard');
     } else {
@@ -67,7 +73,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Owner-specific room routes (must be before /rooms/{room} route)
-Route::middleware(['auth', 'role:owner'])->group(function () {
+Route::middleware(['auth', 'role:owner,broker'])->group(function () {
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
     Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
     Route::get('/rooms/{room}/edit', [RoomController::class, 'edit'])->name('rooms.edit');
@@ -76,6 +82,18 @@ Route::middleware(['auth', 'role:owner'])->group(function () {
     Route::post('/rooms/{room}/featured', [RoomController::class, 'makeFeatured'])->name('rooms.featured');
     Route::post('/rooms/{room}/booked', [RoomController::class, 'markBooked'])->name('rooms.markBooked');
     Route::post('/rooms/{room}/available', [RoomController::class, 'markAvailable'])->name('rooms.markAvailable');
+});
+
+Route::middleware(['auth', 'role:broker'])->prefix('agent')->name('agent.')->group(function () {
+    Route::get('/dashboard', [BrokerDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/pending', [BrokerDashboardController::class, 'pending'])->name('pending');
+    Route::get('/properties', [BrokerDashboardController::class, 'properties'])->name('properties');
+    Route::get('/subscription', [BrokerDashboardController::class, 'subscription'])->name('subscription');
+    Route::post('/subscription/purchase', [BrokerDashboardController::class, 'purchaseSubscription'])->name('subscription.purchase');
+    Route::get('/payments', [BrokerDashboardController::class, 'payments'])->name('payments');
+    Route::get('/transactions', [BrokerDashboardController::class, 'transactions'])->name('transactions');
+    Route::get('/profile', [BrokerDashboardController::class, 'profile'])->name('profile');
+    Route::patch('/profile', [BrokerDashboardController::class, 'updateProfile'])->name('profile.update');
 });
 
 // Public room browsing
@@ -264,6 +282,23 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::put('/owners/{owner}', [AdminController::class, 'updateOwner'])->name('owners.update');
     Route::delete('/owners/{owner}', [AdminController::class, 'destroyOwner'])->name('owners.destroy');
     Route::post('/owners/{user}/toggle-block', [AdminController::class, 'toggleBlock'])->name('owners.toggleBlock');
+
+    // Brokers Management
+    Route::get('/brokers', [AdminBrokerController::class, 'index'])->name('brokers.index');
+    Route::get('/brokers/{broker}', [AdminBrokerController::class, 'show'])->name('brokers.show');
+    Route::post('/brokers/{broker}/approve', [AdminBrokerController::class, 'approve'])->name('brokers.approve');
+    Route::post('/brokers/{broker}/reject', [AdminBrokerController::class, 'reject'])->name('brokers.reject');
+    Route::post('/brokers/{broker}/suspend', [AdminBrokerController::class, 'suspend'])->name('brokers.suspend');
+    Route::post('/brokers/{broker}/activate', [AdminBrokerController::class, 'activate'])->name('brokers.activate');
+    Route::delete('/brokers/{broker}', [AdminBrokerController::class, 'destroy'])->name('brokers.destroy');
+
+    // Broker Settings
+    Route::get('/broker-settings', [AdminBrokerSettingsController::class, 'index'])->name('broker-settings.index');
+    Route::post('/broker-settings', [AdminBrokerSettingsController::class, 'update'])->name('broker-settings.update');
+
+    // Broker Plans
+    Route::resource('broker-plans', AdminBrokerPlanController::class)->except(['show']);
+    Route::post('/broker-plans/{brokerPlan}/toggle-active', [AdminBrokerPlanController::class, 'toggleActive'])->name('broker-plans.toggleActive');
 
     Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
     Route::get('/all-rooms', [AdminController::class, 'rooms'])->name('all-rooms');

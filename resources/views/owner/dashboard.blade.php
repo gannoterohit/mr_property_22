@@ -6,26 +6,23 @@
 <link rel="stylesheet" href="{{ asset('css/owner-dashboard.css') }}">
 @endpush
 
-@section('content')
+@section('owner-content')
 @php $user = Auth::user(); @endphp
-<div class="owner-workspace owner-dashboard-page min-h-screen flex bg-slate-50">
-    @include('owner.partials.sidebar', ['active' => 'dashboard'])
-
-    <main class="flex-1 min-w-0 pb-24 lg:pb-12">
-        <header class="bg-white border-b border-slate-200">
-            <div class="owner-dashboard-header max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-600">Owner dashboard</p>
-                    <h1 class="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-950">Welcome back, {{ $user->name }}</h1>
-                    <p class="mt-2 text-sm text-slate-500">A quick overview of your property listings and customer interest.</p>
-                </div>
-                <a href="{{ route('rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition">
-                    <i class="fas fa-plus"></i> Add New Property
-                </a>
+<div class="min-h-screen bg-slate-50">
+    <header class="bg-white border-b border-slate-200">
+        <div class="owner-dashboard-header max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-600">Owner dashboard</p>
+                <h1 class="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-950">Welcome back, {{ $user->name }}</h1>
+                <p class="mt-2 text-sm text-slate-500">A quick overview of your property listings and customer interest.</p>
             </div>
-        </header>
+            <a href="{{ route('rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition">
+                <i class="fas fa-plus"></i> Add New Property
+            </a>
+        </div>
+    </header>
 
-        <div class="owner-dashboard-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="owner-dashboard-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @include('partials.offer-banner', ['placement' => 'dashboard'])
             <section class="owner-dashboard-stats" aria-label="Dashboard statistics">
                 @foreach([
@@ -77,6 +74,5 @@
                 </aside>
             </section>
         </div>
-    </main>
-</div>
+    </div>
 @endsection
