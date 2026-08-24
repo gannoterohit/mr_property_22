@@ -396,7 +396,7 @@ class AdminController extends Controller
 
         if ($term !== '') {
             $matches = User::withTrashed()
-                ->whereIn('role', ['user', 'owner'])
+                ->whereIn('role', ['user', 'owner', 'broker'])
                 ->where(function ($query) use ($term) {
                     $query->where('name', 'like', "%{$term}%")
                         ->orWhere('email', 'like', "%{$term}%")
@@ -416,7 +416,7 @@ class AdminController extends Controller
         $history = [];
         if ($request->filled('member_id')) {
             $member = User::withTrashed()
-                ->whereIn('role', ['user', 'owner'])
+                ->whereIn('role', ['user', 'owner', 'broker'])
                 ->withCount(['rooms', 'payments', 'subscriptions', 'enquiries', 'wishlists', 'complaints', 'cityAlerts', 'referrals'])
                 ->findOrFail($request->integer('member_id'));
 

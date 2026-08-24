@@ -50,7 +50,7 @@
                 </div>
             </div>
         </header>
-        <div class="owner-content">
+        <div class="owner-content bg-slate-50">
             @yield('broker-content')
         </div>
     </main>

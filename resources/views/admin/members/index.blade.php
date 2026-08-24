@@ -13,7 +13,7 @@
     <header>
         <p class="admin-theme-text text-[10px] font-extrabold uppercase tracking-[.2em]">People intelligence</p>
         <h1 class="mt-1 text-2xl font-extrabold text-slate-950">Member 360 Search</h1>
-        <p class="mt-1 text-sm text-slate-500">Search any user or owner and review their complete available account history.</p>
+            <p class="mt-1 text-sm text-slate-500">Search any user, owner or broker and review their complete available account history.</p>
     </header>
 
     @include('admin.members.nav')
@@ -58,10 +58,22 @@
     @if($member)
         @php
             $isDeleted = $member->trashed();
-            $detailRoute = $member->role === 'owner' ? 'admin.owners.detail' : 'admin.users.detail';
-            $editRoute = $member->role === 'owner' ? 'admin.owners.edit' : 'admin.users.edit';
-            $toggleRoute = $member->role === 'owner' ? 'admin.owners.toggleBlock' : 'admin.users.toggleBlock';
-            $destroyRoute = $member->role === 'owner' ? 'admin.owners.destroy' : 'admin.users.destroy';
+            if ($member->role === 'owner') {
+                $detailRoute = 'admin.owners.detail';
+                $editRoute = 'admin.owners.edit';
+                $toggleRoute = 'admin.owners.toggleBlock';
+                $destroyRoute = 'admin.owners.destroy';
+            } elseif ($member->role === 'broker') {
+                $detailRoute = 'admin.brokers.show';
+                $editRoute = null;
+                $toggleRoute = null;
+                $destroyRoute = 'admin.brokers.destroy';
+            } else {
+                $detailRoute = 'admin.users.detail';
+                $editRoute = 'admin.users.edit';
+                $toggleRoute = 'admin.users.toggleBlock';
+                $destroyRoute = 'admin.users.destroy';
+            }
         @endphp
 
         <section class="rounded-2xl border bg-white p-5 shadow-sm">
@@ -73,7 +85,7 @@
                         <p class="mt-1 text-xs text-slate-500">Member #{{ $member->id }} - {{ $member->email }} - {{ $member->phone ?: 'No phone' }}</p>
                         <div class="mt-2 flex flex-wrap gap-2">
                             <span class="rounded-full px-2.5 py-1 text-[10px] font-bold {{ $isDeleted || $member->is_blocked ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700' }}">{{ $isDeleted ? 'Deleted' : ($member->is_blocked ? 'Blocked' : 'Active') }}</span>
-                            <span class="rounded-full bg-sky-50 px-2.5 py-1 text-[10px] font-bold text-sky-700">KYC: {{ ucfirst(str_replace('_',' ',$member->verification_status)) }}</span>
+                            <span class="rounded-full bg-sky-50 px-2.5 py-1 text-[10px] font-bold text-sky-700">KYC: {{ ucfirst(str_replace('_',' ',$member->role === 'broker' ? ($member->broker_verification_status ?? 'pending') : $member->verification_status)) }}</span>
                             <span class="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-bold text-amber-700">Joined {{ $member->created_at->format('d M Y') }}</span>
                         </div>
                     </div>
@@ -82,8 +94,19 @@
                     @if($isDeleted)
                         <form method="POST" action="{{ route('admin.members.restore',$member->id) }}">@csrf<button class="rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white"><i class="fas fa-rotate-left mr-1"></i>Restore</button></form>
                     @else
-                        <x-admin.action-icon variant="edit" :href="route($editRoute,$member)" />
-                        <form method="POST" action="{{ route($toggleRoute,$member) }}">@csrf<input type="hidden" name="block_reason" value="Blocked from Member 360 by administrator"><button class="rounded-xl px-4 py-2.5 text-xs font-bold {{ $member->is_blocked ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">{{ $member->is_blocked ? 'Unblock' : 'Block' }}</button></form>
+                        @if($member->role === 'broker')
+                            @if($member->broker_verification_status === 'pending')
+                                <form action="{{ route('admin.brokers.approve', $member) }}" method="POST" class="admin-confirm inline" data-confirm-title="Approve broker?" data-confirm-text="This will activate the broker account." data-confirm-button="Yes, approve">@csrf @method('POST')<button type="submit" class="rounded-xl bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition"><i class="fas fa-check mr-1"></i>Approve</button></form>
+                                <form action="{{ route('admin.brokers.reject', $member) }}" method="POST" class="admin-confirm inline" data-confirm-title="Reject broker?" data-confirm-text="This will reject the broker application." data-confirm-button="Yes, reject">@csrf @method('POST')<button type="submit" class="rounded-xl bg-red-50 px-4 py-2.5 text-xs font-bold text-red-700 hover:bg-red-100 transition"><i class="fas fa-times mr-1"></i>Reject</button></form>
+                            @elseif($member->broker_verification_status === 'approved')
+                                <form action="{{ route('admin.brokers.suspend', $member) }}" method="POST" class="admin-confirm inline" data-confirm-title="Suspend broker?" data-confirm-text="Broker will not be able to list properties." data-confirm-button="Yes, suspend">@csrf @method('POST')<button type="submit" class="rounded-xl bg-amber-50 px-4 py-2.5 text-xs font-bold text-amber-700 hover:bg-amber-100 transition"><i class="fas fa-pause mr-1"></i>Suspend</button></form>
+                            @elseif($member->broker_verification_status === 'suspended')
+                                <form action="{{ route('admin.brokers.activate', $member) }}" method="POST" class="admin-confirm inline" data-confirm-title="Activate broker?" data-confirm-button="Yes, activate">@csrf @method('POST')<button type="submit" class="rounded-xl bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition"><i class="fas fa-play mr-1"></i>Activate</button></form>
+                            @endif
+                        @else
+                            <x-admin.action-icon variant="edit" :href="route($editRoute,$member)" />
+                            <form method="POST" action="{{ route($toggleRoute,$member) }}">@csrf<input type="hidden" name="block_reason" value="Blocked from Member 360 by administrator"><button class="rounded-xl px-4 py-2.5 text-xs font-bold {{ $member->is_blocked ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">{{ $member->is_blocked ? 'Unblock' : 'Block' }}</button></form>
+                        @endif
                         <form method="POST" action="{{ route($destroyRoute,$member) }}" class="admin-confirm" data-confirm-title="Delete {{ $member->name }}?" data-confirm-text="This account can be restored later." data-confirm-button="Yes, delete account">@csrf @method('DELETE')<x-admin.action-icon variant="delete" type="submit" /></form>
                     @endif
                 </div>

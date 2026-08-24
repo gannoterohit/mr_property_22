@@ -5,6 +5,10 @@
 <noscript><link rel="stylesheet" href="{{ asset('css/admin.css') }}"></noscript>
 @endpush
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+@endpush
+
 @push('sweetalert')
 <script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>
 @endpush

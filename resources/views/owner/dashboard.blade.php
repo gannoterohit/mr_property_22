@@ -16,7 +16,7 @@
                 <h1 class="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-950">Welcome back, {{ $user->name }}</h1>
                 <p class="mt-2 text-sm text-slate-500">A quick overview of your property listings and customer interest.</p>
             </div>
-            <a href="{{ route('rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition">
+            <a href="{{ route('owner.rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition">
                 <i class="fas fa-plus"></i> Add New Property
             </a>
         </div>
@@ -65,9 +65,9 @@
                         <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10"><i class="fas fa-bolt text-amber-300"></i></span>
                         <h2 class="mt-4 font-bold">Quick actions</h2>
                         <div class="mt-4 space-y-2">
-                            <a href="{{ route('rooms.create') }}" class="owner-quick-primary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold"><span><i class="fas fa-plus mr-2 text-indigo-600"></i>Add a property</span><i class="fas fa-arrow-right text-xs"></i></a>
+                            <a href="{{ route('owner.rooms.create') }}" class="owner-quick-primary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold"><span><i class="fas fa-plus mr-2 text-indigo-600"></i>Add a property</span><i class="fas fa-arrow-right text-xs"></i></a>
                             <a href="{{ route('owner.enquiries') }}" class="owner-quick-secondary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold"><span><i class="fas fa-address-card mr-2"></i>View enquiries</span><i class="fas fa-arrow-right text-xs"></i></a>
-                            <a href="{{ route('plans') }}" class="owner-quick-secondary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold"><span><i class="fas fa-tags mr-2"></i>Listing plans</span><i class="fas fa-arrow-right text-xs"></i></a>
+                            <a href="{{ route('owner.plans') }}" class="owner-quick-secondary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold"><span><i class="fas fa-tags mr-2"></i>Listing plans</span><i class="fas fa-arrow-right text-xs"></i></a>
                         </div>
                     </div>
                     <div class="owner-account-card rounded-2xl border border-slate-200 bg-white shadow-sm"><p class="text-xs font-bold uppercase tracking-wider text-slate-400">Account</p><div class="mt-3 flex items-center gap-3"><span class="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-50 font-bold text-indigo-600">{{ strtoupper(substr($user->name, 0, 1)) }}</span><div class="min-w-0"><p class="truncate text-sm font-bold text-slate-900">{{ $user->name }}</p><p class="truncate text-xs text-slate-500">{{ $user->email }}</p></div></div><a href="{{ route('profile.edit') }}" class="mt-4 flex w-full items-center justify-center rounded-xl border border-slate-200 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50">Manage profile</a></div>

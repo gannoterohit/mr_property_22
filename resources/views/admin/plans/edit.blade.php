@@ -71,7 +71,7 @@
                         <label for="contacts_limit" class="block text-xs font-bold text-slate-700">Contact Unlocks Limit <span class="font-medium text-slate-400">(-1 for unlimited)</span></label>
                         <input type="number" name="contacts_limit" id="contacts_limit" value="{{ old('contacts_limit', $plan->contacts_limit) }}" min="-1" class="admin-plan-field mt-2">
                     </div>
-                    <div id="listing_limit_group" class="{{ old('type', $plan->type) === 'owner' ? '' : 'hidden' }}">
+                    <div id="listing_limit_group" class="{{ old('type', $plan->type) === 'owner' || old('type', $plan->type) === 'broker' ? '' : 'hidden' }}">
                         <label for="listing_limit" class="block text-xs font-bold text-slate-700">Listing Limit <span class="font-medium text-slate-400">(-1 for unlimited)</span></label>
                         <input type="number" name="listing_limit" id="listing_limit" value="{{ old('listing_limit', $plan->listing_limit) }}" min="-1" class="admin-plan-field mt-2">
                     </div>

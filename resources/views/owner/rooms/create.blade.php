@@ -1,37 +1,24 @@
-@extends('layouts.owner')
+@extends('layouts.room-create')
 
 @section('title', 'List Your Property - RoomRental')
 
 @section('owner-content')
 <link rel="stylesheet" href="{{ asset('css/owner-rooms-create.css') }}">
 
-<div class="owner-workspace room-editor min-h-screen bg-slate-50">
-    <!-- Mobile App Header -->
-    <div class="lg:hidden bg-white px-4 py-4 flex items-center justify-between sticky top-0 z-40 border-b">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('owner.dashboard') }}" class="text-gray-900">
-                <i class="fas fa-arrow-left text-xl"></i>
-            </a>
-            <h1 class="text-lg font-black text-gray-900">List Your Property</h1>
-        </div>
-        <div class="w-8"></div> <!-- Spacer -->
+<!-- Mobile Header -->
+<div class="lg:hidden bg-white px-4 py-4 flex items-center justify-between sticky top-0 z-40 border-b">
+    <div class="flex items-center gap-3">
+        @if(Auth::user()->role === 'broker')
+        <a href="{{ route('agent.dashboard') }}" class="text-gray-900"><i class="fas fa-arrow-left text-xl"></i></a>
+        @else
+        <a href="{{ route('owner.dashboard') }}" class="text-gray-900"><i class="fas fa-arrow-left text-xl"></i></a>
+        @endif
+        <h1 class="text-lg font-black text-gray-900">List Your Property</h1>
     </div>
+    <div class="w-8"></div>
+</div>
 
-    <div class="owner-form-shell">
-        <!-- Main Content Area -->
-        <main class="flex-1">
-            <!-- Desktop Header -->
-            <div class="owner-page-header owner-form-page-header hidden lg:block bg-white border-b border-slate-200">
-                <div class="max-w-6xl mx-auto flex items-center justify-between">
-                    <div>
-                        <h1 class="font-black text-slate-950">List Your Property</h1>
-                        <p class="text-slate-500">Fill in the details to reach thousands of potential tenants.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Form Content -->
-            <div class="room-editor-content max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 pb-12 lg:pb-16">
+<div>
                 <!-- Listing Information Alert -->
                 <div class="bg-amber-50 border border-amber-200 rounded-[2rem] p-6 mb-8 flex items-start gap-4">
                     <div class="w-10 h-10 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 shrink-0">
@@ -302,9 +289,7 @@
                     </div>
                 </form>
             </div>
-        </main>
-    </div>
-</div>
+@endsection
 
 @include('owner.rooms.partials.editor-styles')
 @push('scripts')
@@ -669,7 +654,7 @@ document.getElementById('roomForm').addEventListener('submit', async function(e)
 
     const formData = new FormData(this);
     try {
-        const res = await fetch('{{ route("rooms.store") }}', {
+        const res = await fetch('{{ route("owner.rooms.store") }}', {
             method: 'POST',
             body: formData,
             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
@@ -756,5 +741,4 @@ script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsKey}&libra
 script.async = true;
 document.head.appendChild(script);
 </script>
-@endpush
-@endsection
+    @endpush

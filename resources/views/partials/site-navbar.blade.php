@@ -207,7 +207,7 @@
                         
                         <!-- Post Property Button for Logged In -->
                         @if(Auth::user()->role === 'owner')
-                            <a href="{{ route('rooms.create') }}"
+                            <a href="{{ route('owner.rooms.create') }}"
                                class="theme-primary-button h-10 px-4 rounded-xl text-sm font-bold transition-all duration-200 shadow-md flex items-center gap-1.5 whitespace-nowrap">
                                 <i class="fas fa-plus text-xs"></i> Post Property
                             </a>

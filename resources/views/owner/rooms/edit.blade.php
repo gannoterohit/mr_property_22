@@ -792,7 +792,7 @@ document.getElementById('editRoomForm').addEventListener('submit', async functio
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Updating...';
     
     try {
-        const response = await fetch('{{ route("rooms.update", $room->id) }}', {
+        const response = await fetch('{{ route("owner.rooms.update", $room->id) }}', {
             method: 'POST',
             body: formData,
             headers: {

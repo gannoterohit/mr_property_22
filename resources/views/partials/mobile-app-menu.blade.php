@@ -123,7 +123,7 @@
             <div class="space-y-1">
                 @auth
                     @if(Auth::user()->role === 'owner')
-                        <a href="{{ route('rooms.create') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-green-50 transition text-gray-700 font-bold">
+                        <a href="{{ route('owner.rooms.create') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-green-50 transition text-gray-700 font-bold">
                             <i class="fas fa-plus-circle w-5 text-green-500"></i> List New Room
                         </a>
                     @endif

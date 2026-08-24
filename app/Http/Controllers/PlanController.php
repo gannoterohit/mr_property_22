@@ -39,6 +39,15 @@ class PlanController extends Controller
                 ->whereHas('plan', fn ($q) => $q->where('type', 'owner'))->with('plan')->latest()->first();
             return view('account.plans', ['plans' => $listingPlans, 'activeSubscription' => $activeSubscription]);
         }
+
+        // Show broker listing plans to brokers (ACTIVE ONLY)
+        if (Auth::check() && Auth::user()->role === 'broker') {
+            $brokerPlans = Plan::where('type', 'broker')
+                ->where(fn ($q) => $q->where('listing_limit', '>', 0)->orWhere('listing_limit', -1))
+                ->where('is_active', true)
+                ->get();
+            return view('account.plans', ['plans' => $brokerPlans, 'activeSubscription' => null]);
+        }
         
         // Plans are role-specific, so guests must sign in first.
         return redirect()->route('login');

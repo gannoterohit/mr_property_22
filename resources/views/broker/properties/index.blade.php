@@ -16,7 +16,7 @@
                 <h1 class="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-950">My Properties</h1>
                 <p class="mt-2 text-sm text-slate-500">Manage your property listings.</p>
             </div>
-            <a href="{{ route('rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition">
+            <a href="{{ route('agent.rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition">
                 <i class="fas fa-plus"></i> Add New Property
             </a>
         </div>
@@ -46,8 +46,8 @@
                                     </td>
                                     <td class="px-5 text-slate-500">{{ $property->created_at->format('M d, Y') }}</td>
                                     <td class="px-5"><div class="flex justify-end gap-2">
-                                        <a href="{{ route('rooms.show', $property) }}" class="rounded-lg bg-slate-100 p-2 text-xs font-bold text-slate-700 hover:bg-slate-200" target="_blank"><i class="fas fa-eye"></i></a>
-                                        <a href="{{ route('rooms.edit', $property) }}" class="rounded-lg bg-indigo-100 p-2 text-xs font-bold text-indigo-700 hover:bg-indigo-200"><i class="fas fa-edit"></i></a>
+                                        <a href="{{ route('agent.rooms.show', $property) }}" class="rounded-lg bg-slate-100 p-2 text-xs font-bold text-slate-700 hover:bg-slate-200" target="_blank"><i class="fas fa-eye"></i></a>
+                                        <a href="{{ route('agent.rooms.edit', $property) }}" class="rounded-lg bg-indigo-100 p-2 text-xs font-bold text-indigo-700 hover:bg-indigo-200"><i class="fas fa-edit"></i></a>
                                     </div></td>
                                 </tr>
                             @empty
@@ -66,8 +66,8 @@
                                     <span class="inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold mt-2 {{ $property->status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">{{ ucfirst($property->status) }}</span>
                                 </div>
                                 <div class="flex gap-2">
-                                    <a href="{{ route('rooms.show', $property) }}" class="rounded-lg bg-slate-100 p-2 text-xs font-bold text-slate-700" target="_blank"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('rooms.edit', $property) }}" class="rounded-lg bg-indigo-100 p-2 text-xs font-bold text-indigo-700"><i class="fas fa-edit"></i></a>
+                                    <a href="{{ route('agent.rooms.show', $property) }}" class="rounded-lg bg-slate-100 p-2 text-xs font-bold text-slate-700" target="_blank"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('agent.rooms.edit', $property) }}" class="rounded-lg bg-indigo-100 p-2 text-xs font-bold text-indigo-700"><i class="fas fa-edit"></i></a>
                                 </div>
                             </div>
                         </article>

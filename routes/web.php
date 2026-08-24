@@ -72,23 +72,25 @@ Route::get('/dashboard', function () {
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Owner-specific room routes (must be before /rooms/{room} route)
-Route::middleware(['auth', 'role:owner,broker'])->group(function () {
+// Public room browsing
+Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
+Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
+
+Route::middleware(['auth', 'role:broker'])->prefix('agent')->name('agent.')->group(function () {
+    Route::get('/dashboard', [BrokerDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/pending', [BrokerDashboardController::class, 'pending'])->name('pending');
+    Route::get('/properties', [BrokerDashboardController::class, 'properties'])->name('properties');
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
     Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
+    Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
     Route::get('/rooms/{room}/edit', [RoomController::class, 'edit'])->name('rooms.edit');
     Route::put('/rooms/{room}', [RoomController::class, 'update'])->name('rooms.update');
     Route::delete('/rooms/{room}', [RoomController::class, 'destroy'])->name('rooms.destroy');
     Route::post('/rooms/{room}/featured', [RoomController::class, 'makeFeatured'])->name('rooms.featured');
     Route::post('/rooms/{room}/booked', [RoomController::class, 'markBooked'])->name('rooms.markBooked');
     Route::post('/rooms/{room}/available', [RoomController::class, 'markAvailable'])->name('rooms.markAvailable');
-});
-
-Route::middleware(['auth', 'role:broker'])->prefix('agent')->name('agent.')->group(function () {
-    Route::get('/dashboard', [BrokerDashboardController::class, 'dashboard'])->name('dashboard');
-    Route::get('/pending', [BrokerDashboardController::class, 'pending'])->name('pending');
-    Route::get('/properties', [BrokerDashboardController::class, 'properties'])->name('properties');
     Route::get('/subscription', [BrokerDashboardController::class, 'subscription'])->name('subscription');
+    Route::get('/plans', [PlanController::class, 'index'])->name('plans');
     Route::post('/subscription/purchase', [BrokerDashboardController::class, 'purchaseSubscription'])->name('subscription.purchase');
     Route::get('/payments', [BrokerDashboardController::class, 'payments'])->name('payments');
     Route::get('/transactions', [BrokerDashboardController::class, 'transactions'])->name('transactions');
@@ -336,9 +338,9 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::get('rooms/{room}', [AdminController::class, 'showRoom'])->name('rooms.show');
     Route::get('rooms/{room}/edit', [AdminController::class, 'editRoom'])->name('rooms.edit');
     Route::put('rooms/{room}/update', [AdminController::class, 'updateRoom'])->name('rooms.update');
-    Route::post('rooms/{room}/approve', [AdminController::class, 'approveRoom'])->name('rooms.approve');
-    Route::post('rooms/{room}/reject', [AdminController::class, 'rejectRoom'])->name('rooms.reject');
-    Route::patch('rooms/{room}/toggle-status', [AdminController::class, 'toggleRoomStatus'])->name('rooms.toggle-status');
+    Route::post('/rooms/{room}/approve', [AdminController::class, 'approveRoom'])->name('rooms.approve');
+    Route::post('/rooms/{room}/reject', [AdminController::class, 'rejectRoom'])->name('rooms.reject');
+    Route::patch('/rooms/{room}/toggle-status', [AdminController::class, 'toggleRoomStatus'])->name('rooms.toggle-status');
     Route::post('rooms/bulk-action', [AdminController::class, 'bulkRooms'])->name('rooms.bulk');
     Route::delete('rooms/{room}', [AdminController::class, 'deleteRoom'])->name('rooms.destroy');
 
@@ -356,10 +358,20 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
         ->name('pages.legacy');
 });
 
-Route::middleware(['auth', 'role:owner'])->prefix('owner')->group(function () {
-    Route::get('/dashboard', [OwnerController::class, 'dashboard'])->name('owner.dashboard');
-    Route::get('/rooms', [OwnerController::class, 'rooms'])->name('owner.rooms');
-    Route::get('/enquiries', [OwnerController::class, 'enquiries'])->name('owner.enquiries');
+Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->group(function () {
+    Route::get('/dashboard', [OwnerController::class, 'dashboard'])->name('dashboard');
+    Route::get('/rooms', [OwnerController::class, 'rooms'])->name('rooms');
+    Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
+    Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
+    Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
+    Route::get('/rooms/{room}/edit', [RoomController::class, 'edit'])->name('rooms.edit');
+    Route::put('/rooms/{room}', [RoomController::class, 'update'])->name('rooms.update');
+    Route::delete('/rooms/{room}', [RoomController::class, 'destroy'])->name('rooms.destroy');
+    Route::post('/rooms/{room}/featured', [RoomController::class, 'makeFeatured'])->name('rooms.featured');
+    Route::post('/rooms/{room}/booked', [RoomController::class, 'markBooked'])->name('rooms.markBooked');
+    Route::post('/rooms/{room}/available', [RoomController::class, 'markAvailable'])->name('rooms.markAvailable');
+    Route::get('/enquiries', [OwnerController::class, 'enquiries'])->name('enquiries');
+    Route::get('/plans', [PlanController::class, 'index'])->name('plans');
 });
 
 require __DIR__.'/auth.php';
