@@ -10,16 +10,15 @@
             ['route' => 'owner.rooms', 'match' => 'owner.rooms', 'icon' => 'fa-list', 'label' => 'All Properties'],
             ['route' => 'owner.rooms.create', 'match' => 'owner.rooms.create', 'icon' => 'fa-plus', 'label' => 'Add New Property'],
         ]],
-        'leads' => ['label' => 'Leads & Plans', 'icon' => 'fa-address-card', 'items' => [
-            ['route' => 'owner.enquiries', 'match' => 'owner.enquiries', 'icon' => 'fa-inbox', 'label' => 'Enquiries'],
-            ['route' => 'owner.plans', 'match' => 'owner.plans', 'icon' => 'fa-tags', 'label' => 'Listing Plans'],
+        'plans' => ['label' => 'Plans', 'icon' => 'fa-tags', 'items' => [
+            ['route' => 'owner.plans', 'match' => 'owner.plans', 'icon' => 'fa-layer-group', 'label' => 'Listing Plans'],
         ]],
         'financial' => ['label' => 'Financial', 'icon' => 'fa-wallet', 'items' => [
             ['route' => 'wallet', 'match' => 'wallet', 'icon' => 'fa-coins', 'label' => 'My Wallet'],
         ]],
         'more' => ['label' => 'More', 'icon' => 'fa-ellipsis', 'items' => [
-            ['route' => 'referral.index', 'match' => 'referral.*', 'icon' => 'fa-gift', 'label' => 'Refer & Earn'],
             ['route' => 'complaints.index', 'match' => 'complaints.*', 'icon' => 'fa-shield-halved', 'label' => 'My Complaints'],
+            ['route' => 'referral.index', 'match' => 'referral.*', 'icon' => 'fa-gift', 'label' => 'Refer & Earn'],
             ['route' => 'profile.edit', 'match' => 'profile.*', 'icon' => 'fa-user-gear', 'label' => 'Profile Settings'],
         ]],
     ];

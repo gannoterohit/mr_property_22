@@ -1,21 +1,20 @@
-@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : (Auth::user()->role === 'broker' ? 'layouts.agent' : (Auth::user()->role === 'user' ? 'layouts.customer' : 'layouts.public')))
 @section('title', $complaint->ticket_number)
-@section('content')
-@php $isOwner = Auth::user()->role === 'owner'; @endphp
+@php $role = Auth::user()->role; $isOwner = $role === 'owner'; $isBroker = $role === 'broker'; $isCustomer = $role === 'user'; $contentSection = $isOwner ? 'owner-content' : ($isBroker ? 'broker-content' : ($isCustomer ? 'customer-content' : 'content')); @endphp
+@section($contentSection)
+<div class="{{ ($isOwner || $isBroker || $isCustomer) ? 'owner-workspace' : '' }} min-h-screen bg-slate-50">
+    @if($isOwner) @include('owner.partials.sidebar', ['active' => 'complaints']) @endif
+    @if($isBroker) @include('broker.partials.sidebar', ['active' => 'complaints']) @endif
+    @if($isCustomer) @include('customer.partials.sidebar', ['active' => 'complaints']) @endif
 
-<div class="{{ $isOwner ? 'owner-workspace' : '' }} min-h-screen bg-slate-50">
-    @if($isOwner)
-        @include('owner.partials.sidebar', ['active' => 'complaints'])
-    @endif
-
-    <main class="{{ $isOwner ? 'complaint-page-main' : '' }} flex-1">
+    <main class="{{ ($isOwner || $isBroker || $isCustomer) ? 'complaint-page-main' : '' }} flex-1">
 
         {{-- Page Header --}}
-        @if($isOwner)
+        @if($isOwner || $isBroker || $isCustomer)
             <header class="owner-page-header">
                 <a href="{{ route('complaints.index') }}" class="text-xs font-bold text-indigo-600">← My Complaints</a>
                 <div class="mt-2 flex flex-wrap items-center gap-3">
-                    <h1 class="text-2xl font-bold text-slate-900">{{ $complaint->ticket_number }}</h1>
+                    <h1 class="text-2xl font-extrabold text-slate-900">{{ $complaint->ticket_number }}</h1>
                     <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">{{ \App\Models\Complaint::STATUSES[$complaint->status] }}</span>
                 </div>
             </header>
@@ -37,7 +36,7 @@
         @endif
 
         {{-- Content --}}
-        <div class="{{ $isOwner ? 'complaint-page-content complaint-detail-grid' : 'max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-3 gap-5' }}">
+        <div class="{{ ($isOwner || $isBroker || $isCustomer) ? 'complaint-page-content complaint-detail-grid' : 'max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-3 gap-5' }}">
 
             {{-- Left: Main Content --}}
             <section class="min-w-0 space-y-5 {{ $isOwner ? '' : 'lg:col-span-2' }}">

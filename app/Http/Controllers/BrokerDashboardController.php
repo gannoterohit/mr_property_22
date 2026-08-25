@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\BrokerListingCredit;
 use App\Models\BrokerPayment;
-use App\Models\BrokerSubscription;
 use App\Models\BrokerTransaction;
 use App\Models\BrokerWallet;
+use App\Models\Enquiry;
 use App\Models\Room;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -31,7 +31,6 @@ class BrokerDashboardController extends Controller
             'featured_properties' => Room::where('broker_id', $broker->id)->where('is_featured', true)->count(),
         ];
 
-        $subscription = $broker->brokerSubscription()->first();
         $wallet = $broker->brokerWallet;
         $credits = BrokerListingCredit::where('broker_id', $broker->id)
             ->where('credits_remaining', '>', 0)
@@ -45,7 +44,7 @@ class BrokerDashboardController extends Controller
         $recentPayments = BrokerPayment::where('broker_id', $broker->id)->latest()->limit(5)->get();
 
         return view('broker.dashboard', compact(
-            'broker', 'stats', 'subscription', 'wallet', 'credits',
+            'broker', 'stats', 'wallet', 'credits',
             'recentProperties', 'recentTransactions', 'recentPayments'
         ));
     }
@@ -86,120 +85,22 @@ class BrokerDashboardController extends Controller
         return view('broker.properties.index', compact('properties', 'roomCounts'));
     }
 
-    public function subscription(Request $request)
+    public function enquiries(Request $request)
     {
         $broker = Auth::user();
-                if (!$broker->is_broker_active) {
-            return redirect()->route('agent.pending');
+        abort_if(!$broker->is_broker_active, 403);
+
+        $query = Enquiry::whereHas('room', function ($q) use ($broker) {
+            $q->where('broker_id', $broker->id);
+        })->with(['user', 'room', 'payment']);
+
+        if ($request->filled('status')) {
+            $query->where('unlocked', $request->boolean('status'));
         }
 
-        if (!\App\Models\BrokerSetting::isEnabled('broker_subscription_enabled', true)) {
-            abort(404, 'Broker subscriptions are currently disabled.');
-        }
+        $enquiries = $query->latest()->paginate(20);
 
-        $subscription = $broker->brokerSubscription()->first();
-        $plans = \App\Models\BrokerPlan::active()->get();
-        $credits = BrokerListingCredit::where('broker_id', $broker->id)
-            ->where(function ($q) {
-                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
-            })
-            ->get();
-
-        return view('broker.subscription.index', compact('subscription', 'plans', 'credits'));
-    }
-
-    public function purchaseSubscription(Request $request, \App\Models\BrokerPlan $plan)
-    {
-        $broker = Auth::user();
-                if (!$broker->is_broker_active) {
-            return redirect()->route('agent.pending');
-        }
-        abort_if(!\App\Models\BrokerSetting::isEnabled('broker_subscription_enabled', true), 404, 'Broker subscriptions are currently disabled.');
-        abort_if(!$plan->is_active, 404, 'This plan is no longer available.');
-
-        $request->validate([
-            'payment_method' => 'nullable|in:wallet,razorpay',
-        ]);
-
-        $paymentMethod = $request->payment_method ?? 'razorpay';
-
-        if ($paymentMethod === 'wallet') {
-            $wallet = $broker->brokerWallet;
-            if (!$wallet || $wallet->balance < $plan->price) {
-                return back()->with('error', 'Insufficient wallet balance.');
-            }
-
-            DB::beginTransaction();
-            try {
-                $wallet->decrement('balance', $plan->price);
-                $wallet->increment('total_withdrawn', $plan->price);
-
-                $startsAt = now();
-                $expiresAt = $plan->duration_days ? now()->addDays($plan->duration_days) : null;
-
-                $subscription = BrokerSubscription::create([
-                    'broker_id' => $broker->id,
-                    'plan_id' => $plan->id,
-                    'starts_at' => $startsAt,
-                    'expires_at' => $expiresAt,
-                    'status' => 'active',
-                    'max_listings' => $plan->max_listings ?? 0,
-                    'listings_used' => 0,
-                    'amount_paid' => $plan->price,
-                    'payment_id' => null,
-                ]);
-
-                $broker->update([
-                    'broker_subscription_expires_at' => $expiresAt,
-                    'broker_subscription_listings_limit' => $plan->max_listings ?? 0,
-                    'broker_subscription_listings_used' => 0,
-                ]);
-
-                BrokerPayment::create([
-                    'broker_id' => $broker->id,
-                    'payment_type' => 'subscription',
-                    'amount' => $plan->price,
-                    'status' => 'completed',
-                    'method' => 'wallet',
-                    'plan_id' => $plan->id,
-                ]);
-
-                BrokerTransaction::create([
-                    'broker_id' => $broker->id,
-                    'type' => 'debit',
-                    'category' => 'subscription',
-                    'amount' => $plan->price,
-                    'description' => "Subscription purchased: {$plan->name}",
-                ]);
-
-                DB::commit();
-
-                return redirect()->route('agent.subscription')->with('success', 'Subscription activated successfully!');
-            } catch (\Exception $e) {
-                DB::rollBack();
-                report($e);
-                return back()->with('error', 'Unable to purchase subscription. Please try again.');
-            }
-        }
-
-        // Razorpay flow
-        $payment = BrokerPayment::create([
-            'broker_id' => $broker->id,
-            'payment_type' => 'subscription',
-            'amount' => $plan->price,
-            'status' => 'pending',
-            'method' => 'razorpay',
-            'plan_id' => $plan->id,
-        ]);
-
-        // TODO: Integrate with Razorpay API to create order
-        // For now, return pending payment info
-        return response()->json([
-            'success' => true,
-            'payment_id' => $payment->id,
-            'amount' => $plan->price,
-            'message' => 'Please complete payment to activate subscription',
-        ]);
+        return view('broker.enquiries.index', compact('enquiries'));
     }
 
     public function payments(Request $request)

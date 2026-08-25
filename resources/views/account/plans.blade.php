@@ -1,6 +1,6 @@
-@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : (Auth::user()->role === 'broker' ? 'layouts.agent' : (Auth::user()->role === 'user' ? 'layouts.customer' : 'layouts.public')))
 
-@section('title', (Auth::user()->role === 'owner' ? 'Room Listing Plans' : 'Contact Unlock Plans') . ' - ' . \App\Models\Setting::get('website_name', 'RoomRental'))
+@section('title', (Auth::user()->role === 'owner' ? 'Room Listing Plans' : (Auth::user()->role === 'broker' ? 'Broker Listing Plans' : 'Contact Unlock Plans')) . ' - ' . \App\Models\Setting::get('website_name', 'RoomRental'))
 
 @if(Auth::user()->role === 'owner')
     @push('styles')
@@ -11,25 +11,29 @@
 <link rel="stylesheet" href="{{ asset('css/account-plans.css') }}">
 @endpush
 
-@section('content')
 @php
-    $isOwner = Auth::user()->role === 'owner';
-    $limitField = $isOwner ? 'listing_limit' : 'contacts_limit';
-    $usageType = $isOwner ? 'listing' : 'contact';
-    $feeEnabledKey = $isOwner ? 'listing_fee_enabled' : 'unlock_fee_enabled';
+    $role = Auth::user()->role;
+    $isOwner = $role === 'owner';
+    $isBroker = $role === 'broker';
+    $isCustomer = $role === 'user';
+    $limitField = ($isOwner || $isBroker) ? 'listing_limit' : 'contacts_limit';
+    $usageType = ($isOwner || $isBroker) ? 'listing' : 'contact';
+    $feeEnabledKey = ($isOwner || $isBroker) ? 'listing_fee_enabled' : 'unlock_fee_enabled';
     $feeEnabled = filter_var(\App\Models\Setting::get($feeEnabledKey, '0'), FILTER_VALIDATE_BOOLEAN);
     $singleFee = $feeEnabled
-        ? (float) \App\Models\Setting::get($isOwner ? 'listing_fee' : 'unlock_fee', $isOwner ? 199 : 49)
+        ? (float) \App\Models\Setting::get(($isOwner || $isBroker) ? 'listing_fee' : 'unlock_fee', ($isOwner || $isBroker) ? 199 : 49)
         : 0;
     $usedCredits = $activeSubscription?->usages()->where('usage_type', $usageType)->count() ?? 0;
     $activeLimit = $activeSubscription?->plan?->{$limitField};
     $remainingCredits = $activeLimit === -1 ? 'Unlimited' : max(0, (int) $activeLimit - $usedCredits);
+    $contentSection = $isOwner ? 'owner-content' : ($isBroker ? 'broker-content' : ($isCustomer ? 'customer-content' : 'content'));
 @endphp
 
-<div class="{{ $isOwner ? 'owner-workspace flex' : '' }} min-h-screen bg-slate-50">
-    @if($isOwner)
-        @include('owner.partials.sidebar', ['active' => 'plans'])
-    @endif
+@section($contentSection)
+<div class="{{ ($isOwner || $isBroker || $isCustomer) ? 'owner-workspace flex' : '' }} min-h-screen bg-slate-50">
+    @if($isOwner) @include('owner.partials.sidebar', ['active' => 'plans']) @endif
+    @if($isBroker) @include('broker.partials.sidebar', ['active' => 'agent.plans']) @endif
+    @if($isCustomer) @include('customer.partials.sidebar', ['active' => 'plans']) @endif
 
     <main class="flex-1 min-w-0 pb-24 lg:pb-12">
         <section class="border-b border-slate-200 bg-white">
@@ -37,16 +41,16 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
                     <div class="max-w-2xl">
                         <h1 class="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-950">
-                            {{ $isOwner ? 'Room Listing Plans' : 'Room Unlock Plans' }}
+                            {{ $isBroker ? 'Broker Listing Plans' : ($isOwner ? 'Room Listing Plans' : 'Room Unlock Plans') }}
                         </h1>
                         <p class="mt-2 text-sm sm:text-base leading-6 text-slate-600">
-                            {{ $isOwner
+                            {{ $isBroker || $isOwner
                                 ? 'Select a plan based on how many rooms you want to list.'
                                 : 'Select a plan based on how many room contacts you want to unlock.' }}
                         </p>
                     </div>
                     <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 min-w-[210px]">
-                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Single {{ $isOwner ? 'listing' : 'unlock' }}</p>
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Single {{ $isBroker || $isOwner ? 'listing' : 'unlock' }}</p>
                         <div class="mt-1 flex items-baseline gap-2">
                             <span class="text-xl font-extrabold text-slate-950">{{ $feeEnabled ? '₹'.number_format($singleFee) : 'Free' }}</span>
                             <span class="text-xs text-slate-500">{{ $feeEnabled ? 'without a plan' : 'during launch period' }}</span>
@@ -81,7 +85,7 @@
                 <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
                     <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400"><i class="fas fa-box-open text-xl"></i></span>
                     <h3 class="mt-4 font-heading text-lg font-bold text-slate-900">No plans available right now</h3>
-                    <p class="mt-2 text-sm text-slate-500">You can still use the single {{ $isOwner ? 'listing' : 'room unlock' }} option.</p>
+                    <p class="mt-2 text-sm text-slate-500">You can still use the single {{ $isBroker || $isOwner ? 'listing' : 'room unlock' }} option.</p>
                 </div>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
@@ -102,11 +106,11 @@
                             <div class="mt-6 flex items-end gap-2"><span class="text-4xl font-extrabold tracking-tight text-slate-950">&#8377;{{ number_format($plan->price) }}</span><span class="pb-1 text-sm text-slate-500">one time</span></div>
                             <div class="mt-5 rounded-xl bg-slate-50 p-4">
                                 <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Includes</p>
-                                <p class="mt-1 text-xl font-extrabold text-slate-950">{{ $limit === -1 ? 'Unlimited' : $limit }} {{ $isOwner ? 'room listings' : 'room unlocks' }}</p>
+                                <p class="mt-1 text-xl font-extrabold text-slate-950">{{ $limit === -1 ? 'Unlimited' : $limit }} {{ $isBroker ? 'broker listings' : ($isOwner ? 'room listings' : 'room unlocks') }}</p>
                                 @if($saving > 0)<p class="mt-1 text-xs font-bold text-emerald-600">You save &#8377;{{ number_format($saving) }}</p>@endif
                             </div>
                             <ul class="my-6 space-y-3 text-sm text-slate-600">
-                                <li class="flex gap-3"><i class="fas fa-check mt-1 text-emerald-600"></i><span>{{ $isOwner ? 'One credit for every new room' : 'One credit for every unlocked room' }}</span></li>
+                                <li class="flex gap-3"><i class="fas fa-check mt-1 text-emerald-600"></i><span>{{ $isBroker || $isOwner ? 'One credit for every new room' : 'One credit for every unlocked room' }}</span></li>
                                 <li class="flex gap-3"><i class="fas fa-check mt-1 text-emerald-600"></i><span>Credits valid for {{ $plan->duration_days }} days</span></li>
                                 <li class="flex gap-3"><i class="fas fa-check mt-1 text-emerald-600"></i><span>No automatic renewal</span></li>
                                 @foreach(array_slice($plan->benefits ?? [], 0, 2) as $benefit)

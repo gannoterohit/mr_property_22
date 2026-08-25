@@ -388,7 +388,6 @@ class RoomController extends Controller {
             // Broker-specific listing fee logic
             $isBroker = Auth::user()->role === 'broker';
             $brokerListingChargesEnabled = \App\Models\BrokerSetting::isEnabled('broker_listing_charges_enabled', false);
-            $brokerSubscriptionEnabled = \App\Models\BrokerSetting::isEnabled('broker_subscription_enabled', false);
 
             if ($isBroker && !$brokerListingChargesEnabled) {
                 $listingFeeEnabled = false;
@@ -419,32 +418,10 @@ class RoomController extends Controller {
                 ]);
             }
 
-            // Check broker subscription or credits for room listing
-            $useSubscription = false;
+            // Check broker credits for room listing
             $useCredits = false;
 
-            if ($isBroker && $brokerSubscriptionEnabled) {
-                $activeSubscription = \App\Models\BrokerSubscription::where('broker_id', Auth::id())
-                    ->where('status', 'active')
-                    ->where('expires_at', '>=', now())
-                    ->lockForUpdate()
-                    ->with('plan')
-                    ->first();
-
-                if ($activeSubscription && $activeSubscription->is_active) {
-                    if ($activeSubscription->remaining_listings > 0) {
-                        $activeSubscription->increment('listings_used');
-                        $room->update([
-                            'listing_fee_paid' => true,
-                            'status' => 'active',
-                            'listing_payment_id' => null,
-                        ]);
-                        $useSubscription = true;
-                    }
-                }
-            }
-
-            if (!$useSubscription && $isBroker) {
+            if ($isBroker) {
                 $credits = \App\Models\BrokerListingCredit::where('broker_id', Auth::id())
                     ->where('credits_remaining', '>', 0)
                     ->where(function ($q) {
@@ -465,14 +442,13 @@ class RoomController extends Controller {
                 }
             }
 
-            if ($useSubscription || $useCredits) {
+            if ($useCredits) {
                 DB::commit();
 
                 return response()->json([
                     'success' => true,
                     'room_id' => $room->id,
-                    'subscription_used' => $useSubscription,
-                    'credits_used' => $useCredits,
+                    'credits_used' => true,
                     'message' => 'Room listed successfully!',
                 ]);
             }
@@ -1045,7 +1021,6 @@ class RoomController extends Controller {
             try {
                 $isBroker = Auth::user()->role === 'broker';
                 $brokerListingChargesEnabled = \App\Models\BrokerSetting::isEnabled('broker_listing_charges_enabled', false);
-                $brokerSubscriptionEnabled = \App\Models\BrokerSetting::isEnabled('broker_subscription_enabled', false);
 
                 // For brokers, check broker-specific settings
                 if ($isBroker && !$brokerListingChargesEnabled) {
@@ -1129,27 +1104,6 @@ class RoomController extends Controller {
                             'listing_payment_id' => null // null means used subscription
                         ]);
                         $useSubscription = true;
-                    }
-                }
-
-                // Check broker subscription for room listing
-                if ($isBroker && $brokerSubscriptionEnabled) {
-                    $activeBrokerSubscription = \App\Models\BrokerSubscription::where('broker_id', Auth::id())
-                        ->where('status', 'active')
-                        ->where('expires_at', '>=', now())
-                        ->with('plan')
-                        ->first();
-
-                    if ($activeBrokerSubscription && $activeBrokerSubscription->is_active) {
-                        if ($activeBrokerSubscription->remaining_listings > 0) {
-                            $activeBrokerSubscription->increment('listings_used');
-                            $room->update([
-                                'listing_fee_paid' => true,
-                                'status' => 'active',
-                                'listing_payment_id' => null,
-                            ]);
-                            $useSubscription = true;
-                        }
                     }
                 }
 

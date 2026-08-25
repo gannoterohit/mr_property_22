@@ -20,7 +20,6 @@
         ['broker_module_enabled', 'Broker Module', 'Enable/disable entire broker module including registration, dashboard and listings.', 'fa-handshake'],
         ['broker_verification_enabled', 'Broker Verification', 'Require admin approval for new broker registrations. Disable for auto-approval.', 'fa-id-card'],
         ['broker_listing_charges_enabled', 'Broker Listing Charges', 'Charge brokers per listing. Disable for free broker listings.', 'fa-building'],
-        ['broker_subscription_enabled', 'Broker Subscription', 'Allow brokers to purchase subscription plans.', 'fa-tags'],
         ['broker_featured_enabled', 'Featured Listing for Brokers', 'Allow brokers to feature their listings.', 'fa-star'],
         ['broker_future_brokerage_enabled', 'Future Brokerage System', 'Enable brokerage/commission tracking for future use.', 'fa-chart-line'],
     ];
@@ -35,7 +34,6 @@
     broker_module_enabled: {{ $brokerOn('broker_module_enabled', '1') ? 'true' : 'false' }},
     broker_verification_enabled: {{ $brokerOn('broker_verification_enabled', '1') ? 'true' : 'false' }},
     broker_listing_charges_enabled: {{ $brokerOn('broker_listing_charges_enabled', '1') ? 'true' : 'false' }},
-    broker_subscription_enabled: {{ $brokerOn('broker_subscription_enabled', '1') ? 'true' : 'false' }},
     broker_featured_enabled: {{ $brokerOn('broker_featured_enabled', '1') ? 'true' : 'false' }},
     broker_future_brokerage_enabled: {{ $brokerOn('broker_future_brokerage_enabled', '0') ? 'true' : 'false' }}
 }">

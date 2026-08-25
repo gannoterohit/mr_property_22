@@ -36,8 +36,7 @@
                 @endforeach
                 @foreach([
                     ['Featured Properties', $stats['featured_properties'], 'fa-star', 'bg-amber-50 text-amber-600', route('agent.properties')],
-                    ['Subscription', $subscription ? ucfirst($subscription->status) : 'Inactive', 'fa-tags', 'bg-sky-50 text-sky-600', route('agent.subscription')],
-                    ['Credits Remaining', $credits->sum('credits_remaining'), 'fa-coins', 'bg-emerald-50 text-emerald-600', route('agent.subscription')],
+                    ['Credits Remaining', $credits->sum('credits_remaining'), 'fa-coins', 'bg-emerald-50 text-emerald-600', route('agent.plans')],
                     ['Wallet Balance', number_format($wallet?->balance ?? 0), 'fa-wallet', 'bg-purple-50 text-purple-600', route('agent.payments')],
                 ] as $stat)
                     <a href="{{ $stat[4] }}" class="owner-dashboard-stat block rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">

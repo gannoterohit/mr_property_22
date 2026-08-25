@@ -1,19 +1,18 @@
-@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : (Auth::user()->role === 'broker' ? 'layouts.agent' : (Auth::user()->role === 'user' ? 'layouts.customer' : 'layouts.public')))
 @section('title', 'Submit a Complaint')
-@section('content')
-@php $isOwner = Auth::user()->role === 'owner'; @endphp
+@php $role = Auth::user()->role; $isOwner = $role === 'owner'; $isBroker = $role === 'broker'; $isCustomer = $role === 'user'; $contentSection = $isOwner ? 'owner-content' : ($isBroker ? 'broker-content' : ($isCustomer ? 'customer-content' : 'content')); @endphp
+@section($contentSection)
+<div class="{{ ($isOwner || $isBroker || $isCustomer) ? 'owner-workspace' : '' }} min-h-screen bg-slate-50">
+    @if($isOwner) @include('owner.partials.sidebar', ['active' => 'complaints']) @endif
+    @if($isBroker) @include('broker.partials.sidebar', ['active' => 'complaints']) @endif
+    @if($isCustomer) @include('customer.partials.sidebar', ['active' => 'complaints']) @endif
 
-<div class="{{ $isOwner ? 'owner-workspace' : '' }} min-h-screen bg-slate-50">
-    @if($isOwner)
-        @include('owner.partials.sidebar', ['active' => 'complaints'])
-    @endif
-
-    <main class="{{ $isOwner ? 'complaint-page-main' : '' }} flex-1">
+    <main class="{{ ($isOwner || $isBroker || $isCustomer) ? 'complaint-page-main' : '' }} flex-1">
 
         {{-- Page Header --}}
-        @if($isOwner)
+        @if($isOwner || $isBroker || $isCustomer)
             <header class="owner-page-header">
-                <h1 class="text-2xl font-bold text-slate-900">Submit a Complaint</h1>
+                <h1 class="text-2xl font-extrabold text-slate-900">Submit a Complaint</h1>
                 <p class="text-sm text-slate-500 mt-1">Give clear details and evidence so our team can investigate.</p>
             </header>
         @else
@@ -30,7 +29,7 @@
         @endif
 
         {{-- Content --}}
-        <div class="{{ $isOwner ? 'complaint-page-content' : 'max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6' }}">
+        <div class="{{ ($isOwner || $isBroker || $isCustomer) ? 'complaint-page-content' : 'max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6' }}">
             @if($errors->any())
                 <div class="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
                     <ul class="list-disc pl-5">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>

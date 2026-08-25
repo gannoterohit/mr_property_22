@@ -1,4 +1,4 @@
-@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : (Auth::user()->role === 'broker' ? 'layouts.agent' : (Auth::user()->role === 'user' ? 'layouts.customer' : 'layouts.public')))
 
 @section('title','Refer & Earn | ' . \App\Models\Setting::get('website_name', 'ApnaNest'))
 
@@ -8,10 +8,13 @@
     @endpush
 @endif
 
-@section('content')
-<div class="{{ $user->role==='owner'?'owner-workspace referral-page':'referral-page' }} min-h-screen">
+@php $contentSection = Auth::user()->role === 'owner' ? 'owner-content' : (Auth::user()->role === 'broker' ? 'broker-content' : (Auth::user()->role === 'user' ? 'customer-content' : 'content')); @endphp
+@section($contentSection)
+<div class="{{ $user->role==='owner'||$user->role==='broker'||$user->role==='user'?'owner-workspace referral-page':'referral-page' }} min-h-screen">
     @if($user->role==='owner') @include('owner.partials.sidebar',['active'=>'referral']) @endif
-    <main class="{{ $user->role==='owner'?'flex-1 min-w-0':'account-main' }}">
+    @if($user->role==='broker') @include('broker.partials.sidebar',['active'=>'agent.referral']) @endif
+    @if($user->role==='user') @include('customer.partials.sidebar',['active'=>'referral']) @endif
+    <main class="{{ $user->role==='owner'||$user->role==='broker'?'flex-1 min-w-0':'account-main' }}">
         <header class="account-header">
             <div class="account-container">
                 <div>

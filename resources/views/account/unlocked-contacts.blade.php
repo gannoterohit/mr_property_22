@@ -1,9 +1,13 @@
-@extends('layouts.public')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : (Auth::user()->role === 'broker' ? 'layouts.agent' : (Auth::user()->role === 'user' ? 'layouts.customer' : 'layouts.public')))
 
 @section('title', 'My Unlocked Contacts | ApnaNest')
 
-@section('content')
-<div class="min-h-screen bg-slate-50">
+@php $contentSection = Auth::user()->role === 'owner' ? 'owner-content' : (Auth::user()->role === 'broker' ? 'broker-content' : (Auth::user()->role === 'user' ? 'customer-content' : 'content')); @endphp
+@section($contentSection)
+<div class="min-h-screen bg-slate-50 {{ (Auth::user()->role === 'owner' || Auth::user()->role === 'broker' || Auth::user()->role === 'user') ? 'owner-workspace flex' : '' }}">
+    @if(Auth::user()->role === 'owner') @include('owner.partials.sidebar', ['active' => 'unlocked-contacts']) @endif
+    @if(Auth::user()->role === 'broker') @include('broker.partials.sidebar', ['active' => 'unlocks.index']) @endif
+    @if(Auth::user()->role === 'user') @include('customer.partials.sidebar', ['active' => 'unlocks.index']) @endif
     <main class="account-main unlocked-page">
         <header class="account-header">
             <div class="account-container">

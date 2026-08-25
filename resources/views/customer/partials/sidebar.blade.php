@@ -1,34 +1,29 @@
 @php
-    $broker = Auth::user();
-    $brokerLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo');
+    $customer = Auth::user();
+    $customerLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo');
 
     $navGroups = [
         'main' => ['label' => 'Main', 'icon' => 'fa-th-large', 'items' => [
-            ['route' => 'agent.dashboard', 'match' => 'agent.dashboard', 'icon' => 'fa-chart-pie', 'label' => 'Dashboard'],
+            ['route' => 'home', 'match' => 'home', 'icon' => 'fa-home', 'label' => 'Browse Rooms'],
+            ['route' => 'wishlist.index', 'match' => 'wishlist.*', 'icon' => 'fa-heart', 'label' => 'My Wishlist'],
         ]],
-        'listings' => ['label' => 'My Listings', 'icon' => 'fa-building', 'items' => [
-            ['route' => 'agent.properties', 'match' => 'agent.properties', 'icon' => 'fa-list', 'label' => 'All Properties'],
-            ['route' => 'agent.rooms.create', 'match' => 'agent.rooms.create', 'icon' => 'fa-plus', 'label' => 'Add New Property'],
-        ]],
-        'leads' => ['label' => 'Leads', 'icon' => 'fa-address-card', 'items' => [
-            ['route' => 'agent.enquiries', 'match' => 'agent.enquiries', 'icon' => 'fa-inbox', 'label' => 'All Enquiries'],
-            ['route' => 'agent.enquiries', 'match' => 'agent.enquiries.unread', 'icon' => 'fa-envelope', 'label' => 'Unread'],
-        ]],
-        'plans' => ['label' => 'Plans', 'icon' => 'fa-tags', 'items' => [
-            ['route' => 'agent.plans', 'match' => 'agent.plans', 'icon' => 'fa-layer-group', 'label' => 'Listing Plans'],
-        ]],
-        'financial' => ['label' => 'Financial', 'icon' => 'fa-wallet', 'items' => [
-            ['route' => 'agent.payments', 'match' => 'agent.payments', 'icon' => 'fa-credit-card', 'label' => 'Payments'],
-            ['route' => 'agent.transactions', 'match' => 'agent.transactions', 'icon' => 'fa-receipt', 'label' => 'Transactions'],
-            ['route' => 'wallet', 'match' => 'wallet', 'icon' => 'fa-coins', 'label' => 'Wallet'],
+        'account' => ['label' => 'Account', 'icon' => 'fa-user', 'items' => [
+            ['route' => 'profile.edit', 'match' => 'profile.*', 'icon' => 'fa-user-gear', 'label' => 'Profile Settings'],
+            ['route' => 'wallet', 'match' => 'wallet', 'icon' => 'fa-coins', 'label' => 'My Wallet'],
         ]],
         'more' => ['label' => 'More', 'icon' => 'fa-ellipsis', 'items' => [
-            ['route' => 'complaints.index', 'match' => 'complaints.*', 'icon' => 'fa-shield-halved', 'label' => 'Complaints'],
+            ['route' => 'complaints.index', 'match' => 'complaints.*', 'icon' => 'fa-shield-halved', 'label' => 'My Complaints'],
             ['route' => 'referral.index', 'match' => 'referral.*', 'icon' => 'fa-gift', 'label' => 'Refer & Earn'],
-            ['route' => 'wishlist.index', 'match' => 'wishlist.*', 'icon' => 'fa-heart', 'label' => 'Wishlist'],
-            ['route' => 'agent.profile', 'match' => 'agent.profile', 'icon' => 'fa-user-gear', 'label' => 'Profile Settings'],
         ]],
     ];
+
+    $financialGroup = $navGroups['account']['items'];
+    if (!\App\Models\Setting::isEnabled('wallet_enabled', true)) {
+        $navGroups['account'] = ['label' => 'Account', 'icon' => 'fa-user', 'items' => []];
+    }
+    if (!\App\Models\Setting::isEnabled('referral_enabled', true)) {
+        $navGroups['more']['items'] = array_values(array_filter($navGroups['more']['items'], fn($i) => $i['route'] !== 'referral.index'));
+    }
 @endphp
 
 @once
@@ -38,28 +33,29 @@
 
 <aside class="owner-sidebar hidden lg:flex bg-white border-r border-slate-200 flex-col sticky top-0 h-screen">
     <div class="px-5 py-3 border-b border-slate-100">
-        <a href="{{ route('agent.dashboard') }}" class="flex items-center gap-3">
-            @if($brokerLogo)
-                <img src="{{ asset('storage/' . $brokerLogo) }}" alt="Agent panel" class="w-8 h-8 rounded-xl object-contain border border-slate-200 bg-white p-1">
+        <a href="{{ route('home') }}" class="flex items-center gap-3">
+            @if($customerLogo)
+                <img src="{{ asset('storage/' . $customerLogo) }}" alt="Customer panel" class="w-8 h-8 rounded-xl object-contain border border-slate-200 bg-white p-1">
             @else
-                <span class="w-8 h-8 rounded-xl owner-theme-bg flex items-center justify-center text-white">
-                    <i class="fas fa-user-tie text-sm"></i>
+                <span class="w-8 h-8 rounded-xl owner-theme-bg flex items-center justify-center">
+                    <i class="fas fa-user text-sm"></i>
                 </span>
             @endif
             <span class="min-w-0">
-                <strong class="block text-[13px] text-slate-900 truncate">Agent Workspace</strong>
-                <small class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Manage listings</small>
+                <strong class="block text-[13px] text-slate-900 truncate">My Account</strong>
+                <small class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Renter dashboard</small>
             </span>
         </a>
     </div>
 
-    <nav class="flex-1 min-h-0 overflow-y-auto pt-4 px-3 pb-3 space-y-1 overscroll-contain" aria-label="Agent navigation">
+    <nav class="flex-1 min-h-0 overflow-y-auto pt-4 px-3 pb-3 space-y-1 overscroll-contain" aria-label="Customer navigation">
         @foreach($navGroups as $groupKey => $group)
             @php
                 $groupItems = $group['items'];
                 $groupActive = collect($groupItems)->contains(fn ($item) => request()->routeIs($item['match']));
                 $groupOpen = $groupActive;
             @endphp
+            @continue($groupOpen === false && empty($groupItems))
             <section class="owner-nav-group" data-group="{{ $groupKey }}">
                 <button type="button" class="owner-nav-group-toggle group flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-[13px] font-bold transition {{ $groupActive ? 'owner-sidebar-group-active' : 'border-transparent bg-white text-slate-700 hover:bg-slate-50' }}" aria-expanded="{{ $groupOpen ? 'true' : 'false' }}">
                     <span class="flex min-w-0 items-center gap-2.5">
@@ -85,10 +81,10 @@
 
     <div class="p-3 border-t border-slate-100">
         <div class="flex items-center gap-3 px-3 py-2 mb-1">
-            <img src="{{ $broker?->avatar ? asset('storage/'.$broker->avatar) : asset('assets/images/default-avatar.svg') }}" width="200" height="200" onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'" alt="Agent profile" class="w-8 h-8 rounded-full border border-slate-200 owner-theme-soft object-cover">
+            <img src="{{ $customer?->avatar ? asset('storage/'.$customer->avatar) : asset('assets/images/default-avatar.svg') }}" width="200" height="200" onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'" alt="Customer profile" class="w-8 h-8 rounded-full border border-slate-200 owner-theme-soft object-cover">
             <span class="min-w-0">
-                <strong class="block text-xs text-slate-800 truncate">{{ $broker?->name }}</strong>
-                <small class="block text-[10px] text-slate-400 truncate">Agent</small>
+                <strong class="block text-xs text-slate-800 truncate">{{ $customer?->name }}</strong>
+                <small class="block text-[10px] text-slate-400 truncate">Customer</small>
             </span>
         </div>
         <form method="POST" action="{{ route('logout') }}">

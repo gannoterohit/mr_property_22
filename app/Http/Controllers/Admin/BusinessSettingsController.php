@@ -38,7 +38,7 @@ class BusinessSettingsController extends Controller
             Setting::set($key, $request->boolean($key) ? '1' : '0');
         }
 
-        foreach (['broker_module_enabled', 'broker_verification_enabled', 'broker_listing_charges_enabled', 'broker_subscription_enabled', 'broker_featured_enabled', 'broker_future_brokerage_enabled'] as $key) {
+        foreach (['broker_module_enabled', 'broker_verification_enabled', 'broker_listing_charges_enabled', 'broker_featured_enabled', 'broker_future_brokerage_enabled'] as $key) {
             \App\Models\BrokerSetting::set($key, $request->boolean($key) ? '1' : '0');
         }
 

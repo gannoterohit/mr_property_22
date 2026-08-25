@@ -80,6 +80,7 @@ Route::middleware(['auth', 'role:broker'])->prefix('agent')->name('agent.')->gro
     Route::get('/dashboard', [BrokerDashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/pending', [BrokerDashboardController::class, 'pending'])->name('pending');
     Route::get('/properties', [BrokerDashboardController::class, 'properties'])->name('properties');
+    Route::get('/enquiries', [BrokerDashboardController::class, 'enquiries'])->name('enquiries');
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
     Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
     Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
@@ -89,9 +90,7 @@ Route::middleware(['auth', 'role:broker'])->prefix('agent')->name('agent.')->gro
     Route::post('/rooms/{room}/featured', [RoomController::class, 'makeFeatured'])->name('rooms.featured');
     Route::post('/rooms/{room}/booked', [RoomController::class, 'markBooked'])->name('rooms.markBooked');
     Route::post('/rooms/{room}/available', [RoomController::class, 'markAvailable'])->name('rooms.markAvailable');
-    Route::get('/subscription', [BrokerDashboardController::class, 'subscription'])->name('subscription');
     Route::get('/plans', [PlanController::class, 'index'])->name('plans');
-    Route::post('/subscription/purchase', [BrokerDashboardController::class, 'purchaseSubscription'])->name('subscription.purchase');
     Route::get('/payments', [BrokerDashboardController::class, 'payments'])->name('payments');
     Route::get('/transactions', [BrokerDashboardController::class, 'transactions'])->name('transactions');
     Route::get('/profile', [BrokerDashboardController::class, 'profile'])->name('profile');

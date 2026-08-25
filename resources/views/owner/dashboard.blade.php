@@ -27,9 +27,9 @@
             <section class="owner-dashboard-stats" aria-label="Dashboard statistics">
                 @foreach([
                     ['Total properties', $rooms ?? 0, 'fa-building', 'bg-indigo-50 text-indigo-600', route('owner.rooms')],
-                    ['Contact unlocks', $contactUnlocks ?? 0, 'fa-address-card', 'bg-emerald-50 text-emerald-600', route('owner.enquiries')],
                     ['Featured', $featuredRooms ?? 0, 'fa-star', 'bg-amber-50 text-amber-600', route('owner.rooms')],
                     ['Wallet points', number_format($user->wallet ?? 0), 'fa-wallet', 'bg-sky-50 text-sky-600', route('wallet')],
+                    ['Active listings', $activeRooms ?? 0, 'fa-check-circle', 'bg-emerald-50 text-emerald-600', route('owner.rooms')],
                 ] as $stat)
                     <a href="{{ $stat[4] }}" class="owner-dashboard-stat block rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
                         <div class="flex items-start justify-between gap-3">
@@ -66,7 +66,6 @@
                         <h2 class="mt-4 font-bold">Quick actions</h2>
                         <div class="mt-4 space-y-2">
                             <a href="{{ route('owner.rooms.create') }}" class="owner-quick-primary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold"><span><i class="fas fa-plus mr-2 text-indigo-600"></i>Add a property</span><i class="fas fa-arrow-right text-xs"></i></a>
-                            <a href="{{ route('owner.enquiries') }}" class="owner-quick-secondary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold"><span><i class="fas fa-address-card mr-2"></i>View enquiries</span><i class="fas fa-arrow-right text-xs"></i></a>
                             <a href="{{ route('owner.plans') }}" class="owner-quick-secondary flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold"><span><i class="fas fa-tags mr-2"></i>Listing plans</span><i class="fas fa-arrow-right text-xs"></i></a>
                         </div>
                     </div>

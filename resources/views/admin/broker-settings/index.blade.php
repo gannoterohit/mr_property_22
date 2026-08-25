@@ -33,7 +33,6 @@
                         'broker_module_enabled' => 'Broker Module',
                         'broker_verification_enabled' => 'Broker Verification',
                         'broker_listing_charges_enabled' => 'Broker Listing Charges',
-                        'broker_subscription_enabled' => 'Broker Subscription',
                         'broker_featured_enabled' => 'Featured Listing for Brokers',
                         'broker_future_brokerage_enabled' => 'Future Brokerage System',
                     ];
@@ -64,7 +63,6 @@
                         'broker_per_listing_charge' => 'Per Listing Charge (INR)',
                         'broker_featured_charge' => 'Featured Listing Charge (INR)',
                         'broker_listing_expiry_days' => 'Listing Expiry (Days)',
-                        'broker_subscription_expiry_days' => 'Subscription Expiry (Days)',
                         'broker_free_listing_limit' => 'Free Listing Limit',
                         'broker_lead_charge' => 'Lead Charge (INR)',
                     ];

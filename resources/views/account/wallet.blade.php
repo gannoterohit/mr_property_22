@@ -1,8 +1,11 @@
-@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
-@section('title','My Wallet | ApnaNest')
-@section('content')
-<div class="{{ $user->role==='owner'?'owner-workspace flex':'' }} min-h-screen">
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : (Auth::user()->role === 'broker' ? 'layouts.agent' : (Auth::user()->role === 'user' ? 'layouts.customer' : 'layouts.public')))
+@section('title','My Wallet | ' . \App\Models\Setting::get('website_name', 'RoomRental'))
+@php $contentSection = Auth::user()->role === 'owner' ? 'owner-content' : (Auth::user()->role === 'broker' ? 'broker-content' : (Auth::user()->role === 'user' ? 'customer-content' : 'content')); @endphp
+@section($contentSection)
+<div class="{{ $user->role==='owner'||$user->role==='broker'||$user->role==='user'?'owner-workspace flex':'' }} min-h-screen">
     @if($user->role==='owner') @include('owner.partials.sidebar',['active'=>'wallet']) @endif
+    @if($user->role==='broker') @include('broker.partials.sidebar',['active'=>'agent.wallet']) @endif
+    @if($user->role==='user') @include('customer.partials.sidebar',['active'=>'wallet']) @endif
     <main class="account-main">
         <header class="account-header">
             <div class="account-container">

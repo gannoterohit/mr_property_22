@@ -1,20 +1,19 @@
-@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : (Auth::user()->role === 'broker' ? 'layouts.agent' : (Auth::user()->role === 'user' ? 'layouts.customer' : 'layouts.public')))
 @section('title', 'My Complaints')
-@section('content')
-@php $isOwner = Auth::user()->role === 'owner'; @endphp
+@php $role = Auth::user()->role; $isOwner = $role === 'owner'; $isBroker = $role === 'broker'; $contentSection = $isOwner ? 'owner-content' : ($isBroker ? 'broker-content' : ($role === 'user' ? 'customer-content' : 'content')); @endphp
+@section($contentSection)
+<div class="{{ ($isOwner || $isBroker || $role === 'user') ? 'owner-workspace' : '' }} min-h-screen bg-slate-50">
+    @if($isOwner) @include('owner.partials.sidebar', ['active' => 'owner.complaints.index']) @endif
+    @if($isBroker) @include('broker.partials.sidebar', ['active' => 'agent.complaints.index']) @endif
+    @if($role === 'user') @include('customer.partials.sidebar', ['active' => 'complaints']) @endif
 
-<div class="{{ $isOwner ? 'owner-workspace' : '' }} min-h-screen bg-slate-50">
-    @if($isOwner)
-        @include('owner.partials.sidebar', ['active' => 'complaints'])
-    @endif
-
-    <main class="{{ $isOwner ? 'complaint-page-main' : '' }} flex-1">
+    <main class="{{ ($isOwner || $isBroker) ? 'complaint-page-main' : '' }} flex-1">
 
         {{-- Page Header --}}
-        @if($isOwner)
+        @if($isOwner || $isBroker)
             <header class="owner-page-header flex items-center justify-between gap-4">
-                <div><h1 class="text-2xl font-bold text-slate-900">My Complaints</h1><p class="text-sm text-slate-500 mt-1">Track reports and support responses.</p></div>
-                <a href="{{ route('complaints.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white"><i class="fas fa-plus"></i> New Complaint</a>
+                <div><h1 class="text-2xl font-extrabold text-slate-900">My Complaints</h1><p class="text-sm text-slate-500 mt-1">Track reports and support responses.</p></div>
+                <a href="{{ route('complaints.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition"><i class="fas fa-plus text-xs"></i> New Complaint</a>
             </header>
         @else
             <header class="bg-white border-b border-slate-200">
@@ -32,7 +31,7 @@
         @endif
 
         {{-- Content --}}
-        <div class="{{ $isOwner ? 'complaint-page-content' : 'max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6' }}">
+        <div class="{{ ($isOwner || $isBroker) ? 'complaint-page-content' : 'max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6' }}">
             <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
                 <div class="overflow-x-auto"><table class="w-full text-sm">
                     <thead class="bg-slate-50 text-left text-xs uppercase text-slate-500"><tr><th class="p-4">Ticket</th><th class="p-4">Complaint</th><th class="p-4">Property</th><th class="p-4">Status</th><th class="p-4">Updated</th></tr></thead>

@@ -1,4 +1,4 @@
-@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : 'layouts.public')
+@extends(Auth::user()->role === 'owner' ? 'layouts.owner' : (Auth::user()->role === 'broker' ? 'layouts.agent' : (Auth::user()->role === 'user' ? 'layouts.customer' : 'layouts.public')))
 
 @section('title', 'Profile Settings - ' . \App\Models\Setting::get('website_name', 'RoomRental'))
 
@@ -6,11 +6,12 @@
 <link rel="stylesheet" href="{{ asset('css/account-profile-edit.css') }}">
 @endpush
 
-@section('content')
-<div class="{{ $user->role === 'owner' ? 'owner-workspace' : '' }} profile-page min-h-screen {{ $user->role === 'owner' ? 'flex' : '' }}">
-    @if($user->role === 'owner')
-        @include('owner.partials.sidebar', ['active' => 'profile'])
-    @endif
+@php $contentSection = $user->role === 'owner' ? 'owner-content' : ($user->role === 'broker' ? 'broker-content' : ($user->role === 'user' ? 'customer-content' : 'content')); @endphp
+@section($contentSection)
+<div class="{{ ($user->role === 'owner' || $user->role === 'broker' || $user->role === 'user') ? 'owner-workspace' : '' }} profile-page min-h-screen {{ ($user->role === 'owner' || $user->role === 'broker' || $user->role === 'user') ? 'flex' : '' }}">
+    @if($user->role === 'owner') @include('owner.partials.sidebar', ['active' => 'profile']) @endif
+    @if($user->role === 'broker') @include('broker.partials.sidebar', ['active' => 'agent.profile']) @endif
+    @if($user->role === 'user') @include('customer.partials.sidebar', ['active' => 'profile']) @endif
 
     <main class="profile-main flex-1 pb-20 lg:pb-0">
         <header class="border-b border-slate-200 bg-white">

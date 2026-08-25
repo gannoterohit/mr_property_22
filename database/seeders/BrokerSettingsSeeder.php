@@ -33,13 +33,6 @@ class BrokerSettingsSeeder extends Seeder
                 'description' => 'Enable/disable per-listing charges for brokers',
             ],
             [
-                'key' => 'broker_subscription_enabled',
-                'value' => '1',
-                'type' => 'boolean',
-                'group' => 'broker',
-                'description' => 'Enable/disable broker subscription plans',
-            ],
-            [
                 'key' => 'broker_featured_enabled',
                 'value' => '1',
                 'type' => 'boolean',
@@ -75,13 +68,6 @@ class BrokerSettingsSeeder extends Seeder
                 'type' => 'number',
                 'group' => 'broker',
                 'description' => 'Default listing expiry in days',
-            ],
-            [
-                'key' => 'broker_subscription_expiry_days',
-                'value' => '30',
-                'type' => 'number',
-                'group' => 'broker',
-                'description' => 'Default subscription expiry in days',
             ],
             [
                 'key' => 'broker_free_listing_limit',
