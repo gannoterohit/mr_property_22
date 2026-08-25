@@ -1,11 +1,11 @@
-@extends('layouts.owner')
+@extends('layouts.agent')
 
 @section('title', 'List Your Property')
 
-@section('owner-content')
+@section('broker-content')
 <link rel="stylesheet" href="{{ asset('css/owner-rooms-create.css') }}">
 
-<a href="{{ route('owner.dashboard') }}" class="lg:hidden text-gray-900"><i class="fas fa-arrow-left text-xl"></i></a>
+<a href="{{ route('agent.dashboard') }}" class="lg:hidden text-gray-900"><i class="fas fa-arrow-left text-xl"></i></a>
 
 <div class="room-editor-content">
                 <!-- Listing Information Alert -->
@@ -97,6 +97,13 @@
                                        class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
                             </div>
 
+                            <div>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Broker Fee</label>
+                                <div class="relative">
+                                    <span class="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-gray-400">₹</span>
+                                    <input type="number" name="broker_fee" required min="0" placeholder="1000"
+                                           class="w-full bg-gray-50 border-none rounded-2xl pl-10 pr-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
+                                </div>
                             </div>
                         </div>
 

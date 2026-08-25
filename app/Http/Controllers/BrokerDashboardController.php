@@ -76,7 +76,14 @@ class BrokerDashboardController extends Controller
 
         $properties = $query->latest()->paginate(20);
 
-        return view('broker.properties.index', compact('properties'));
+        $roomCounts = [
+            'all' => Room::where('broker_id', $broker->id)->count(),
+            'active' => Room::where('broker_id', $broker->id)->where('status', 'active')->where('listing_status', 'approved')->count(),
+            'pending' => Room::where('broker_id', $broker->id)->where('listing_status', 'pending')->count(),
+            'booked' => Room::where('broker_id', $broker->id)->where('status', 'booked')->count(),
+        ];
+
+        return view('broker.properties.index', compact('properties', 'roomCounts'));
     }
 
     public function subscription(Request $request)

@@ -281,6 +281,9 @@ class RoomController extends Controller {
     
 
     public function create() {
+        if (Auth::check() && Auth::user()->role === 'broker') {
+            return view('broker.rooms.create');
+        }
         return view('owner.rooms.create');
     }
 
