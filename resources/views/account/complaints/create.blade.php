@@ -9,35 +9,14 @@
 
     <main class="{{ ($isOwner || $isBroker || $isCustomer) ? 'complaint-page-main' : '' }} flex-1">
 
-        {{-- Page Header --}}
+        {{-- Content --}}
         @if($isOwner || $isBroker || $isCustomer)
-            <header class="owner-page-header">
-                <h1 class="text-2xl font-extrabold text-slate-900">Submit a Complaint</h1>
-                <p class="text-sm text-slate-500 mt-1">Give clear details and evidence so our team can investigate.</p>
-            </header>
-        @else
-            <header class="bg-white border-b border-slate-200">
-                <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <a href="{{ route('complaints.index') }}" class="text-xs font-bold text-indigo-600 inline-flex items-center gap-1 mb-3">
-                        <i class="fas fa-arrow-left text-[10px]"></i> My Complaints
-                    </a>
-                    <p class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-1">Support</p>
+            <div class="{{ ($isOwner || $isBroker || $isCustomer) ? 'complaint-page-content' : '' }}">
+                <div class="mb-6">
                     <h1 class="text-2xl font-extrabold text-slate-900">Submit a Complaint</h1>
                     <p class="text-sm text-slate-500 mt-1">Give clear details and evidence so our team can investigate.</p>
                 </div>
-            </header>
-        @endif
-
-        {{-- Content --}}
-        <div class="{{ ($isOwner || $isBroker || $isCustomer) ? 'complaint-page-content' : 'max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6' }}">
-            @if($errors->any())
-                <div class="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-                    <ul class="list-disc pl-5">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
-                </div>
-            @endif
-
-            <form action="{{ route('complaints.store') }}" method="POST" enctype="multipart/form-data"
-                  class="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 md:p-6 shadow-sm">
+                <form action="{{ route('complaints.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 md:p-6 shadow-sm">
                 @csrf
 
                 <div>

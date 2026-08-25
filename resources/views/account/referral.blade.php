@@ -15,16 +15,6 @@
     @if($user->role==='broker') @include('broker.partials.sidebar',['active'=>'agent.referral']) @endif
     @if($user->role==='user') @include('customer.partials.sidebar',['active'=>'referral']) @endif
     <main class="{{ $user->role==='owner'||$user->role==='broker'?'flex-1 min-w-0':'account-main' }}">
-        <header class="account-header">
-            <div class="account-container">
-                <div>
-                    <span class="account-eyebrow">Rewards program</span>
-                    <h1>Refer & Earn</h1>
-                    <p>Invite friends to {{ \App\Models\Setting::get('website_name', 'ApnaNest') }} and get free contact unlocks when they join.</p>
-                </div>
-                <a href="{{ route('owner.rooms') }}" class="account-action secondary {{ $user->role==='owner'?'owner-theme-bg owner-theme-hover-bg':'' }}">My Properties</a>
-            </div>
-        </header>
         <div class="account-container account-body">
             <section class="referral-hero">
                 <div class="referral-copy">

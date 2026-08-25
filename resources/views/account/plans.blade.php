@@ -36,30 +36,6 @@
     @if($isCustomer) @include('customer.partials.sidebar', ['active' => 'plans']) @endif
 
     <main class="flex-1 min-w-0 pb-24 lg:pb-12">
-        <section class="border-b border-slate-200 bg-white">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-7 lg:py-9">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-                    <div class="max-w-2xl">
-                        <h1 class="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-950">
-                            {{ $isBroker ? 'Broker Listing Plans' : ($isOwner ? 'Room Listing Plans' : 'Room Unlock Plans') }}
-                        </h1>
-                        <p class="mt-2 text-sm sm:text-base leading-6 text-slate-600">
-                            {{ $isBroker || $isOwner
-                                ? 'Select a plan based on how many rooms you want to list.'
-                                : 'Select a plan based on how many room contacts you want to unlock.' }}
-                        </p>
-                    </div>
-                    <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 min-w-[210px]">
-                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Single {{ $isBroker || $isOwner ? 'listing' : 'unlock' }}</p>
-                        <div class="mt-1 flex items-baseline gap-2">
-                            <span class="text-xl font-extrabold text-slate-950">{{ $feeEnabled ? '₹'.number_format($singleFee) : 'Free' }}</span>
-                            <span class="text-xs text-slate-500">{{ $feeEnabled ? 'without a plan' : 'during launch period' }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
             @if($activeSubscription)
                 <div class="mb-8 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 sm:p-6">

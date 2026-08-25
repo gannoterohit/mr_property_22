@@ -7,19 +7,6 @@
     @if($user->role==='broker') @include('broker.partials.sidebar',['active'=>'agent.wallet']) @endif
     @if($user->role==='user') @include('customer.partials.sidebar',['active'=>'wallet']) @endif
     <main class="account-main">
-        <header class="account-header">
-            <div class="account-container">
-                <div>
-                    <span class="account-eyebrow">Payments and credits</span>
-                    <h1>My Wallet</h1>
-                    <p>Track cash balance and referral unlock credits.</p>
-                </div>
-                <a href="{{ route('referral.index') }}" class="account-action">
-                    <i class="fas fa-gift"></i> Earn Free Unlocks
-                </a>
-            </div>
-        </header>
-        
         <div class="account-container account-body">
             @if(session('success'))
                 <div class="account-flash success"><i class="fas fa-circle-check mr-2"></i>{{ session('success') }}</div>

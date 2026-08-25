@@ -9,19 +9,6 @@
     @if(Auth::user()->role === 'broker') @include('broker.partials.sidebar', ['active' => 'unlocks.index']) @endif
     @if(Auth::user()->role === 'user') @include('customer.partials.sidebar', ['active' => 'unlocks.index']) @endif
     <main class="account-main unlocked-page">
-        <header class="account-header">
-            <div class="account-container">
-                <div>
-                    <span class="account-eyebrow">Your contacts</span>
-                    <h1>My Unlocked Contacts</h1>
-                    <p>{{ $unlocks->total() }} {{ Str::plural('property contact', $unlocks->total()) }} available in your account.</p>
-                </div>
-                <a href="{{ route('rooms.index') }}" class="account-action">
-                    <i class="fas fa-magnifying-glass"></i> Find more properties
-                </a>
-            </div>
-        </header>
-
         <div class="account-container account-body">
             @if($unlocks->count())
                 <section class="unlock-grid" aria-label="Unlocked room contacts">

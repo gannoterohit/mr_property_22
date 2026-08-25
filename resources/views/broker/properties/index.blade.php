@@ -8,14 +8,7 @@
 
 @section('broker-content')
 @php $user = Auth::user(); @endphp
-<div class="min-h-screen bg-slate-50">
-    <header class="border-b border-slate-200 bg-white">
-        <div class="owner-rooms-header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-            <div><p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-600">Agent panel</p><h1 class="mt-1 text-2xl sm:text-3xl font-extrabold text-slate-950">My Properties</h1><p class="mt-2 text-sm text-slate-500">View and manage all your property listings in one place.</p></div>
-            <a href="{{ route('agent.rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-700"><i class="fas fa-plus"></i>Add New Property</a>
-        </div>
-    </header>
-    <div class="owner-rooms-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="owner-rooms-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="owner-room-stats">
             @foreach([['All properties','all'],['Active','active'],['Pending','pending'],['Rented','booked']] as $item)
                 <div class="owner-room-stat"><p class="text-xs font-semibold text-slate-500">{{ $item[0] }}</p><p class="mt-2 text-2xl font-extrabold text-slate-950">{{ $roomCounts[$item[1]] }}</p></div>

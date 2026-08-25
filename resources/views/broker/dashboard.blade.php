@@ -9,16 +9,6 @@
 @section('broker-content')
 @php $user = Auth::user(); @endphp
 <div class="owner-dashboard-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div>
-            <p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-600">Agent dashboard</p>
-            <h2 class="mt-1 text-xl sm:text-2xl font-extrabold tracking-tight text-slate-950">Welcome back, {{ $user->name }}</h2>
-            <p class="mt-1 text-sm text-slate-500">Overview of your listings, leads and earnings.</p>
-        </div>
-        <a href="{{ route('agent.rooms.create') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition">
-            <i class="fas fa-plus"></i> Add New Property
-        </a>
-    </div>
             @include('partials.offer-banner', ['placement' => 'dashboard'])
             <section class="owner-dashboard-stats" aria-label="Dashboard statistics">
                 @foreach([

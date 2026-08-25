@@ -9,34 +9,9 @@
 
     <main class="{{ ($isOwner || $isBroker || $isCustomer) ? 'complaint-page-main' : '' }} flex-1">
 
-        {{-- Page Header --}}
-        @if($isOwner || $isBroker || $isCustomer)
-            <header class="owner-page-header">
-                <a href="{{ route('complaints.index') }}" class="text-xs font-bold text-indigo-600">← My Complaints</a>
-                <div class="mt-2 flex flex-wrap items-center gap-3">
-                    <h1 class="text-2xl font-extrabold text-slate-900">{{ $complaint->ticket_number }}</h1>
-                    <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">{{ \App\Models\Complaint::STATUSES[$complaint->status] }}</span>
-                </div>
-            </header>
-        @else
-            <header class="bg-white border-b border-slate-200">
-                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-                    <a href="{{ route('complaints.index') }}" class="text-xs font-bold text-indigo-600 inline-flex items-center gap-1 mb-3">
-                        <i class="fas fa-arrow-left text-[10px]"></i> My Complaints
-                    </a>
-                    <div class="flex flex-wrap items-center gap-3">
-                        <h1 class="text-xl font-extrabold text-slate-900">{{ $complaint->ticket_number }}</h1>
-                        <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">
-                            {{ \App\Models\Complaint::STATUSES[$complaint->status] }}
-                        </span>
-                    </div>
-                    <p class="text-sm text-slate-500 mt-1">{{ $complaint->subject }}</p>
-                </div>
-            </header>
-        @endif
-
         {{-- Content --}}
-        <div class="{{ ($isOwner || $isBroker || $isCustomer) ? 'complaint-page-content complaint-detail-grid' : 'max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-3 gap-5' }}">
+        @if($isOwner || $isBroker || $isCustomer)
+            <div class="{{ ($isOwner || $isBroker || $isCustomer) ? 'complaint-page-content complaint-detail-grid' : '' }}">
 
             {{-- Left: Main Content --}}
             <section class="min-w-0 space-y-5 {{ $isOwner ? '' : 'lg:col-span-2' }}">

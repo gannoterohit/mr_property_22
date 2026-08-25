@@ -8,17 +8,7 @@
 
 @section('broker-content')
 @php $user = Auth::user(); @endphp
-<div class="min-h-screen bg-slate-50">
-    <header class="border-b border-slate-200 bg-white">
-        <div class="owner-rooms-header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-            <div>
-                <p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-600">Leads</p>
-                <h1 class="mt-1 text-2xl sm:text-3xl font-extrabold text-slate-950">All Enquiries</h1>
-                <p class="mt-2 text-sm text-slate-500">Property seekers who showed interest in your listings.</p>
-            </div>
-        </div>
-    </header>
-    <div class="owner-rooms-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="owner-rooms-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="owner-room-stats">
             @php
                 $total = $enquiries->total();

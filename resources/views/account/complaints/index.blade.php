@@ -9,30 +9,14 @@
 
     <main class="{{ ($isOwner || $isBroker) ? 'complaint-page-main' : '' }} flex-1">
 
-        {{-- Page Header --}}
-        @if($isOwner || $isBroker)
-            <header class="owner-page-header flex items-center justify-between gap-4">
-                <div><h1 class="text-2xl font-extrabold text-slate-900">My Complaints</h1><p class="text-sm text-slate-500 mt-1">Track reports and support responses.</p></div>
-                <a href="{{ route('complaints.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition"><i class="fas fa-plus text-xs"></i> New Complaint</a>
-            </header>
-        @else
-            <header class="bg-white border-b border-slate-200">
-                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
-                    <div>
-                        <p class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-1">Support</p>
-                        <h1 class="text-2xl font-extrabold text-slate-900">My Complaints</h1>
-                        <p class="text-sm text-slate-500 mt-1">Track reports and support responses.</p>
-                    </div>
-                    <a href="{{ route('complaints.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition">
-                        <i class="fas fa-plus text-xs"></i> New Complaint
-                    </a>
-                </div>
-            </header>
-        @endif
-
         {{-- Content --}}
-        <div class="{{ ($isOwner || $isBroker) ? 'complaint-page-content' : 'max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6' }}">
-            <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        @if($isOwner || $isBroker || $role === 'user')
+            <div class="{{ ($isOwner || $isBroker || $role === 'user') ? 'complaint-page-content' : '' }}">
+                <div class="flex items-center justify-between gap-4 mb-6">
+                    <div><h1 class="text-2xl font-extrabold text-slate-900">My Complaints</h1><p class="text-sm text-slate-500 mt-1">Track reports and support responses.</p></div>
+                    <a href="{{ route('complaints.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition"><i class="fas fa-plus text-xs"></i> New Complaint</a>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
                 <div class="overflow-x-auto"><table class="w-full text-sm">
                     <thead class="bg-slate-50 text-left text-xs uppercase text-slate-500"><tr><th class="p-4">Ticket</th><th class="p-4">Complaint</th><th class="p-4">Property</th><th class="p-4">Status</th><th class="p-4">Updated</th></tr></thead>
                     <tbody class="divide-y divide-slate-100">

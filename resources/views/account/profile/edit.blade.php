@@ -14,17 +14,6 @@
     @if($user->role === 'user') @include('customer.partials.sidebar', ['active' => 'profile']) @endif
 
     <main class="profile-main flex-1 pb-20 lg:pb-0">
-        <header class="border-b border-slate-200 bg-white">
-            <div class="profile-header-inner max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-[.16em] text-indigo-600">Account settings</p>
-                    <h1 class="mt-1 text-2xl font-extrabold tracking-tight text-slate-950">Profile Settings</h1>
-                    <p class="mt-1 text-sm text-slate-500">Manage your personal information and account security.</p>
-                </div>
-                <span class="hidden sm:inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700"><i class="fas fa-circle-check"></i>{{ ucfirst($user->role) }} account</span>
-            </div>
-        </header>
-
         <div class="profile-content max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             @if(session('status') === 'profile-updated')
                 <div class="mb-5 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800"><i class="fas fa-circle-check"></i>Profile updated successfully.</div>
