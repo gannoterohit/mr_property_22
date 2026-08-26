@@ -18,6 +18,11 @@
                                     @if($room->propertyCategory?->name)
                                         <span class="bg-indigo-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-full">{{ $room->propertyCategory->name }}</span>
                                     @endif
+                                    @if($room->listing_type === 'broker')
+                                        <span class="bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-full flex items-center gap-1 shadow-sm"><i class="fas fa-user-tie"></i> Verified Agent</span>
+                                    @else
+                                        <span class="bg-emerald-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-full flex items-center gap-1 shadow-sm"><i class="fas fa-shield-check"></i> Direct Owner (0%)</span>
+                                    @endif
                                 </div>
                                 @if($room->is_featured)
                                     <span class="market-room-badge">Featured</span>
@@ -44,7 +49,7 @@
                                         <span>{{ number_format((float)$room->area_sqft, 2) }} sqft</span>
                                     @endif
                                 </div>
-                                <span class="market-room-contact">Contact Owner</span>
+                                <span class="market-room-contact">{{ $room->listing_type === 'broker' ? 'Contact Agent' : 'Contact Owner' }}</span>
                             </div>
                         </a>
                 @endforeach

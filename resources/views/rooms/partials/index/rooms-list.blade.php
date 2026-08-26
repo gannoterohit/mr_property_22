@@ -35,9 +35,13 @@
                                             </span>
                                         @endif
                                         @if($room->listing_type === 'broker')
-                                            <span class="room-theme-secondary-badge text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg">Broker Fee</span>
+                                            <span class="bg-amber-500 text-white text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1 shadow-sm">
+                                                <i class="fas fa-user-tie"></i> Verified Agent
+                                            </span>
                                         @else
-                                            <span class="room-theme-secondary-badge text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg">No Broker Fee</span>
+                                            <span class="bg-emerald-600 text-white text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1 shadow-sm">
+                                                <i class="fas fa-shield-check"></i> Direct Owner (0%)
+                                            </span>
                                         @endif
                                     </div>
 
@@ -90,10 +94,14 @@
 
                                     <div class="room-owner-row">
                                         <img src="{{ $room->user?->avatar ? asset('storage/'.$room->user->avatar) : asset('assets/images/default-avatar.svg') }}"
-                                             alt="{{ $room->user?->name ?? 'Property owner' }}"
+                                             alt="{{ $room->user?->name ?? 'Property Lister' }}"
                                              loading="lazy"
                                              onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'">
-                                        <span>Owner: <strong>{{ $room->user?->name ?? 'Verified owner' }}</strong></span>
+                                        @if($room->listing_type === 'broker')
+                                            <span>Agent: <strong>{{ $room->user?->agency_name ?: ($room->user?->name ?? 'Verified Agent') }}</strong></span>
+                                        @else
+                                            <span>Owner: <strong>{{ $room->user?->name ?? 'Verified Owner' }}</strong></span>
+                                        @endif
                                     </div>
 
                                     <!-- Bottom actions -->

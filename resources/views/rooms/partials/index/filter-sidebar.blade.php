@@ -41,6 +41,28 @@
                         </select>
                     </div>
 
+                    <!-- Listed By Filter -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Listed By</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-xs text-slate-600 font-semibold cursor-pointer hover-text-primary transition-colors">
+                                <input type="radio" name="listing_type" value="" {{ !request('listing_type') ? 'checked' : '' }}
+                                       class="text-indigo-600 border-slate-300">
+                                <span>All Listings</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-xs text-slate-600 font-semibold cursor-pointer hover-text-primary transition-colors">
+                                <input type="radio" name="listing_type" value="owner" {{ request('listing_type') === 'owner' ? 'checked' : '' }}
+                                       class="text-emerald-600 border-slate-300">
+                                <span class="flex items-center gap-1.5"><i class="fas fa-shield-check text-emerald-600 text-[10px]"></i> Direct Owner (0% Brokerage)</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-xs text-slate-600 font-semibold cursor-pointer hover-text-primary transition-colors">
+                                <input type="radio" name="listing_type" value="broker" {{ request('listing_type') === 'broker' ? 'checked' : '' }}
+                                       class="text-amber-500 border-slate-300">
+                                <span class="flex items-center gap-1.5"><i class="fas fa-user-tie text-amber-500 text-[10px]"></i> Verified Agent</span>
+                            </label>
+                        </div>
+                    </div>
+
                     <!-- Property Type — dynamic: only shows types that exist in DB -->
                     <div class="space-y-2">
                         <label class="text-xs font-black text-slate-700 uppercase tracking-wider block">Property Type</label>

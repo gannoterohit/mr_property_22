@@ -131,6 +131,10 @@ class RoomController extends Controller {
         $query->where('area_sqft', '<=', $request->max_area_sqft);
     }
 
+    if ($request->filled('listing_type')) {
+        $query->where('listing_type', $request->listing_type);
+    }
+
     if ($request->filled('area')) {
         $area = trim($request->area);
         if ($area !== '') {

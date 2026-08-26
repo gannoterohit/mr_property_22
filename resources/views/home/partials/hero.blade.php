@@ -3,10 +3,14 @@
         <div class="market-hero-box">
             <div class="market-hero-image" style="background-image:url('{{ $heroImage }}')"></div>
             <div class="market-hero-copy">
-                <span class="market-eyebrow"><i class="fas fa-shield-halved"></i>100% verified properties · zero brokerage</span>
+                <span class="market-eyebrow"><i class="fas fa-shield-halved"></i>100% Verified Properties · Direct Owners &amp; Trusted Agents</span>
                 <h1>Find your perfect property <span>@if($displayCity)in {{ $displayCity }}@else near you @endif</span></h1>
                 <p>{{ $heroDescription }}</p>
-                <div class="market-benefits">@foreach([1,2,3] as $benefit)<span><i class="fas {{ $text('home_why_'.$benefit.'_icon',['fa-shield-halved','fa-ban','fa-user-check'][$benefit-1]) }}"></i>{{ $text('home_why_'.$benefit.'_title',['Verified Listings','No Brokerage','Direct Owner Contact'][$benefit-1]) }}</span>@endforeach</div>
+                <div class="market-benefits">
+                    <span><i class="fas fa-shield-halved"></i>Verified Listings</span>
+                    <span><i class="fas fa-house-chimney-user"></i>Direct Owners &amp; Agents</span>
+                    <span><i class="fas fa-unlock-keyhole"></i>Instant Unlock</span>
+                </div>
             </div>
             <div class="market-city-card hidden md:flex"><small><i class="fas fa-location-arrow"></i> Currently available in</small><strong>{{ $displayCity ?: 'Your city' }}</strong><span>More cities coming soon!</span></div>
             <div class="hidden md:block">
