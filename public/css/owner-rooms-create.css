@@ -1,8 +1,8 @@
     .room-editor-content {
         width: 100% !important;
-        max-width: 100% !important;
+        max-width: 48rem !important;
         margin: 0 auto !important;
-        padding: 1rem !important;
+        padding: 0.75rem !important;
         box-sizing: border-box !important;
         overflow-x: hidden !important;
     }
@@ -38,7 +38,7 @@
     .room-editor-content .p-8,
     .room-editor-content .p-6,
     .room-editor-content .p-10 {
-        padding: 1rem !important;
+        padding: 0.75rem !important;
     }
     .room-editor-content .space-y-6 > * + * {
         margin-top: 1rem !important;
@@ -130,39 +130,39 @@
     }
     @media (min-width: 640px) {
         .room-editor-content {
-            padding: 1.5rem !important;
+            padding: 1rem !important;
         }
         .room-editor-content .p-8,
         .room-editor-content .p-6,
         .room-editor-content .p-10 {
-            padding: 1.5rem !important;
+            padding: 1rem !important;
         }
         .room-editor-content .rounded-[2rem],
         .room-editor-content .rounded-[2.5rem] {
-            border-radius: 1.25rem !important;
+            border-radius: 1rem !important;
         }
         .room-editor-content .owner-form-wide {
-            padding: 1.5rem !important;
-            border-radius: 1.25rem !important;
+            padding: 1rem !important;
+            border-radius: 1rem !important;
         }
     }
     @media (min-width: 1024px) {
         .room-editor-content {
-            max-width: 72rem !important;
-            padding: 2rem !important;
+            max-width: 48rem !important;
+            padding: 1.25rem !important;
         }
         .room-editor-content .p-8,
         .room-editor-content .p-6,
         .room-editor-content .p-10 {
-            padding: 2rem !important;
+            padding: 1.25rem !important;
         }
         .room-editor-content .rounded-[2rem],
         .room-editor-content .rounded-[2.5rem] {
-            border-radius: 1.5rem !important;
+            border-radius: 1rem !important;
         }
         .room-editor-content .owner-form-wide {
-            padding: 2rem !important;
-            border-radius: 1.5rem !important;
+            padding: 1.25rem !important;
+            border-radius: 1rem !important;
         }
     }
     .room-editor-content .owner-form-wide .grid {

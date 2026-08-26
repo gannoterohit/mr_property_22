@@ -2,7 +2,7 @@
     .profile-main { min-width: 0; }
     .profile-header-inner { padding-top: 1.5rem; padding-bottom: 1.5rem; }
     .profile-content { padding-top: 2rem; padding-bottom: 4rem; }
-    .profile-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: 1.5rem; align-items: start; }
+    .profile-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: 1.5rem; align-items: start; max-width: 56rem; margin: 0 auto; }
     .profile-stack { display: flex; flex-direction: column; gap: 1.5rem; }
     .profile-card { border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; padding: 1.5rem; box-shadow: 0 1px 3px rgba(15,23,42,.04); }
     .profile-card input:not([type="file"]), .profile-card select, .profile-card textarea { border: 1px solid #e2e8f0 !important; border-radius: .75rem !important; background: #f8fafc !important; }
