@@ -372,11 +372,19 @@
                                         </div>
                                         
                                         @if($room->listing_type === 'broker')
-                                        <div class="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-xl">
-                                            <p class="text-[10px] font-black uppercase text-orange-700 tracking-widest mb-1">Brokerage Policy</p>
-                                            <p class="text-xs text-orange-800 leading-tight">
-                                                A professional service fee of <span class="font-bold text-lg">₹{{ $room->broker_fee }}</span> is payable to the broker only if you finalize this deal.
-                                            </p>
+                                        <div class="mt-4 p-3.5 bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-2xl shadow-sm">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-orange-600 text-white text-xs"><i class="fas fa-shield-check"></i></span>
+                                                <div class="min-w-0">
+                                                    <p class="text-xs font-black text-orange-950 truncate">{{ $room->owner?->agency_name ?: ($room->owner?->name . ' (Agent)') }}</p>
+                                                    @if($room->owner?->broker_license)
+                                                        <p class="text-[10px] text-orange-700 font-semibold">Lic: {{ $room->owner->broker_license }}</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="pt-2 border-t border-orange-200/60 text-xs text-orange-900 leading-tight">
+                                                <span class="font-bold">Brokerage:</span> {{ $room->broker_fee ? '₹' . number_format($room->broker_fee) : 'As per agreement' }} <span class="text-[10px] text-orange-700 block mt-0.5">(Payable only after deal finalization)</span>
+                                            </div>
                                         </div>
                                         @endif
 

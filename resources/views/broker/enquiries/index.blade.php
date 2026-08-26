@@ -117,13 +117,27 @@
                             </div>
 
                             @if($room)
-                            <div class="owner-room-actions">
-                                <a href="{{ route('agent.rooms.show', $room) }}" target="_blank" class="owner-room-btn owner-room-btn-outline">
+                            <div class="owner-room-actions" style="grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .35rem;">
+                                <a href="{{ route('agent.rooms.show', $room) }}" target="_blank" class="owner-room-btn owner-room-btn-outline" title="View Property">
                                     <i class="fas fa-eye"></i> View
                                 </a>
-                                <a href="mailto:{{ $seeker->email ?? '' }}" class="owner-room-btn owner-room-btn-indigo">
-                                    <i class="fas fa-envelope"></i> Contact
-                                </a>
+                                @if(!empty($seeker?->phone))
+                                    @php
+                                        $seekerDigits = preg_replace('/[^0-9]/', '', $seeker->phone);
+                                        if(strlen($seekerDigits) === 10) { $seekerDigits = '91' . $seekerDigits; }
+                                        $waMsg = 'Hello ' . ($seeker->name ?? '') . ', I saw your enquiry for ' . ($room->title ?? 'our property') . ' on ' . config('app.name', 'ApnaNest') . '. When would you like to visit?';
+                                    @endphp
+                                    <a href="tel:{{ $seeker->phone }}" class="owner-room-btn owner-room-btn-indigo" title="Call Seeker">
+                                        <i class="fas fa-phone-alt"></i> Call
+                                    </a>
+                                    <a href="https://wa.me/{{ $seekerDigits }}?text={{ rawurlencode($waMsg) }}" target="_blank" class="owner-room-btn owner-room-btn-green" title="Chat on WhatsApp" style="background:#10b981;color:#fff;">
+                                        <i class="fa-brands fa-whatsapp"></i> Chat
+                                    </a>
+                                @else
+                                    <a href="mailto:{{ $seeker->email ?? '' }}" class="owner-room-btn owner-room-btn-indigo" style="grid-column: span 2;" title="Send Email">
+                                        <i class="fas fa-envelope"></i> Email
+                                    </a>
+                                @endif
                             </div>
                             @endif
                         </div>
