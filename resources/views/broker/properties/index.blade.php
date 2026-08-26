@@ -7,14 +7,13 @@
 @endpush
 
 @section('broker-content')
-@php $user = Auth::user(); @endphp
 <div class="owner-rooms-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     {{-- Page Header --}}
     <div class="agent-page-header">
         <div>
-            <h2>Your Properties</h2>
-            <p>Manage your listings, pricing, and availability.</p>
+            <h2 class="agent-page-header-title">Your Properties</h2>
+            <p class="agent-page-header-sub">Manage your listings, pricing, and availability.</p>
         </div>
         <a href="{{ route('agent.rooms.create') }}" class="agent-page-header-action">
             <i class="fas fa-plus"></i> Add Property
@@ -24,29 +23,29 @@
     {{-- Stat Tiles --}}
     <div class="owner-room-stats">
         @foreach([
-            ['All Properties', $roomCounts['all'],     'fa-building',     'text-indigo-600'],
-            ['Active',         $roomCounts['active'],  'fa-circle-check', 'text-emerald-600'],
-            ['Pending',        $roomCounts['pending'], 'fa-clock',        'text-amber-600'],
-            ['Rented',         $roomCounts['booked'],  'fa-key',          'text-rose-600'],
-        ] as $item)
+            [$roomCounts['all'],    'All Properties', 'fa-building',     'stat-indigo'],
+            [$roomCounts['active'], 'Active',          'fa-circle-check', 'stat-emerald'],
+            [$roomCounts['pending'],'Pending',         'fa-clock',        'stat-amber'],
+            [$roomCounts['booked'], 'Rented',          'fa-key',          'stat-rose'],
+        ] as [$count, $label, $icon, $color])
             <div class="owner-room-stat">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="fas {{ $item[2] }} {{ $item[3] }} text-sm"></i>
-                    <p class="text-xs font-semibold text-slate-500">{{ $item[0] }}</p>
+                <div class="owner-room-stat-row">
+                    <i class="fas {{ $icon }} owner-room-stat-icon {{ $color }}"></i>
+                    <span class="owner-room-stat-label">{{ $label }}</span>
                 </div>
-                <p class="text-2xl font-extrabold text-slate-950">{{ $item[1] }}</p>
+                <div class="owner-room-stat-value">{{ $count }}</div>
             </div>
         @endforeach
     </div>
 
     {{-- Listing Grid --}}
     <section class="owner-listing-section">
-        <div class="owner-listing-heading flex items-end justify-between gap-4">
+        <div class="owner-listing-heading">
             <div>
-                <h2 class="text-base font-extrabold text-slate-950">All Listings</h2>
-                <p class="mt-0.5 text-xs text-slate-500">Click a property to view or edit its details.</p>
+                <h2 class="owner-listing-title">All Listings</h2>
+                <p class="owner-listing-sub">Click Edit to update details, pricing or availability.</p>
             </div>
-            <span class="hidden sm:block text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+            <span class="owner-listing-count">
                 {{ $properties->total() }} {{ Str::plural('property', $properties->total()) }}
             </span>
         </div>
@@ -54,53 +53,49 @@
         @if($properties->count())
             <div class="owner-room-grid">
                 @foreach($properties as $property)
-                    <article class="owner-room-card overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    @php
+                        $st = $property->status;
+                        $badgeClass = $st === 'active' ? 'badge-active' : ($st === 'pending' ? 'badge-pending' : ($st === 'booked' ? 'badge-booked' : 'badge-default'));
+                        $label = $st === 'booked' ? 'Rented' : ucfirst($st);
+                    @endphp
+                    <article class="owner-room-card">
                         <div class="owner-room-media">
-                            <div class="owner-room-placeholder"><i class="fas fa-house text-3xl"></i></div>
+                            <div class="owner-room-placeholder"><i class="fas fa-house"></i></div>
                             @if($property->photo_url)
                                 <img src="{{ $property->photo_url }}" alt="{{ $property->title }}" width="400" height="300" loading="lazy" onerror="this.style.display='none'">
                             @endif
-                            <span class="absolute right-3 top-3 z-10 rounded-full bg-white/90 backdrop-blur-sm px-2.5 py-1 text-[10px] font-extrabold uppercase shadow-sm
-                                {{ $property->status === 'active' ? 'text-emerald-700' : ($property->status === 'pending' ? 'text-amber-700' : ($property->status === 'booked' ? 'text-rose-700' : 'text-slate-700')) }}">
-                                <span class="inline-block w-1.5 h-1.5 rounded-full mr-1 {{ $property->status === 'active' ? 'bg-emerald-500' : ($property->status === 'pending' ? 'bg-amber-500' : ($property->status === 'booked' ? 'bg-rose-500' : 'bg-slate-400')) }}"></span>
-                                {{ $property->status === 'booked' ? 'Rented' : ucfirst($property->status) }}
+                            <span class="owner-room-status-badge {{ $badgeClass }}">
+                                <span class="badge-dot"></span>{{ $label }}
                             </span>
                         </div>
-                        <div class="p-5">
-                            <div class="flex items-start justify-between gap-3 mb-3">
-                                <div class="min-w-0">
-                                    <h2 class="truncate font-bold text-slate-950">{{ $property->title }}</h2>
-                                    <p class="mt-1 truncate text-xs text-slate-500">
-                                        <i class="fas fa-location-dot mr-1 text-rose-400"></i>
-                                        {{ $property->city }}{{ $property->state ? ', '.$property->state : '' }}
-                                    </p>
+                        <div class="owner-room-body">
+                            <div class="owner-room-meta">
+                                <div style="min-width:0">
+                                    <p class="owner-room-name">{{ $property->title }}</p>
+                                    <p class="owner-room-loc"><i class="fas fa-location-dot"></i>{{ $property->city }}{{ $property->state ? ', '.$property->state : '' }}</p>
                                 </div>
-                                <div class="shrink-0 text-right">
-                                    <p class="text-sm font-extrabold text-slate-950">&#8377;{{ number_format($property->rent) }}</p>
-                                    <span class="text-[10px] font-medium text-slate-400">per month</span>
+                                <div class="owner-room-price">
+                                    <span class="owner-room-price-amt">&#8377;{{ number_format($property->rent) }}</span>
+                                    <span class="owner-room-price-unit">per month</span>
                                 </div>
                             </div>
-
-                            <div class="grid grid-cols-2 gap-2.5">
-                                <a href="{{ route('agent.rooms.show', $property) }}" class="flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition">
-                                    <i class="fas fa-eye text-slate-400"></i> View
+                            <div class="owner-room-actions">
+                                <a href="{{ route('agent.rooms.show', $property) }}" class="owner-room-btn owner-room-btn-outline">
+                                    <i class="fas fa-eye"></i> View
                                 </a>
-                                <a href="{{ route('agent.rooms.edit', $property) }}" class="flex items-center justify-center gap-1.5 rounded-xl bg-indigo-50 py-2.5 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition">
+                                <a href="{{ route('agent.rooms.edit', $property) }}" class="owner-room-btn owner-room-btn-indigo">
                                     <i class="fas fa-pen"></i> Edit
                                 </a>
+                                @if($property->status === 'active')
+                                    <button type="button" onclick="markRoomRented({{ $property->id }})" class="owner-room-btn owner-room-btn-rose owner-room-btn-full">
+                                        <i class="fas fa-key"></i> Mark as Rented
+                                    </button>
+                                @elseif($property->status === 'booked')
+                                    <button type="button" onclick="makeRoomAvailable({{ $property->id }})" class="owner-room-btn owner-room-btn-green owner-room-btn-full">
+                                        <i class="fas fa-rotate"></i> Make Available
+                                    </button>
+                                @endif
                             </div>
-
-                            @if($property->status === 'active')
-                                <button type="button" onclick="markRoomRented({{ $property->id }})"
-                                    class="mt-2.5 flex w-full items-center justify-center gap-2 rounded-xl bg-rose-50 py-2.5 text-xs font-bold text-rose-700 hover:bg-rose-100 transition">
-                                    <i class="fas fa-key"></i> Mark as Rented
-                                </button>
-                            @elseif($property->status === 'booked')
-                                <button type="button" onclick="makeRoomAvailable({{ $property->id }})"
-                                    class="mt-2.5 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 transition">
-                                    <i class="fas fa-rotate"></i> Make Available
-                                </button>
-                            @endif
                         </div>
                     </article>
                 @endforeach
@@ -110,14 +105,14 @@
                 <i class="fas fa-house-circle-xmark"></i>
                 <h2>No properties listed yet</h2>
                 <p>Add your first property and start receiving enquiries from tenants.</p>
-                <a href="{{ route('agent.rooms.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-700 transition shadow-sm shadow-indigo-100">
+                <a href="{{ route('agent.rooms.create') }}" class="agent-empty-btn">
                     <i class="fas fa-plus"></i> Add Your First Property
                 </a>
             </div>
         @endif
 
         @if($properties->hasPages())
-            <div class="mt-8">{{ $properties->links() }}</div>
+            <div style="margin-top:2rem">{{ $properties->links() }}</div>
         @endif
     </section>
 </div>
@@ -125,21 +120,18 @@
 @push('scripts')
 <script>
 const agentRoomCsrf = '{{ csrf_token() }}';
-
 async function agentRoomPost(url, payload = {}) {
     const response = await fetch(url, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': agentRoomCsrf, 'Accept': 'application/json' }, body: JSON.stringify(payload) });
     const data = await response.json().catch(() => ({ success: false, message: 'Invalid server response' }));
     if (!response.ok) throw new Error(data.message || 'Request failed');
     return data;
 }
-
 async function markRoomRented(roomId) {
     const result = await Swal.fire({ title: 'Mark property as rented?', text: 'This property will stop appearing to property seekers.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, mark rented', confirmButtonColor: '#e11d48' });
     if (!result.isConfirmed) return;
     try { const data = await agentRoomPost(`{{ route('agent.rooms.markBooked', ':room') }}`.replace(':room', roomId)); await Swal.fire('Property rented', data.message, 'success'); location.reload(); }
     catch (error) { Swal.fire('Could not update property', error.message, 'error'); }
 }
-
 async function makeRoomAvailable(roomId) {
     const confirmation = await Swal.fire({ title: 'Make property available?', text: 'This property will be visible to users again.', icon: 'question', showCancelButton: true, confirmButtonText: 'Make available', confirmButtonColor: '#059669' });
     if (!confirmation.isConfirmed) return;
