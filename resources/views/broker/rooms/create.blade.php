@@ -1,275 +1,355 @@
 @extends('layouts.agent')
 
-@section('title', 'List Your Property')
+@section('title', 'List Your Property - Agent Workspace')
 
 @section('broker-content')
 <link rel="stylesheet" href="{{ asset('css/owner-rooms-create.css') }}">
 
-<a href="{{ route('agent.dashboard') }}" class="lg:hidden text-gray-900"><i class="fas fa-arrow-left text-xl"></i></a>
+<div class="owner-rooms-create-container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+    <!-- Header -->
+    <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('agent.dashboard') }}" class="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition shadow-sm shrink-0">
+                <i class="fas fa-arrow-left text-sm"></i>
+            </a>
+            <div>
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">List Your Property</h1>
+                <p class="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">Fill in property details, upload photos and select location to publish your listing.</p>
+            </div>
+        </div>
+    </div>
 
-<div class="room-editor-content">
-                <!-- Listing Information Alert -->
-                <div class="bg-amber-50 border border-amber-200 rounded-[2rem] p-6 mb-8 flex items-start gap-4">
-                    <div class="w-10 h-10 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 shrink-0">
-                        <i class="fas fa-info-circle"></i>
-                    </div>
-                    <div>
-                        @if(filter_var(\App\Models\Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))
-                            <p class="font-bold text-amber-900">Listing Fee: &#8377;{{ \App\Models\Setting::get('listing_fee', 199) }}</p>
-                            <p class="text-sm text-amber-700">Your property will be submitted for admin approval after payment confirmation.</p>
-                        @else
-                            <p class="font-bold text-emerald-900">Property listing is currently free</p>
-                            <p class="text-sm text-emerald-700">No payment or listing-plan credit will be used. Admin approval is still required.</p>
-                        @endif
+    <!-- Listing Information Alert -->
+    <div class="bg-gradient-to-r from-amber-50 to-orange-50/40 border border-amber-200/80 rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8 flex items-start gap-3.5 shadow-sm">
+        <div class="w-10 h-10 bg-amber-100/80 rounded-xl flex items-center justify-center text-amber-700 shrink-0 mt-0.5">
+            <i class="fas fa-info-circle text-lg"></i>
+        </div>
+        <div class="min-w-0 flex-1">
+            @if(filter_var(\App\Models\Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))
+                <p class="font-bold text-amber-950 text-sm sm:text-base">Listing Fee: &#8377;{{ \App\Models\Setting::get('listing_fee', 199) }}</p>
+                <p class="text-xs sm:text-sm text-amber-800/90 mt-0.5">Your property will be submitted for admin approval after payment confirmation.</p>
+            @else
+                <p class="font-bold text-emerald-950 text-sm sm:text-base flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Property listing is currently free
+                </p>
+                <p class="text-xs sm:text-sm text-emerald-800/90 mt-0.5">No payment or listing-plan credit will be used. Admin approval will be requested on submit.</p>
+            @endif
+        </div>
+    </div>
+
+    <form id="roomForm" enctype="multipart/form-data" class="owner-room-form-grid">
+        @csrf
+        <input type="hidden" name="listing_type" value="broker">
+        
+        <!-- Basic Details Card -->
+        <div class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-base font-bold shrink-0">
+                    <i class="fas fa-home"></i>
+                </span>
+                <div>
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Basic Details</h3>
+                    <p class="text-xs text-slate-500">Title, category, pricing, and description</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <!-- Title -->
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Property Title <span class="text-rose-500">*</span></label>
+                    <input type="text" name="title" required placeholder="e.g. Luxury 1BHK Apartment in Indiranagar"
+                           class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm">
+                </div>
+
+                <!-- Property Type -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Property Type <span class="text-rose-500">*</span></label>
+                    <select name="property_type_id" id="property_type_id" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm">
+                        <option value="">Select property type</option>
+                        @foreach(\App\Models\PropertyType::where('status', true)->orderBy('name')->get() as $type)
+                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Property Category -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Property Category <span class="text-rose-500">*</span></label>
+                    <select name="property_category_id" id="property_category_id" data-selected-category-id="{{ old('property_category_id') }}" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm disabled:opacity-60 disabled:cursor-not-allowed" disabled>
+                        <option value="">Select category</option>
+                    </select>
+                </div>
+
+                <!-- Furnishing -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Furnishing <span class="text-rose-500">*</span></label>
+                    <select name="furnishing_type" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm">
+                        @foreach(App\Models\RoomOption::optionsFor('furnishing_type') as $option)
+                            <option value="{{ $option->id }}">{{ $option->label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Preferred Tenant -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Preferred Tenant <span class="text-rose-500">*</span></label>
+                    <select name="tenant_type" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm">
+                        @foreach(App\Models\RoomOption::optionsFor('tenant_type') as $option)
+                            <option value="{{ $option->id }}">{{ $option->label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Monthly Rent -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Monthly Rent <span class="text-rose-500">*</span></label>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-4 text-slate-400 font-bold text-sm pointer-events-none">₹</span>
+                        <input type="number" name="rent" required min="0" placeholder="e.g. 15000"
+                               class="w-full pl-9 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm">
                     </div>
                 </div>
 
-                <form id="roomForm" enctype="multipart/form-data" class="owner-room-form-grid">
-                    @csrf
-                    
-                    <!-- Basic Details -->
-                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 space-y-6">
-                        <h3 class="text-xl font-black text-gray-900 border-b pb-4 mb-2">Basic Details</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="md:col-span-2">
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Property Title</label>
-                                <input type="text" name="title" required placeholder="e.g. Luxury 1BHK in Indiranagar"
-                                       class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Property Type</label>
-                                <select name="property_type_id" id="property_type_id" required class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                                    <option value="">Select property type</option>
-                                    @foreach(\App\Models\PropertyType::where('status', true)->orderBy('name')->get() as $type)
-                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Property Category</label>
-                                <select name="property_category_id" id="property_category_id" data-selected-category-id="{{ old('property_category_id') }}" required class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700" disabled>
-                                    <option value="">Select category</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Furnishing</label>
-                                <select name="furnishing_type" required class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                                    @foreach(App\Models\RoomOption::optionsFor('furnishing_type') as $option)
-                                        <option value="{{ $option->id }}">{{ $option->label }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Preferred Tenant</label>
-                                <select name="tenant_type" required class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                                    @foreach(App\Models\RoomOption::optionsFor('tenant_type') as $option)
-                                        <option value="{{ $option->id }}">{{ $option->label }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Monthly Rent</label>
-                                <div class="relative">
-                                    <span class="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-gray-400">₹</span>
-                                    <input type="number" name="rent" required min="0" placeholder="0"
-                                           class="w-full bg-gray-50 border-none rounded-2xl pl-10 pr-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Deposit (Optional)</label>
-                                <div class="relative">
-                                    <span class="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-gray-400">₹</span>
-                                    <input type="number" name="deposit" min="0" placeholder="0"
-                                           class="w-full bg-gray-50 border-none rounded-2xl pl-10 pr-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Area (sq ft)</label>
-                                <input type="number" name="area_sqft" min="0" step="0.01" placeholder="e.g. 450"
-                                       class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Broker Fee</label>
-                                <div class="relative">
-                                    <span class="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-gray-400">₹</span>
-                                    <input type="number" name="broker_fee" required min="0" placeholder="1000"
-                                           class="w-full bg-gray-50 border-none rounded-2xl pl-10 pr-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Description</label>
-                            <textarea name="description" rows="4" placeholder="Tell us more about the property, rules, and nearby facilities..."
-                                      class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition resize-none font-bold text-gray-700"></textarea>
-                        </div>
+                <!-- Deposit -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Deposit (Optional)</label>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-4 text-slate-400 font-bold text-sm pointer-events-none">₹</span>
+                        <input type="number" name="deposit" min="0" placeholder="e.g. 30000"
+                               class="w-full pl-9 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm">
                     </div>
+                </div>
 
-                    <!-- Media Assets -->
-                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 space-y-6">
-                        <h3 class="text-xl font-black text-gray-900 border-b pb-4 mb-2">Photos & Video</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Upload Photos (Max 5)</label>
-                                <div class="relative group">
-                                    <input type="file" name="photos[]" accept="image/*" multiple required
-                                           class="hidden" id="photosInput"
-                                           onchange="handlePhotosUpload(event)">
-                                    <label for="photosInput" class="cursor-pointer block border-2 border-dashed border-gray-200 rounded-[2rem] p-10 text-center hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
-                                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-300 group-hover:text-indigo-400 transition mb-3"></i>
-                                        <p class="text-sm font-bold text-gray-500 group-hover:text-indigo-600 transition">Select property photos</p>
-                                    </label>
-                                </div>
-                                <div id="photosPreview" class="grid grid-cols-3 gap-3 mt-4 hidden"></div>
-                            </div>
+                <!-- Area -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Area (sq ft)</label>
+                    <input type="number" name="area_sqft" min="0" step="0.01" placeholder="e.g. 450"
+                           class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm">
+                </div>
 
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Property Video (Optional)</label>
-                                <input type="file" name="video" accept="video/*" class="hidden" id="videoInput" onchange="handleVideoUpload(event)">
-                                <label for="videoInput" class="cursor-pointer block border-2 border-dashed border-gray-200 rounded-[2rem] p-10 text-center hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
-                                    <i class="fas fa-video text-4xl text-gray-300 group-hover:text-indigo-400 transition mb-3"></i>
-                                    <p class="text-sm font-bold text-gray-500 group-hover:text-indigo-600 transition">Add virtual tour</p>
-                                </label>
-                                <video id="videoPreview" src="" controls class="hidden mt-4 max-h-40 mx-auto rounded-2xl w-full object-cover"></video>
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Or YouTube Video URL</label>
-                                <input type="url" name="video_url" placeholder="https://www.youtube.com/watch?v=..."
-                                       class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                                <p class="text-[10px] text-gray-400 mt-2 px-1">Paste a YouTube or Vimeo link to show a video tour.</p>
-                            </div>
-                        </div>
+                <!-- Broker Fee -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Broker Fee <span class="text-rose-500">*</span></label>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-4 text-slate-400 font-bold text-sm pointer-events-none">₹</span>
+                        <input type="number" name="broker_fee" required min="0" placeholder="e.g. 1000"
+                               class="w-full pl-9 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm">
                     </div>
+                </div>
 
-                    <!-- Facilities -->
-                    <div class="owner-form-wide bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
-                        <h3 class="text-xl font-black text-gray-900 border-b pb-4 mb-6">Common Facilities</h3>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                            @foreach(\App\Models\RoomOption::optionsFor('amenity') as $amenityOption)
-                                @php $amenity = $amenityOption->label; @endphp
-                            <label class="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl cursor-pointer hover:bg-indigo-50 transition border border-transparent hover:border-indigo-100">
-                                <input type="checkbox" name="amenities[]" value="{{ $amenity }}" class="w-5 h-5 rounded-lg text-indigo-600 focus:ring-indigo-500 border-gray-300">
-                                <span class="font-bold text-gray-700 text-sm">{{ $amenity }}</span>
-                            </label>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <!-- Location Section -->
-                    <div class="owner-form-wide bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 space-y-6">
-                        <h3 class="text-xl font-black text-gray-900 border-b pb-4 mb-2">Location Information</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="space-y-6">
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Search Property Location</label>
-                                    <div class="relative">
-                                        <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                                        <input type="text" id="locationSearch" placeholder="Enter neighborhood or address..." 
-                                               class="w-full bg-gray-50 border-none rounded-2xl pl-12 pr-5 py-4 focus:ring-2 focus:ring-indigo-500 transition font-bold text-gray-700">
-                                    </div>
-                                </div>
-
-                                <button type="button" id="getCurrentLocationBtn" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold py-4 rounded-2xl flex items-center justify-center gap-3 transition">
-                                    <i class="fas fa-crosshairs"></i> Get Current Location
-                                </button>
-
-                                <div class="bg-gray-50 p-6 rounded-[2rem] space-y-4">
-                                    <div class="flex justify-between text-xs font-black uppercase tracking-widest text-gray-400">
-                                        <span>City</span>
-                                        <span id="city-text" class="text-indigo-600">–</span>
-                                    </div>
-                                    <div class="flex justify-between text-xs font-black uppercase tracking-widest text-gray-400">
-                                        <span>State</span>
-                                        <span id="state-text" class="text-indigo-600">–</span>
-                                    </div>
-                                    <div class="pt-2 border-t border-gray-200">
-                                         <p id="full-address-text" class="text-sm font-bold text-gray-700 line-clamp-2 italic">No address selected...</p>
-                                    </div>
-                                </div>
-
-                                <div class="hidden">
-                                    <input type="text" name="country" id="countryInput">
-                                    <input type="text" name="state" id="stateInput">
-                                    <input type="text" name="city" id="cityInput">
-                                    <input type="text" name="address" id="location_address">
-                                    <input type="hidden" name="latitude" id="latitude">
-                                    <input type="hidden" name="longitude" id="longitude">
-                                </div>
-                            </div>
-
-                            <div class="h-80 md:h-auto min-h-[300px] bg-gray-100 rounded-[2rem] overflow-hidden border border-gray-200 shadow-inner">
-                                <div id="map" class="w-full h-full"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Landmark Section (SEO) -->
-                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 space-y-4">
-                        <h3 class="text-xl font-black text-gray-900 border-b pb-4 mb-2">Nearby Landmarks (SEO)</h3>
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Help users find you via search engines</p>
-                        <div id="landmark-container" class="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-2xl min-h-[60px] cursor-text" onclick="document.getElementById('landmark-input').focus()">
-                            <input type="text" id="landmark-input" placeholder="Type and press Enter (e.g. IIT Delhi, Metro Station)" 
-                                   class="bg-transparent border-none outline-none font-bold text-gray-700 placeholder-gray-300 w-full min-w-[200px]">
-                        </div>
-                    </div>
-
-                    @if(filter_var(\App\Models\Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))
-                    <!-- Payment Method -->
-                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 space-y-4">
-                        <h3 class="text-xl font-black text-gray-900 border-b pb-4 mb-2">Payment Method</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="payment_method" value="online" checked class="hidden peer">
-                                <div class="p-4 rounded-xl border-2 border-gray-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50 transition-all flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-sm">
-                                        <i class="fas fa-credit-card"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-gray-900">Pay Online</p>
-                                        <p class="text-xs text-gray-500">UPI, Card, Netbanking</p>
-                                    </div>
-                                    <i class="fas fa-check-circle text-indigo-600 text-xl ml-auto opacity-0 peer-checked:opacity-100 transition-opacity"></i>
-                                </div>
-                            </label>
-
-                            <label class="cursor-pointer">
-                                <input type="radio" name="payment_method" value="wallet" class="hidden peer">
-                                <div class="p-4 rounded-xl border-2 border-gray-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50 transition-all flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-green-600 shadow-sm">
-                                        <i class="fas fa-wallet"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-gray-900">Wallet Balance</p>
-                                        <p class="text-xs text-gray-500">Available: ₹{{ number_format(auth()->user()->wallet_balance ?? 0, 2) }}</p>
-                                    </div>
-                                    <i class="fas fa-check-circle text-indigo-600 text-xl ml-auto opacity-0 peer-checked:opacity-100 transition-opacity"></i>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                    @endif
-
-                    <!-- Submit Button -->
-                    <div class="owner-form-wide pt-2">
-                        <button type="submit" 
-                                class="w-full bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-700 hover:to-indigo-900 text-white font-black py-6 rounded-[2rem] shadow-xl shadow-indigo-100 hover:shadow-indigo-200 transition-all duration-300 transform active:scale-95 text-lg flex items-center justify-center gap-3">
-                            <i class="fas fa-paper-plane"></i> Post Property Listing
-                        </button>
-                    </div>
-                </form>
+                <!-- Description -->
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Description</label>
+                    <textarea name="description" rows="4" placeholder="Tell us more about the property, rules, and nearby facilities..."
+                              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-medium text-slate-800 text-sm resize-none"></textarea>
+                </div>
             </div>
+        </div>
+
+        <!-- Photos & Video Card -->
+        <div class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base font-bold shrink-0">
+                    <i class="fas fa-camera"></i>
+                </span>
+                <div>
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Photos & Video</h3>
+                    <p class="text-xs text-slate-500">Showcase your property with clear media</p>
+                </div>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- Upload Photos -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Upload Photos (Max 5) <span class="text-rose-500">*</span></label>
+                    <div class="relative group">
+                        <input type="file" name="photos[]" accept="image/*" multiple required
+                               class="hidden" id="photosInput"
+                               onchange="handlePhotosUpload(event)">
+                        <label for="photosInput" class="cursor-pointer flex flex-col items-center justify-center w-full p-6 sm:p-8 border-2 border-dashed border-slate-200 rounded-2xl hover:border-indigo-400 hover:bg-indigo-50/40 transition-all group text-center">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 group-hover:bg-indigo-100 text-slate-400 group-hover:text-indigo-600 flex items-center justify-center mb-3 transition-colors">
+                                <i class="fas fa-cloud-upload-alt text-xl"></i>
+                            </div>
+                            <p class="text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">Select property photos</p>
+                            <p class="text-xs text-slate-400 mt-1">PNG, JPG up to 5MB (Max 5 photos)</p>
+                        </label>
+                    </div>
+                    <div id="photosPreview" class="grid grid-cols-3 gap-3 mt-4 hidden"></div>
+                </div>
+
+                <!-- Video Options -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Property Video (Optional)</label>
+                        <input type="file" name="video" accept="video/*" class="hidden" id="videoInput" onchange="handleVideoUpload(event)">
+                        <label for="videoInput" class="cursor-pointer flex flex-col items-center justify-center p-4 border border-dashed border-slate-200 rounded-2xl hover:border-indigo-400 hover:bg-indigo-50/40 transition-all text-center group">
+                            <i class="fas fa-video text-2xl text-slate-300 group-hover:text-indigo-500 transition-colors mb-1.5"></i>
+                            <span class="text-xs font-bold text-slate-600 group-hover:text-indigo-600 transition-colors">Add virtual tour</span>
+                        </label>
+                        <video id="videoPreview" src="" controls class="hidden mt-3 max-h-36 mx-auto rounded-xl w-full object-cover"></video>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Or YouTube Video URL</label>
+                        <input type="url" name="video_url" placeholder="https://www.youtube.com/watch?v=..."
+                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-xs sm:text-sm">
+                        <p class="text-[11px] text-slate-400 mt-1">Paste a YouTube or Vimeo link.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Facilities -->
+        <div class="owner-form-wide bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-base font-bold shrink-0">
+                    <i class="fas fa-wifi"></i>
+                </span>
+                <div>
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Common Facilities</h3>
+                    <p class="text-xs text-slate-500">Select amenities included with the property</p>
+                </div>
+            </div>
+            <div class="facilities-grid">
+                @foreach(\App\Models\RoomOption::optionsFor('amenity') as $amenityOption)
+                    @php $amenity = $amenityOption->label; @endphp
+                    <label class="flex items-center gap-3 p-3.5 bg-slate-50 hover:bg-indigo-50/50 rounded-2xl cursor-pointer transition-all border border-slate-200/70 hover:border-indigo-200 group">
+                        <input type="checkbox" name="amenities[]" value="{{ $amenity }}" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300 shrink-0">
+                        <span class="font-semibold text-slate-700 group-hover:text-indigo-900 text-xs sm:text-sm leading-normal select-none break-words">{{ $amenity }}</span>
+                    </label>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Location Section -->
+        <div class="owner-form-wide bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-base font-bold shrink-0">
+                    <i class="fas fa-map-marker-alt"></i>
+                </span>
+                <div>
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Location Information</h3>
+                    <p class="text-xs text-slate-500">Search address or pick exact location on map</p>
+                </div>
+            </div>
+            
+            <div class="location-section-grid">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Search Property Location</label>
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="locationSearch" placeholder="Enter neighborhood or address..." 
+                                   class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm">
+                        </div>
+                    </div>
+
+                    <button type="button" id="getCurrentLocationBtn" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-xs sm:text-sm border border-indigo-100">
+                        <i class="fas fa-crosshairs"></i> Get Current Location
+                    </button>
+
+                    <div class="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200/70 space-y-3">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-500">
+                            <span>CITY</span>
+                            <span id="city-text" class="text-indigo-600 font-bold uppercase tracking-wider">–</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-500">
+                            <span>STATE</span>
+                            <span id="state-text" class="text-indigo-600 font-bold uppercase tracking-wider">–</span>
+                        </div>
+                        <div class="pt-2 border-t border-slate-200/80">
+                             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">SELECTED ADDRESS</p>
+                             <p id="full-address-text" class="text-xs sm:text-sm font-semibold text-slate-700 leading-snug">No address selected...</p>
+                        </div>
+                    </div>
+
+                    <div class="hidden">
+                        <input type="text" name="country" id="countryInput">
+                        <input type="text" name="state" id="stateInput">
+                        <input type="text" name="city" id="cityInput">
+                        <input type="text" name="address" id="location_address">
+                        <input type="hidden" name="latitude" id="latitude">
+                        <input type="hidden" name="longitude" id="longitude">
+                    </div>
+                </div>
+
+                <div class="location-map-container shadow-inner">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Landmark Section (SEO) -->
+        <div class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 space-y-4">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-base font-bold shrink-0">
+                    <i class="fas fa-compass"></i>
+                </span>
+                <div>
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Nearby Landmarks (SEO)</h3>
+                    <p class="text-xs text-slate-500">Help users find you via search engines</p>
+                </div>
+            </div>
+            <div id="landmark-container" class="flex flex-wrap gap-2 p-3 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200/80 min-h-[64px] cursor-text items-center" onclick="document.getElementById('landmark-input').focus()">
+                <input type="text" id="landmark-input" placeholder="Type and press Enter (e.g. IIT Delhi, Metro Station)" 
+                       class="bg-transparent border-none outline-none font-semibold text-slate-800 placeholder-slate-400 text-xs sm:text-sm flex-1 min-w-[200px] px-1 py-1">
+            </div>
+        </div>
+
+        @if(filter_var(\App\Models\Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN))
+        <!-- Payment Method -->
+        <div class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 space-y-4">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base font-bold shrink-0">
+                    <i class="fas fa-wallet"></i>
+                </span>
+                <div>
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Payment Method</h3>
+                    <p class="text-xs text-slate-500">Choose how to pay for listing fee</p>
+                </div>
+            </div>
+            <div class="payment-options-grid">
+                <label class="cursor-pointer">
+                    <input type="radio" name="payment_method" value="online" checked class="hidden peer">
+                    <div class="p-4 rounded-2xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50/50 transition-all flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm border border-slate-100 shrink-0">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="font-bold text-slate-900 text-sm">Pay Online</p>
+                            <p class="text-xs text-slate-500">UPI, Card, Netbanking</p>
+                        </div>
+                        <i class="fas fa-check-circle text-indigo-600 text-lg ml-auto opacity-0 peer-checked:opacity-100 transition-opacity shrink-0"></i>
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="radio" name="payment_method" value="wallet" class="hidden peer">
+                    <div class="p-4 rounded-2xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50/50 transition-all flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm border border-slate-100 shrink-0">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="font-bold text-slate-900 text-sm">Wallet Balance</p>
+                            <p class="text-xs text-slate-500">Available: ₹{{ number_format(auth()->user()->wallet_balance ?? 0, 2) }}</p>
+                        </div>
+                        <i class="fas fa-check-circle text-indigo-600 text-lg ml-auto opacity-0 peer-checked:opacity-100 transition-opacity shrink-0"></i>
+                    </div>
+                </label>
+            </div>
+        </div>
+        @endif
+
+        <!-- Submit Button -->
+        <div class="owner-form-wide pt-2">
+            <button type="submit" 
+                    class="w-full bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-700 hover:to-indigo-900 text-white font-extrabold py-4 sm:py-5 rounded-2xl shadow-lg shadow-indigo-200/60 hover:shadow-indigo-300 transition-all duration-200 transform active:scale-[0.99] text-base sm:text-lg flex items-center justify-center gap-3">
+                <i class="fas fa-paper-plane"></i> Post Property Listing
+            </button>
+        </div>
+    </form>
+</div>
 @endsection
 
 @include('owner.rooms.partials.editor-styles')
@@ -635,7 +715,7 @@ document.getElementById('roomForm').addEventListener('submit', async function(e)
 
     const formData = new FormData(this);
     try {
-        const res = await fetch('{{ route("owner.rooms.store") }}', {
+        const res = await fetch('{{ route("agent.rooms.store") }}', {
             method: 'POST',
             body: formData,
             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
@@ -643,9 +723,9 @@ document.getElementById('roomForm').addEventListener('submit', async function(e)
         
         const data = await res.json();
         if (data.success) {
-            if (data.subscription_used || data.free_listing || data.wallet_used) {
+            if (data.subscription_used || data.free_listing || data.wallet_used || data.credits_used) {
                 toastr.success(data.message || 'Property listed successfully!');
-                setTimeout(() => window.location.href = '{{ url("/rooms") }}', 1500);
+                setTimeout(() => window.location.href = '{{ route("agent.properties") }}', 1500);
             } else {
                 await initiatePayment(data.payment_id, data.amount, data.room_id);
             }
@@ -688,7 +768,7 @@ async function initiatePayment(paymentId, amount, roomId) {
             const verifyData = await verify.json();
             if (verifyData.status === 'success') {
                 toastr.success('Payment successful! Your listing is active.');
-                setTimeout(() => window.location.href = '{{ url("/rooms") }}', 1500);
+                setTimeout(() => window.location.href = '{{ route("agent.properties") }}', 1500);
             } else {
                 toastr.error('Verification failed');
             }
@@ -709,4 +789,4 @@ script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsKey}&libra
 script.async = true;
 document.head.appendChild(script);
 </script>
-    @endpush
+@endpush

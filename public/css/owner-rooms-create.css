@@ -1,186 +1,128 @@
-    .room-editor-content {
-        width: 100% !important;
-        max-width: 48rem !important;
-        margin: 0 auto !important;
-        padding: 0.75rem !important;
-        box-sizing: border-box !important;
-        overflow-x: hidden !important;
+/* Responsive Room Creation & Editing styles */
+.owner-rooms-create-container {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.owner-room-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+@media (min-width: 1024px) {
+    .owner-room-form-grid {
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+        gap: 1.5rem;
     }
-    .room-editor-content .owner-room-form-grid {
-        display: grid !important;
-        gap: 1rem !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        grid-template-columns: 1fr !important;
-        overflow: hidden !important;
+}
+
+.owner-room-form-grid > .owner-form-wide {
+    grid-column: 1 / -1;
+}
+
+/* Location Section Grid */
+.location-section-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .location-section-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
     }
-    .room-editor-content .owner-room-form-grid > div {
-        min-width: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
+}
+
+@media (min-width: 1024px) {
+    .location-section-grid {
+        grid-template-columns: 5fr 7fr;
+        gap: 1.5rem;
     }
-    .room-editor-content .owner-form-wide {
-        min-width: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
+}
+
+.location-map-container {
+    width: 100%;
+    height: 360px;
+    min-height: 300px;
+    border-radius: 1rem;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #cbd5e1;
+    background-color: #f1f5f9;
+}
+
+@media (max-width: 640px) {
+    .location-map-container {
+        height: 280px;
+        min-height: 240px;
     }
-    .room-editor-content .rounded-[2rem],
-    .room-editor-content .rounded-[2.5rem] {
-        border-radius: 1rem !important;
+}
+
+.location-map-container #map {
+    width: 100%;
+    height: 100%;
+}
+
+/* Facilities Grid */
+.facilities-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+    .facilities-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
-    .room-editor-content .rounded-3xl {
-        border-radius: 0.875rem !important;
+}
+
+@media (min-width: 768px) {
+    .facilities-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
-    .room-editor-content .p-8,
-    .room-editor-content .p-6,
-    .room-editor-content .p-10 {
-        padding: 0.75rem !important;
+}
+
+@media (min-width: 1024px) {
+    .facilities-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
     }
-    .room-editor-content .space-y-6 > * + * {
-        margin-top: 1rem !important;
+}
+
+/* Payment Options Grid */
+.payment-options-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .payment-options-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .room-editor-content .space-y-4 > * + * {
-        margin-top: 0.75rem !important;
-    }
-    .room-editor-content .grid {
-        min-width: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-    .room-editor-content input,
-    .room-editor-content select,
-    .room-editor-content textarea {
-        font-size: 0.95rem !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-    .room-editor-content label {
-        font-size: 0.7rem !important;
-        letter-spacing: 0.05em !important;
-    }
-    .room-editor-content img {
-        max-width: 100% !important;
-        height: auto !important;
-    }
-    .room-editor-content .flex.flex-wrap {
-        gap: 0.5rem !important;
-    }
-    .room-editor-content .aspect-video,
-    .room-editor-content .aspect-square {
-        aspect-ratio: auto !important;
-        height: auto !important;
-    }
-    .room-editor-content .grid > label {
-        min-width: 0 !important;
-        overflow: hidden !important;
-    }
-    .room-editor-content .grid > label span {
-        word-break: break-word !important;
-        line-height: 1.3 !important;
-    }
-    .room-editor-content .grid > label input[type="checkbox"] {
-        width: 1.1rem !important;
-        height: 1.1rem !important;
-        flex-shrink: 0 !important;
-    }
-    @media (max-width: 639px) {
-        .room-editor-content {
-            padding: 1rem !important;
-        }
-        .room-editor-content .p-8,
-        .room-editor-content .p-6,
-        .room-editor-content .p-10 {
-            padding: 1rem !important;
-        }
-        .room-editor-content .rounded-[2rem],
-        .room-editor-content .rounded-[2.5rem] {
-            border-radius: 1rem !important;
-        }
-        .room-editor-content .rounded-3xl {
-            border-radius: 0.875rem !important;
-        }
-        .room-editor-content .owner-form-wide {
-            padding: 1rem !important;
-            border-radius: 1rem !important;
-        }
-        .room-editor-content .h-80 {
-            height: 12rem !important;
-            min-height: 12rem !important;
-        }
-        .room-editor-content .md\:col-span-2 {
-            grid-column: 1 / -1 !important;
-        }
-        .room-editor-content .grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        }
-        .room-editor-content .grid > label {
-            padding: 0.75rem !important;
-            gap: 0.5rem !important;
-            border-radius: 0.75rem !important;
-        }
-        .room-editor-content .grid > label span {
-            font-size: 0.7rem !important;
-        }
-    }
-    @media (min-width: 640px) {
-        .room-editor-content {
-            padding: 1rem !important;
-        }
-        .room-editor-content .p-8,
-        .room-editor-content .p-6,
-        .room-editor-content .p-10 {
-            padding: 1rem !important;
-        }
-        .room-editor-content .rounded-[2rem],
-        .room-editor-content .rounded-[2.5rem] {
-            border-radius: 1rem !important;
-        }
-        .room-editor-content .owner-form-wide {
-            padding: 1rem !important;
-            border-radius: 1rem !important;
-        }
-    }
-    @media (min-width: 1024px) {
-        .room-editor-content {
-            max-width: 48rem !important;
-            padding: 1.25rem !important;
-        }
-        .room-editor-content .p-8,
-        .room-editor-content .p-6,
-        .room-editor-content .p-10 {
-            padding: 1.25rem !important;
-        }
-        .room-editor-content .rounded-[2rem],
-        .room-editor-content .rounded-[2.5rem] {
-            border-radius: 1rem !important;
-        }
-        .room-editor-content .owner-form-wide {
-            padding: 1.25rem !important;
-            border-radius: 1rem !important;
-        }
-    }
-    .room-editor-content .owner-form-wide .grid {
-        min-width: 0 !important;
-    }
-    .room-editor-content .owner-form-wide label {
-        font-size: 0.7rem !important;
-        letter-spacing: 0.05em !important;
-    }
-    .room-editor-content .owner-form-wide input,
-    .room-editor-content .owner-form-wide select,
-    .room-editor-content .owner-form-wide textarea {
-        font-size: 0.95rem !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-    .room-editor-content .owner-form-wide img {
-        max-width: 100% !important;
-        height: auto !important;
-    }
+}
+
+/* Form Elements */
+.owner-room-form-grid input[type="text"],
+.owner-room-form-grid input[type="number"],
+.owner-room-form-grid input[type="url"],
+.owner-room-form-grid select,
+.owner-room-form-grid textarea {
+    font-size: 0.875rem;
+    box-sizing: border-box;
+}
+
+.owner-room-form-grid select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.85rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25em 1.25em;
+    padding-right: 2.5rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
