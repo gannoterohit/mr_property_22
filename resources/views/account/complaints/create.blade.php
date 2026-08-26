@@ -1,9 +1,10 @@
 @extends(Auth::user()->role === 'owner' ? 'layouts.owner' : (Auth::user()->role === 'broker' ? 'layouts.agent' : (Auth::user()->role === 'user' ? 'layouts.customer' : 'layouts.public')))
 @section('title', 'Submit a Complaint')
 @php $role = Auth::user()->role; $isOwner = $role === 'owner'; $isBroker = $role === 'broker'; $isCustomer = $role === 'user'; $contentSection = $isOwner ? 'owner-content' : ($isBroker ? 'broker-content' : ($isCustomer ? 'customer-content' : 'content')); @endphp
+@push('styles')<link rel="stylesheet" href="{{ asset('css/owner-dashboard.css') }}">@endpush
 @section($contentSection)
 @php $user = Auth::user(); @endphp
-<div class="account-container account-body">
+<div class="owner-dashboard-content max-w-3xl mx-auto px-4 sm:px-6 lg:px-8" style="padding-top:2rem;padding-bottom:3.5rem">
     <div class="mb-6">
         <h1 class="text-2xl font-extrabold text-slate-900">Submit a Complaint</h1>
         <p class="text-sm text-slate-500 mt-1">Give clear details and evidence so our team can investigate.</p>

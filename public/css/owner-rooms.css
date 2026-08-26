@@ -1,6 +1,8 @@
     .owner-rooms-page { background: #f8fafc; }
     .owner-rooms-header-inner { padding-top: 2rem !important; padding-bottom: 2rem !important; }
     .owner-rooms-content { padding-top: 2rem !important; padding-bottom: 3.5rem !important; }
+
+    /* ── Stat Tiles ── */
     .owner-room-stats {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -9,21 +11,65 @@
     }
     .owner-room-stat {
         min-height: 88px;
-        padding: 1rem 1.125rem !important;
+        padding: 1rem 1.25rem !important;
         border: 1px solid #e2e8f0;
-        border-radius: 1rem;
+        border-radius: 1.15rem;
         background: #fff;
-        box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
+        box-shadow: 0 1px 4px rgba(15,23,42,.04);
+        transition: box-shadow .15s ease, border-color .15s ease;
     }
+    .owner-room-stat:hover {
+        box-shadow: 0 4px 14px rgba(15,23,42,.08);
+        border-color: rgba(var(--owner-primary-rgb, 79,70,229), .22);
+    }
+
+    /* ── Page Header ── */
+    .agent-page-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .agent-page-header h2 { font-size: 1.25rem !important; font-weight: 800 !important; color: #0f172a !important; margin: 0 !important; line-height: 1.3 !important; }
+    .agent-page-header p { font-size: .8125rem !important; color: #64748b !important; margin: .3rem 0 0 !important; font-weight: 400 !important; }
+    .agent-page-header-action {
+        display: inline-flex; align-items: center; gap: .5rem;
+        padding: .625rem 1.1rem; border-radius: .875rem;
+        font-size: .8rem; font-weight: 700; white-space: nowrap;
+        background: var(--owner-primary, #4f46e5); color: #fff !important;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(var(--owner-primary-rgb, 79,70,229), .22);
+        transition: filter .15s ease, box-shadow .15s ease;
+    }
+    .agent-page-header-action:hover {
+        filter: brightness(.93);
+        box-shadow: 0 6px 18px rgba(var(--owner-primary-rgb, 79,70,229), .3);
+    }
+
+    /* ── Listing heading ── */
     .owner-listing-section { padding-top: .25rem; }
     .owner-listing-heading { margin-bottom: 1.25rem !important; }
+
+    /* ── Property / Lead Grid ── */
     .owner-room-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 1.5rem;
         align-items: start;
     }
-    .owner-room-card { min-width: 0; height: auto !important; align-self: start; }
+    .owner-room-card {
+        min-width: 0; height: auto !important; align-self: start;
+        transition: box-shadow .18s ease, transform .18s ease !important;
+    }
+    .owner-room-card:hover {
+        box-shadow: 0 8px 28px rgba(15,23,42,.12) !important;
+        transform: translateY(-2px) !important;
+    }
+
+    /* ── Media / Image ── */
     .owner-room-media {
         position: relative;
         width: 100%;
@@ -31,10 +77,31 @@
         min-height: 220px;
         max-height: 220px;
         overflow: hidden;
-        background: linear-gradient(135deg, rgba(var(--owner-primary-rgb), .12), #f8fafc);
+        background: linear-gradient(135deg, rgba(var(--owner-primary-rgb, 79,70,229), .12), #f8fafc);
     }
     .owner-room-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .owner-room-media::after {
+        content: '';
+        position: absolute;
+        inset: auto 0 0;
+        height: 70px;
+        background: linear-gradient(to top, rgba(15,23,42,.35), transparent);
+        pointer-events: none;
+    }
     .owner-room-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
+
+    /* ── Empty state ── */
+    .agent-empty-state {
+        border-radius: 1.25rem;
+        border: 2px dashed #e2e8f0;
+        background: #fff;
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+    .agent-empty-state i { font-size: 2.5rem; color: #cbd5e1; display: block; margin-bottom: 1rem; }
+    .agent-empty-state h2 { font-size: 1.05rem; font-weight: 800; color: #1e293b; margin: 0 0 .5rem; }
+    .agent-empty-state p { font-size: .85rem; color: #64748b; margin: 0 0 1.5rem; }
+
     @media (max-width: 1279px) { .owner-room-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 767px) {
         .owner-rooms-header-inner { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
@@ -43,4 +110,5 @@
         .owner-room-stat { min-height: 78px; padding: .875rem !important; }
         .owner-room-grid { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
         .owner-room-media { height: 200px !important; min-height: 200px; max-height: 200px; }
+        .agent-page-header { flex-direction: column; align-items: flex-start; }
     }

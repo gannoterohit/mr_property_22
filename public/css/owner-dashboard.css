@@ -1,13 +1,30 @@
     .owner-dashboard-page { background: #f8fafc; }
     .owner-dashboard-header { padding-top: 2rem !important; padding-bottom: 2rem !important; }
     .owner-dashboard-content { padding-top: 2rem !important; padding-bottom: 3.5rem !important; }
+
+    /* ── Stat Cards ── */
     .owner-dashboard-stats {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 1rem;
         margin-bottom: 1.75rem;
     }
-    .owner-dashboard-stat { min-height: 112px; padding: 1.25rem !important; }
+    .owner-dashboard-stat {
+        min-height: 112px;
+        padding: 1.35rem !important;
+        border-radius: 1.25rem !important;
+        background: #fff !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 2px 8px rgba(15,23,42,.05) !important;
+        transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease !important;
+    }
+    .owner-dashboard-stat:hover {
+        box-shadow: 0 6px 20px rgba(15,23,42,.10) !important;
+        transform: translateY(-2px) !important;
+        border-color: rgba(var(--owner-primary-rgb), .25) !important;
+    }
+
+    /* ── Dashboard Body ── */
     .owner-dashboard-body {
         display: grid;
         grid-template-columns: minmax(0, 1fr) 320px;
@@ -16,6 +33,45 @@
     }
     .owner-dashboard-panel { min-width: 0; }
     .owner-dashboard-side { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+
+    /* ── Panel header ── */
+    .owner-dashboard-panel .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.1rem 1.35rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* ── Table styles (Payments / Transactions) ── */
+    .owner-dashboard-panel table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .owner-dashboard-panel thead tr { background: #f8fafc; }
+    .owner-dashboard-panel thead th {
+        padding: 0.7rem 1.25rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: #94a3b8;
+        border-bottom: 1px solid #e2e8f0;
+        white-space: nowrap;
+    }
+    .owner-dashboard-panel thead th:first-child { border-radius: 0; }
+    .owner-dashboard-panel tbody tr {
+        transition: background .12s ease;
+    }
+    .owner-dashboard-panel tbody tr:hover { background: #f8fafc; }
+    .owner-dashboard-panel tbody td {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.8125rem;
+        color: #475569;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+    .owner-dashboard-panel tbody tr:last-child td { border-bottom: none; }
+
+    /* ── Quick actions ── */
     .owner-quick-actions {
         padding: 1.25rem !important;
         border-radius: 1rem;
@@ -30,12 +86,59 @@
     .owner-recent-image { position: relative; width: 80px; height: 64px; flex: 0 0 80px; overflow: hidden; border-radius: .75rem; background: #f1f5f9; }
     .owner-recent-image img { position: relative; z-index: 1; display: block; width: 100%; height: 100%; object-fit: cover; }
     .owner-recent-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
+
+    /* ── Welcome Banner ── */
+    .agent-welcome-banner {
+        background: linear-gradient(135deg, var(--owner-primary) 0%, rgba(var(--owner-primary-rgb),.72) 100%);
+        border-radius: 1.25rem;
+        padding: 1.5rem 2rem;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+        box-shadow: 0 8px 28px rgba(var(--owner-primary-rgb),.22);
+    }
+    .agent-welcome-banner .welcome-text h2 { font-size: 1.2rem; font-weight: 800; color: #fff; margin: 0; }
+    .agent-welcome-banner .welcome-text p { font-size: .825rem; color: rgba(255,255,255,.78); margin: .25rem 0 0; }
+    .agent-welcome-banner .welcome-icon {
+        width: 52px; height: 52px; border-radius: 1rem;
+        background: rgba(255,255,255,.18);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; color: #fff; flex-shrink: 0;
+    }
+    .agent-welcome-banner .welcome-actions { display: flex; align-items: center; gap: .75rem; flex-shrink: 0; }
+    .agent-welcome-banner .welcome-btn {
+        display: inline-flex; align-items: center; gap: .5rem;
+        padding: .6rem 1.1rem; border-radius: .75rem;
+        font-size: .8rem; font-weight: 700;
+        background: rgba(255,255,255,.18); color: #fff;
+        border: 1px solid rgba(255,255,255,.25);
+        text-decoration: none; transition: background .15s ease;
+    }
+    .agent-welcome-banner .welcome-btn:hover { background: rgba(255,255,255,.28); }
+    .agent-welcome-banner .welcome-btn-primary {
+        background: #fff; color: var(--owner-primary); border-color: #fff;
+    }
+    .agent-welcome-banner .welcome-btn-primary:hover { background: #f1f5f9; }
+
+    /* ── Page section heading ── */
+    .agent-section-heading {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 1rem; margin-bottom: 1.25rem;
+    }
+    .agent-section-heading h2 { font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0; }
+    .agent-section-heading p { font-size: .8rem; color: #64748b; margin: .2rem 0 0; }
+
     @media (max-width: 1279px) {
         .owner-dashboard-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 1023px) {
         .owner-dashboard-body { grid-template-columns: minmax(0, 1fr); }
         .owner-dashboard-side { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .agent-welcome-banner { flex-wrap: wrap; }
+        .agent-welcome-banner .welcome-actions { width: 100%; }
     }
     @media (max-width: 639px) {
         .owner-dashboard-header { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
@@ -43,4 +146,6 @@
         .owner-dashboard-stats { gap: .75rem; margin-bottom: 1.25rem; }
         .owner-dashboard-stat { min-height: 96px; padding: 1rem !important; }
         .owner-dashboard-side { display: flex; }
+        .agent-welcome-banner { padding: 1.1rem 1.25rem; }
+        .agent-welcome-banner .welcome-text h2 { font-size: 1rem; }
     }

@@ -188,3 +188,47 @@
     .owner-nav-chevron.rotate-180 {
         transform: rotate(180deg);
     }
+
+    /* ── Agent Profile Page ── */
+    .agent-profile-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, .6fr);
+        gap: 1.5rem;
+        align-items: start;
+    }
+    .agent-profile-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 1.25rem;
+        padding: 1.75rem;
+        box-shadow: 0 1px 4px rgba(15,23,42,.05);
+    }
+    .agent-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    .agent-profile-card input,
+    .agent-profile-card select,
+    .agent-profile-card textarea {
+        width: 100%;
+        padding: .65rem .9rem;
+        border: 1px solid #e2e8f0;
+        border-radius: .75rem;
+        font-size: .875rem;
+        color: #0f172a;
+        background: #f8fafc;
+        transition: border-color .15s ease, box-shadow .15s ease;
+        outline: none;
+    }
+    .agent-profile-card input:focus,
+    .agent-profile-card select:focus,
+    .agent-profile-card textarea:focus {
+        border-color: var(--owner-primary);
+        box-shadow: 0 0 0 3px rgba(var(--owner-primary-rgb), .1);
+        background: #fff;
+    }
+    @media (max-width: 1023px) {
+        .agent-profile-grid { grid-template-columns: minmax(0, 1fr); }
+        .agent-form-row { grid-template-columns: 1fr; }
+    }

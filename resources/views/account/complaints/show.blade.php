@@ -1,9 +1,10 @@
 @extends(Auth::user()->role === 'owner' ? 'layouts.owner' : (Auth::user()->role === 'broker' ? 'layouts.agent' : (Auth::user()->role === 'user' ? 'layouts.customer' : 'layouts.public')))
 @section('title', $complaint->ticket_number)
 @php $role = Auth::user()->role; $isOwner = $role === 'owner'; $isBroker = $role === 'broker'; $isCustomer = $role === 'user'; $contentSection = $isOwner ? 'owner-content' : ($isBroker ? 'broker-content' : ($isCustomer ? 'customer-content' : 'content')); @endphp
+@push('styles')<link rel="stylesheet" href="{{ asset('css/owner-dashboard.css') }}">@endpush
 @section($contentSection)
 @php $user = Auth::user(); @endphp
-<div class="account-container account-body">
+<div class="owner-dashboard-content max-w-5xl mx-auto px-4 sm:px-6 lg:px-8" style="padding-top:2rem;padding-bottom:3.5rem">
     <div class="mb-6">
         <a href="{{ route('complaints.index') }}" class="text-xs font-bold text-indigo-600 inline-flex items-center gap-1 mb-3">
             <i class="fas fa-arrow-left text-[10px]"></i> My Complaints
