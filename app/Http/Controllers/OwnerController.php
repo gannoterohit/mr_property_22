@@ -16,12 +16,15 @@ class OwnerController extends Controller
         $featuredRooms = Room::where('user_id', Auth::id())
             ->where('is_featured', true)
             ->count();
+        $activeRooms = Room::where('user_id', Auth::id())
+            ->where('status', 'active')
+            ->count();
         $recentRooms = Room::where('user_id', Auth::id())
             ->latest()
             ->take(3)
             ->get();
 
-        return view('owner.dashboard', compact('rooms', 'contactUnlocks', 'featuredRooms', 'recentRooms'));
+        return view('owner.dashboard', compact('rooms', 'activeRooms', 'contactUnlocks', 'featuredRooms', 'recentRooms'));
     }
 
     public function rooms()

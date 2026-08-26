@@ -47,10 +47,8 @@
             @else
                 <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center"><i class="fas fa-house-circle-xmark text-4xl text-slate-300"></i><h2 class="mt-4 text-lg font-bold text-slate-900">No properties listed yet</h2><p class="mt-2 text-sm text-slate-500">Add your first property and start receiving enquiries.</p><a href="{{ route('owner.rooms.create') }}" class="mt-5 inline-flex rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white">Add Your First Property</a></div>
             @endif
-            @if($myRooms->hasPages())<div class="mt-8">{{ $myRooms->links() }}</div>@endif
-            </section>
-        </div>
-    </main>
+        @if($myRooms->hasPages())<div class="mt-8">{{ $myRooms->links() }}</div>@endif
+    </section>
 </div>
 
 @push('scripts')
