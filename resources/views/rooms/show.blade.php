@@ -786,8 +786,10 @@ function makeFeatured(roomId) {
 async function executeFeature(roomId, paymentMethod) {
     try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+        const userRole = '{{ Auth::check() ? Auth::user()->role : "" }}';
+        const featuredUrl = userRole === 'broker' ? '{{ route("agent.rooms.featured", ":id") }}' : '{{ route("owner.rooms.featured", ":id") }}';
         
-        const response = await fetch(`{{ route('rooms.featured', ':id') }}`.replace(':id', roomId), {
+        const response = await fetch(featuredUrl.replace(':id', roomId), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

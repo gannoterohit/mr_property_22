@@ -208,13 +208,15 @@ class NotificationService
 
             $msg = "Your room listing '{$room->title}' was not approved." . ($reasons ? " Reason: {$reasons}" : ' Please review and resubmit.');
 
+            $editUrl = $owner->role === 'broker' ? route('agent.rooms.edit', $room->slug) : route('owner.rooms.edit', $room->slug);
+
             // Bell notification
             UserNotification::send(
                 $owner->id,
                 'room_rejected',
                 "Room Rejected: {$room->title}",
                 $msg,
-                route('rooms.edit', $room->slug),
+                $editUrl,
                 'fa-times-circle'
             );
 
@@ -224,7 +226,7 @@ class NotificationService
                 "Room Needs Revision ⚠️",
                 "'{$room->title}' was not approved. Tap to review.",
                 ['type' => 'room_rejected', 'room_slug' => $room->slug ?? ''],
-                route('rooms.edit', $room->slug)
+                $editUrl
             );
 
         } catch (\Exception $e) {

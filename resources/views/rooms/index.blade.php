@@ -324,8 +324,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+            const userRole = '{{ Auth::check() ? Auth::user()->role : "" }}';
+            const bookedUrl = userRole === 'broker' ? '{{ route("agent.rooms.markBooked", ":id") }}' : '{{ route("owner.rooms.markBooked", ":id") }}';
             
-            const response = await fetch(`{{ route('rooms.markBooked', ':id') }}`.replace(':id', roomId), {
+            const response = await fetch(bookedUrl.replace(':id', roomId), {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
@@ -357,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function markAvailable(roomId) {
         const result = await Swal.fire({
             title: 'Make Available?',
-            text: "Making this room available will charge listing fee.",
+            text: "Making this room available will update its status.",
             icon: 'info',
             showCancelButton: true,
             confirmButtonColor: ROOM_SECONDARY_COLOR,
@@ -369,8 +371,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+            const userRole = '{{ Auth::check() ? Auth::user()->role : "" }}';
+            const availableUrl = userRole === 'broker' ? '{{ route("agent.rooms.markAvailable", ":id") }}' : '{{ route("owner.rooms.markAvailable", ":id") }}';
             
-            const response = await fetch(`{{ route('rooms.markAvailable', ':id') }}`.replace(':id', roomId), {
+            const response = await fetch(availableUrl.replace(':id', roomId), {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,

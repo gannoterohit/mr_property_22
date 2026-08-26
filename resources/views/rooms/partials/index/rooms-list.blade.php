@@ -98,12 +98,17 @@
 
                                     <!-- Bottom actions -->
                                     @auth
-                                        @if(Auth::user()->role === 'owner' && Auth::id() === $room->user_id)
+                                        @php
+                                            $isMyRoom = Auth::id() === $room->user_id || (Auth::user()->role === 'broker' && Auth::id() === $room->broker_id);
+                                            $editRoute = Auth::user()->role === 'broker' ? route('agent.rooms.edit', $room) : (Auth::user()->role === 'owner' ? route('owner.rooms.edit', $room) : null);
+                                            $destroyRoute = Auth::user()->role === 'broker' ? route('agent.rooms.destroy', $room) : (Auth::user()->role === 'owner' ? route('owner.rooms.destroy', $room) : null);
+                                        @endphp
+                                        @if($isMyRoom && $editRoute)
                                             <div class="grid grid-cols-2 gap-2 mt-auto">
-                                                <a href="{{ route('rooms.edit', $room) }}" class="flex items-center justify-center bg-amber-50 text-amber-700 font-extrabold py-2 rounded-xl hover:bg-amber-100 transition-colors text-xs">
+                                                <a href="{{ $editRoute }}" class="flex items-center justify-center bg-amber-50 text-amber-700 font-extrabold py-2 rounded-xl hover:bg-amber-100 transition-colors text-xs">
                                                     <i class="fas fa-edit mr-1"></i> Edit
                                                 </a>
-                                                <form action="{{ route('rooms.destroy', $room->id) }}" method="POST" class="delete-room-form">
+                                                <form action="{{ $destroyRoute }}" method="POST" class="delete-room-form">
                                                     @csrf @method('DELETE')
                                                     <button type="submit" class="w-full flex items-center justify-center bg-red-50 text-red-600 font-extrabold py-2 rounded-xl hover:bg-red-100 transition-colors text-xs">
                                                         <i class="fas fa-trash mr-1"></i> Delete
@@ -112,7 +117,7 @@
                                             </div>
                                         @else
                                             <a href="{{ route('rooms.show', $room->id) }}" class="room-theme-primary-button w-full py-2 font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1 text-xs mt-auto">
-                                                Contact Owner <i class="fas fa-arrow-right text-[10px]"></i>
+                                                {{ $room->listing_type === 'broker' ? 'Contact Agent' : 'Contact Owner' }} <i class="fas fa-arrow-right text-[10px]"></i>
                                             </a>
                                         @endif
                                     @else
