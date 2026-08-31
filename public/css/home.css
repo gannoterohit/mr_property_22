@@ -527,3 +527,266 @@ body>nav .desktop-navbar-menu a:first-child {
   .owner-cta-button{width:100%;justify-content:center;padding:12px}
   .owner-cta-image{height:180px}
 }
+
+/* Full Width Hero - Reduced Height */
+.market-hero{padding:0!important;background:0 0!important}
+.market-hero .market-wrap{width:100%!important;max-width:100%!important}
+.market-hero-box{border-radius:0!important;min-height:480px!important}
+.market-hero-copy{padding:60px 56px 150px!important}
+.market-search{left:40px!important;right:40px!important;width:auto!important;transform:none!important}
+.market-stats{width:min(1320px,calc(100% - 64px))!important;margin:30px auto 0!important}
+
+@media(max-width:767px){
+.market-hero-box{min-height:380px!important}
+.market-hero-copy{padding:40px 20px 120px!important}
+.market-search{left:16px!important;right:16px!important}
+}
+
+/* Fix Hero Image - Full Width Banner */
+.market-hero-image {
+    left: 0 !important;
+    width: 100% !important;
+    background-position: center center !important;
+    background-size: cover !important;
+}
+
+.market-hero-image:after {
+    background: linear-gradient(90deg, rgba(9,18,38,.95) 0%, rgba(9,18,38,.85) 50%, rgba(9,18,38,.2) 100%) !important;
+}
+
+.market-hero-box {
+    overflow: hidden !important;
+}
+
+@media(max-width: 767px) {
+    .market-hero-image:after {
+        background: rgba(15,23,42,.85) !important;
+    }
+}
+
+/* ===== HERO FULL WIDTH FIX ===== */
+.market-hero-box {
+    position: relative !important;
+    overflow: hidden !important;
+    min-height: 470px !important;
+    border-radius: 0 !important;
+    background: #0f172a !important;
+}
+.market-hero-image {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    opacity: 1 !important;
+    animation: none !important;
+}
+.market-hero-image:after {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(90deg, rgba(9,18,38,.95) 0%, rgba(9,18,38,.85) 50%, rgba(9,18,38,.2) 100%) !important;
+}
+.market-hero-copy {
+    position: relative !important;
+    z-index: 2 !important;
+    color: #fff !important;
+}
+@media(max-width: 767px) {
+    .market-hero-box {
+        min-height: 380px !important;
+    }
+    .market-hero-image:after {
+        background: rgba(15,23,42,.88) !important;
+    }
+}
+/* ===== END HERO FIX ===== */
+
+/* ===== HERO FULL WIDTH FIX v2 ===== */
+.market-hero {
+    padding: 0 !important;
+    background: transparent !important;
+}
+.market-hero .market-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.market-hero-box {
+    position: relative !important;
+    overflow: hidden !important;
+    min-height: 500px !important;
+    border-radius: 0 !important;
+    background: #0f172a !important;
+}
+.market-hero-image {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    opacity: 1 !important;
+    animation: none !important;
+    z-index: 1 !important;
+}
+.market-hero-image:after {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(90deg, rgba(9,18,38,.92) 0%, rgba(9,18,38,.82) 50%, rgba(9,18,38,.15) 100%) !important;
+    z-index: 2 !important;
+}
+.market-hero-copy {
+    position: relative !important;
+    z-index: 3 !important;
+    color: #fff !important;
+}
+@media(max-width: 767px) {
+    .market-hero-box {
+        min-height: 380px !important;
+    }
+    .market-hero-image:after {
+        background: rgba(15,23,42,.85) !important;
+    }
+}
+/* ===== END HERO FIX v2 ===== */
+
+/* ===== HERO FULL WIDTH FIX v3 ===== */
+.market-hero {
+    padding: 0 !important;
+    background: transparent !important;
+}
+.market-hero .market-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.market-hero-box {
+    position: relative !important;
+    overflow: hidden !important;
+    min-height: 500px !important;
+    border-radius: 0 !important;
+}
+.market-hero-image {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    opacity: 1 !important;
+    animation: none !important;
+    z-index: 1 !important;
+}
+.market-hero-image:after {
+    display: none !important;
+}
+.market-hero-copy {
+    position: relative !important;
+    z-index: 3 !important;
+    color: #fff !important;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6) !important;
+}
+@media(max-width: 767px) {
+    .market-hero-box {
+        min-height: 380px !important;
+    }
+}
+/* ===== END HERO FIX v3 ===== */
+
+/* ===== HERO FULL WIDTH FIX v4 ===== */
+.market-hero {
+    padding: 0 !important;
+    background: transparent !important;
+}
+.market-hero .market-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.market-hero-box {
+    position: relative !important;
+    overflow: hidden !important;
+    min-height: 500px !important;
+    border-radius: 0 !important;
+}
+.market-hero-image {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    opacity: 1 !important;
+    animation: none !important;
+    z-index: 1 !important;
+}
+.market-hero-image:after {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.2) 100%) !important;
+    z-index: 2 !important;
+}
+.market-hero-copy {
+    position: relative !important;
+    z-index: 3 !important;
+    color: #fff !important;
+    padding: 80px 40px !important;
+    max-width: 800px !important;
+}
+.market-hero-copy h1 {
+    color: #fff !important;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5) !important;
+    font-size: 48px !important;
+    line-height: 1.1 !important;
+    margin-bottom: 16px !important;
+}
+.market-hero-copy p {
+    color: rgba(255,255,255,0.9) !important;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.5) !important;
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+}
+.market-hero-copy .market-benefits span {
+    color: rgba(255,255,255,0.95) !important;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5) !important;
+}
+.market-eyebrow {
+    background: rgba(255,255,255,0.15) !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+    color: #fff !important;
+    backdrop-filter: blur(4px) !important;
+}
+@media(max-width: 767px) {
+    .market-hero-box {
+        min-height: 380px !important;
+    }
+    .market-hero-copy {
+        padding: 40px 20px !important;
+    }
+    .market-hero-copy h1 {
+        font-size: 32px !important;
+    }
+}
+/* ===== END HERO FIX v4 ===== */

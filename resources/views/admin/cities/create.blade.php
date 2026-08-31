@@ -115,7 +115,10 @@
                     <div>
                         <label for="cityImage" class="text-xs font-bold text-slate-700">Hero image</label>
                         <input id="cityImage" name="image" type="file" accept="image/*" class="mt-1.5 block w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-xs file:font-bold file:text-white">
-                        <p class="mt-1 text-[10px] text-slate-400">Upload a city image for the homepage hero. Leave blank to use the default fallback image.</p>
+                         <p class="mt-1 text-[10px] text-slate-400">
+                             <strong class="text-indigo-600">Recommended: 2400 x 600px</strong> (4:1 ratio) · Max 4MB<br>
+                             Minimum: 1920 x 480px · Formats: JPG, PNG, WebP
+                         </p>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>

@@ -17,7 +17,7 @@
 @push('styles')
 @include('partials.listings-ld')
 <link rel="preload" href="{{ $heroImage }}" as="image" fetchpriority="high">
-<link rel="stylesheet" href="{{ asset('css/home.css') }}">
+<link rel="stylesheet" href="{{ asset('css/home.css') }}?v={{ filemtime(public_path('css/home.css')) }}">
 @endpush
 
 @section('content')
