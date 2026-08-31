@@ -201,24 +201,31 @@ class RoomController extends Controller {
 
     $popularCities = CityOperations::selectorCities();
 
-    // Log the search or visit if city is detected
-    if ($request->filled('city') || $request->filled('min_rent') || $request->filled('max_rent') || isset($userCity)) {
+    // Log the search or visit if city is detected (with rate limiting)
+    if (($request->filled('city') || $request->filled('min_rent') || $request->filled('max_rent') || isset($userCity)) && !$request->ajax()) {
         try {
-            \App\Models\SearchLog::create([
-                'city' => $request->city ?? $userCity ?? 'Unknown',
-                'search_term' => $request->city ?? 'Auto-Detected', 
-                'filters' => [
-                    'min_rent' => $request->min_rent,
-                    'max_rent' => $request->max_rent,
-                    'property_type_id' => $request->property_type_id,
-                    'property_category_id' => $request->property_category_id,
-                    'min_area_sqft' => $request->min_area_sqft,
-                    'max_area_sqft' => $request->max_area_sqft,
-                    'is_auto_detected' => ! $request->filled('city') // Flag to know it was passive
-                ],
-                'user_id' => Auth::id(),
-                'ip_address' => $request->ip(),
-            ]);
+            $ipAddress = $request->ip();
+            $recentLog = \App\Models\SearchLog::where('ip_address', $ipAddress)
+                ->where('created_at', '>=', now()->subMinutes(5))
+                ->exists();
+
+            if (!$recentLog) {
+                \App\Models\SearchLog::create([
+                    'city' => $request->city ?? $userCity ?? 'Unknown',
+                    'search_term' => $request->city ?? 'Auto-Detected',
+                    'filters' => [
+                        'min_rent' => $request->min_rent,
+                        'max_rent' => $request->max_rent,
+                        'property_type_id' => $request->property_type_id,
+                        'property_category_id' => $request->property_category_id,
+                        'min_area_sqft' => $request->min_area_sqft,
+                        'max_area_sqft' => $request->max_area_sqft,
+                        'is_auto_detected' => ! $request->filled('city')
+                    ],
+                    'user_id' => Auth::id(),
+                    'ip_address' => $ipAddress,
+                ]);
+            }
         } catch(\Exception $e) {
             // Fail silently
         }
@@ -1084,11 +1091,8 @@ class RoomController extends Controller {
                 
                 $useSubscription = false;
                 if (!$isBroker && $activeSubscription && $activeSubscription->plan && $activeSubscription->plan->type === 'owner') {
-                    // Count rooms listed using subscription (listing_payment_id is null)
-                    $usedListings = Room::where('user_id', Auth::id())
-                        ->where('listing_fee_paid', true)
-                        ->whereNull('listing_payment_id') // Subscription listings have null listing_payment_id
-                        ->count();
+                    // Count rooms listed using subscription
+                    $usedListings = $activeSubscription->usages()->where('usage_type', 'listing')->count();
                     
                     $totalListings = $activeSubscription->plan->listing_limit ?? 0;
                     

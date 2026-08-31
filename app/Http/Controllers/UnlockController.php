@@ -203,14 +203,18 @@ class UnlockController extends Controller
                         'status' => 'completed'
                     ]);
 
-                    // Create enquiry record
-                    $enquiry = Enquiry::create([
-                        'user_id' => $user->id,
-                        'room_id' => $room->id,
-                        'payment_id' => $payment->id,
-                        'unlocked' => true,
-                        'unlocked_at' => now()
-                    ]);
+                    // Create or update enquiry record
+                    $enquiry = Enquiry::updateOrCreate(
+                        [
+                            'user_id' => $user->id,
+                            'room_id' => $room->id,
+                        ],
+                        [
+                            'payment_id' => $payment->id,
+                            'unlocked' => true,
+                            'unlocked_at' => now()
+                        ]
+                    );
 
                     DB::commit();
                     \App\Services\NotificationService::notifyContactUnlocked(Auth::user(), $room);

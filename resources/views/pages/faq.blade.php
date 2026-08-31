@@ -27,7 +27,7 @@
                     </button>
                     <div id="faq-{{ $index }}" class="hidden px-4 pb-4 text-sm leading-6 text-slate-600 transition-all duration-300">
                         <div class="border-t border-slate-100 pt-3">
-                            {!! $faq['answer'] !!}
+                            {!! \App\Services\HtmlSanitizer::clean($faq['answer']) !!}
                         </div>
                     </div>
                 </div>

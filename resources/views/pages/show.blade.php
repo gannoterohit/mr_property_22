@@ -16,7 +16,7 @@
             </div>
             <div class="px-5 py-5 md:px-6">
                 <div class="prose max-w-none text-sm leading-7 text-slate-700 prose-headings:font-extrabold prose-headings:text-slate-950 prose-h2:mt-5 prose-h2:text-xl prose-p:my-3 prose-li:my-1">
-                    {!! $content !!}
+                    {!! \App\Services\HtmlSanitizer::clean($content) !!}
                 </div>
             </div>
         </article>

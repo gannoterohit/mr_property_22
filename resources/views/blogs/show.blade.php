@@ -58,7 +58,7 @@
 
         <div class="article-layout">
             <article class="article-main">
-                <div class="article-body">{!! $blog->content !!}</div>
+                <div class="article-body">{!! \App\Services\HtmlSanitizer::clean($blog->content) !!}</div>
                 <div class="article-thanks">
                     <div><strong>Was this guide helpful?</strong><p>Explore more verified rooms and practical rental guides on ApnaNest.</p></div>
                     <a href="{{ route('rooms.index') }}">Browse verified rooms</a>

@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'broker.active' => \App\Http\Middleware\BrokerActive::class,
             'admin.permission' => \App\Http\Middleware\AdminPermission::class,
             'admin.activity' => \App\Http\Middleware\LogAdminActivity::class,
         ]);

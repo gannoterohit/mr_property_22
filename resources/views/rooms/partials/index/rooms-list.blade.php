@@ -1,5 +1,6 @@
             <!-- Rooms list -->
-            @if($rooms->count() > 0)
+            <div id="rooms-list-container">
+                @if($rooms->count() > 0)
                 <!-- Desktop Columns Grid (Flexbox wrapper for guaranteed column layout) -->
                 <div class="hidden md:flex flex-wrap -mx-2.5">
                     @foreach($rooms as $room)
@@ -174,3 +175,5 @@
                     </div>
                 </div>
             @endif
+            </div>
+            <!-- End rooms-list-container -->

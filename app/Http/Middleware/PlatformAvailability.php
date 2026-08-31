@@ -66,7 +66,7 @@ class PlatformAvailability
             return $this->unavailable($request, 'broker_module');
         }
 
-        if (!$this->enabled('broker_module_enabled', true) && $this->isBrokerPublicRoute($request)) {
+        if (!BrokerSetting::isEnabled('broker_module_enabled', true) && $this->isBrokerPublicRoute($request)) {
             return $this->unavailable($request, 'broker_module');
         }
 

@@ -40,6 +40,7 @@
 
     <form id="roomForm" enctype="multipart/form-data" class="owner-room-form-grid">
         @csrf
+        <input type="hidden" name="listing_type" value="owner">
         
         <!-- Basic Details Card -->
         <div class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">

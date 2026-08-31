@@ -345,14 +345,21 @@ class RazorpayController extends Controller
                 return response('invalid payload', 400);
             }
 
-            // Find existing payment record
+            // Find existing payment record with lock to prevent duplicate processing
             $payment = Payment::where('transaction_id', $paymentId)
                 ->when($orderId, fn ($query) => $query->orWhere('gateway_order_id', $orderId))
+                ->lockForUpdate()
                 ->first();
 
             if ($payment && $payment->status === 'pending') {
                 \DB::beginTransaction();
                 try {
+                    // Double-check status after acquiring lock
+                    if ($payment->status !== 'pending') {
+                        \DB::rollBack();
+                        return response('ok', 200);
+                    }
+
                     $payment->update([
                         'transaction_id' => $paymentId,
                         'status' => 'completed'
@@ -418,6 +425,60 @@ class RazorpayController extends Controller
                 } catch (\Exception $e) {
                     \DB::rollBack();
                     Log::error('Webhook error: '.$e->getMessage());
+                }
+            }
+        }
+
+        // Handle payment.failed event
+        if ($data['event'] === 'payment.failed') {
+            $paymentId = $paymentEntity['id'] ?? null;
+            $orderId = $paymentEntity['order_id'] ?? null;
+
+            if ($paymentId) {
+                $payment = Payment::where('transaction_id', $paymentId)
+                    ->when($orderId, fn ($query) => $query->orWhere('gateway_order_id', $orderId))
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($payment && $payment->status === 'pending') {
+                    $payment->update([
+                        'status' => 'failed',
+                        'metadata' => array_merge($payment->metadata ?? [], [
+                            'failure_reason' => $paymentEntity['error_description'] ?? 'Unknown error',
+                            'failure_code' => $paymentEntity['error_code'] ?? null,
+                        ])
+                    ]);
+
+                    Log::info('Payment marked as failed via webhook', [
+                        'payment_id' => $payment->id,
+                        'reason' => $paymentEntity['error_description'] ?? 'Unknown',
+                    ]);
+                }
+            }
+        }
+
+        // Handle refund.created event
+        if ($data['event'] === 'refund.created') {
+            $paymentId = $paymentEntity['payment_id'] ?? $paymentEntity['id'] ?? null;
+
+            if ($paymentId) {
+                $payment = Payment::where('transaction_id', $paymentId)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($payment && $payment->status === 'completed') {
+                    $payment->update([
+                        'status' => 'refunded',
+                        'metadata' => array_merge($payment->metadata ?? [], [
+                            'refund_id' => $paymentEntity['id'] ?? null,
+                            'refund_amount' => $paymentEntity['amount'] ?? null,
+                        ])
+                    ]);
+
+                    Log::info('Payment marked as refunded via webhook', [
+                        'payment_id' => $payment->id,
+                        'refund_id' => $paymentEntity['id'] ?? null,
+                    ]);
                 }
             }
         }

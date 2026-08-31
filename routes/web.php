@@ -76,7 +76,7 @@ Route::get('/dashboard', function () {
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
 
-Route::middleware(['auth', 'role:broker'])->prefix('agent')->name('agent.')->group(function () {
+Route::middleware(['auth', 'role:broker', 'broker.active'])->prefix('agent')->name('agent.')->group(function () {
     Route::get('/dashboard', [BrokerDashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/pending', [BrokerDashboardController::class, 'pending'])->name('pending');
     Route::get('/properties', [BrokerDashboardController::class, 'properties'])->name('properties');
@@ -97,9 +97,8 @@ Route::middleware(['auth', 'role:broker'])->prefix('agent')->name('agent.')->gro
     Route::patch('/profile', [BrokerDashboardController::class, 'updateProfile'])->name('profile.update');
 });
 
-// Public room browsing
-Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
-Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
+// Public room browsing (moved to top - lines 76-77)
+// Removed duplicate declarations that were here
 
 Route::post('/unlock/{room}', [UnlockController::class, 'unlock'])->name('unlock.contact');
 

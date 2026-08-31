@@ -31,7 +31,7 @@ class HtmlSanitizer
         'td' => ['colspan', 'rowspan'],
     ];
 
-    public function clean(?string $html): string
+    public static function clean(?string $html): string
     {
         if ($html === null || trim($html) === '') {
             return '';
@@ -55,7 +55,7 @@ class HtmlSanitizer
             return '';
         }
 
-        $this->sanitizeChildren($root);
+        self::sanitizeChildren($root);
 
         $output = '';
         foreach (iterator_to_array($root->childNodes) as $child) {
@@ -65,7 +65,7 @@ class HtmlSanitizer
         return $output;
     }
 
-    private function sanitizeChildren(DOMNode $parent): void
+    private static function sanitizeChildren(DOMNode $parent): void
     {
         foreach (iterator_to_array($parent->childNodes) as $node) {
             if (! $node instanceof DOMElement) {
@@ -86,12 +86,12 @@ class HtmlSanitizer
                 continue;
             }
 
-            $this->sanitizeAttributes($node, $tag);
-            $this->sanitizeChildren($node);
+            self::sanitizeAttributes($node, $tag);
+            self::sanitizeChildren($node);
         }
     }
 
-    private function sanitizeAttributes(DOMElement $element, string $tag): void
+    private static function sanitizeAttributes(DOMElement $element, string $tag): void
     {
         $allowed = array_merge(self::GLOBAL_ATTRIBUTES, self::TAG_ATTRIBUTES[$tag] ?? []);
         foreach (iterator_to_array($element->attributes) as $attribute) {
@@ -122,7 +122,7 @@ class HtmlSanitizer
         }
     }
 
-    private function safeUrl(string $url): bool
+    private static function safeUrl(string $url): bool
     {
         $url = trim(html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
         if ($url === '' || preg_match('/[\x00-\x1F\x7F]/', $url)) {
