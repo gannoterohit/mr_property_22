@@ -34,5 +34,6 @@
 
 @section('layout-bottom-navigation')
     @include('partials.mobile-bottom-nav')
+    @include('partials.guest-incentive-modal')
 @endsection
 
