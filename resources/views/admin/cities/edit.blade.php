@@ -119,12 +119,21 @@
                 <div id="cityMap" class="w-full"></div>
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-2 border-t bg-slate-50 px-5 py-3">
-                <div>
+            <div class="flex flex-wrap items-center justify-between gap-3 border-t bg-slate-50 p-4 sm:px-5 sm:py-3.5">
+                <div class="min-w-0 flex-1">
                     <p class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Current Position</p>
-                    <p id="selectedLocationLabel" class="text-xs font-bold text-slate-700">{{ $city->name }}{{ $city->state ? ', ' . $city->state : '' }}</p>
+                    <p id="selectedLocationLabel" class="truncate text-xs font-bold text-slate-700">{{ $city->name }}{{ $city->state ? ', ' . $city->state : '' }}</p>
                 </div>
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[10px] font-bold text-slate-500 shadow-sm"><i class="fas fa-hand-pointer admin-theme-text"></i> Click map to move marker</span>
+                <div class="flex items-center gap-2">
+                    <div class="relative w-28 sm:w-32">
+                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[9px] font-extrabold text-slate-400">LAT</span>
+                        <input id="cityLatitude" name="latitude" value="{{ old('latitude', $city->latitude) }}" required readonly class="h-9 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-2 font-mono text-[11px] font-bold text-slate-700 shadow-xs">
+                    </div>
+                    <div class="relative w-28 sm:w-32">
+                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[9px] font-extrabold text-slate-400">LNG</span>
+                        <input id="cityLongitude" name="longitude" value="{{ old('longitude', $city->longitude) }}" required readonly class="h-9 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-2 font-mono text-[11px] font-bold text-slate-700 shadow-xs">
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -192,22 +201,12 @@
 
                         <div class="mt-2.5 rounded-xl border border-indigo-100 bg-indigo-50/50 p-2.5 text-[11px] text-slate-600 space-y-1">
                             <div class="flex items-center gap-1.5 font-extrabold text-indigo-900">
-                                <i class="fas fa-images text-indigo-500"></i> Best Size: 2400 × 600 px (4:1 Aspect Ratio)
+                                <i class="fas fa-images text-indigo-500"></i> Best Exact Fit: 2400 × 525 px (1920 × 420 px)
                             </div>
                             <p class="text-[10.5px] text-slate-500">
-                                • Uploaded images homepage hero carousel me auto-rotate hongi.<br>
-                                • <span class="text-emerald-700 font-semibold">Auto-Fit:</span> Badi size ki images bhi automatically perfect fit hongi.
+                                • Current 420px height ke hisab se <strong>2400 × 525 px</strong> upar-niche se bina kate 100% full fit dikhegi.<br>
+                                • Formats: <strong>WebP, JPG, PNG</strong> (Max 4MB per image).
                             </p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="cityLatitude" class="text-xs font-bold text-slate-700">Latitude <span class="text-red-500">*</span></label>
-                            <input id="cityLatitude" name="latitude" value="{{ old('latitude', $city->latitude) }}" required readonly class="city-input mt-1.5 bg-slate-50 font-mono text-[11px] text-slate-600">
-                        </div>
-                        <div>
-                            <label for="cityLongitude" class="text-xs font-bold text-slate-700">Longitude <span class="text-red-500">*</span></label>
-                            <input id="cityLongitude" name="longitude" value="{{ old('longitude', $city->longitude) }}" required readonly class="city-input mt-1.5 bg-slate-50 font-mono text-[11px] text-slate-600">
                         </div>
                     </div>
                     <div>

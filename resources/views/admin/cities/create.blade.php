@@ -84,12 +84,21 @@
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-2 border-t bg-slate-50 px-5 py-3">
-                <div>
-                    <p class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Selected location</p>
-                    <p id="selectedLocationLabel" class="text-xs font-bold text-slate-700">No location selected</p>
+            <div class="flex flex-wrap items-center justify-between gap-3 border-t bg-slate-50 p-4 sm:px-5 sm:py-3.5">
+                <div class="min-w-0 flex-1">
+                    <p class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Selected Location</p>
+                    <p id="selectedLocationLabel" class="truncate text-xs font-bold text-slate-700">No location selected</p>
                 </div>
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[10px] font-bold text-slate-500 shadow-sm"><i class="fas fa-hand-pointer admin-theme-text"></i> Click map to fine-tune</span>
+                <div class="flex items-center gap-2">
+                    <div class="relative w-28 sm:w-32">
+                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[9px] font-extrabold text-slate-400">LAT</span>
+                        <input id="cityLatitude" name="latitude" value="{{ old('latitude') }}" required readonly placeholder="--" class="h-9 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-2 font-mono text-[11px] font-bold text-slate-700 shadow-xs">
+                    </div>
+                    <div class="relative w-28 sm:w-32">
+                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[9px] font-extrabold text-slate-400">LNG</span>
+                        <input id="cityLongitude" name="longitude" value="{{ old('longitude') }}" required readonly placeholder="--" class="h-9 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-2 font-mono text-[11px] font-bold text-slate-700 shadow-xs">
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -106,7 +115,7 @@
                 <div class="mt-4 space-y-4">
                     <div>
                         <label for="cityName" class="text-xs font-bold text-slate-700">City name <span class="text-red-500">*</span></label>
-                        <input id="cityName" name="name" value="{{ old('name') }}" required placeholder="City name" class="city-input mt-1.5">
+                        <input id="cityName" name="name" value="{{ old('name') }}" required placeholder="City name" class="city-input mt-1.5 font-bold">
                     </div>
                     <div>
                         <label for="cityState" class="text-xs font-bold text-slate-700">State</label>
@@ -121,22 +130,12 @@
                         <div id="imagePreviewGrid" class="mt-2.5 grid grid-cols-3 gap-2 hidden"></div>
                         <div class="mt-2 rounded-xl border border-indigo-100 bg-indigo-50/50 p-2.5 text-[11px] text-slate-600 space-y-1">
                             <div class="flex items-center gap-1.5 font-extrabold text-indigo-900">
-                                <i class="fas fa-images text-indigo-500"></i> Best Size: 2400 × 600 px (4:1 Aspect Ratio)
+                                <i class="fas fa-images text-indigo-500"></i> Best Exact Fit: 2400 × 525 px (1920 × 420 px)
                             </div>
                             <p class="text-[10.5px] text-slate-500">
-                                • Aap ek saath <strong>3 se 5 images</strong> select kar sakte hain jo auto-carousel me chalengi.<br>
-                                • <span class="text-emerald-700 font-semibold">Auto-Fit:</span> Badi size ki images bhi bina stretch huye automatically cover hokar fit ho jayengi.
+                                • Hero section ki current 420px height ke hisab se <strong>2400 × 525 px</strong> upar-niche se bina kate 100% fit aayegi.<br>
+                                • Formats: <strong>WebP, JPG, PNG</strong> (Max 4MB per image).
                             </p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="cityLatitude" class="text-xs font-bold text-slate-700">Latitude <span class="text-red-500">*</span></label>
-                            <input id="cityLatitude" name="latitude" value="{{ old('latitude') }}" required readonly placeholder="--" class="city-input mt-1.5 bg-slate-50 font-mono text-[11px] text-slate-600">
-                        </div>
-                        <div>
-                            <label for="cityLongitude" class="text-xs font-bold text-slate-700">Longitude <span class="text-red-500">*</span></label>
-                            <input id="cityLongitude" name="longitude" value="{{ old('longitude') }}" required readonly placeholder="--" class="city-input mt-1.5 bg-slate-50 font-mono text-[11px] text-slate-600">
                         </div>
                     </div>
                     <div>
