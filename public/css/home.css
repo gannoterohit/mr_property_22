@@ -147,35 +147,6 @@
         );
     z-index: 1;
 }
-.market-hero-dots {
-    position: absolute;
-    right: 24px;
-    bottom: 84px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    z-index: 4;
-    padding: 5px 9px;
-    background: rgba(15,23,42,.45);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,.15);
-    border-radius: 999px;
-}
-.market-hero-dot {
-    width: 8px;
-    height: 8px;
-    padding: 0;
-    border: 0;
-    border-radius: 999px;
-    background: rgba(255,255,255,.45);
-    cursor: pointer;
-    transition: all .25s ease;
-}
-.market-hero-dot.is-active {
-    width: 22px;
-    background: var(--secondary, #4ade80);
-    box-shadow: 0 0 10px rgba(var(--primary-rgb), .6);
-}
 .market-hero-copy {
     position: relative;
     z-index: 3;

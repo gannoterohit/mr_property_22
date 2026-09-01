@@ -45,39 +45,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const heroSlider = document.getElementById('marketHeroSlider');
     if (heroSlider) {
         const slides = heroSlider.querySelectorAll('.market-hero-slide');
-        const dots = heroSlider.querySelectorAll('.market-hero-dot');
         if (slides.length > 1) {
             let currentIndex = 0;
-            let slideTimer;
 
             const goToSlide = (index) => {
                 slides.forEach((slide, i) => slide.classList.toggle('is-active', i === index));
-                dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
                 currentIndex = index;
             };
 
-            const nextSlide = () => {
+            setInterval(() => {
                 goToSlide((currentIndex + 1) % slides.length);
-            };
-
-            const startAutoPlay = () => {
-                slideTimer = setInterval(nextSlide, 5000);
-            };
-
-            const stopAutoPlay = () => {
-                if (slideTimer) clearInterval(slideTimer);
-            };
-
-            dots.forEach((dot) => {
-                dot.addEventListener('click', () => {
-                    const targetIndex = parseInt(dot.getAttribute('data-slide'), 10);
-                    goToSlide(targetIndex);
-                    stopAutoPlay();
-                    startAutoPlay();
-                });
-            });
-
-            startAutoPlay();
+            }, 5000);
         }
     }
     const searchForm = document.querySelector('.market-search');
