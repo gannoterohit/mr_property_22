@@ -102,20 +102,35 @@
     background: color-mix(in srgb, var(--primary, #1e3a8a) 80%, #000 20%);
     box-shadow: none;
 }
-.market-hero-image {
+.market-hero-slider {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    background-position: center 40%;
-    background-size: cover;
-    background-repeat: no-repeat;
-    opacity: 1;
     overflow: hidden;
-    animation: marketImageDrift 18s ease-in-out alternate infinite;
     z-index: 0;
 }
-.market-hero-image:after {
+.market-hero-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.04);
+    transition: opacity 1.2s cubic-bezier(.4,0,.2,1), transform 7s cubic-bezier(.25,1,.5,1), visibility 1.2s;
+    z-index: 0;
+}
+.market-hero-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    z-index: 1;
+}
+.market-hero-slide:after {
     content: '';
     position: absolute;
     inset: 0;
@@ -133,6 +148,35 @@
             rgba(15,23,42,.35) 100%
         );
     z-index: 1;
+}
+.market-hero-dots {
+    position: absolute;
+    right: 24px;
+    bottom: 84px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    z-index: 4;
+    padding: 5px 9px;
+    background: rgba(15,23,42,.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 999px;
+}
+.market-hero-dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255,255,255,.45);
+    cursor: pointer;
+    transition: all .25s ease;
+}
+.market-hero-dot.is-active {
+    width: 22px;
+    background: var(--secondary, #4ade80);
+    box-shadow: 0 0 10px rgba(var(--primary-rgb), .6);
 }
 .market-hero-copy {
     position: relative;
@@ -1250,15 +1294,17 @@
         padding: 0;
         border-radius: 0;
     }
-    .market-hero-image {
+    .market-hero-slider {
         position: absolute;
         inset: 0;
         width: 100%;
         height: 100%;
-        background-position: center center;
         z-index: 0;
     }
-    .market-hero-image:after {
+    .market-hero-slide {
+        background-position: center center;
+    }
+    .market-hero-slide:after {
         background:
             linear-gradient(
                 180deg,
@@ -1266,6 +1312,19 @@
                 rgba(0,0,0,.10) 45%,
                 rgba(0,0,0,.38) 100%
             ) !important;
+    }
+    .market-hero-dots {
+        right: 16px;
+        bottom: 16px;
+        padding: 4px 7px;
+        gap: 5px;
+    }
+    .market-hero-dot {
+        width: 6px;
+        height: 6px;
+    }
+    .market-hero-dot.is-active {
+        width: 16px;
     }
     .market-hero-copy {
         position: relative;

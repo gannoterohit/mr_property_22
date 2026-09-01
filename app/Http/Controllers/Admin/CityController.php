@@ -22,12 +22,19 @@ class CityController extends Controller
         return view('admin.cities.create');
     }
 
+    public function edit(City $city)
+    {
+        return view('admin.cities.edit', compact('city'));
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:100|unique:cities,name',
             'state' => 'nullable|string|max:100',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'images' => 'nullable|array|max:10',
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:4096',
             'image_url' => 'nullable|url|max:255',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
@@ -36,7 +43,9 @@ class CityController extends Controller
             'is_default' => 'nullable|boolean',
         ]);
 
-        $data['image_url'] = $this->handleCityImageUpload($request);
+        $uploadedImages = $this->handleMultipleCityImageUploads($request);
+        $data['hero_images'] = !empty($uploadedImages) ? $uploadedImages : null;
+        $data['image_url'] = $uploadedImages[0] ?? null;
 
         $data['slug'] = Str::slug($data['name']);
         $data['is_active'] = $request->boolean('is_active');
@@ -53,6 +62,9 @@ class CityController extends Controller
             'name' => 'required|string|max:100|unique:cities,name,' . $city->id,
             'state' => 'nullable|string|max:100',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'images' => 'nullable|array|max:10',
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:4096',
+            'existing_hero_images' => 'nullable|array',
             'image_url' => 'nullable|url|max:255',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
@@ -61,12 +73,30 @@ class CityController extends Controller
             'is_default' => 'nullable|boolean',
         ]);
 
-        if ($request->hasFile('image')) {
-            $data['image_url'] = $this->handleCityImageUpload($request, $city);
-        } elseif ($request->filled('image_url')) {
-            $data['image_url'] = $request->image_url;
+        // Retain remaining existing images
+        $keptImages = $request->input('existing_hero_images', []);
+        if (!is_array($keptImages)) {
+            $keptImages = [];
+        }
+
+        // Delete removed images from storage
+        $currentImages = is_array($city->hero_images) ? $city->hero_images : ($city->image_url ? [$city->image_url] : []);
+        foreach ($currentImages as $oldImg) {
+            if (!in_array($oldImg, $keptImages, true)) {
+                $this->deleteStoredCityImage($oldImg);
+            }
+        }
+
+        // Upload newly added images
+        $newlyUploaded = $this->handleMultipleCityImageUploads($request);
+        $allImages = array_values(array_filter(array_merge($keptImages, $newlyUploaded)));
+
+        if (!empty($allImages)) {
+            $data['hero_images'] = $allImages;
+            $data['image_url'] = $allImages[0];
         } else {
-            $data['image_url'] = $city->image_url;
+            $data['hero_images'] = null;
+            $data['image_url'] = null;
         }
 
         $data['slug'] = Str::slug($data['name']);
@@ -75,7 +105,11 @@ class CityController extends Controller
 
         $city->update($data);
 
-        return back()->with('success', 'City updated successfully.');
+        if ($request->header('Referer') && str_contains($request->header('Referer'), '/edit')) {
+            return redirect()->route('admin.cities.edit', $city)->with('success', 'City updated successfully.');
+        }
+
+        return redirect()->route('admin.cities.index')->with('success', 'City updated successfully.');
     }
 
     public function toggleStatus(City $city)
@@ -102,31 +136,53 @@ class CityController extends Controller
             return back()->with('error', 'This city has related listings or alerts. Deactivate it instead of deleting.');
         }
 
+        if (is_array($city->hero_images)) {
+            foreach ($city->hero_images as $img) {
+                $this->deleteStoredCityImage($img);
+            }
+        }
         $this->deleteStoredCityImage($city->image_url);
         $city->delete();
 
         return redirect()->route('admin.cities.index')->with('success', 'City deleted successfully.');
     }
 
-    protected function handleCityImageUpload(Request $request, ?City $city = null): ?string
+    protected function handleMultipleCityImageUploads(Request $request): array
     {
+        $uploaded = [];
+
+        // Multiple files via images[]
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                if ($file && $file->isValid()) {
+                    $path = \App\Services\ImageOptimizer::optimizeToPublicPath(
+                        $file,
+                        'city_hero',
+                        'uploads/cities'
+                    );
+                    if ($path) {
+                        $uploaded[] = $path;
+                    }
+                }
+            }
+        }
+
+        // Single file fallback via image
         if ($request->hasFile('image')) {
-            $this->deleteStoredCityImage($city?->image_url);
-
-            $path = \App\Services\ImageOptimizer::optimizeToPublicPath(
-                $request->file('image'),
-                'city_hero',
-                'uploads/cities'
-            );
-
-            return $path;
+            $file = $request->file('image');
+            if ($file && $file->isValid()) {
+                $path = \App\Services\ImageOptimizer::optimizeToPublicPath(
+                    $file,
+                    'city_hero',
+                    'uploads/cities'
+                );
+                if ($path && !in_array($path, $uploaded, true)) {
+                    $uploaded[] = $path;
+                }
+            }
         }
 
-        if ($request->filled('image_url')) {
-            return $request->image_url;
-        }
-
-        return $city?->image_url;
+        return $uploaded;
     }
 
     protected function deleteStoredCityImage(?string $imageUrl): void

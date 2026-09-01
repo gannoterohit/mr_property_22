@@ -13,6 +13,7 @@ class City extends Model
         'slug',
         'state',
         'image_url',
+        'hero_images',
         'is_active',
         'is_default',
         'latitude',
@@ -21,6 +22,7 @@ class City extends Model
     ];
 
     protected $casts = [
+        'hero_images' => 'array',
         'is_active' => 'boolean',
         'is_default' => 'boolean',
         'latitude' => 'decimal:7',
@@ -47,6 +49,21 @@ class City extends Model
         });
     }
 
+    public function getHeroImagesListAttribute(): array
+    {
+        $images = $this->hero_images;
+        if (is_string($images)) {
+            $images = json_decode($images, true);
+        }
+        if (is_array($images) && !empty($images)) {
+            return array_values(array_filter($images));
+        }
+        if (!empty($this->image_url)) {
+            return [$this->image_url];
+        }
+        return [];
+    }
+
     public static function findByName(?string $name): ?self
     {
         $name = trim((string) $name);
@@ -65,21 +82,47 @@ class City extends Model
 
     public static function resolveHeroImage(?string $cityName): string
     {
+        $images = static::resolveHeroImages($cityName);
+        return $images[0] ?? asset('assets/images/hero-bg.webp');
+    }
+
+    public static function resolveHeroImages(?string $cityName): array
+    {
+        $images = [];
         $normalizedName = trim((string) $cityName);
 
-        if ($normalizedName === '') {
-            return asset('assets/images/hero-bg.webp');
+        $city = null;
+        if ($normalizedName !== '') {
+            $city = static::whereRaw('LOWER(name) = ?', [Str::lower($normalizedName)])
+                ->first() ?? static::whereRaw('LOWER(slug) = ?', [Str::slug($normalizedName)])
+                ->first();
         }
 
-        $city = static::whereRaw('LOWER(name) = ?', [Str::lower($normalizedName)])
-            ->first() ?? static::whereRaw('LOWER(slug) = ?', [Str::slug($normalizedName)])
-            ->first();
-
-        if ($city && !empty($city->image_url)) {
-            return static::resolveImageUrl($city->image_url);
+        if (!$city) {
+            $city = static::defaultCity();
         }
 
-        return asset('assets/images/hero-bg.webp');
+        if ($city) {
+            if (!empty($city->hero_images) && is_array($city->hero_images)) {
+                foreach ($city->hero_images as $img) {
+                    if (!empty($img)) {
+                        $url = static::resolveImageUrl($img);
+                        if (!in_array($url, $images, true)) {
+                            $images[] = $url;
+                        }
+                    }
+                }
+            }
+            if (empty($images) && !empty($city->image_url)) {
+                $images[] = static::resolveImageUrl($city->image_url);
+            }
+        }
+
+        if (empty($images)) {
+            $images[] = asset('assets/images/hero-bg.webp');
+        }
+
+        return array_values(array_unique($images));
     }
 
     public static function resolveImageUrl(?string $value): string

@@ -100,7 +100,10 @@
                 </thead>
                 <tbody id="cityTableBody" class="divide-y divide-slate-100">
                     @forelse($cities as $city)
-                        @php($formId = 'city-form-'.$city->id)
+                        @php
+                            $formId = 'city-form-' . $city->id;
+                            $cityHeroImages = $city->hero_images_list;
+                        @endphp
                         <tr class="city-row transition hover:bg-slate-50/70" data-search="{{ Str::lower($city->name.' '.$city->state) }}">
                             <td>
                                 <form id="{{ $formId }}" method="POST" action="{{ route('admin.cities.update', $city) }}" enctype="multipart/form-data">
@@ -117,10 +120,20 @@
                                 <input form="{{ $formId }}" name="state" value="{{ $city->state }}" placeholder="Add state" class="city-field min-w-[140px]">
                             </td>
                             <td>
-                                <div class="min-w-[180px] space-y-2">
-                                    <input form="{{ $formId }}" name="image" type="file" accept="image/*" class="block w-full cursor-pointer rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-[10px] text-slate-600 file:mr-2 file:rounded-md file:border-0 file:bg-slate-900 file:px-2 file:py-1 file:text-[10px] file:font-bold file:text-white">
-                                    @if($city->image_url)
-                                        <img src="{{ \App\Models\City::resolveHeroImage($city->name) }}" alt="{{ $city->name }} hero image" width="1920" height="800" class="h-12 w-full rounded-lg border object-cover">
+                                <div class="min-w-[150px] space-y-1">
+                                    @if(!empty($cityHeroImages))
+                                        <div class="relative group inline-block">
+                                            <img src="{{ \App\Models\City::resolveImageUrl($cityHeroImages[0]) }}" alt="{{ $city->name }} hero image" width="1920" height="800" class="h-11 w-24 rounded-lg border border-slate-200 object-cover shadow-sm">
+                                            @if(count($cityHeroImages) > 1)
+                                                <span class="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center rounded-full bg-indigo-600 px-1.5 py-0.5 text-[9px] font-extrabold text-white shadow">
+                                                    {{ count($cityHeroImages) }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400">
+                                            <i class="fas fa-image"></i> Default
+                                        </span>
                                     @endif
                                 </div>
                             </td>
@@ -152,8 +165,11 @@
                                 </label>
                             </td>
                             <td class="text-right">
-                                <div class="flex justify-end gap-2">
-                                    <button form="{{ $formId }}" class="inline-flex h-9 items-center gap-2 rounded-lg bg-slate-900 px-4 text-xs font-extrabold text-white transition admin-theme-hover-bg">
+                                <div class="flex justify-end items-center gap-2">
+                                    <a href="{{ route('admin.cities.edit', $city) }}" class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-indigo-50 px-3 text-xs font-extrabold text-indigo-700 hover:bg-indigo-100 transition shadow-sm" title="Edit City & Images">
+                                        <i class="fas fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <button form="{{ $formId }}" class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-slate-900 px-3 text-xs font-extrabold text-white transition admin-theme-hover-bg shadow-sm" title="Save quick changes">
                                         <i class="fas fa-floppy-disk"></i> Save
                                     </button>
                                     <form method="POST" action="{{ route('admin.cities.destroy', $city) }}" class="admin-confirm" data-confirm-title="Delete {{ $city->name }}?" data-confirm-text="Only cities without related listings or alerts can be deleted." data-confirm-button="Yes, delete city">

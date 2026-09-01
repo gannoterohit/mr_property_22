@@ -1,7 +1,18 @@
 <section class="market-hero">
     <div class="market-wrap">
         <div class="market-hero-box">
-            <div class="market-hero-image" style="background-image:url('{{ $heroImage }}')"></div>
+            <div class="market-hero-slider" id="marketHeroSlider">
+                @foreach($heroImages as $idx => $img)
+                    <div class="market-hero-slide {{ $idx === 0 ? 'is-active' : '' }}" style="background-image:url('{{ $img }}')"></div>
+                @endforeach
+                @if(count($heroImages) > 1)
+                    <div class="market-hero-dots">
+                        @foreach($heroImages as $idx => $img)
+                            <button type="button" class="market-hero-dot {{ $idx === 0 ? 'is-active' : '' }}" data-slide="{{ $idx }}" aria-label="Slide {{ $idx + 1 }}"></button>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
             <div class="market-hero-copy">
                 <span class="market-eyebrow"><i class="fas fa-shield-halved"></i>100% Verified Properties · Direct Owners &amp; Trusted Agents</span>
                 <h1>Find your perfect property <span>@if($displayCity)in {{ $displayCity }}@else near you @endif</span></h1>

@@ -6,7 +6,8 @@
     $displayCity = $cityContext['launchingSoonCityName'] ?? $homeCity;
     $siteName = \App\Models\Setting::get('website_name', 'ApnaNest');
     $text = fn (string $key, string $fallback = '') => \App\Models\Setting::get($key, $fallback);
-    $heroImage = \App\Models\City::resolveHeroImage($homeCity ?? $displayCity ?? null);
+    $heroImages = \App\Models\City::resolveHeroImages($homeCity ?? $displayCity ?? null);
+    $heroImage = $heroImages[0] ?? asset('assets/images/hero-bg.webp');
     $heroDescription = $text('home_hero_description', 'Discover verified rooms, PGs and flats for rent. Connect directly with genuine property owners.');
 @endphp
 
@@ -38,6 +39,47 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // ----------------------------------------------------
+    // Hero Auto-Carousel Image Slider
+    // ----------------------------------------------------
+    const heroSlider = document.getElementById('marketHeroSlider');
+    if (heroSlider) {
+        const slides = heroSlider.querySelectorAll('.market-hero-slide');
+        const dots = heroSlider.querySelectorAll('.market-hero-dot');
+        if (slides.length > 1) {
+            let currentIndex = 0;
+            let slideTimer;
+
+            const goToSlide = (index) => {
+                slides.forEach((slide, i) => slide.classList.toggle('is-active', i === index));
+                dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
+                currentIndex = index;
+            };
+
+            const nextSlide = () => {
+                goToSlide((currentIndex + 1) % slides.length);
+            };
+
+            const startAutoPlay = () => {
+                slideTimer = setInterval(nextSlide, 5000);
+            };
+
+            const stopAutoPlay = () => {
+                if (slideTimer) clearInterval(slideTimer);
+            };
+
+            dots.forEach((dot) => {
+                dot.addEventListener('click', () => {
+                    const targetIndex = parseInt(dot.getAttribute('data-slide'), 10);
+                    goToSlide(targetIndex);
+                    stopAutoPlay();
+                    startAutoPlay();
+                });
+            });
+
+            startAutoPlay();
+        }
+    }
     const searchForm = document.querySelector('.market-search');
     if (!searchForm) return;
 

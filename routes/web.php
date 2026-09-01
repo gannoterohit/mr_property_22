@@ -220,6 +220,7 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::get('/cities', [CityController::class, 'index'])->name('cities.index');
     Route::get('/cities/create', [CityController::class, 'create'])->name('cities.create');
     Route::post('/cities', [CityController::class, 'store'])->name('cities.store');
+    Route::get('/cities/{city}/edit', [CityController::class, 'edit'])->name('cities.edit');
     Route::put('/cities/{city}', [CityController::class, 'update'])->name('cities.update');
     Route::delete('/cities/{city}', [CityController::class, 'destroy'])->name('cities.destroy');
     Route::post('/settings', [BusinessSettingsController::class, 'update'])->name('settings.update');

@@ -113,12 +113,21 @@
                         <input id="cityState" name="state" value="{{ old('state') }}" placeholder="State name" class="city-input mt-1.5">
                     </div>
                     <div>
-                        <label for="cityImage" class="text-xs font-bold text-slate-700">Hero image</label>
-                        <input id="cityImage" name="image" type="file" accept="image/*" class="mt-1.5 block w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-xs file:font-bold file:text-white">
-                         <p class="mt-1 text-[10px] text-slate-400">
-                             <strong class="text-indigo-600">Recommended: 2400 x 600px</strong> (4:1 ratio) · Max 4MB<br>
-                             Minimum: 1920 x 480px · Formats: JPG, PNG, WebP
-                         </p>
+                        <div class="flex items-center justify-between">
+                            <label for="cityImages" class="text-xs font-bold text-slate-700">Hero Images (Carousel Banners)</label>
+                            <span class="text-[10px] font-bold text-indigo-600">Select Multiple</span>
+                        </div>
+                        <input id="cityImages" name="images[]" type="file" accept="image/*" multiple class="mt-1.5 block w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-xs file:font-bold file:text-white">
+                        <div id="imagePreviewGrid" class="mt-2.5 grid grid-cols-3 gap-2 hidden"></div>
+                        <div class="mt-2 rounded-xl border border-indigo-100 bg-indigo-50/50 p-2.5 text-[11px] text-slate-600 space-y-1">
+                            <div class="flex items-center gap-1.5 font-extrabold text-indigo-900">
+                                <i class="fas fa-images text-indigo-500"></i> Best Size: 2400 × 600 px (4:1 Aspect Ratio)
+                            </div>
+                            <p class="text-[10.5px] text-slate-500">
+                                • Aap ek saath <strong>3 se 5 images</strong> select kar sakte hain jo auto-carousel me chalengi.<br>
+                                • <span class="text-emerald-700 font-semibold">Auto-Fit:</span> Badi size ki images bhi bina stretch huye automatically cover hokar fit ho jayengi.
+                            </p>
+                        </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
@@ -285,6 +294,31 @@
             searchCity();
         }
     });
+
+    var cityImagesInput = document.getElementById('cityImages');
+    var imagePreviewGrid = document.getElementById('imagePreviewGrid');
+    if (cityImagesInput && imagePreviewGrid) {
+        cityImagesInput.addEventListener('change', function () {
+            imagePreviewGrid.innerHTML = '';
+            if (this.files && this.files.length > 0) {
+                imagePreviewGrid.classList.remove('hidden');
+                Array.from(this.files).forEach(function (file) {
+                    if (file.type.startsWith('image/')) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var div = document.createElement('div');
+                            div.className = 'relative overflow-hidden rounded-lg border border-slate-200 bg-slate-100 aspect-[4/1.5] shadow-xs';
+                            div.innerHTML = '<img src="' + e.target.result + '" class="h-full w-full object-cover">';
+                            imagePreviewGrid.appendChild(div);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            } else {
+                imagePreviewGrid.classList.add('hidden');
+            }
+        });
+    }
 
     document.getElementById('cityCreateForm').addEventListener('submit', function (event) {
         if (!latitudeInput.value || !longitudeInput.value) {
