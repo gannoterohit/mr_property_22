@@ -28,8 +28,6 @@
                 </div>
             </form>
             </div>
-        </div>
-        @include('partials.offer-banner', ['placement' => 'home_hero'])
         @include('partials.adsense-slot', ['placement' => 'home_top'])
         <div class="market-stats">
             @foreach([['fa-house-circle-check',number_format($totalRooms).'+','Verified rooms'],['fa-user-check',number_format($totalOwners).'+','Verified owners'],['fa-location-dot',number_format($totalAreas).'+','Popular areas'],['fa-clock','24/7','Customer support']] as $stat)

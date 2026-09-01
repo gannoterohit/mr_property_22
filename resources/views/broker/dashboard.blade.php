@@ -10,8 +10,6 @@
 @php $user = Auth::user(); @endphp
 <div class="owner-dashboard-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    @include('partials.offer-banner', ['placement' => 'dashboard'])
-
     {{-- Welcome Banner --}}
     <div class="agent-welcome-banner">
         <div class="welcome-text">

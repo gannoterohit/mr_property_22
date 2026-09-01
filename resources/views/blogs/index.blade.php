@@ -59,10 +59,7 @@
                     @endforeach
                 </div>
 
-                <!-- Mobile Offer Banner (Restoring original design but adding this) -->
-                <div class="lg:hidden mt-6">
-                    @include('partials.offer-banner', ['placement' => 'mobile_feed'])
-                </div>
+
             </div>
 
             <!-- Main Content Grid with Sidebar -->
@@ -156,8 +153,6 @@
                          </div>
                     </div>
 
-                    <!-- Sidebar Offers Inject (Added here for visibility) -->
-                    @include('partials.offer-banner', ['placement' => 'sidebar'])
 
                     <!-- Newsletter Widget -->
                     <div class="blog-newsletter rounded-[2rem] p-6 text-white relative overflow-hidden shadow-xl">

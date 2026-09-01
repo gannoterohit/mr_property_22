@@ -26,7 +26,7 @@
             ['route' => 'admin.payments.index', 'match' => 'admin.payments*', 'icon' => 'fa-credit-card', 'label' => 'Payments'],
             ['route' => 'admin.plans.index', 'match' => 'admin.plans*', 'icon' => 'fa-tags', 'label' => 'Subscription Plans'],
             ['route' => 'admin.broker-plans.index', 'match' => 'admin.broker-plans*', 'icon' => 'fa-id-card-clip', 'label' => 'Broker Plans'],
-            ['route' => 'admin.offers.index', 'match' => 'admin.offers*', 'icon' => 'fa-bullhorn', 'label' => 'Offers'],
+            ['route' => 'admin.offers.index', 'match' => 'admin.offers*', 'icon' => 'fa-ticket', 'label' => 'Coupons & Offers'],
         ]],
         'content' => ['label' => 'Content Management', 'icon' => 'fa-pen-to-square', 'items' => [
             ['route' => 'admin.blogs.index', 'match' => 'admin.blogs*', 'icon' => 'fa-newspaper', 'label' => 'Blogs'],

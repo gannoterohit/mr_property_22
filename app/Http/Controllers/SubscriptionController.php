@@ -15,8 +15,9 @@ class SubscriptionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'plan_id' => 'required|exists:plans,id',
+            'plan_id'        => 'required|exists:plans,id',
             'payment_method' => 'nullable|in:wallet,online',
+            'coupon_code'    => 'nullable|string|max:30',
         ]);
 
         $plan = Plan::findOrFail($request->plan_id);
@@ -51,80 +52,148 @@ class SubscriptionController extends Controller
             ], 400);
         }
 
+        // Apply coupon if provided
+        $appliedOffer = null;
+        $originalPrice = (float) $plan->price;
+        $discountAmount = 0.0;
+        $finalPrice = $originalPrice;
+
+        if ($request->filled('coupon_code')) {
+            $code = strtoupper(trim($request->input('coupon_code')));
+            $offer = \App\Models\Offer::where('code', $code)->first();
+            if (!$offer) {
+                return response()->json(['success' => false, 'message' => 'Invalid coupon code.'], 422);
+            }
+            $context = match($plan->type) {
+                'owner'  => 'owner_plans',
+                'broker' => 'broker_plans',
+                default  => 'user_plans',
+            };
+            $check = $offer->canBeUsedBy(Auth::id(), $context, $originalPrice);
+            if (!$check['valid']) {
+                return response()->json(['success' => false, 'message' => $check['message']], 422);
+            }
+            $appliedOffer = $offer;
+            $discountAmount = $offer->calculateDiscount($originalPrice);
+            $finalPrice = max(0, $originalPrice - $discountAmount);
+        }
+
         DB::beginTransaction();
         try {
             $user = Auth::user();
             
-            // Wallet payment
-            if ($paymentMethod === 'wallet') {
-                if ($user->wallet_balance < $plan->price) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Insufficient wallet balance. Your balance: ₹' . $user->wallet_balance
-                    ], 400);
-                }
-                
-                // Deduct from wallet_balance
-                $user->decrement('wallet_balance', $plan->price);
-                
-                // Create subscription - active immediately
+            // 100% Free coupon scenario (finalPrice == 0)
+            if ($finalPrice <= 0 && $appliedOffer) {
                 $subscription = Subscription::create([
-                    'user_id' => $user->id,
-                    'plan_id' => $plan->id,
+                    'user_id'    => $user->id,
+                    'plan_id'    => $plan->id,
                     'start_date' => Carbon::now(),
-                    'end_date' => Carbon::now()->addDays($plan->duration_days),
-                    'status' => 'active'
+                    'end_date'   => Carbon::now()->addDays($plan->duration_days),
+                    'status'     => 'active'
                 ]);
 
-                // Create payment record for wallet usage
                 $payment = Payment::create([
-                    'user_id' => $user->id,
-                    'type' => 'subscription',
-                    'amount' => $plan->price,
-                    'gateway' => 'wallet',
+                    'user_id'      => $user->id,
+                    'type'         => 'subscription',
+                    'amount'       => 0,
+                    'gateway'      => 'coupon_100_percent',
                     'reference_id' => $subscription->id,
-                    'status' => 'completed'
+                    'status'       => 'completed'
                 ]);
+
+                $appliedOffer->recordUsage($user->id, 'subscription', $subscription->id, $originalPrice, $discountAmount);
 
                 DB::commit();
 
                 return response()->json([
-                    'success' => true,
+                    'success'         => true,
+                    'free_activated'  => true,
                     'subscription_id' => $subscription->id,
-                    'wallet_used' => true,
-                    'new_balance' => $user->wallet_balance,
-                    'message' => 'Subscription activated successfully using wallet balance!'
+                    'message'         => '🎉 100% Discount applied! Subscription activated immediately!'
+                ]);
+            }
+
+            // Wallet payment
+            if ($paymentMethod === 'wallet') {
+                if ($user->wallet_balance < $finalPrice) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Insufficient wallet balance. Payable amount: ₹' . $finalPrice . ', Balance: ₹' . $user->wallet_balance
+                    ], 400);
+                }
+                
+                // Deduct from wallet_balance
+                $user->decrement('wallet_balance', $finalPrice);
+                
+                // Create subscription - active immediately
+                $subscription = Subscription::create([
+                    'user_id'    => $user->id,
+                    'plan_id'    => $plan->id,
+                    'start_date' => Carbon::now(),
+                    'end_date'   => Carbon::now()->addDays($plan->duration_days),
+                    'status'     => 'active'
+                ]);
+
+                // Create payment record for wallet usage
+                $payment = Payment::create([
+                    'user_id'      => $user->id,
+                    'type'         => 'subscription',
+                    'amount'       => $finalPrice,
+                    'gateway'      => 'wallet',
+                    'reference_id' => $subscription->id,
+                    'status'       => 'completed'
+                ]);
+
+                if ($appliedOffer) {
+                    $appliedOffer->recordUsage($user->id, 'subscription', $subscription->id, $originalPrice, $discountAmount);
+                }
+
+                DB::commit();
+
+                return response()->json([
+                    'success'         => true,
+                    'subscription_id' => $subscription->id,
+                    'wallet_used'     => true,
+                    'new_balance'     => $user->wallet_balance,
+                    'message'         => 'Subscription activated successfully using wallet balance!'
                 ]);
             }
 
             // Online payment (Razorpay)
             // Create subscription - pending
             $subscription = Subscription::create([
-                'user_id' => Auth::id(),
-                'plan_id' => $plan->id,
+                'user_id'    => Auth::id(),
+                'plan_id'    => $plan->id,
                 'start_date' => Carbon::now(),
-                'end_date' => Carbon::now()->addDays($plan->duration_days),
-                'status' => 'pending'
+                'end_date'   => Carbon::now()->addDays($plan->duration_days),
+                'status'     => 'pending'
             ]);
 
-            // Create payment record
+            // Create payment record with discounted amount
             $payment = Payment::create([
-                'user_id' => Auth::id(),
-                'type' => 'subscription',
-                'amount' => $plan->price,
-                'gateway' => 'razorpay',
+                'user_id'      => Auth::id(),
+                'type'         => 'subscription',
+                'amount'       => $finalPrice,
+                'gateway'      => 'razorpay',
                 'reference_id' => $subscription->id,
-                'status' => 'pending'
+                'status'       => 'pending'
             ]);
+
+            // If coupon applied, record pending usage or record right now
+            if ($appliedOffer) {
+                $appliedOffer->recordUsage($user->id, 'subscription', $subscription->id, $originalPrice, $discountAmount);
+            }
 
             DB::commit();
 
             return response()->json([
-                'success' => true,
+                'success'         => true,
                 'subscription_id' => $subscription->id,
-                'payment_id' => $payment->id,
-                'amount' => $plan->price,
-                'message' => 'Please complete payment to activate subscription.'
+                'payment_id'      => $payment->id,
+                'amount'          => $finalPrice,
+                'original_amount' => $originalPrice,
+                'discount_amount' => $discountAmount,
+                'message'         => 'Please complete payment to activate subscription.'
             ]);
 
         } catch (\Exception $e) {

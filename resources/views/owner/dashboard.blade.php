@@ -9,7 +9,7 @@
 @section('owner-content')
 @php $user = Auth::user(); @endphp
 <div class="owner-dashboard-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            @include('partials.offer-banner', ['placement' => 'dashboard'])
+
             <section class="owner-dashboard-stats" aria-label="Dashboard statistics">
                 @foreach([
                     ['Total properties', $rooms ?? 0, 'fa-building', 'bg-indigo-50 text-indigo-600', route('owner.rooms')],

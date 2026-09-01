@@ -3,37 +3,36 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CouponUsage;
 use App\Models\Offer;
-use App\Models\Setting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class OfferController extends Controller
 {
     public function index(Request $request)
     {
-        $allOffers = Offer::latest()->get();
-        $placementCounts = $allOffers
-            ->filter(fn (Offer $offer) => $offer->is_active && (!$offer->end_date || $offer->end_date->endOfDay()->gte(now())))
-            ->groupBy('placement')
-            ->map->count();
-
-        $offers = Offer::query()
-            ->when($request->filled('search'), function ($query) use ($request) {
+        $coupons = Offer::query()
+            ->when($request->filled('search'), function ($q) use ($request) {
                 $term = trim($request->string('search'));
-                $query->where(fn ($q) => $q->where('title', 'like', "%{$term}%")
-                    ->orWhere('description', 'like', "%{$term}%")
-                    ->orWhere('discount_text', 'like', "%{$term}%"));
+                $q->where(fn ($q) => $q->where('title', 'like', "%{$term}%")->orWhere('code', 'like', "%{$term}%"));
             })
-            ->when($request->filled('placement'), fn ($query) => $query->where('placement', $request->string('placement')))
-            ->when($request->filled('audience'), fn ($query) => $query->where('target_audience', $request->string('audience')))
-            ->when($request->input('status') === 'active', fn ($query) => $query->where('is_active', true))
-            ->when($request->input('status') === 'inactive', fn ($query) => $query->where('is_active', false))
+            ->when($request->filled('status'), function ($q) use ($request) {
+                match ($request->input('status')) {
+                    'active'    => $q->where('is_active', true),
+                    'inactive'  => $q->where('is_active', false),
+                    default     => null,
+                };
+            })
+            ->withCount('usages')
             ->latest()
-            ->paginate(15)
+            ->paginate(20)
             ->withQueryString();
 
-        return view('admin.offers.index', compact('offers', 'placementCounts'));
+        $totalSavings = CouponUsage::sum('discount_amount');
+        $totalUsages  = CouponUsage::count();
+
+        return view('admin.offers.index', compact('coupons', 'totalSavings', 'totalUsages'));
     }
 
     public function create()
@@ -44,94 +43,74 @@ class OfferController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'discount_text' => 'nullable|string|max:50',
-            'target_audience' => 'required|in:user,owner,broker,both',
-            'banner_color' => 'required|string|max:7',
-            'placement' => 'required|string|in:' . implode(',', array_keys(Offer::PLACEMENTS)),
-            'type' => 'required|string|in:text_only,image_only,both',
-            'link_url' => 'nullable|url|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'title'           => 'required|string|max:255',
+            'description'     => 'nullable|string|max:500',
+            'code'            => 'required|string|max:30|unique:offers,code|regex:/^[A-Z0-9_]+$/i',
+            'discount_type'   => 'required|in:percentage,flat',
+            'discount_value'  => 'required|numeric|min:1|max:100000',
+            'max_discount_cap'=> 'nullable|numeric|min:1',
+            'min_order_value' => 'nullable|numeric|min:0',
+            'max_uses'        => 'nullable|integer|min:1',
+            'per_user_limit'  => 'required|integer|min:1|max:10',
+            'applicable_for'  => 'required|in:all,owner_plans,user_plans,broker_plans,unlocks',
+            'target_audience' => 'required|in:all,user,owner,broker,both',
+            'show_as_banner'  => 'nullable|boolean',
+            'start_date'      => 'nullable|date',
+            'end_date'        => 'nullable|date|after_or_equal:start_date',
         ]);
 
-        if (in_array($validated['type'], ['image_only', 'both'], true) && !$request->hasFile('image')) {
-            return back()->withInput()->withErrors(['image' => 'Please upload an image for the selected offer type.']);
-        }
-
-        if ($request->hasFile('image')) {
-            $validated['image_path'] = \App\Services\ImageOptimizer::optimize($request->file('image'), 'offer_image');
-        }
-
-        $validated['is_active'] = $request->has('is_active');
+        $validated['code'] = strtoupper(trim($validated['code']));
+        $validated['is_active'] = $request->boolean('is_active', true);
+        $validated['show_as_banner'] = $request->boolean('show_as_banner');
 
         Offer::create($validated);
 
-        return redirect()->route('admin.offers.index')->with('success', 'Offer created successfully!');
+        return redirect()->route('admin.offers.index')->with('success', 'Coupon "' . $validated['code'] . '" created successfully!');
     }
 
     public function edit(Offer $offer)
     {
-        return view('admin.offers.edit', compact('offer'));
+        $usageStats = $offer->usages()->selectRaw('COUNT(*) as total_uses, SUM(discount_amount) as total_savings')->first();
+        return view('admin.offers.edit', compact('offer', 'usageStats'));
     }
 
     public function update(Request $request, Offer $offer)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'discount_text' => 'nullable|string|max:50',
-            'target_audience' => 'required|in:user,owner,broker,both',
-            'banner_color' => 'required|string|max:7',
-            'placement' => 'required|string|in:' . implode(',', array_keys(Offer::PLACEMENTS)),
-            'type' => 'required|string|in:text_only,image_only,both',
-            'link_url' => 'nullable|url|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'title'           => 'required|string|max:255',
+            'description'     => 'nullable|string|max:500',
+            'code'            => 'required|string|max:30|unique:offers,code,' . $offer->id . '|regex:/^[A-Z0-9_]+$/i',
+            'discount_type'   => 'required|in:percentage,flat',
+            'discount_value'  => 'required|numeric|min:1|max:100000',
+            'max_discount_cap'=> 'nullable|numeric|min:1',
+            'min_order_value' => 'nullable|numeric|min:0',
+            'max_uses'        => 'nullable|integer|min:1',
+            'per_user_limit'  => 'required|integer|min:1|max:10',
+            'applicable_for'  => 'required|in:all,owner_plans,user_plans,broker_plans,unlocks',
+            'target_audience' => 'required|in:all,user,owner,broker,both',
+            'show_as_banner'  => 'nullable|boolean',
+            'start_date'      => 'nullable|date',
+            'end_date'        => 'nullable|date|after_or_equal:start_date',
         ]);
 
-        if (in_array($validated['type'], ['image_only', 'both'], true) && !$request->hasFile('image') && !$offer->image_path) {
-            return back()->withInput()->withErrors(['image' => 'Please upload an image for the selected offer type.']);
-        }
-
-        if ($request->hasFile('image')) {
-            if ($offer->image_path) {
-                Storage::disk('public')->delete($offer->image_path);
-            }
-            $validated['image_path'] = \App\Services\ImageOptimizer::optimize($request->file('image'), 'offer_image');
-        }
-
-        $validated['is_active'] = $request->has('is_active');
+        $validated['code'] = strtoupper(trim($validated['code']));
+        $validated['is_active'] = $request->boolean('is_active');
+        $validated['show_as_banner'] = $request->boolean('show_as_banner');
 
         $offer->update($validated);
 
-        return redirect()->route('admin.offers.index')->with('success', 'Offer updated successfully!');
+        return redirect()->route('admin.offers.index')->with('success', 'Coupon updated successfully!');
     }
 
     public function destroy(Offer $offer)
     {
-        if ($offer->image_path) {
-            Storage::disk('public')->delete($offer->image_path);
-        }
         $offer->delete();
-        return redirect()->route('admin.offers.index')->with('success', 'Offer deleted successfully!');
+        return redirect()->route('admin.offers.index')->with('success', 'Coupon deleted.');
     }
 
     public function toggleActive(Offer $offer)
     {
         $offer->update(['is_active' => !$offer->is_active]);
-        return back()->with('success', 'Offer status updated!');
-    }
-
-    public function updateDisplaySettings(Request $request)
-    {
-        $data = $request->validate([
-            'popup_delay' => ['required', 'integer', 'min:0', 'max:300'],
-        ]);
-        Setting::set('popup_delay', $data['popup_delay']);
-        return back()->with('success', 'Offer display settings updated.');
+        return back()->with('success', 'Coupon status updated!');
     }
 }

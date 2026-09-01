@@ -20,7 +20,6 @@ use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnalyticsEventController;
 use App\Http\Controllers\BrokerDashboardController;
-use App\Http\Controllers\BrokerRegistrationController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PlanController;
@@ -56,9 +55,8 @@ Route::post('/analytics/events', [AnalyticsEventController::class, 'store'])
     ->middleware('throttle:60,1')
     ->name('analytics.events.store');
 
-// Broker Registration (public — no auth required)
-Route::get('/become-agent', [BrokerRegistrationController::class, 'create'])->name('broker.register');
-Route::post('/become-agent', [BrokerRegistrationController::class, 'store'])->middleware('throttle:10,1')->name('broker.register.store');
+// Broker Registration redirect to unified auth registration
+Route::get('/become-agent', fn () => redirect()->route('register', ['role' => 'broker']))->name('broker.register');
 
 // Referral Tracking
 Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'track'])->name('referral.track');
@@ -180,6 +178,11 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/webhook/razorpay', [RazorpayController::class, 'webhook'])->name('razorpay.webhook');
 
+// Coupon / Promo Code Validation (auth required)
+Route::middleware(['auth'])->group(function () {
+    Route::post('/coupon/apply', [\App\Http\Controllers\CouponController::class, 'apply'])->name('coupon.apply');
+});
+
 Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/staff', [\App\Http\Controllers\Admin\AdminStaffController::class, 'index'])->name('staff.index');
@@ -258,11 +261,9 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::resource('plans', PlanController::class)->except(['show']);
     Route::post('/plans/{plan}/toggle-active', [PlanController::class, 'toggleActive'])->name('plans.toggleActive');
 
-    // Offers Management
-    Route::get('/offerses', fn () => redirect()->route('admin.offers.index'))->name('offers.legacy');
+    // Coupon / Offer Management
     Route::resource('offers', \App\Http\Controllers\Admin\OfferController::class)->except(['show']);
     Route::post('/offers/{offer}/toggle-active', [\App\Http\Controllers\Admin\OfferController::class, 'toggleActive'])->name('offers.toggleActive');
-    Route::post('/offers/display-settings', [\App\Http\Controllers\Admin\OfferController::class, 'updateDisplaySettings'])->name('offers.display-settings');
 
     // Users Management
     Route::get('/members', [AdminController::class, 'member360'])->name('members.index');

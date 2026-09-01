@@ -52,10 +52,7 @@
             <p class="text-xs text-gray-500 mt-0.5">{{ $rooms->total() }} properties found</p>
         </div>
 
-        <!-- Mobile Offer Banner -->
-        <div class="px-4 mb-4">
-            @include('partials.offer-banner', ['placement' => 'mobile_feed'])
-        </div>
+
 
         <!-- 2. Vertical List (Remaining Rooms) -->
         <div id="mobile-room-list" class="px-3 pb-24">

@@ -18,35 +18,49 @@ class PlanController extends Controller
             return view('admin.plans.index', compact('plans', 'contactPlans', 'listingPlans'));
         }
         
+        // Fetch active coupons applicable for the current user's role
+        $role = Auth::user()->role;
+        $context = match($role) {
+            'owner'  => 'owner_plans',
+            'broker' => 'broker_plans',
+            default  => 'user_plans',
+        };
+        $coupons = \App\Models\Offer::active()
+            ->where(function($q) use ($context, $role) {
+                $q->whereIn('applicable_for', ['all', $context])
+                  ->whereIn('target_audience', ['both', 'all', $role]);
+            })
+            ->get();
+
         // Show contact subscription plans ONLY to users (ACTIVE ONLY)
-        if (Auth::check() && Auth::user()->role === 'user') {
+        if ($role === 'user') {
             $contactPlans = Plan::where('type', 'user')
                 ->where(fn ($q) => $q->where('contacts_limit', '>', 0)->orWhere('contacts_limit', -1))
                 ->where('is_active', true)
                 ->get();
             $activeSubscription = Auth::user()->subscriptions()->where('status', 'active')->whereDate('end_date', '>=', today())
                 ->whereHas('plan', fn ($q) => $q->where('type', 'user'))->with('plan')->latest()->first();
-            return view('account.plans', ['plans' => $contactPlans, 'activeSubscription' => $activeSubscription]);
+            return view('account.plans', ['plans' => $contactPlans, 'activeSubscription' => $activeSubscription, 'coupons' => $coupons]);
         }
         
         // Show room listing plans ONLY to owners (ACTIVE ONLY)
-        if (Auth::check() && Auth::user()->role === 'owner') {
+        if ($role === 'owner') {
             $listingPlans = Plan::where('type', 'owner')
                 ->where(fn ($q) => $q->where('listing_limit', '>', 0)->orWhere('listing_limit', -1))
                 ->where('is_active', true)
                 ->get();
             $activeSubscription = Auth::user()->subscriptions()->where('status', 'active')->whereDate('end_date', '>=', today())
                 ->whereHas('plan', fn ($q) => $q->where('type', 'owner'))->with('plan')->latest()->first();
-            return view('account.plans', ['plans' => $listingPlans, 'activeSubscription' => $activeSubscription]);
+            return view('account.plans', ['plans' => $listingPlans, 'activeSubscription' => $activeSubscription, 'coupons' => $coupons]);
         }
 
         // Show broker listing plans to brokers (ACTIVE ONLY)
-        if (Auth::check() && Auth::user()->role === 'broker') {
+        if ($role === 'broker') {
             $brokerPlans = Plan::where('type', 'broker')
                 ->where(fn ($q) => $q->where('listing_limit', '>', 0)->orWhere('listing_limit', -1))
                 ->where('is_active', true)
                 ->get();
-            return view('account.plans', ['plans' => $brokerPlans, 'activeSubscription' => null]);
+            return view('account.plans', ['plans' => $brokerPlans, 'activeSubscription' => null, 'coupons' => $coupons]);
         }
         
         // Plans are role-specific, so guests must sign in first.

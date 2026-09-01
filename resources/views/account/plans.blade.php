@@ -43,6 +43,34 @@
         </div>
     @endif
 
+    @if(isset($coupons) && $coupons->isNotEmpty())
+        <div class="mb-8 rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50/70 via-white to-indigo-50/40 p-5 shadow-sm">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-white text-xs"><i class="fas fa-tags"></i></span>
+                <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Available Promo Deals</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                @foreach($coupons as $c)
+                    <div class="flex items-center justify-between gap-3 rounded-xl border border-dashed border-indigo-200 bg-white p-3.5 shadow-sm hover:border-indigo-400 transition group">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-black text-indigo-700 font-mono tracking-wider">{{ $c->code }}</span>
+                                <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-extrabold text-emerald-700">{{ $c->discount_label }}</span>
+                            </div>
+                            <p class="mt-1 text-xs text-slate-600 truncate">{{ $c->title }}</p>
+                            @if($c->min_order_value > 0)
+                                <p class="text-[10px] text-slate-400">Min order ₹{{ number_format($c->min_order_value, 0) }}</p>
+                            @endif
+                        </div>
+                        <button type="button" onclick="copyAndApply('{{ $c->code }}')" class="shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition" title="Copy code">
+                            <i class="fas fa-copy text-[10px] mr-1"></i> Copy
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     <div class="mb-6 flex items-center justify-between gap-4">
         <div><h2 class="font-heading text-xl font-bold text-slate-950">Available plans</h2><p class="mt-1 text-sm text-slate-500">Transparent pricing. No automatic renewal.</p></div>
         <span class="hidden sm:inline-flex items-center gap-2 text-xs font-semibold text-slate-500"><i class="fas fa-shield-halved text-emerald-600"></i> Secure payment</span>
@@ -101,11 +129,82 @@
 @include('account.partials.page-styles')
 <link rel="stylesheet" href="{{ asset('css/account-plans.css') }}">
 <div id="planPaymentModal" class="fixed inset-0 z-[1100] hidden items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-sm" role="dialog" aria-modal="true">
-    <div class="w-full max-w-md rounded-t-3xl sm:rounded-2xl bg-white p-6 shadow-2xl">
-        <div class="flex items-start justify-between gap-4"><div><p class="plan-modal-title">Complete purchase</p><h3 id="selectedPlanName" class="mt-1 font-heading text-xl font-bold text-slate-950"></h3><p id="selectedPlanPrice" class="mt-1 text-sm text-slate-500"></p></div><button onclick="closePlanPayment()" class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200"><i class="fas fa-xmark"></i></button></div>
-        <div class="mt-6 space-y-3">
-            <button onclick="purchasePlan('online')" class="plan-pay-online flex w-full items-center justify-between rounded-xl p-4 text-left"><span class="flex items-center gap-3"><i class="fas fa-credit-card"></i><span><strong class="block text-sm">Pay online</strong><small class="text-indigo-100">UPI, card or net banking</small></span></span><i class="fas fa-arrow-right text-xs"></i></button>
-            <button onclick="purchasePlan('wallet')" class="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left text-slate-900 hover:bg-slate-50"><span class="flex items-center gap-3"><i class="fas fa-wallet plan-trust-icon"></i><span><strong class="block text-sm">Use wallet balance</strong><small class="text-slate-500">Available &#8377;{{ number_format(Auth::user()->wallet_balance ?? 0, 2) }}</small></span></span><i class="fas fa-arrow-right text-xs text-slate-400"></i></button>
+    <div class="w-full max-w-md rounded-t-3xl sm:rounded-2xl bg-white p-6 shadow-2xl space-y-4">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <p class="plan-modal-title">Complete purchase</p>
+                <h3 id="selectedPlanName" class="mt-1 font-heading text-xl font-bold text-slate-950"></h3>
+                <div class="flex items-center gap-2 mt-1">
+                    <p id="selectedPlanPrice" class="text-sm font-semibold text-slate-500"></p>
+                    <span id="couponDiscountBadge" class="hidden rounded-full bg-emerald-100 text-emerald-800 px-2 py-0.5 text-xs font-black"></span>
+                </div>
+            </div>
+            <button onclick="closePlanPayment()" class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+
+        {{-- Promo Code Section --}}
+        <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Have a Promo Code?</label>
+            <div id="couponInputGroup" class="space-y-2">
+                <div class="flex gap-2">
+                    <input type="text" id="couponCodeInput" placeholder="e.g. SAVE20"
+                        class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider focus:ring-0 focus:border-indigo-500"
+                        oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9_]/g,'')">
+                    <button type="button" onclick="applyCoupon()" id="applyCouponBtn"
+                        class="rounded-lg admin-theme-bg px-3.5 py-1.5 text-xs font-bold text-white hover:opacity-90 transition">
+                        Apply
+                    </button>
+                </div>
+                @if(isset($coupons) && $coupons->isNotEmpty())
+                    <div class="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200/60">
+                        <span class="text-[10px] text-slate-400 font-semibold">Available:</span>
+                        @foreach($coupons as $c)
+                            <button type="button" onclick="applySpecificCode('{{ $c->code }}')"
+                                class="inline-flex items-center gap-1 rounded-md border border-dashed border-indigo-300 bg-indigo-50/70 px-2 py-0.5 text-[10px] font-bold text-indigo-700 hover:bg-indigo-100 transition font-mono">
+                                <span>{{ $c->code }}</span>
+                                <span class="text-[9px] text-emerald-600 font-sans font-extrabold">({{ $c->discount_label }})</span>
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+            <div id="appliedCouponInfo" class="hidden items-center justify-between mt-1 pt-1 border-t border-slate-200">
+                <span id="couponSuccessMsg" class="text-xs font-bold text-emerald-700 flex items-center gap-1.5">
+                    <i class="fas fa-check-circle"></i> <span id="couponSuccessText"></span>
+                </span>
+                <button type="button" onclick="removeCoupon()" class="text-xs font-bold text-red-500 hover:text-red-700">
+                    Remove
+                </button>
+            </div>
+            <p id="couponErrorMsg" class="hidden mt-1 text-xs font-bold text-red-600 flex items-center gap-1">
+                <i class="fas fa-circle-exclamation text-[10px]"></i> <span id="couponErrorText"></span>
+            </p>
+        </div>
+
+        {{-- Payment Options --}}
+        <div class="space-y-2.5 pt-1">
+            <button onclick="purchasePlan('online')" id="payOnlineBtn" class="plan-pay-online flex w-full items-center justify-between rounded-xl p-4 text-left">
+                <span class="flex items-center gap-3">
+                    <i class="fas fa-credit-card"></i>
+                    <span>
+                        <strong class="block text-sm" id="payOnlineText">Pay online</strong>
+                        <small class="text-indigo-100">UPI, card or net banking</small>
+                    </span>
+                </span>
+                <i class="fas fa-arrow-right text-xs"></i>
+            </button>
+            <button onclick="purchasePlan('wallet')" id="payWalletBtn" class="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left text-slate-900 hover:bg-slate-50">
+                <span class="flex items-center gap-3">
+                    <i class="fas fa-wallet plan-trust-icon"></i>
+                    <span>
+                        <strong class="block text-sm">Use wallet balance</strong>
+                        <small class="text-slate-500">Available &#8377;{{ number_format(Auth::user()->wallet_balance ?? 0, 2) }}</small>
+                    </span>
+                </span>
+                <i class="fas fa-arrow-right text-xs text-slate-400"></i>
+            </button>
         </div>
     </div>
 </div>
@@ -114,25 +213,123 @@
 @push('scripts')
 <script>
 const planRazorpayKey = @js(\App\Models\Setting::get('razorpay_key', ''));
+const userRole = @js(Auth::user()->role ?? 'user');
 let selectedPlan = null;
+let appliedCouponCode = null;
+let currentDiscount = 0;
 
 function openPlanPayment(id, name, price) {
-    selectedPlan = { id, name, price };
+    selectedPlan = { id, name, price: Number(price) };
+    appliedCouponCode = null;
+    currentDiscount = 0;
+    resetCouponUI();
     document.getElementById('selectedPlanName').textContent = name;
-    document.getElementById('selectedPlanPrice').textContent = `\u20B9${Number(price).toLocaleString('en-IN')} \u00B7 one-time payment`;
+    updatePriceDisplay();
     const modal = document.getElementById('planPaymentModal');
     modal.classList.remove('hidden'); modal.classList.add('flex');
 }
-function closePlanPayment() { const modal = document.getElementById('planPaymentModal'); modal.classList.add('hidden'); modal.classList.remove('flex'); }
+
+function closePlanPayment() {
+    const modal = document.getElementById('planPaymentModal');
+    modal.classList.add('hidden'); modal.classList.remove('flex');
+}
+
+function resetCouponUI() {
+    document.getElementById('couponCodeInput').value = '';
+    document.getElementById('couponInputGroup').classList.remove('hidden');
+    document.getElementById('appliedCouponInfo').classList.add('hidden');
+    document.getElementById('appliedCouponInfo').classList.remove('flex');
+    document.getElementById('couponErrorMsg').classList.add('hidden');
+    document.getElementById('couponDiscountBadge').classList.add('hidden');
+}
+
+function updatePriceDisplay() {
+    if (!selectedPlan) return;
+    const finalAmount = Math.max(0, selectedPlan.price - currentDiscount);
+    if (currentDiscount > 0) {
+        document.getElementById('selectedPlanPrice').innerHTML = `<span class="line-through text-slate-400">&#8377;${selectedPlan.price.toLocaleString('en-IN')}</span> <strong class="text-emerald-700 text-base">&#8377;${finalAmount.toLocaleString('en-IN')}</strong>`;
+        document.getElementById('couponDiscountBadge').textContent = `SAVED ₹${currentDiscount.toLocaleString('en-IN')}`;
+        document.getElementById('couponDiscountBadge').classList.remove('hidden');
+        document.getElementById('payOnlineText').textContent = finalAmount === 0 ? 'Activate Plan (FREE)' : `Pay ₹${finalAmount.toLocaleString('en-IN')} Online`;
+    } else {
+        document.getElementById('selectedPlanPrice').textContent = `₹${selectedPlan.price.toLocaleString('en-IN')} · one-time payment`;
+        document.getElementById('couponDiscountBadge').classList.add('hidden');
+        document.getElementById('payOnlineText').textContent = 'Pay online';
+    }
+}
+
+async function applyCoupon() {
+    const code = document.getElementById('couponCodeInput').value.trim();
+    if (!code || !selectedPlan) return;
+    const btn = document.getElementById('applyCouponBtn');
+    btn.disabled = true; btn.textContent = '...';
+    document.getElementById('couponErrorMsg').classList.add('hidden');
+
+    try {
+        const context = userRole === 'owner' ? 'owner_plans' : (userRole === 'broker' ? 'broker_plans' : 'user_plans');
+        const res = await fetch(@js(route('coupon.apply')), {
+            method: 'POST',
+            headers: {'Content-Type':'application/json','X-CSRF-TOKEN':@js(csrf_token()),'Accept':'application/json'},
+            body: JSON.stringify({ code: code, amount: selectedPlan.price, context: context })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.valid) {
+            document.getElementById('couponErrorText').textContent = data.message || 'Invalid coupon code';
+            document.getElementById('couponErrorMsg').classList.remove('hidden');
+            return;
+        }
+
+        appliedCouponCode = data.code;
+        currentDiscount = Number(data.discount_amount);
+        updatePriceDisplay();
+
+        document.getElementById('couponInputGroup').classList.add('hidden');
+        document.getElementById('couponSuccessText').textContent = `${data.code} applied! Saved ₹${data.discount_amount}`;
+        document.getElementById('appliedCouponInfo').classList.remove('hidden');
+        document.getElementById('appliedCouponInfo').classList.add('flex');
+    } catch (err) {
+        document.getElementById('couponErrorText').textContent = 'Error checking coupon';
+        document.getElementById('couponErrorMsg').classList.remove('hidden');
+    } finally {
+        btn.disabled = false; btn.textContent = 'Apply';
+    }
+}
+
+function removeCoupon() {
+    appliedCouponCode = null;
+    currentDiscount = 0;
+    resetCouponUI();
+    updatePriceDisplay();
+}
+
+function applySpecificCode(code) {
+    document.getElementById('couponCodeInput').value = code;
+    applyCoupon();
+}
+
+function copyAndApply(code) {
+    navigator.clipboard.writeText(code).then(() => {
+        toastr.success(`Code ${code} copied! Select any plan below to apply.`);
+    });
+}
 
 async function purchasePlan(method) {
     if (!selectedPlan) return;
-    const planId = selectedPlan.id; closePlanPayment();
+    const planId = selectedPlan.id;
+    const coupon = appliedCouponCode;
+    closePlanPayment();
     try {
-        const response = await fetch(@js(route('subscription.purchase')), { method: 'POST', headers: {'Content-Type':'application/json','X-CSRF-TOKEN':@js(csrf_token()),'Accept':'application/json','X-Requested-With':'XMLHttpRequest'}, body: JSON.stringify({plan_id: planId, payment_method: method}) });
+        const response = await fetch(@js(route('subscription.purchase')), {
+            method: 'POST',
+            headers: {'Content-Type':'application/json','X-CSRF-TOKEN':@js(csrf_token()),'Accept':'application/json','X-Requested-With':'XMLHttpRequest'},
+            body: JSON.stringify({ plan_id: planId, payment_method: method, coupon_code: coupon })
+        });
         const data = await response.json();
         if (!response.ok || !data.success) throw new Error(data.message || 'Unable to purchase this plan');
-        if (data.wallet_used) { toastr.success('Plan activated successfully'); return setTimeout(() => location.reload(), 900); }
+        if (data.free_activated || data.wallet_used) {
+            toastr.success(data.message || 'Plan activated successfully!');
+            return setTimeout(() => location.reload(), 900);
+        }
         await payForPlan(data.payment_id);
     } catch (error) { toastr.error(error.message || 'Something went wrong'); }
 }

@@ -270,7 +270,5 @@
                     </div>
                 </form>
             </div>
-            <div class="mt-5">
-                @include('partials.offer-banner', ['placement' => 'sidebar'])
-            </div>
+
         </div>

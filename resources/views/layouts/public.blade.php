@@ -36,8 +36,3 @@
     @include('partials.mobile-bottom-nav')
 @endsection
 
-@section('layout-popup')
-    @unless(request()->routeIs('owner.*', 'profile.*', 'wallet', 'referral.*', 'wishlist.*', 'complaints.*', 'plans'))
-        @include('partials.offer-banner', ['placement' => 'popup'])
-    @endunless
-@endsection
