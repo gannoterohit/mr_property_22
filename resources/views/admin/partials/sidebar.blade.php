@@ -24,9 +24,8 @@
         ]],
         'finance' => ['label' => 'Finance & Plans', 'icon' => 'fa-wallet', 'items' => [
             ['route' => 'admin.payments.index', 'match' => 'admin.payments*', 'icon' => 'fa-credit-card', 'label' => 'Payments'],
-
-
             ['route' => 'admin.plans.index', 'match' => 'admin.plans*', 'icon' => 'fa-tags', 'label' => 'Subscription Plans'],
+            ['route' => 'admin.broker-plans.index', 'match' => 'admin.broker-plans*', 'icon' => 'fa-id-card-clip', 'label' => 'Broker Plans'],
             ['route' => 'admin.offers.index', 'match' => 'admin.offers*', 'icon' => 'fa-bullhorn', 'label' => 'Offers'],
         ]],
         'content' => ['label' => 'Content Management', 'icon' => 'fa-pen-to-square', 'items' => [

@@ -86,18 +86,26 @@ class AdminController extends Controller
         if ($access['finance']) {
             $types = ['listing', 'featured', 'unlock', 'subscription'];
             $completed = Payment::where('status', 'completed')->whereIn('type', $types);
+            $brokerCompleted = \App\Models\BrokerPayment::where('status', 'completed');
+
+            $totalEarnings = (clone $completed)->sum('amount') + (clone $brokerCompleted)->sum('amount');
+            $todayEarnings = (clone $completed)->whereDate('created_at', today())->sum('amount') + (clone $brokerCompleted)->whereDate('created_at', today())->sum('amount');
+            $currentMonthEarnings = (clone $completed)->whereYear('created_at', now()->year)->whereMonth('created_at', now()->month)->sum('amount') + (clone $brokerCompleted)->whereYear('created_at', now()->year)->whereMonth('created_at', now()->month)->sum('amount');
+            $lastMonthEarnings = (clone $completed)->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->sum('amount') + (clone $brokerCompleted)->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->sum('amount');
+
             $data += [
-                'totalEarnings' => (clone $completed)->sum('amount'),
-                'todayEarnings' => (clone $completed)->whereDate('created_at', today())->sum('amount'),
-                'currentMonthEarnings' => (clone $completed)->whereYear('created_at', now()->year)->whereMonth('created_at', now()->month)->sum('amount'),
-                'lastMonthEarnings' => (clone $completed)->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->sum('amount'),
+                'totalEarnings' => $totalEarnings,
+                'todayEarnings' => $todayEarnings,
+                'currentMonthEarnings' => $currentMonthEarnings,
+                'lastMonthEarnings' => $lastMonthEarnings,
                 'recentPayments' => Payment::with('user')->latest()->limit(5)->get(),
             ];
             $monthSql = DB::getDriverName() === 'sqlite' ? "CAST(strftime('%m', created_at) AS INTEGER)" : 'MONTH(created_at)';
             $monthly = (clone $completed)->selectRaw("{$monthSql} month, SUM(amount) total")->whereYear('created_at', now()->year)->groupByRaw($monthSql)->pluck('total', 'month');
-            $data['revenueData'] = collect(range(1, 12))->map(fn ($month) => (float) ($monthly[$month] ?? 0))->all();
+            $brokerMonthly = (clone $brokerCompleted)->selectRaw("{$monthSql} month, SUM(amount) total")->whereYear('created_at', now()->year)->groupByRaw($monthSql)->pluck('total', 'month');
+            $data['revenueData'] = collect(range(1, 12))->map(fn ($month) => (float) (($monthly[$month] ?? 0) + ($brokerMonthly[$month] ?? 0)))->all();
             $data['percentageChange'] = $data['lastMonthEarnings'] > 0 ? (($data['currentMonthEarnings'] - $data['lastMonthEarnings']) / $data['lastMonthEarnings']) * 100 : 0;
-            $data['actionQueues'][] = ['label' => 'Failed / pending payments', 'count' => Payment::whereIn('status', ['failed', 'pending'])->count(), 'route' => route('admin.payments.index', ['status' => 'pending']), 'icon' => 'fa-credit-card'];
+            $data['actionQueues'][] = ['label' => 'Failed / pending payments', 'count' => Payment::whereIn('status', ['failed', 'pending'])->count() + \App\Models\BrokerPayment::whereIn('status', ['failed', 'pending'])->count(), 'route' => route('admin.payments.index', ['status' => 'pending']), 'icon' => 'fa-credit-card'];
             $data['quickLinks'][] = ['label' => 'Payments', 'route' => route('admin.payments.index'), 'icon' => 'fa-credit-card'];
             $data['quickLinks'][] = ['label' => 'Plans', 'route' => route('admin.plans.index'), 'icon' => 'fa-tags'];
             if ($access['finance_manage']) {
@@ -344,16 +352,21 @@ class AdminController extends Controller
         $to = $request->date('to') ?? now()->endOfDay();
         $paymentsBase = Payment::whereBetween('created_at', [$from->startOfDay(), $to->endOfDay()]);
         $revenueByType = (clone $paymentsBase)->where('status', 'completed')->selectRaw('type, SUM(amount) total')->groupBy('type')->pluck('total', 'type');
+        $brokerRevenue = \App\Models\BrokerPayment::where('status', 'completed')->whereBetween('created_at', [$from->startOfDay(), $to->endOfDay()])->sum('amount');
+        if ($brokerRevenue > 0) {
+            $revenueByType['broker_plans'] = $brokerRevenue;
+        }
         $dailyCollections = (clone $paymentsBase)->where('status', 'completed')->selectRaw('DATE(created_at) day, SUM(amount) total')->groupBy('day')->orderBy('day')->get();
-        $failedPayments = (clone $paymentsBase)->where('status', 'failed')->count();
+        $failedPayments = (clone $paymentsBase)->where('status', 'failed')->count() + \App\Models\BrokerPayment::where('status', 'failed')->whereBetween('created_at', [$from->startOfDay(), $to->endOfDay()])->count();
         $totalUsers = User::where('role', 'user')->whereBetween('created_at', [$from, $to])->count();
         $unlocks = \App\Models\Enquiry::where('unlocked', true)->whereBetween('unlocked_at', [$from, $to])->count();
         $cityDemand = \App\Models\Enquiry::join('rooms', 'rooms.id', '=', 'enquiries.room_id')->whereBetween('enquiries.created_at', [$from, $to])->selectRaw('rooms.city, COUNT(*) total')->groupBy('rooms.city')->orderByDesc('total')->limit(10)->get();
         $ownerGrowth = User::where('role', 'owner')->whereBetween('created_at', [$from, $to])->count();
+        $brokerGrowth = User::where('role', 'broker')->whereBetween('created_at', [$from, $to])->count();
         $listingGrowth = Room::whereBetween('created_at', [$from, $to])->count();
         $resolutionHours = \App\Models\Complaint::whereNotNull('closed_at')->whereBetween('closed_at', [$from, $to])->selectRaw('AVG(TIMESTAMPDIFF(HOUR, created_at, closed_at)) avg_hours')->value('avg_hours');
 
-        return view('admin.analytics.reports', compact('from', 'to', 'revenueByType', 'dailyCollections', 'failedPayments', 'totalUsers', 'unlocks', 'cityDemand', 'ownerGrowth', 'listingGrowth', 'resolutionHours'));
+        return view('admin.analytics.reports', compact('from', 'to', 'revenueByType', 'dailyCollections', 'failedPayments', 'totalUsers', 'unlocks', 'cityDemand', 'ownerGrowth', 'brokerGrowth', 'listingGrowth', 'resolutionHours'));
     }
 
 

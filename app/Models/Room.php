@@ -40,6 +40,8 @@ class Room extends Model
         'listing_payment_id',
         'listing_type',
         'broker_fee',
+        'broker_id',
+        'expires_at',
         'moderation_status',
         'moderation_note',
     ];
@@ -51,7 +53,19 @@ class Room extends Model
         'photos' => 'array',
         'amenities' => 'array',
         'landmarks' => 'array',
+        'expires_at' => 'datetime',
     ];
+
+    public function isExpired(): bool
+    {
+        return $this->expires_at !== null && $this->expires_at->isPast();
+    }
+
+    public function expiresInDays(): ?int
+    {
+        if (!$this->expires_at) return null;
+        return (int) now()->diffInDays($this->expires_at, false);
+    }
 
     /**
      * Get the route key for the model.

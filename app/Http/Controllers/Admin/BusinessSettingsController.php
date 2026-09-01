@@ -176,8 +176,14 @@ class BusinessSettingsController extends Controller
                     );
                 }
 
-                Setting::clearCache();
             });
+
+            if ($request->has('broker_listing_fee_enabled') || $request->has('broker_listing_fee')) {
+                \App\Models\BrokerSetting::set('broker_listing_charges_enabled', $request->boolean('broker_listing_fee_enabled') ? '1' : '0');
+                if ($request->filled('broker_listing_fee')) {
+                    \App\Models\BrokerSetting::set('broker_per_listing_charge', (string) $request->input('broker_listing_fee'));
+                }
+            }
 
             foreach (array_unique($oldFiles) as $oldFile) {
                 Storage::disk('public')->delete($oldFile);

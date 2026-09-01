@@ -79,6 +79,27 @@
                                     <span class="owner-room-price-unit">per month</span>
                                 </div>
                             </div>
+
+                            @if($property->expires_at)
+                                @php
+                                    $daysRemaining = $property->expiresInDays();
+                                @endphp
+                                <div class="mt-2 text-xs">
+                                    @if($daysRemaining < 0)
+                                        <span class="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-0.5 font-bold text-rose-700">
+                                            <i class="fas fa-circle-exclamation text-[10px]"></i> Expired {{ abs($daysRemaining) }}d ago
+                                        </span>
+                                    @elseif($daysRemaining <= 7)
+                                        <span class="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 font-bold text-amber-700">
+                                            <i class="fas fa-triangle-exclamation text-[10px]"></i> Expires in {{ $daysRemaining }} day{{ $daysRemaining == 1 ? '' : 's' }}
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 text-[11px] text-slate-400">
+                                            <i class="fas fa-calendar-check text-[10px]"></i> Active till {{ $property->expires_at->format('M d, Y') }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
                             <div class="owner-room-actions">
                                 <a href="{{ route('agent.rooms.show', $property) }}" class="owner-room-btn owner-room-btn-outline">
                                     <i class="fas fa-eye"></i> View

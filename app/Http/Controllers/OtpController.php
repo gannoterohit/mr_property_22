@@ -195,11 +195,15 @@ class OtpController extends Controller
     public function verifyRegistrationOtp(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string',
-            'role'  => 'nullable|in:user,owner,broker',
-            'otp'   => 'required|string|min:6|max:6',
+            'name'            => 'required|string|max:255',
+            'email'           => 'required|email|unique:users,email',
+            'phone'           => 'nullable|string',
+            'role'            => 'nullable|in:user,owner,broker',
+            'otp'             => 'required|string|min:6|max:6',
+            'agency_name'     => 'nullable|string|max:255',
+            'agency_address'  => 'nullable|string|max:500',
+            'broker_license'  => 'nullable|string|max:100',
+            'agency_gst'      => 'nullable|string|max:50',
         ]);
 
         if ($validator->fails()) {
@@ -249,6 +253,10 @@ class OtpController extends Controller
 
         if ($request->role === 'broker') {
             $userData['broker_verification_status'] = \App\Models\BrokerSetting::isEnabled('broker_verification_enabled', true) ? 'pending' : 'approved';
+            $userData['agency_name']    = $request->agency_name ?? null;
+            $userData['agency_address'] = $request->agency_address ?? null;
+            $userData['broker_license'] = $request->broker_license ?? null;
+            $userData['agency_gst']     = $request->agency_gst ?? null;
             if ($userData['broker_verification_status'] === 'approved') {
                 $userData['is_broker_active'] = true;
                 $userData['broker_verified_at'] = now();

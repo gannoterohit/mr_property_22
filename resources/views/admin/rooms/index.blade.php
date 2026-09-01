@@ -140,8 +140,19 @@
                                 </div>
                             </td>
                             <td class="px-4">
-                                <a href="{{ route('admin.owners.detail',$room->owner) }}" class="admin-theme-hover-text text-xs font-bold text-slate-800">{{ $room->owner->name }}</a>
-                                <p class="text-[10px] {{ $room->owner->verification_status==='verified'?'text-emerald-600':'text-amber-600' }}">{{ ucfirst(str_replace('_',' ',$room->owner->verification_status)) }}</p>
+                                @if($room->owner?->role === 'broker')
+                                    <a href="{{ route('admin.brokers.show', $room->owner) }}" class="admin-theme-hover-text text-xs font-bold text-indigo-700 block">
+                                        <i class="fas fa-handshake mr-1 text-[10px]"></i>{{ $room->owner->name }}
+                                    </a>
+                                    <span class="inline-flex items-center gap-1 rounded bg-indigo-50 px-1.5 py-0.5 text-[9px] font-bold text-indigo-700 mt-0.5">
+                                        {{ $room->owner->agency_name ?: 'Broker' }}
+                                    </span>
+                                @elseif($room->owner)
+                                    <a href="{{ route('admin.owners.detail',$room->owner) }}" class="admin-theme-hover-text text-xs font-bold text-slate-800 block">{{ $room->owner->name }}</a>
+                                    <p class="text-[10px] {{ $room->owner->verification_status==='verified'?'text-emerald-600':'text-amber-600' }}">{{ ucfirst(str_replace('_',' ',$room->owner->verification_status)) }}</p>
+                                @else
+                                    <span class="text-xs text-slate-400">Direct / Admin</span>
+                                @endif
                             </td>
                             <td class="px-4">
                                 <p class="text-xs">{{ $room->city }}</p>

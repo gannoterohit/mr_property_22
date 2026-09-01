@@ -24,7 +24,15 @@ class OwnerController extends Controller
             ->take(3)
             ->get();
 
-        return view('owner.dashboard', compact('rooms', 'activeRooms', 'contactUnlocks', 'featuredRooms', 'recentRooms'));
+        // Active subscription plan
+        $activePlan = \App\Models\Subscription::where('user_id', Auth::id())
+            ->where('status', 'active')
+            ->where('end_date', '>=', now())
+            ->with('plan')
+            ->latest()
+            ->first();
+
+        return view('owner.dashboard', compact('rooms', 'activeRooms', 'contactUnlocks', 'featuredRooms', 'recentRooms', 'activePlan'));
     }
 
     public function rooms()

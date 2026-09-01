@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnalyticsEventController;
 use App\Http\Controllers\BrokerDashboardController;
+use App\Http\Controllers\BrokerRegistrationController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PlanController;
@@ -54,6 +55,10 @@ Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 Route::post('/analytics/events', [AnalyticsEventController::class, 'store'])
     ->middleware('throttle:60,1')
     ->name('analytics.events.store');
+
+// Broker Registration (public — no auth required)
+Route::get('/become-agent', [BrokerRegistrationController::class, 'create'])->name('broker.register');
+Route::post('/become-agent', [BrokerRegistrationController::class, 'store'])->middleware('throttle:10,1')->name('broker.register.store');
 
 // Referral Tracking
 Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'track'])->name('referral.track');

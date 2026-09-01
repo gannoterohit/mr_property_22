@@ -80,6 +80,27 @@
                         <span class="text-slate-500 font-medium">Account Role</span>
                         <span class="font-bold text-slate-800">{{ ucfirst($user->role) }}</span>
                     </div>
+                    @if($user->role === 'owner' || $user->role === 'broker')
+                        <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+                            <span class="text-slate-500 font-medium">KYC Verification</span>
+                            @php
+                                $status = $user->role === 'broker' ? ($user->broker_verification_status ?? 'pending') : ($user->verification_status ?? 'pending');
+                            @endphp
+                            @if($status === 'approved')
+                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700">
+                                    <i class="fas fa-circle-check text-[10px]"></i> Verified
+                                </span>
+                            @elseif($status === 'rejected')
+                                <span class="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-0.5 text-xs font-bold text-rose-700">
+                                    <i class="fas fa-circle-xmark text-[10px]"></i> Rejected
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-700">
+                                    <i class="fas fa-clock text-[10px]"></i> Pending Review
+                                </span>
+                            @endif
+                        </div>
+                    @endif
                 </div>
             </section>
 

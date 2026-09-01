@@ -47,6 +47,41 @@
                 </div>
 
                 <aside class="owner-dashboard-side">
+                    {{-- Active Subscription Card --}}
+                    @if(isset($activePlan) && $activePlan)
+                        <div class="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/50 to-white p-5 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="rounded-full bg-indigo-100 px-2.5 py-0.5 text-[11px] font-bold text-indigo-700 uppercase tracking-wider">Active Plan</span>
+                                <span class="text-xs font-semibold text-slate-500">Expires {{ \Carbon\Carbon::parse($activePlan->end_date)->format('M d, Y') }}</span>
+                            </div>
+                            <h3 class="mt-3 text-base font-extrabold text-slate-900">{{ $activePlan->plan->name ?? 'Subscription' }}</h3>
+                            <p class="mt-1 text-xs text-slate-500">
+                                @php
+                                    $daysLeft = (int) now()->diffInDays(\Carbon\Carbon::parse($activePlan->end_date), false);
+                                @endphp
+                                @if($daysLeft > 0)
+                                    <span class="font-bold text-emerald-600"><i class="fas fa-clock mr-1"></i>{{ $daysLeft }} days remaining</span>
+                                @else
+                                    <span class="font-bold text-rose-600"><i class="fas fa-exclamation-circle mr-1"></i>Expires today</span>
+                                @endif
+                            </p>
+                            <a href="{{ route('owner.plans') }}" class="mt-4 flex w-full items-center justify-center rounded-xl bg-indigo-600 py-2.5 text-xs font-bold text-white transition hover:bg-indigo-700">
+                                Upgrade / Renew Plan
+                            </a>
+                        </div>
+                    @else
+                        <div class="rounded-2xl border border-amber-200 bg-amber-50/60 p-5 shadow-sm">
+                            <div class="flex items-center gap-2 text-amber-800">
+                                <i class="fas fa-crown text-amber-600"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">No Active Plan</span>
+                            </div>
+                            <p class="mt-2 text-xs text-slate-600">Subscribe to a plan to unlock more listings and featured property promotions.</p>
+                            <a href="{{ route('owner.plans') }}" class="mt-3 flex w-full items-center justify-center rounded-xl bg-amber-600 py-2 text-xs font-bold text-white transition hover:bg-amber-700">
+                                View Plans
+                            </a>
+                        </div>
+                    @endif
+
                     <div class="owner-quick-actions shadow-sm">
                         <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10"><i class="fas fa-bolt text-amber-300"></i></span>
                         <h2 class="mt-4 font-bold">Quick actions</h2>

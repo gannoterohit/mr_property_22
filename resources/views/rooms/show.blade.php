@@ -711,9 +711,15 @@ async function toggleWishlist(roomId) {
 function unlockContact(roomId) {
     const feeEnabled = @json(filter_var(\App\Models\Setting::get('unlock_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN));
     const fee = feeEnabled ? {{ \App\Models\Setting::get('unlock_fee', 49) }} : 0;
-    // Check if free or logged in
+    
     @if(Auth::check())
-        if (!feeEnabled) {
+        @php
+            $hasFreeOption = !filter_var(\App\Models\Setting::get('unlock_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN)
+                || (Auth::user()->free_unlocks ?? 0) > 0
+                || ($subscriptionRemaining ?? 0) > 0;
+        @endphp
+        const hasFreeOption = @json($hasFreeOption);
+        if (!feeEnabled || hasFreeOption) {
             executeUnlock(roomId, 'free');
         } else {
             openPaymentSelectionModal(fee, 'unlock', roomId);

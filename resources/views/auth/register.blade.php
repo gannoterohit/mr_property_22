@@ -52,7 +52,13 @@
                     <div id="broker-fields" class="hidden space-y-4">
                         <div class="auth-grid">
                             <div class="auth-field-group"><label class="auth-label" for="agency_name">Agency Name <span style="font-weight:500;color:#94a3b8">(optional)</span></label><input class="auth-field" type="text" id="agency_name" name="agency_name" placeholder="Your agency name"></div>
-                            <div class="auth-field-group"><label class="auth-label" for="broker_license">Broker License <span style="font-weight:500;color:#94a3b8">(optional)</span></label><input class="auth-field" type="text" id="broker_license" name="broker_license" placeholder="License number"></div>
+                            <div class="auth-field-group"><label class="auth-label" for="broker_license">RERA / License No. <span style="font-weight:500;color:#94a3b8">(optional)</span></label><input class="auth-field" type="text" id="broker_license" name="broker_license" placeholder="License / RERA number"></div>
+                        </div>
+                        <div class="auth-field-group"><label class="auth-label" for="agency_address">Agency Address <span style="font-weight:500;color:#94a3b8">(optional)</span></label><input class="auth-field" type="text" id="agency_address" name="agency_address" placeholder="123, MG Road, Indore, MP"></div>
+                        <div class="auth-field-group"><label class="auth-label" for="agency_gst">GST Number <span style="font-weight:500;color:#94a3b8">(optional)</span></label><input class="auth-field" type="text" id="agency_gst" name="agency_gst" placeholder="23AABCU9603R1ZX"></div>
+                        <div style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.18);border-radius:12px;padding:12px 14px;font-size:.8rem;color:#94a3b8;">
+                            <i class="fas fa-info-circle" style="color:#818cf8;margin-right:6px;"></i>
+                            Your broker account will require <strong style="color:#cbd5e1;">admin approval</strong> before you can list properties. You'll see your status after logging in.
                         </div>
                     </div>
                     <div class="auth-field-group"><label class="auth-label" for="referral_code_input">Referral code <span style="font-weight:500;color:#94a3b8">(optional)</span></label><input class="auth-field" type="text" id="referral_code_input" name="referral_code" autocomplete="off" value="{{ old('referral_code', session('referral_code')) }}" placeholder="Enter referral code"></div>

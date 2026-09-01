@@ -56,6 +56,13 @@
                     </div>
                 @endif
             </div>
+
+            <div>
+                <label for="phone" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Phone Number</label>
+                <input id="phone" name="phone" type="tel" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-semibold text-slate-800 text-sm" 
+                       value="{{ old('phone', $user->phone) }}" placeholder="+91 98765 43210" />
+                <x-input-error class="mt-2 text-xs font-semibold text-rose-500" :messages="$errors->get('phone')" />
+            </div>
         </div>
 
         <div class="pt-2 flex items-center gap-4">

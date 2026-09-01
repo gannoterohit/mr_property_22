@@ -35,9 +35,18 @@ class AdminBrokerController extends Controller
 
         if ($active = $request->get('is_broker_active')) {
             $query->where('is_broker_active', $active === '1' || $active === 'true');
+        } elseif ($accountStatus = $request->get('status')) {
+            if ($accountStatus === 'active') {
+                $query->where('is_broker_active', true);
+            } elseif ($accountStatus === 'suspended') {
+                $query->where(function ($q) {
+                    $q->where('is_broker_active', false)
+                      ->orWhere('broker_verification_status', 'suspended');
+                });
+            }
         }
 
-        $brokers = $query->latest()->paginate(20);
+        $brokers = $query->latest()->paginate(20)->withQueryString();
 
         $stats = [
             'total' => User::where('role', 'broker')->count(),
