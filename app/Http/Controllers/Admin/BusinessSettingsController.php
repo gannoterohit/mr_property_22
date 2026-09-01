@@ -116,6 +116,18 @@ class BusinessSettingsController extends Controller
             'facebook_client_id' => ['nullable', 'string', 'max:255'],
             'facebook_client_secret' => ['nullable', 'string', 'max:500'],
             'facebook_redirect_url' => ['nullable', 'url', 'max:500'],
+            // Promo Popup Modal Settings
+            'promo_modal_enabled' => ['nullable', 'boolean'],
+            'promo_modal_audience' => ['nullable', 'in:guests_only,logged_in,all'],
+            'promo_modal_type' => ['nullable', 'in:text_card,banner_image,both'],
+            'promo_modal_badge' => ['nullable', 'string', 'max:100'],
+            'promo_modal_title' => ['nullable', 'string', 'max:255'],
+            'promo_modal_description' => ['nullable', 'string', 'max:1000'],
+            'promo_modal_btn_text' => ['nullable', 'string', 'max:100'],
+            'promo_modal_btn_url' => ['nullable', 'string', 'max:500'],
+            'promo_modal_delay' => ['nullable', 'numeric', 'min:0', 'max:60'],
+            'promo_modal_cooldown_hours' => ['nullable', 'integer', 'min:0', 'max:720'],
+            'promo_modal_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
         ]);
 
         $brokerFeeEnabled = $request->boolean('broker_listing_fee_enabled');
@@ -130,6 +142,7 @@ class BusinessSettingsController extends Controller
             'firebase_push_enabled',
             'google_login_enabled',
             'facebook_login_enabled',
+            'promo_modal_enabled',
         ] as $booleanKey) {
             $data[$booleanKey] = $request->boolean($booleanKey) ? '1' : '0';
         }
@@ -149,7 +162,7 @@ class BusinessSettingsController extends Controller
         $oldFiles = [];
 
         try {
-            foreach (['navbar_logo', 'footer_logo', 'website_logo', 'website_favicon', 'owner_cta_image'] as $fileKey) {
+            foreach (['navbar_logo', 'footer_logo', 'website_logo', 'website_favicon', 'owner_cta_image', 'promo_modal_image'] as $fileKey) {
                 if (! $request->hasFile($fileKey)) {
                     continue;
                 }
@@ -198,7 +211,7 @@ class BusinessSettingsController extends Controller
         }
 
         $tab = in_array($request->input('_active_tab'), [
-            'general','appearance','payment','integrations','firebase','sms','seo','mail','referral'
+            'general','appearance','payment','integrations','firebase','sms','seo','mail','referral','modal'
         ]) ? $request->input('_active_tab') : 'general';
 
         if ($request->wantsJson()) {
@@ -258,6 +271,7 @@ class BusinessSettingsController extends Controller
             'footer_logo' => 'logo',
             'website_logo' => 'logo',
             'website_favicon' => 'favicon',
+            'promo_modal_image' => 'offer_image',
             default => 'logo',
         };
 

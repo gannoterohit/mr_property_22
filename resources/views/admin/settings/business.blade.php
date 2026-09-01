@@ -40,6 +40,7 @@
                 ['seo', 'fa-search', 'SEO & Analytics'],
                 ['mail', 'fa-envelope', 'Mail Server'],
                 ['referral', 'fa-toggle-on', 'Feature Toggles'],
+                ['modal', 'fa-window-restore text-blue-500', 'Promo Popup Modal'],
             ] as [$tabKey, $tabIcon, $tabLabel])
                 <button type="button" data-settings-tab="{{ $tabKey }}" class="inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg bg-slate-50 px-4 text-xs font-bold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900" role="tab" aria-selected="false">
                     <i class="fas {{ $tabIcon }} text-[11px]"></i><span>{{ $tabLabel }}</span>
@@ -896,6 +897,119 @@
                     </div>
                 </div>
 
+                <!-- Promo Popup Modal Section -->
+                <div data-settings-panel="modal" class="space-y-6" hidden>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-6">
+                        <div class="flex items-center justify-between pb-4 border-b border-gray-100">
+                            <div class="flex items-center">
+                                <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mr-4">
+                                    <i class="fas fa-window-restore text-xl"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-800">Promo Popup Modal Settings</h2>
+                                    <p class="text-sm text-gray-500">Configure the Booking.com-style dynamic promotion/login modal</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex shrink-0 items-center cursor-pointer">
+                                <input type="checkbox" name="promo_modal_enabled" value="1" class="peer sr-only" @checked(filter_var(\App\Models\Setting::get('promo_modal_enabled', '1'), FILTER_VALIDATE_BOOLEAN))>
+                                <span class="admin-switch-track h-6 w-11 rounded-full transition bg-slate-200 peer-checked:bg-blue-600"></span>
+                                <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                            </label>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Target Audience</label>
+                                <select name="promo_modal_audience" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white text-sm font-medium text-gray-900">
+                                    <option value="guests_only" @selected(\App\Models\Setting::get('promo_modal_audience', 'guests_only') === 'guests_only')>Guests Only (Non-Logged in Visitors)</option>
+                                    <option value="logged_in" @selected(\App\Models\Setting::get('promo_modal_audience') === 'logged_in')>Logged-In Members Only</option>
+                                    <option value="all" @selected(\App\Models\Setting::get('promo_modal_audience') === 'all')>All Visitors (Everyone)</option>
+                                </select>
+                                <p class="mt-1.5 text-xs text-gray-400">Choose who should see this popup modal.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Modal Display Format</label>
+                                <select name="promo_modal_type" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white text-sm font-medium text-gray-900">
+                                    <option value="text_card" @selected(\App\Models\Setting::get('promo_modal_type', 'text_card') === 'text_card')>Clean Text Card (Booking.com style)</option>
+                                    <option value="banner_image" @selected(\App\Models\Setting::get('promo_modal_type') === 'banner_image')>Graphic Banner Image Only</option>
+                                    <option value="both" @selected(\App\Models\Setting::get('promo_modal_type') === 'both')>Both (Image Banner + Text Content)</option>
+                                </select>
+                                <p class="mt-1.5 text-xs text-gray-400">Select whether to display text, graphic banner, or both.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Badge Text (Top Pill)</label>
+                                <input type="text" name="promo_modal_badge" value="{{ \App\Models\Setting::get('promo_modal_badge', 'FarmStayGo Perks') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white text-sm font-medium text-gray-900" placeholder="e.g. FarmStayGo Perks / Festival Special">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Modal Headline / Title</label>
+                                <input type="text" name="promo_modal_title" value="{{ \App\Models\Setting::get('promo_modal_title', 'Sign in, save money') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white text-sm font-bold text-gray-900" placeholder="e.g. Sign in, save money">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Modal Description / Message</label>
+                            <textarea name="promo_modal_description" rows="2" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white text-sm font-medium text-gray-900 resize-none" placeholder="e.g. Sign in or create a free account to unlock exclusive member discounts & free room contacts.">{{ \App\Models\Setting::get('promo_modal_description', 'Sign in or create a free account to unlock exclusive member discounts & free room contacts.') }}</textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Button Text</label>
+                                <input type="text" name="promo_modal_btn_text" value="{{ \App\Models\Setting::get('promo_modal_btn_text', 'Sign in or register') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white text-sm font-bold text-gray-900" placeholder="e.g. Sign in or register / Claim Deal">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Button Link URL</label>
+                                <input type="text" name="promo_modal_btn_url" value="{{ \App\Models\Setting::get('promo_modal_btn_url', '/login') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white text-sm font-medium text-gray-900 font-mono" placeholder="e.g. /login, /register, /plans, or https://...">
+                            </div>
+                        </div>
+
+                        {{-- Image Upload --}}
+                        <div class="border-t border-gray-100 pt-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Custom Banner Image (Optional)</label>
+                            <div class="flex items-center gap-6">
+                                <div class="h-24 w-40 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden shrink-0">
+                                    @php $modalImg = \App\Models\Setting::get('promo_modal_image'); @endphp
+                                    @if($modalImg)
+                                        <img src="{{ asset('storage/' . $modalImg) }}" class="h-full w-full object-cover">
+                                    @else
+                                        <span class="text-xs text-gray-400 font-medium">No Banner</span>
+                                    @endif
+                                </div>
+                                <div class="flex-1">
+                                    <input type="file" name="promo_modal_image" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                    <p class="mt-1.5 text-xs text-gray-400">Upload a custom promotional banner image (PNG, JPG, WebP - Recommended ratio 16:9 or 4:3).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Timing & Frequency --}}
+                        <div class="border-t border-gray-100 pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Popup Delay (Seconds)</label>
+                                <div class="relative">
+                                    <input type="number" name="promo_modal_delay" step="0.5" min="0" max="60" value="{{ \App\Models\Setting::get('promo_modal_delay', '2.5') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white text-sm font-bold text-gray-900">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400">sec</span>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-400">How long to wait after page load before showing the modal (Default: 2.5s).</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Dismiss Cooldown (Hours)</label>
+                                <div class="relative">
+                                    <input type="number" name="promo_modal_cooldown_hours" step="1" min="0" max="720" value="{{ \App\Models\Setting::get('promo_modal_cooldown_hours', '24') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 bg-gray-50 focus:bg-white text-sm font-bold text-gray-900">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400">hours</span>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-400">Once dismissed, how many hours to wait before showing again (Default: 24h). Set 0 for every session.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="settings-save-bar" class="sticky bottom-4 z-20 mt-6 items-center justify-end border-t border-slate-200 bg-gray-50/95 py-4 backdrop-blur">
                     <button type="submit" class="inline-flex items-center justify-center rounded-xl admin-theme-bg px-7 py-3 text-sm font-bold text-white shadow-lg  transition ">
                         <i class="fas fa-save mr-2"></i> Save Changes
@@ -1174,6 +1288,7 @@ setupImagePreview('footer_logo');
 setupImagePreview('website_logo');
 setupImagePreview('website_favicon');
 setupImagePreview('owner_cta_image');
+setupImagePreview('promo_modal_image');
 
 const settingsForm = document.getElementById('settings-form');
 if (settingsForm) {
