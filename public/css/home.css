@@ -528,85 +528,13 @@ body>nav .desktop-navbar-menu a:first-child {
   .owner-cta-image{height:180px}
 }
 
-/* Full Width Hero - Reduced Height */
-.market-hero{padding:0!important;background:0 0!important}
-.market-hero .market-wrap{width:100%!important;max-width:100%!important}
-.market-hero-box{border-radius:0!important;min-height:480px!important}
-.market-hero-copy{padding:60px 56px 150px!important}
-.market-search{left:40px!important;right:40px!important;width:auto!important;transform:none!important}
-.market-stats{width:min(1320px,calc(100% - 64px))!important;margin:30px auto 0!important}
 
-@media(max-width:767px){
-.market-hero-box{min-height:380px!important}
-.market-hero-copy{padding:40px 20px 120px!important}
-.market-search{left:16px!important;right:16px!important}
-}
 
-/* Fix Hero Image - Full Width Banner */
-.market-hero-image {
-    left: 0 !important;
-    width: 100% !important;
-    background-position: center center !important;
-    background-size: cover !important;
-}
 
-.market-hero-image:after {
-    background: linear-gradient(90deg, rgba(9,18,38,.95) 0%, rgba(9,18,38,.85) 50%, rgba(9,18,38,.2) 100%) !important;
-}
 
-.market-hero-box {
-    overflow: hidden !important;
-}
+/* ===== HERO FINAL v6 – Compact height, integrated search ===== */
 
-@media(max-width: 767px) {
-    .market-hero-image:after {
-        background: rgba(15,23,42,.85) !important;
-    }
-}
-
-/* ===== HERO FULL WIDTH FIX ===== */
-.market-hero-box {
-    position: relative !important;
-    overflow: hidden !important;
-    min-height: 470px !important;
-    border-radius: 0 !important;
-    background: #0f172a !important;
-}
-.market-hero-image {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background-position: center center !important;
-    background-size: cover !important;
-    opacity: 1 !important;
-    animation: none !important;
-}
-.market-hero-image:after {
-    content: '' !important;
-    position: absolute !important;
-    inset: 0 !important;
-    background: linear-gradient(90deg, rgba(9,18,38,.95) 0%, rgba(9,18,38,.85) 50%, rgba(9,18,38,.2) 100%) !important;
-}
-.market-hero-copy {
-    position: relative !important;
-    z-index: 2 !important;
-    color: #fff !important;
-}
-@media(max-width: 767px) {
-    .market-hero-box {
-        min-height: 380px !important;
-    }
-    .market-hero-image:after {
-        background: rgba(15,23,42,.88) !important;
-    }
-}
-/* ===== END HERO FIX ===== */
-
-/* ===== HERO FULL WIDTH FIX v2 ===== */
+/* 1. Section & wrap: full-width, no padding */
 .market-hero {
     padding: 0 !important;
     background: transparent !important;
@@ -617,176 +545,498 @@ body>nav .desktop-navbar-menu a:first-child {
     margin: 0 !important;
     padding: 0 !important;
 }
+
+/* 2. Hero box: compact height, overflow VISIBLE so dropdowns can escape */
 .market-hero-box {
     position: relative !important;
-    overflow: hidden !important;
-    min-height: 500px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: visible !important;
+    height: 420px !important;
+    min-height: 420px !important;
     border-radius: 0 !important;
-    background: #0f172a !important;
+    background: #070f1f !important;
+    box-shadow: none !important;
 }
+/* Clip only the background image (not the dropdowns) */
+.market-hero-image {
+    overflow: hidden !important;
+}
+
+/* 3. Background image: full cover */
 .market-hero-image {
     position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
+    inset: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    background-position: center center !important;
+    background-position: center 40% !important;
     background-size: cover !important;
     background-repeat: no-repeat !important;
     opacity: 1 !important;
-    animation: none !important;
-    z-index: 1 !important;
+    animation: marketImageDrift 18s ease-in-out alternate infinite !important;
+    z-index: 0 !important;
 }
+/* Light overlay: image naturally visible, text readable via shadow */
 .market-hero-image:after {
     content: '' !important;
     position: absolute !important;
     inset: 0 !important;
-    background: linear-gradient(90deg, rgba(9,18,38,.92) 0%, rgba(9,18,38,.82) 50%, rgba(9,18,38,.15) 100%) !important;
-    z-index: 2 !important;
-}
-.market-hero-copy {
-    position: relative !important;
-    z-index: 3 !important;
-    color: #fff !important;
-}
-@media(max-width: 767px) {
-    .market-hero-box {
-        min-height: 380px !important;
-    }
-    .market-hero-image:after {
-        background: rgba(15,23,42,.85) !important;
-    }
-}
-/* ===== END HERO FIX v2 ===== */
-
-/* ===== HERO FULL WIDTH FIX v3 ===== */
-.market-hero {
-    padding: 0 !important;
-    background: transparent !important;
-}
-.market-hero .market-wrap {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-.market-hero-box {
-    position: relative !important;
-    overflow: hidden !important;
-    min-height: 500px !important;
-    border-radius: 0 !important;
-}
-.market-hero-image {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background-position: center center !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-    opacity: 1 !important;
-    animation: none !important;
+    background:
+        linear-gradient(
+            95deg,
+            rgba(4,9,20,.52)  0%,
+            rgba(4,9,20,.44) 30%,
+            rgba(4,9,20,.22) 58%,
+            rgba(4,9,20,.04) 80%,
+            rgba(4,9,20,0)   100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(4,9,20,0)   55%,
+            rgba(4,9,20,.32) 100%
+        ) !important;
     z-index: 1 !important;
 }
-.market-hero-image:after {
-    display: none !important;
-}
-.market-hero-copy {
-    position: relative !important;
-    z-index: 3 !important;
-    color: #fff !important;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.6) !important;
-}
-@media(max-width: 767px) {
-    .market-hero-box {
-        min-height: 380px !important;
-    }
-}
-/* ===== END HERO FIX v3 ===== */
 
-/* ===== HERO FULL WIDTH FIX v4 ===== */
-.market-hero {
-    padding: 0 !important;
-    background: transparent !important;
-}
-.market-hero .market-wrap {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-.market-hero-box {
-    position: relative !important;
-    overflow: hidden !important;
-    min-height: 500px !important;
-    border-radius: 0 !important;
-}
-.market-hero-image {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background-position: center center !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-    opacity: 1 !important;
-    animation: none !important;
-    z-index: 1 !important;
-}
-.market-hero-image:after {
-    content: '' !important;
-    position: absolute !important;
-    inset: 0 !important;
-    background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.2) 100%) !important;
-    z-index: 2 !important;
-}
+/* 4. Hero copy area */
 .market-hero-copy {
     position: relative !important;
     z-index: 3 !important;
+    width: min(680px, 54%) !important;
+    max-width: none !important;
+    padding: 44px 0 0 56px !important;
+    margin: 0 !important;
     color: #fff !important;
-    padding: 80px 40px !important;
-    max-width: 800px !important;
+    background: transparent !important;
+    text-shadow: none !important;
+    flex-shrink: 0 !important;
 }
-.market-hero-copy h1 {
-    color: #fff !important;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.5) !important;
-    font-size: 48px !important;
-    line-height: 1.1 !important;
+
+/* 5. Eyebrow – solid dark pill so always readable */
+.market-hero .market-eyebrow {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    padding: 6px 14px !important;
     margin-bottom: 16px !important;
+    border: 1px solid rgba(99,179,237,.35) !important;
+    border-radius: 999px !important;
+    background: rgba(10,25,60,.65) !important;
+    color: #93c5fd !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .1em !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
 }
-.market-hero-copy p {
-    color: rgba(255,255,255,0.9) !important;
-    text-shadow: 0 1px 8px rgba(0,0,0,0.5) !important;
-    font-size: 16px !important;
-    line-height: 1.6 !important;
+.market-hero .market-eyebrow i {
+    color: #4ade80 !important;
+    background: transparent !important;
 }
-.market-hero-copy .market-benefits span {
-    color: rgba(255,255,255,0.95) !important;
-    text-shadow: 0 1px 6px rgba(0,0,0,0.5) !important;
+
+/* 6. H1 – crisp white, strong multi-layer shadow */
+.market-hero h1 {
+    max-width: 600px !important;
+    margin: 0 0 12px !important;
+    color: #ffffff !important;
+    font-size: clamp(30px, 3.2vw, 46px) !important;
+    line-height: 1.08 !important;
+    font-weight: 900 !important;
+    letter-spacing: -1.8px !important;
+    text-shadow:
+        0 1px 0  rgba(0,0,0,.9),
+        0 2px 8px rgba(0,0,0,.8),
+        0 4px 24px rgba(0,0,0,.6) !important;
 }
-.market-eyebrow {
-    background: rgba(255,255,255,0.15) !important;
-    border: 1px solid rgba(255,255,255,0.3) !important;
+.market-hero h1 span {
+    display: inline !important;
+    color: #fdba74 !important;  /* warm orange, bright on dark */
+}
+.market-hero h1 span b {
+    font: inherit !important;
+    color: inherit !important;
+}
+
+/* 7. Description – near-white, subtle shadow for contrast */
+.market-hero-copy > p {
+    max-width: 500px !important;
+    margin: 0 0 14px !important;
+    color: rgba(226,235,255,.92) !important;
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+    text-shadow: 0 1px 6px rgba(0,0,0,.7) !important;
+}
+
+/* 8. Benefits pills */
+.market-hero .market-benefits {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-top: 0 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+}
+.market-hero .market-benefits span {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px 14px !important;
+    border: 1px solid rgba(147,197,253,.3) !important;
+    border-radius: 999px !important;
+    background: rgba(8,20,50,.60) !important;   /* dark navy pill = always readable */
+    color: #e0eeff !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
+.market-hero .market-benefits i {
+    font-size: 11px !important;
+    color: #60a5fa !important;
+    background: transparent !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* 9. City card – glass, top-right */
+.market-city-card {
+    position: absolute !important;
+    z-index: 4 !important;
+    top: 32px !important;
+    right: 48px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 180px !important;
+    padding: 16px 18px !important;
+    border: 1px solid rgba(255,255,255,.15) !important;
+    border-radius: 14px !important;
+    background: rgba(15,23,42,.55) !important;
+    backdrop-filter: blur(18px) !important;
+    box-shadow: 0 8px 28px rgba(0,0,0,.45) !important;
     color: #fff !important;
-    backdrop-filter: blur(4px) !important;
 }
-@media(max-width: 767px) {
+.market-city-card small {
+    color: rgba(255,255,255,.65) !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .06em !important;
+}
+.market-city-card small i {
+    color: #fb923c !important;
+    margin-right: 3px !important;
+}
+.market-city-card strong {
+    margin: 6px 0 3px !important;
+    color: #fff !important;
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    line-height: 1.1 !important;
+}
+.market-city-card span {
+    color: rgba(255,255,255,.5) !important;
+    font-size: 9px !important;
+}
+
+/* ── SEARCH BAR – Embedded at hero bottom, pill-style ─────── */
+
+/* The wrapper holds the form; it sits at the bottom of hero-box */
+.market-search-wrap {
+    position: relative !important;
+    z-index: 5 !important;
+    padding: 0 48px 24px !important;
+    flex-shrink: 0 !important;
+}
+
+/* The form itself: glass pill card */
+.market-search {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    transform: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important;
+    padding: 6px 6px 6px 20px !important;
+    border: 1px solid rgba(255,255,255,.22) !important;
+    border-radius: 14px !important;
+    background: rgba(255,255,255,.12) !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 8px 32px rgba(0,0,0,.35) !important;
+    animation: none !important;
+}
+
+/* Search grid: fields inline, button at end */
+.market-search .market-search-grid {
+    display: flex !important;
+    flex: 1 !important;
+    align-items: center !important;
+    gap: 0 !important;
+    grid-template-columns: unset !important;
+}
+
+/* Each field: vertical divider style */
+.market-search .market-field {
+    flex: 1 !important;
+    min-width: 0 !important;
+    height: 52px !important;
+    padding: 8px 16px !important;
+    border: 0 !important;
+    border-right: 1px solid rgba(255,255,255,.18) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+.market-search .market-field:last-of-type {
+    border-right: 1px solid rgba(255,255,255,.18) !important;
+}
+
+/* Field labels */
+.market-search .market-field label {
+    display: block !important;
+    color: rgba(255,255,255,.6) !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .07em !important;
+    margin-bottom: 2px !important;
+    white-space: nowrap !important;
+}
+
+/* Field inputs & selects */
+.market-search .market-field input,
+.market-search .market-field select {
+    display: block !important;
+    width: 100% !important;
+    height: 22px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: #fff !important;
+    font-size: 13px !important;
+    font-weight: 650 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    line-height: 22px !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    cursor: pointer !important;
+}
+.market-search .market-field input::placeholder {
+    color: rgba(255,255,255,.45) !important;
+    font-size: 13px !important;
+}
+.market-search .market-field select option {
+    background: #1e293b !important;
+    color: #fff !important;
+}
+
+/* Override the custom select trigger inside glass search */
+.market-search .market-custom-trigger {
+    color: #fff !important;
+    font-size: 13px !important;
+    font-weight: 650 !important;
+    background: transparent !important;
+}
+.market-search .market-custom-trigger:after {
+    border-color: rgba(255,255,255,.5) !important;
+}
+.market-search .market-custom-menu {
+    top: 40px !important;
+    z-index: 9999 !important;
+    background: #1e2d46 !important;
+    border-color: rgba(255,255,255,.12) !important;
+    box-shadow: 0 16px 40px rgba(0,0,0,.5) !important;
+}
+.market-search .market-custom-option {
+    background: transparent !important;
+    color: #cbd5e1 !important;
+}
+.market-search .market-custom-option:hover,
+.market-search .market-custom-option:focus {
+    background: rgba(255,255,255,.08) !important;
+    color: #fff !important;
+}
+.market-search .market-custom-option.is-selected {
+    background: rgba(37,99,235,.3) !important;
+    color: #93c5fd !important;
+    font-weight: 800 !important;
+}
+
+/* Select arrow (custom dropdown chevron) */
+.market-search .market-field:has(select):after,
+.market-search .market-field:has(.market-custom-select):after {
+    border-color: rgba(255,255,255,.5) !important;
+}
+
+/* Submit button: bold pill on the right end */
+.market-search-grid > button[type=submit],
+.market-search > button[type=submit] {
+    flex: none !important;
+    height: 46px !important;
+    padding: 0 24px !important;
+    margin-left: 10px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: var(--primary, #2563eb) !important;
+    color: #fff !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+    box-shadow: 0 6px 20px rgba(37,99,235,.45) !important;
+    transition: transform .18s, box-shadow .18s, background .18s !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+}
+.market-search-grid > button[type=submit]:hover,
+.market-search > button[type=submit]:hover {
+    transform: translateY(-1px) scale(1.02) !important;
+    box-shadow: 0 10px 28px rgba(37,99,235,.55) !important;
+    background: #1d4ed8 !important;
+}
+.market-search-grid > button[type=submit] i {
+    font-size: 12px !important;
+}
+
+/* 11. Stats bar – sits directly below hero (no overlap gap needed) */
+.market-stats {
+    width: min(1280px, calc(100% - 96px)) !important;
+    margin: 22px auto 0 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    background: #fff !important;
+    box-shadow: 0 4px 24px -12px rgba(7,15,31,.2) !important;
+}
+
+/* ── Responsive ─────────────────────────────── */
+
+/* Tablet landscape */
+@media (min-width:900px) and (max-width:1199px) {
+    .market-hero-box { height: 400px !important; min-height: 400px !important; }
+    .market-hero-copy { width: min(600px, 58%) !important; padding: 38px 0 0 40px !important; }
+    .market-hero-copy > p { font-size: 13px !important; }
+    .market-search-wrap { padding: 0 32px 20px !important; }
+    .market-city-card { right: 36px !important; }
+    .market-stats { width: calc(100% - 64px) !important; }
+}
+
+/* Tablet portrait – stacked */
+@media (max-width:899px) {
     .market-hero-box {
-        min-height: 380px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        display: block !important;
+        overflow: visible !important;
+    }
+    .market-hero-image {
+        position: relative !important;
+        inset: auto !important;
+        display: block !important;
+        width: 100% !important;
+        height: 240px !important;
+        animation: none !important;
+        z-index: 0 !important;
+    }
+    .market-hero-image:after {
+        background: linear-gradient(180deg, rgba(5,12,28,.28) 0%, rgba(5,12,28,0) 100%) !important;
     }
     .market-hero-copy {
-        padding: 40px 20px !important;
+        position: relative !important;
+        z-index: 2 !important;
+        width: 100% !important;
+        max-width: none !important;
+        padding: 36px 24px 20px !important;
+        margin: 0 !important;
+        background: linear-gradient(180deg, #070f1f 0%, #0f1f3a 100%) !important;
     }
-    .market-hero-copy h1 {
-        font-size: 32px !important;
+    .market-city-card { display: none !important; }
+    .market-search-wrap {
+        position: relative !important;
+        background: #0f1f3a !important;
+        padding: 0 18px 18px !important;
+    }
+    .market-search {
+        border-radius: 12px !important;
+        padding: 14px 14px !important;
+        display: block !important;
+    }
+    .market-search .market-search-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+        gap: 10px !important;
+        flex: unset !important;
+    }
+    .market-search .market-field {
+        border-right: 0 !important;
+        border: 1px solid rgba(255,255,255,.15) !important;
+        border-radius: 10px !important;
+        height: 58px !important;
+        padding: 10px 14px !important;
+    }
+    .market-search-grid > button[type=submit] {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        justify-content: center !important;
+        height: 50px !important;
+        margin-left: 0 !important;
+        border-radius: 10px !important;
+    }
+    .market-stats {
+        width: calc(100% - 36px) !important;
+        margin-top: 16px !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .market-stat:nth-child(2) { border-right: 0 !important; }
+    .market-stat:nth-child(-n+2) { border-bottom: 1px solid #e2e8f0 !important; }
+}
+
+/* Mobile */
+@media (max-width:599px) {
+    .market-hero-image { height: 200px !important; }
+    .market-hero-copy {
+        padding: 28px 16px 16px !important;
+    }
+    .market-hero h1 {
+        font-size: clamp(26px, 8vw, 36px) !important;
+        letter-spacing: -1.2px !important;
+    }
+    .market-hero-copy > p { font-size: 13px !important; }
+    .market-hero .market-benefits span {
+        font-size: 10px !important;
+        padding: 4px 10px !important;
+    }
+    .market-search-wrap { padding: 0 12px 14px !important; }
+    .market-search {
+        padding: 12px !important;
+        border-radius: 10px !important;
+    }
+    .market-search .market-search-grid {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    .market-search .market-field { height: 54px !important; }
+    .market-search-grid > button[type=submit] {
+        height: 48px !important;
+        font-size: 13px !important;
+    }
+    .market-stats {
+        width: calc(100% - 24px) !important;
+        margin-top: 12px !important;
     }
 }
-/* ===== END HERO FIX v4 ===== */
+
+@media (max-width:374px) {
+    .market-hero h1 { font-size: 26px !important; }
+}
+/* ===== END HERO FINAL v6 ===== */

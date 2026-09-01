@@ -12,8 +12,8 @@
                     <span><i class="fas fa-unlock-keyhole"></i>Instant Unlock</span>
                 </div>
             </div>
-            <div class="market-city-card hidden md:flex"><small><i class="fas fa-location-arrow"></i> Currently available in</small><strong>{{ $displayCity ?: 'Your city' }}</strong><span>More cities coming soon!</span></div>
-            <div class="hidden md:block">
+            <div class="market-city-card"><small><i class="fas fa-location-arrow"></i> Currently available in</small><strong>{{ $displayCity ?: 'Your city' }}</strong><span>More cities coming soon!</span></div>
+            <div class="market-search-wrap">
             <form action="{{ route('rooms.index') }}" method="GET" class="market-search">
                 <div class="market-search-grid">
                      <div class="market-field market-field-location"><i class="market-field-icon fas fa-location-dot"></i><label for="city">Location</label><input id="city" name="city" value="{{ $displayCity }}" placeholder="City or locality"></div>
