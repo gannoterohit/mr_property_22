@@ -1,23 +1,22 @@
 <section class="market-hero">
-    <div class="market-wrap">
-        <div class="market-hero-box">
-            <div class="market-hero-slider" id="marketHeroSlider">
-                @foreach($heroImages as $idx => $img)
-                    <div class="market-hero-slide {{ $idx === 0 ? 'is-active' : '' }}" style="background-image:url('{{ $img }}')"></div>
-                @endforeach
+    <div class="market-hero-box">
+        <div class="market-hero-slider" id="marketHeroSlider">
+            @foreach($heroImages as $idx => $img)
+                <div class="market-hero-slide {{ $idx === 0 ? 'is-active' : '' }}" style="background-image:url('{{ $img }}')"></div>
+            @endforeach
+        </div>
+        <div class="market-hero-copy">
+            <span class="market-eyebrow"><i class="fas fa-shield-halved"></i>100% Verified Properties · Direct Owners &amp; Trusted Agents</span>
+            <h1>Find your perfect property <span>@if($displayCity)in {{ $displayCity }}@else near you @endif</span></h1>
+            <p>{{ $heroDescription }}</p>
+            <div class="market-benefits">
+                <span><i class="fas fa-shield-halved"></i>Verified Listings</span>
+                <span><i class="fas fa-house-chimney-user"></i>Direct Owners &amp; Agents</span>
+                <span><i class="fas fa-unlock-keyhole"></i>Instant Unlock</span>
             </div>
-            <div class="market-hero-copy">
-                <span class="market-eyebrow"><i class="fas fa-shield-halved"></i>100% Verified Properties · Direct Owners &amp; Trusted Agents</span>
-                <h1>Find your perfect property <span>@if($displayCity)in {{ $displayCity }}@else near you @endif</span></h1>
-                <p>{{ $heroDescription }}</p>
-                <div class="market-benefits">
-                    <span><i class="fas fa-shield-halved"></i>Verified Listings</span>
-                    <span><i class="fas fa-house-chimney-user"></i>Direct Owners &amp; Agents</span>
-                    <span><i class="fas fa-unlock-keyhole"></i>Instant Unlock</span>
-                </div>
-            </div>
-            <div class="market-city-card"><small><i class="fas fa-location-arrow"></i> Currently available in</small><strong>{{ $displayCity ?: 'Your city' }}</strong><span>More cities coming soon!</span></div>
-            <div class="market-search-wrap">
+        </div>
+        <div class="market-city-card"><small><i class="fas fa-location-arrow"></i> Currently available in</small><strong>{{ $displayCity ?: 'Your city' }}</strong><span>More cities coming soon!</span></div>
+        <div class="market-search-wrap">
             <form action="{{ route('rooms.index') }}" method="GET" class="market-search">
                 <div class="market-search-grid">
                      <div class="market-field market-field-location"><i class="market-field-icon fas fa-location-dot"></i><label for="city">Location</label><input id="city" name="city" value="{{ $displayCity }}" placeholder="City or locality"></div>
@@ -27,7 +26,9 @@
                     <button type="submit"><i class="fas fa-magnifying-glass"></i>{{ $text('home_search_button','Search Properties') }}</button>
                 </div>
             </form>
-            </div>
+        </div>
+    </div>
+    <div class="market-wrap">
         @include('partials.adsense-slot', ['placement' => 'home_top'])
         <div class="market-stats">
             @foreach([['fa-house-circle-check',number_format($totalRooms).'+','Verified rooms'],['fa-user-check',number_format($totalOwners).'+','Verified owners'],['fa-location-dot',number_format($totalAreas).'+','Popular areas'],['fa-clock','24/7','Customer support']] as $stat)
