@@ -42,7 +42,6 @@
         ]],
         'settings' => ['label' => 'Settings', 'icon' => 'fa-gear', 'items' => [
             ['route' => 'admin.settings', 'match' => 'admin.settings*', 'icon' => 'fa-cog', 'label' => 'Business Settings'],
-            ['route' => 'admin.broker-settings.index', 'match' => 'admin.broker-settings*', 'icon' => 'fa-sliders', 'label' => 'Broker Settings'],
             ['route' => 'admin.cities.index', 'match' => 'admin.cities*', 'icon' => 'fa-map-location-dot', 'label' => 'Operational Cities'],
             ['route' => 'admin.maintenance', 'match' => 'admin.maintenance*', 'icon' => 'fa-screwdriver-wrench', 'label' => 'Maintenance'],
             ['route' => 'admin.data-maintenance.index', 'match' => 'admin.data-maintenance*', 'icon' => 'fa-database', 'label' => 'Data Maintenance'],

@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\CmsPage;
 use App\Models\Room;
+use App\Models\Setting;
+use Illuminate\Console\Command;
 
 class GenerateSitemap extends Command
 {
@@ -24,7 +25,8 @@ class GenerateSitemap extends Command
 
     public function handle()
     {
-        $baseUrl = rtrim(config('app.url') ?: url('/'), '/');
+        $configuredUrl = trim((string) Setting::get('website_url', ''));
+        $baseUrl = rtrim($configuredUrl !== '' ? $configuredUrl : (config('app.url') ?: url('/')), '/');
 
         $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
@@ -64,11 +66,13 @@ class GenerateSitemap extends Command
             $sitemap .= "  </url>\n";
         }
 
-        $rooms = Room::where('status','active')->orderBy('updated_at','desc')->get();
+        $rooms = Room::publicVisible()->orderBy('updated_at', 'desc')->get();
         foreach ($rooms as $room) {
+            $roomPath = 'rooms/' . ($room->slug ?: $room->id);
+            $lastmod = $room->updated_at ? $room->updated_at->format('Y-m-d') : date('Y-m-d');
             $sitemap .= "  <url>\n";
-            $sitemap .= '    <loc>' . htmlspecialchars(route('rooms.show', $room->id)) . '</loc>' . "\n";
-            $sitemap .= '    <lastmod>' . $room->updated_at->format('Y-m-d') . '</lastmod>' . "\n";
+            $sitemap .= '    <loc>' . htmlspecialchars(rtrim($baseUrl, '/') . '/' . ltrim($roomPath, '/')) . '</loc>' . "\n";
+            $sitemap .= '    <lastmod>' . $lastmod . '</lastmod>' . "\n";
             $sitemap .= "    <changefreq>weekly</changefreq>\n";
             $sitemap .= "    <priority>0.8</priority>\n";
             $sitemap .= "  </url>\n";

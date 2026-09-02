@@ -266,16 +266,17 @@ class BusinessSettingsController extends Controller
      */
     public function pingSearchEngines()
     {
-        $sitemapUrl = url('/sitemap.xml');
+        $configuredUrl = trim((string) \App\Models\Setting::get('website_url', ''));
+        $baseUrl = rtrim($configuredUrl !== '' ? $configuredUrl : url('/'), '/');
+        $sitemapUrl = $baseUrl . '/sitemap.xml';
         $success = false;
 
         try {
-            // Ping Bing / IndexNow (Modern Standard)
-            \Illuminate\Support\Facades\Http::get('https://www.bing.com/ping?sitemap='.urlencode($sitemapUrl));
+            // Bing/IndexNow ping is the supported public method for sitemap submissions.
+            \Illuminate\Support\Facades\Http::timeout(10)->get('https://www.bing.com/ping?sitemap=' . urlencode($sitemapUrl));
 
-            // Note: Google deprecated their public ping endpoint in late 2023.
-            // IndexNow is the current recommended way for Bing/Yandex.
-            // For Google, having the sitemap in robots.txt (already done) is the most reliable way.
+            // Additional fallback for a generic sitemap pings if a crawler supports it.
+            \Illuminate\Support\Facades\Http::timeout(10)->get('https://www.google.com/ping?sitemap=' . urlencode($sitemapUrl));
 
             $success = true;
         } catch (\Exception $e) {
@@ -283,10 +284,10 @@ class BusinessSettingsController extends Controller
         }
 
         if ($success) {
-            return back()->with('success', 'Search engines notified successfully! Your new rooms will be indexed faster.');
+            return back()->with('success', 'Search engines were notified successfully. Submit your sitemap in Google Search Console for full indexing verification.');
         }
 
-        return back()->with('error', 'Failed to notify search engines. Please try again later.');
+        return back()->with('error', 'Failed to notify search engines. Please verify your production URL and try again later.');
     }
 
     private function optimizeImage($file, string $type): string
