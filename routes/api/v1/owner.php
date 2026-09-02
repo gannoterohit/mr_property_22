@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiOwnerController;
 use App\Http\Controllers\Api\ApiRoomController;
 
-Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(function () {
+Route::middleware(['auth:sanctum', 'role:owner,broker'])->prefix('owner')->group(function () {
 
     Route::get('/dashboard',    [ApiOwnerController::class, 'dashboard']);
 

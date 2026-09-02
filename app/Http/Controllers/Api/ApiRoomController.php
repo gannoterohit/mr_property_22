@@ -72,6 +72,36 @@ class ApiRoomController extends BaseApiController
             $this->applyOptionFilter($query, 'tenant_type', $tenantFilter);
         }
 
+        if ($request->filled('listing_type')) {
+            $query->where('listing_type', $request->listing_type);
+        }
+
+        if ($request->filled('amenities')) {
+            $amenities = $request->amenities;
+            if (is_array($amenities)) {
+                foreach ($amenities as $amenity) {
+                    $query->whereJsonContains('amenities', $amenity);
+                }
+            } else {
+                $query->whereJsonContains('amenities', $amenities);
+            }
+        }
+
+        if ($request->filled('available_now') && $request->available_now == '1') {
+            $query->where('availability_from', '<=', now()->toDateString());
+        } elseif ($request->filled('availability_from')) {
+            $query->where('availability_from', '<=', $request->availability_from);
+        }
+
+        if ($request->filled('area')) {
+            $area = trim($request->area);
+            if ($area !== '') {
+                $query->where(function ($q) use ($area) {
+                    $q->where('address', 'like', '%' . $area . '%');
+                });
+            }
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -87,8 +117,16 @@ class ApiRoomController extends BaseApiController
             $query->selectRaw('*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$lat, $lng, $lat])
                 ->orderBy('distance', 'asc');
         } else {
-            $query->orderBy('is_featured', 'desc')
-                ->orderBy('created_at', 'desc');
+            $sortBy = $request->get('sort_by', 'newest');
+            $query->orderBy('is_featured', 'desc');
+
+            if ($sortBy === 'rent_asc') {
+                $query->orderBy('rent', 'asc');
+            } elseif ($sortBy === 'rent_desc') {
+                $query->orderBy('rent', 'desc');
+            } else {
+                $query->orderBy('created_at', 'desc');
+            }
         }
 
         $rooms = $query->paginate(max(1, min(50, $request->integer('limit', 10))));
@@ -219,7 +257,10 @@ class ApiRoomController extends BaseApiController
             ->orderBy('created_at', 'desc')
             ->paginate($request->get('limit', 10));
 
-        return RoomResource::collection($rooms)->additional(['status' => 'success']);
+        return $this->sendPaginated(
+            RoomResource::collection($rooms),
+            'Rooms fetched successfully.'
+        );
     }
 
     /**
@@ -274,9 +315,26 @@ class ApiRoomController extends BaseApiController
             $data = $validator->validated();
             unset($data['photos'], $data['video'], $data['payment_method']);
             $data['user_id'] = Auth::id();
+
+            if (isset($data['latitude']) && $data['latitude'] === '') {
+                $data['latitude'] = null;
+            }
+            if (isset($data['longitude']) && $data['longitude'] === '') {
+                $data['longitude'] = null;
+            }
             $data['status'] = 'active';
             $data['listing_status'] = 'pending';
             $data['listing_fee_paid'] = false;
+
+            $isBroker = Auth::user()->role === 'broker';
+            if ($isBroker) {
+                $data['broker_id'] = Auth::id();
+                $data['listed_by'] = 'broker';
+                $expiryDays = (int) \App\Models\BrokerSetting::get('broker_listing_expiry_days', 30);
+                $data['expires_at'] = now()->addDays($expiryDays > 0 ? $expiryDays : 30);
+            } else {
+                $data['listed_by'] = 'owner';
+            }
 
             if ($request->hasFile('photos')) {
                 $photos = [];
@@ -313,10 +371,27 @@ class ApiRoomController extends BaseApiController
             }
 
             $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+
+            $brokerListingChargesEnabled = \App\Models\BrokerSetting::isEnabled('broker_listing_charges_enabled', false);
+
+            if ($isBroker) {
+                if (!$brokerListingChargesEnabled) {
+                    $listingFeeEnabled = false;
+                } else {
+                    $freeQuota = (int) \App\Models\BrokerSetting::get('broker_free_listing_limit', 0);
+                    if ($freeQuota > 0) {
+                        $existingBrokerRooms = Room::where('broker_id', Auth::id())->where('id', '!=', $room->id)->count();
+                        if ($existingBrokerRooms < $freeQuota) {
+                            $listingFeeEnabled = false;
+                        }
+                    }
+                }
+            }
+
             if (! $listingFeeEnabled) {
                 $payment = Payment::create([
                     'user_id' => Auth::id(),
-                    'type' => 'listing',
+                    'type' => $isBroker ? 'broker_listing' : 'listing',
                     'amount' => 0,
                     'gateway' => 'free',
                     'reference_id' => $room->id,
@@ -332,6 +407,33 @@ class ApiRoomController extends BaseApiController
                 return $this->sendSuccess(new RoomResource($room->fresh()), 'Room submitted successfully. It will be visible after admin approval.');
             }
 
+            $useCredits = false;
+            if ($isBroker) {
+                $credits = \App\Models\BrokerListingCredit::where('broker_id', Auth::id())
+                    ->where('credits_remaining', '>', 0)
+                    ->where(function ($q) {
+                        $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                    })
+                    ->where('type', 'listing')
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($credits) {
+                    $credits->decrement('credits_remaining');
+                    $room->update([
+                        'listing_fee_paid' => true,
+                        'status' => 'active',
+                        'listing_payment_id' => null,
+                    ]);
+                    $useCredits = true;
+                }
+            }
+
+            if ($useCredits) {
+                DB::commit();
+                return $this->sendSuccess(new RoomResource($room), 'Room listed successfully using credits!');
+            }
+
             // Check Owner Subscription
             $activeSub = \App\Models\Subscription::where('user_id', Auth::id())
                 ->where('status', 'active')
@@ -341,7 +443,7 @@ class ApiRoomController extends BaseApiController
                 ->with('plan')
                 ->first();
 
-            if ($activeSub) {
+            if ($activeSub && !$isBroker) {
                 $used = $activeSub->usages()->where('usage_type', 'listing')->count();
                 $limit = $activeSub->plan->listing_limit;
                 if ($limit === -1 || $used < $limit) {
@@ -356,7 +458,9 @@ class ApiRoomController extends BaseApiController
                 }
             }
 
-            $listingFee = (float) Setting::get('listing_fee', 199);
+            $listingFee = $isBroker
+                ? (float) \App\Models\BrokerSetting::get('broker_per_listing_charge', 199)
+                : (float) Setting::get('listing_fee', 199);
 
             // Handle Wallet Payment
             if ($request->payment_method === 'wallet') {
@@ -365,7 +469,7 @@ class ApiRoomController extends BaseApiController
                     $user->decrement('wallet_balance', $listingFee);
                     $payment = Payment::create([
                         'user_id' => $user->id,
-                        'type' => 'listing',
+                        'type' => $isBroker ? 'broker_listing' : 'listing',
                         'amount' => $listingFee,
                         'gateway' => 'wallet',
                         'reference_id' => $room->id,
@@ -387,7 +491,7 @@ class ApiRoomController extends BaseApiController
             }
 
             $payment = Payment::create([
-                'user_id' => Auth::id(), 'type' => 'listing', 'amount' => $listingFee,
+                'user_id' => Auth::id(), 'type' => $isBroker ? 'broker_listing' : 'listing', 'amount' => $listingFee,
                 'gateway' => 'razorpay', 'reference_id' => $room->id, 'status' => 'pending',
             ]);
             $room->update(['listing_payment_id' => $payment->id]);
@@ -588,8 +692,30 @@ class ApiRoomController extends BaseApiController
 
             DB::beginTransaction();
             try {
+                $isBroker = Auth::user()->role === 'broker';
+                $brokerListingChargesEnabled = \App\Models\BrokerSetting::isEnabled('broker_listing_charges_enabled', false);
+
+                if ($isBroker && !$brokerListingChargesEnabled) {
+                    $payment = Payment::create([
+                        'user_id' => Auth::id(),
+                        'type' => 'broker_listing',
+                        'amount' => 0,
+                        'gateway' => 'free',
+                        'reference_id' => $room->id,
+                        'status' => 'completed',
+                    ]);
+                    $room->update([
+                        'status' => 'active',
+                        'listing_fee_paid' => true,
+                        'listing_payment_id' => $payment->id,
+                    ]);
+                    DB::commit();
+
+                    return $this->sendSuccess(['new_status' => 'active', 'free_listing' => true], 'Room marked as available');
+                }
+
                 $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
-                if (! $listingFeeEnabled) {
+                if (!$isBroker && ! $listingFeeEnabled) {
                     $payment = Payment::create([
                         'user_id' => Auth::id(),
                         'type' => 'listing',
@@ -616,21 +742,27 @@ class ApiRoomController extends BaseApiController
                     ->with('plan')
                     ->first();
 
-                if ($activeSub) {
-                    $used = Room::where('user_id', Auth::id())->where('listing_fee_paid', true)->whereNull('listing_payment_id')->count();
+                if ($activeSub && !$isBroker) {
+                    $used = $activeSub->usages()->where('usage_type', 'listing')->count();
                     if ($activeSub->plan->listing_limit === -1 || $used < $activeSub->plan->listing_limit) {
                         $room->update([
                             'status' => 'active',
                             'listing_fee_paid' => true,
                             'listing_payment_id' => null,
                         ]);
+                        SubscriptionUsage::firstOrCreate(
+                            ['subscription_id' => $activeSub->id, 'usage_type' => 'listing', 'room_id' => $room->id],
+                            ['user_id' => Auth::id(), 'used_at' => now()]
+                        );
                         DB::commit();
 
                         return $this->sendSuccess(['new_status' => 'active'], 'Room marked as available using subscription');
                     }
                 }
 
-                $listingFee = (float) Setting::get('listing_fee', 199);
+                $listingFee = $isBroker
+                    ? (float) \App\Models\BrokerSetting::get('broker_per_listing_charge', 199)
+                    : (float) Setting::get('listing_fee', 199);
 
                 // 2. Handle Wallet
                 if ($request->payment_method === 'wallet') {
@@ -639,7 +771,7 @@ class ApiRoomController extends BaseApiController
                         $user->decrement('wallet_balance', $listingFee);
                         $payment = Payment::create([
                             'user_id' => $user->id,
-                            'type' => 'listing',
+                            'type' => $isBroker ? 'broker_listing' : 'listing',
                             'amount' => $listingFee,
                             'gateway' => 'wallet',
                             'reference_id' => $room->id,
@@ -663,7 +795,7 @@ class ApiRoomController extends BaseApiController
                 // 3. Create the same pending listing payment used by the web flow.
                 $payment = Payment::create([
                     'user_id' => Auth::id(),
-                    'type' => 'listing',
+                    'type' => $isBroker ? 'broker_listing' : 'listing',
                     'amount' => $listingFee,
                     'gateway' => 'razorpay',
                     'reference_id' => $room->id,
@@ -702,8 +834,21 @@ class ApiRoomController extends BaseApiController
             return $this->sendError('Room is already featured', [], 400);
         }
 
-        $featuredFee = Setting::get('featured_fee', 99);
+        $isBroker = Auth::user()->role === 'broker';
+
+        if ($isBroker && !\App\Models\BrokerSetting::isEnabled('broker_featured_enabled', true)) {
+            return $this->sendError('Featured listing is currently disabled for brokers.', [], 400);
+        }
+
+        $featuredFee = $isBroker
+            ? (float) \App\Models\BrokerSetting::get('broker_featured_charge', 99)
+            : (float) Setting::get('featured_fee', 99);
         $user = Auth::user();
+
+        if ($featuredFee <= 0) {
+            $room->update(['is_featured' => true]);
+            return $this->sendSuccess([], 'Room featured successfully!');
+        }
 
         if ($request->payment_method === 'wallet') {
             if ($user->wallet_balance >= $featuredFee) {
@@ -711,7 +856,7 @@ class ApiRoomController extends BaseApiController
 
                 Payment::create([
                     'user_id' => $user->id,
-                    'type' => 'featured',
+                    'type' => $isBroker ? 'broker_featured' : 'featured',
                     'amount' => $featuredFee,
                     'gateway' => 'wallet',
                     'reference_id' => $room->id,
@@ -744,5 +889,34 @@ class ApiRoomController extends BaseApiController
         $cities = CityOperations::selectorCities()->pluck('name')->values();
 
         return $this->sendSuccess($cities);
+    }
+
+    /**
+     * Set preferred city for mobile user
+     */
+    public function setCity(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'city' => 'required|string',
+            'lat'  => 'nullable|numeric',
+            'lng'  => 'nullable|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('City is required', $validator->errors(), 422);
+        }
+
+        $user = Auth::user();
+        $user->update([
+            'preferred_city' => $request->city,
+            'latitude'       => $request->lat,
+            'longitude'      => $request->lng,
+        ]);
+
+        return $this->sendSuccess([
+            'city' => $request->city,
+            'lat'  => $request->lat,
+            'lng'  => $request->lng,
+        ], 'Preferred city set successfully');
     }
 }

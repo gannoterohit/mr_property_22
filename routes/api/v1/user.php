@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\ApiAccountController;
 
 use App\Http\Controllers\Api\ApiFcmTokenController;
 use App\Http\Controllers\Api\ApiNotificationController;
+use App\Http\Controllers\Api\ApiCouponController;
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -55,6 +56,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/city-alerts',          [ApiGeneralController::class, 'getCityAlerts']);
     Route::post('/city-alerts',         [ApiGeneralController::class, 'addCityAlert']);
     Route::delete('/city-alerts/{id}',  [ApiGeneralController::class, 'removeCityAlert']);
+
+    // ── Coupons ───────────────────────────────
+    Route::post('/coupon/apply',  [ApiCouponController::class, 'apply']);
+    Route::post('/coupon/remove', [ApiCouponController::class, 'remove']);
 
     // ── Subscriptions ─────────────────────────
     Route::get('/plans',                    [ApiSubscriptionController::class, 'plans']);

@@ -23,7 +23,10 @@ Route::prefix('v1')->group(function () {
     // 3. OWNER Endpoints (Dashboard, Room Management, Leads)
     require __DIR__ . '/api/v1/owner.php';
 
-    // 4. ADMIN Endpoints (Global Control, Analytics, User Management)
+    // 4. BROKER Endpoints (Dashboard, Properties, Payments)
+    require __DIR__ . '/api/v1/broker.php';
+
+    // 5. ADMIN Endpoints (Global Control, Analytics, User Management)
     require __DIR__ . '/api/v1/admin.php';
 
     // 5. WEBHOOKS (External Callbacks)

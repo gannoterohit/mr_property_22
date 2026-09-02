@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\Payment;
+use App\Models\Offer;
 use App\Http\Resources\PlanResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,12 +16,53 @@ use Carbon\Carbon;
 class ApiSubscriptionController extends BaseApiController
 {
     /**
-     * List all available plans
+     * List all available plans (role-filtered)
      */
     public function plans()
     {
-        $plans = Plan::where('is_active', true)->get();
-        return $this->sendSuccess(PlanResource::collection($plans));
+        $user = Auth::user();
+        $plans = Plan::where('is_active', true)
+            ->where('type', $user->role)
+            ->get();
+
+        $activeSubscription = \App\Models\Subscription::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->whereDate('end_date', '>=', today())
+            ->whereHas('plan', fn ($q) => $q->where('type', $user->role))
+            ->with('plan')
+            ->first();
+
+        $applicableCoupons = Offer::where('is_active', true)
+            ->where(function ($q) use ($user) {
+                $q->where('applicable_for', 'all')
+                  ->orWhere('applicable_for', match ($user->role) {
+                      'owner' => 'owner_plans',
+                      'broker' => 'broker_plans',
+                      default => 'user_plans',
+                  });
+            })
+            ->where(function ($q) {
+                $q->whereNull('start_date')->orWhereDate('start_date', '<=', today());
+            })
+            ->where(function ($q) {
+                $q->whereNull('end_date')->orWhereDate('end_date', '>=', today());
+            })
+            ->get();
+
+        return $this->sendSuccess([
+            'plans' => PlanResource::collection($plans),
+            'active_subscription' => $activeSubscription ? [
+                'id' => $activeSubscription->id,
+                'plan_name' => $activeSubscription->plan->name,
+                'end_date' => $activeSubscription->end_date->toDateString(),
+            ] : null,
+            'applicable_coupons' => $applicableCoupons->map(fn ($c) => [
+                'id' => $c->id,
+                'code' => $c->code,
+                'label' => $c->discount_label,
+                'applicable_for' => $c->applicable_for,
+            ]),
+        ]);
     }
 
     /**
@@ -29,8 +71,9 @@ class ApiSubscriptionController extends BaseApiController
     public function purchase(Request $request)
     {
         $request->validate([
-            'plan_id' => 'required|exists:plans,id',
-            'payment_method' => 'required|in:wallet,online',
+            'plan_id'        => 'required|exists:plans,id',
+            'payment_method' => 'nullable|in:wallet,online',
+            'coupon_code'    => 'nullable|string|max:30',
         ]);
 
         $plan = Plan::findOrFail($request->plan_id);
@@ -39,10 +82,9 @@ class ApiSubscriptionController extends BaseApiController
             return $this->sendError('This plan is not available for your account type', [], 403);
         }
 
-        // Check for active subscription of same type
         $activeSub = Subscription::where('user_id', $user->id)
             ->where('status', 'active')
-            ->whereHas('plan', fn($q) => $q->where('type', $plan->type))
+            ->whereHas('plan', fn ($q) => $q->where('type', $plan->type))
             ->first();
 
         if ($activeSub) {
@@ -50,64 +92,139 @@ class ApiSubscriptionController extends BaseApiController
             $limit = $plan->type === 'owner' ? $activeSub->plan->listing_limit : $activeSub->plan->contacts_limit;
             $exhausted = $limit !== -1 && $activeSub->usages()->where('usage_type', $usageType)->count() >= (int) $limit;
             $expired = $activeSub->end_date && $activeSub->end_date->endOfDay()->isPast();
-            if ($exhausted || $expired) { $activeSub->update(['status' => 'expired']); $activeSub = null; }
+            if ($exhausted || $expired) {
+                $activeSub->update(['status' => 'expired']);
+                $activeSub = null;
+            }
         }
         if ($activeSub) {
             return $this->sendError('You already have an active ' . $plan->type . ' subscription', [], 400);
         }
 
+        $appliedOffer = null;
+        $originalPrice = (float) $plan->price;
+        $discountAmount = 0.0;
+        $finalPrice = $originalPrice;
+
+        if ($request->filled('coupon_code')) {
+            $code = strtoupper(trim($request->input('coupon_code')));
+            $offer = Offer::where('code', $code)->first();
+            if (!$offer) {
+                return $this->sendError('Invalid coupon code.', [], 422);
+            }
+            $context = match ($plan->type) {
+                'owner' => 'owner_plans',
+                'broker' => 'broker_plans',
+                default => 'user_plans',
+            };
+            $check = $offer->canBeUsedBy($user->id, $context, $originalPrice);
+            if (!$check['valid']) {
+                return $this->sendError($check['message'], [], 422);
+            }
+            $appliedOffer = $offer;
+            $discountAmount = $offer->calculateDiscount($originalPrice);
+            $finalPrice = max(0, $originalPrice - $discountAmount);
+        }
+
+        $paymentMethod = $request->input('payment_method', 'online');
+
         DB::beginTransaction();
         try {
-            if ($request->payment_method === 'wallet') {
-                if ($user->wallet_balance < $plan->price) {
-                    return $this->sendError('Insufficient wallet balance', [], 400);
-                }
-
-                $user->decrement('wallet_balance', $plan->price);
-
+            if ($finalPrice <= 0 && $appliedOffer) {
                 $subscription = Subscription::create([
-                    'user_id' => $user->id,
-                    'plan_id' => $plan->id,
+                    'user_id'    => $user->id,
+                    'plan_id'    => $plan->id,
                     'start_date' => now(),
-                    'end_date' => now()->addDays($plan->duration_days),
-                    'status' => 'active'
+                    'end_date'   => now()->addDays($plan->duration_days),
+                    'status'     => 'active',
                 ]);
 
                 Payment::create([
-                    'user_id' => $user->id,
-                    'type' => 'subscription',
-                    'amount' => $plan->price,
-                    'gateway' => 'wallet',
+                    'user_id'      => $user->id,
+                    'type'         => 'subscription',
+                    'amount'       => 0,
+                    'gateway'      => 'coupon_100_percent',
                     'reference_id' => $subscription->id,
-                    'status' => 'completed'
+                    'status'       => 'completed',
                 ]);
+
+                $appliedOffer->recordUsage($user->id, 'subscription', $subscription->id, $originalPrice, $discountAmount);
 
                 DB::commit();
 
                 return $this->sendSuccess([
-                    'new_balance' => (float) $user->wallet_balance
+                    'subscription_id' => $subscription->id,
+                    'free_activated'  => true,
+                ], '100% Discount applied! Subscription activated immediately!');
+            }
+
+            if ($paymentMethod === 'wallet') {
+                if ($user->wallet_balance < $finalPrice) {
+                    DB::rollBack();
+                    return $this->sendError('Insufficient wallet balance. Payable amount: ₹' . $finalPrice . ', Balance: ₹' . $user->wallet_balance, [], 400);
+                }
+
+                $user->decrement('wallet_balance', $finalPrice);
+
+                $subscription = Subscription::create([
+                    'user_id'    => $user->id,
+                    'plan_id'    => $plan->id,
+                    'start_date' => now(),
+                    'end_date'   => now()->addDays($plan->duration_days),
+                    'status'     => 'active',
+                ]);
+
+                Payment::create([
+                    'user_id'      => $user->id,
+                    'type'         => 'subscription',
+                    'amount'       => $finalPrice,
+                    'gateway'      => 'wallet',
+                    'reference_id' => $subscription->id,
+                    'status'       => 'completed',
+                ]);
+
+                if ($appliedOffer) {
+                    $appliedOffer->recordUsage($user->id, 'subscription', $subscription->id, $originalPrice, $discountAmount);
+                }
+
+                DB::commit();
+
+                return $this->sendSuccess([
+                    'new_balance'     => (float) $user->wallet_balance,
+                    'subscription_id' => $subscription->id,
                 ], 'Subscription activated successfully using wallet balance');
             }
 
-            // For online payment
             $subscription = Subscription::create([
-                'user_id' => $user->id,
-                'plan_id' => $plan->id,
+                'user_id'    => $user->id,
+                'plan_id'    => $plan->id,
                 'start_date' => now(),
-                'end_date' => now()->addDays($plan->duration_days),
-                'status' => 'pending'
+                'end_date'   => now()->addDays($plan->duration_days),
+                'status'     => 'pending',
             ]);
 
             $payment = Payment::create([
-                'user_id' => $user->id, 'type' => 'subscription', 'amount' => $plan->price,
-                'gateway' => 'razorpay', 'reference_id' => $subscription->id, 'status' => 'pending'
+                'user_id'      => $user->id,
+                'type'         => 'subscription',
+                'amount'       => $finalPrice,
+                'gateway'      => 'razorpay',
+                'reference_id' => $subscription->id,
+                'status'       => 'pending',
             ]);
+
+            if ($appliedOffer) {
+                $appliedOffer->recordUsage($user->id, 'subscription', $subscription->id, $originalPrice, $discountAmount);
+            }
+
             DB::commit();
+
             return $this->sendSuccess([
-                'subscription_id' => $subscription->id,
-                'payment_record_id' => $payment->id,
-                'amount' => (float) $plan->price,
-                'type' => 'subscription'
+                'subscription_id'    => $subscription->id,
+                'payment_record_id'  => $payment->id,
+                'amount'             => $finalPrice,
+                'original_amount'    => $originalPrice,
+                'discount_amount'    => $discountAmount,
+                'type'               => 'subscription',
             ], 'Payment required to activate subscription');
 
         } catch (\Exception $e) {

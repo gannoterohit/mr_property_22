@@ -29,10 +29,14 @@ class ApiOwnerController extends BaseApiController
             ->whereNotNull('unlocked_at')
             ->count();
 
-        // Recent rooms
+        $activeSubscription = \App\Models\Subscription::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->whereDate('end_date', '>=', today())
+            ->whereHas('plan', fn ($q) => $q->where('type', 'owner')->where('is_active', true))
+            ->with('plan')
+            ->first();
+
         $recentRooms = Room::where('user_id', $user->id)->latest()->limit(5)->get();
-
-
 
         return $this->sendSuccess([
             'stats' => [
@@ -47,6 +51,13 @@ class ApiOwnerController extends BaseApiController
                 'points'          => (float) ($user->wallet ?? 0),
                 'balance'         => (float) ($user->wallet_balance ?? 0),
             ],
+            'active_subscription' => $activeSubscription ? [
+                'id'              => $activeSubscription->id,
+                'plan_name'       => $activeSubscription->plan->name,
+                'end_date'        => $activeSubscription->end_date->toDateString(),
+                'listing_limit'   => $activeSubscription->plan->listing_limit,
+                'used_listings'   => $activeSubscription->usages()->where('usage_type', 'listing')->count(),
+            ] : null,
             'recent_rooms' => RoomResource::collection($recentRooms),
         ]);
     }
@@ -64,12 +75,31 @@ class ApiOwnerController extends BaseApiController
             ->whereNotNull('unlocked_at')
             ->with([
                 'user:id,name',
-                'room:id,title,slug,city,status,user_id',
+                'room:id,title,slug,city,status,user_id,photo,photos',
                 'payment:id,amount,gateway,status',
             ])
             ->latest('unlocked_at')
             ->paginate($request->get('limit', 15));
 
-        return $this->sendSuccess($enquiries);
+        $todayCount = Enquiry::whereIn('room_id', $roomIds)
+            ->where('unlocked', true)
+            ->whereNotNull('unlocked_at')
+            ->whereDate('unlocked_at', today())
+            ->count();
+
+        $distinctRooms = Enquiry::whereIn('room_id', $roomIds)
+            ->where('unlocked', true)
+            ->whereNotNull('unlocked_at')
+            ->distinct('room_id')
+            ->count('room_id');
+
+        return $this->sendSuccess([
+            'enquiries' => $enquiries,
+            'stats' => [
+                'total'          => $enquiries->total(),
+                'today'          => $todayCount,
+                'distinct_rooms' => $distinctRooms,
+            ],
+        ]);
     }
 }
