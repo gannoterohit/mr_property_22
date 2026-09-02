@@ -455,7 +455,7 @@
                                     </a>
                                 @endauth
                             @endif
-                             
+
                             <div class="border-t pt-3 mt-3">
                                 <p class="text-xs text-gray-500">Listed by</p>
                                 <p class="font-bold text-gray-900">{{ $room->owner?->name ?? 'Unknown' }}</p>
@@ -1056,5 +1056,6 @@ function initLeafletMap() {
         });
     </script>
 @endif
+
 @endpush
 @endsection

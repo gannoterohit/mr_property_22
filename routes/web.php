@@ -58,8 +58,8 @@ Route::post('/analytics/events', [AnalyticsEventController::class, 'store'])
 // Broker Registration redirect to unified auth registration
 Route::get('/become-agent', fn () => redirect()->route('register', ['role' => 'broker']))->name('broker.register');
 
-// Referral Tracking
-Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'track'])->name('referral.track');
+    // Referral Tracking
+    Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'track'])->name('referral.track');
 
 Route::get('/dashboard', function () {
     $user = auth()->user();
@@ -78,6 +78,10 @@ Route::get('/dashboard', function () {
 // Public room browsing
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
+
+// Map-based search
+Route::get('/map-search', [\App\Http\Controllers\MapSearchController::class, 'index'])->name('rooms.map');
+Route::get('/api/map-rooms', [\App\Http\Controllers\MapSearchController::class, 'index'])->name('rooms.map.api');
 
 Route::middleware(['auth', 'role:broker', 'broker.active'])->prefix('agent')->name('agent.')->group(function () {
     Route::get('/dashboard', [BrokerDashboardController::class, 'dashboard'])->name('dashboard');
@@ -377,6 +381,7 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
     Route::post('/rooms/{room}/available', [RoomController::class, 'markAvailable'])->name('rooms.markAvailable');
     Route::get('/enquiries', [OwnerController::class, 'enquiries'])->name('enquiries');
     Route::get('/plans', [PlanController::class, 'index'])->name('plans');
+
 });
 
 require __DIR__.'/auth.php';

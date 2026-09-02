@@ -81,6 +81,9 @@
                 <a href="{{ route('rooms.index') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('rooms.index') ? 'bg-indigo-50 text-indigo-600' : '' }}">
                     <i class="fas fa-search w-5 text-indigo-500"></i> Browse Properties
                 </a>
+                <a href="{{ route('rooms.map') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('rooms.map') ? 'bg-indigo-50 text-indigo-600' : '' }}">
+                    <i class="fas fa-map-marked-alt w-5 text-indigo-500"></i> Map View
+                </a>
                 <a href="{{ route('blogs.index') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold {{ request()->routeIs('blogs.*') ? 'bg-indigo-50 text-indigo-600' : '' }}">
                     <i class="fas fa-newspaper w-5 text-indigo-500"></i> Blog
                 </a>

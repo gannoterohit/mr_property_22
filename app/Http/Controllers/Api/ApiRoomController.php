@@ -919,4 +919,71 @@ class ApiRoomController extends BaseApiController
             'lng'  => $request->lng,
         ], 'Preferred city set successfully');
     }
+
+    /**
+     * Map-based search - returns markers for a given area
+     */
+    public function mapSearch(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'lat'    => 'nullable|numeric',
+            'lng'    => 'nullable|numeric',
+            'radius' => 'nullable|numeric|min:1|max:500',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Invalid parameters', $validator->errors(), 422);
+        }
+
+        $query = Room::query()
+            ->publicVisible()
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude');
+
+        if ($request->filled('city')) {
+            $query->where('city', 'like', '%' . $request->city . '%');
+        }
+        if ($request->filled('min_rent')) {
+            $query->where('rent', '>=', $request->min_rent);
+        }
+        if ($request->filled('max_rent')) {
+            $query->where('rent', '<=', $request->max_rent);
+        }
+        if ($request->filled('property_type_id')) {
+            $query->whereIn('property_type_id', (array) $request->property_type_id);
+        }
+
+        if ($request->filled('lat') && $request->filled('lng') && $request->filled('radius')) {
+            $lat = (float) $request->lat;
+            $lng = (float) $request->lng;
+            $radius = (float) $request->radius;
+            $query->selectRaw('*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$lat, $lng, $lat])
+                ->having('distance', '<=', $radius)
+                ->orderBy('distance', 'asc');
+        } else {
+            $query->orderBy('is_featured', 'desc')->orderBy('created_at', 'desc');
+        }
+
+        $rooms = $query->limit(500)->get();
+
+        $markers = $rooms->map(function ($room) {
+            return [
+                'id'           => $room->id,
+                'slug'         => $room->slug,
+                'title'        => $room->title,
+                'rent'         => (float) $room->rent,
+                'city'         => $room->city,
+                'lat'          => (float) $room->latitude,
+                'lng'          => (float) $room->longitude,
+                'photo'        => $room->photo ? (\Illuminate\Support\Str::startsWith($room->photo, ['http://', 'https://']) ? $room->photo : url('storage/' . $room->photo)) : null,
+                'is_featured'  => (bool) $room->is_featured,
+                'url'          => route('rooms.show', $room),
+            ];
+        })->values();
+
+        return $this->sendSuccess([
+            'markers' => $markers,
+            'count'   => $markers->count(),
+        ], 'Map markers fetched successfully.');
+    }
 }

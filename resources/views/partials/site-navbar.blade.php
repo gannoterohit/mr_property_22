@@ -65,7 +65,21 @@
                 <!-- Center Links -->
                 <div class="desktop-navbar-menu hidden lg:flex items-center gap-1 bg-slate-50 border border-slate-100 rounded-xl p-1">
                     <a href="{{ route('home') }}" class="theme-nav-link {{ request()->routeIs('home') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition">Home</a>
-                    <a href="{{ route('rooms.index') }}" class="theme-nav-link {{ request()->routeIs('rooms.index', 'rooms.show') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition">Browse Properties</a>
+
+                    <div class="relative" id="browse-dropdown-wrapper">
+                        <button id="browse-dropdown-btn" type="button" class="theme-nav-link {{ request()->routeIs('rooms.*') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition inline-flex items-center gap-1">
+                            Browse Properties <i class="fas fa-chevron-down text-[9px] opacity-60"></i>
+                        </button>
+                        <div id="browse-dropdown-panel" class="hidden absolute left-0 mt-2 w-48 rounded-xl border border-slate-100 bg-white shadow-xl z-50 overflow-hidden">
+                            <a href="{{ route('rooms.index') }}" class="flex items-center gap-2 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition">
+                                <i class="fas fa-th-list text-indigo-500 w-4"></i> List View
+                            </a>
+                            <a href="{{ route('rooms.map') }}" class="flex items-center gap-2 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition border-t border-slate-50">
+                                <i class="fas fa-map-marked-alt text-indigo-500 w-4"></i> Map View
+                            </a>
+                        </div>
+                    </div>
+
                     @if($cmsPageLive('how-it-works'))
                         <a href="{{ route('pages.how-it-works') }}" class="theme-nav-link {{ request()->routeIs('pages.how-it-works') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition">How It Works</a>
                     @endif
@@ -231,3 +245,29 @@
             </div>
         </div>
     </nav>
+
+    @once
+    @push('scripts')
+    <script>
+    (function () {
+        var btn = document.getElementById('browse-dropdown-btn');
+        var panel = document.getElementById('browse-dropdown-panel');
+        var wrapper = document.getElementById('browse-dropdown-wrapper');
+        if (!btn || !panel || !wrapper) return;
+
+        function open() { panel.classList.remove('hidden'); }
+        function close() { panel.classList.add('hidden'); }
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            panel.classList.contains('hidden') ? open() : close();
+        });
+        document.addEventListener('click', function (e) {
+            if (!wrapper.contains(e.target)) close();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') close();
+        });
+    })();
+    </script>
+    @endpush
+    @endonce

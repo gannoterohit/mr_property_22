@@ -23,6 +23,7 @@ Route::get('/rooms/{room}',            [ApiRoomController::class, 'show']);
 Route::get('/rooms/{room}/similar',    [ApiRoomController::class, 'similar']);
 Route::post('/rooms/detect-city',      [ApiRoomController::class, 'detectCity']);
 Route::post('/rooms/set-city',         [ApiRoomController::class, 'setCity']);
+Route::get('/rooms-map-search',        [ApiRoomController::class, 'mapSearch']);
 Route::get('/cities',                  [ApiRoomController::class, 'getCities']);
 Route::get('/room-options',            [ApiRoomOptionController::class, 'index']);
 Route::get('/property-types',          [ApiPropertyCatalogController::class, 'propertyTypes']);

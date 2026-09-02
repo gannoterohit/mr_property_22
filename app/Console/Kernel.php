@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\GenerateSitemap::class,
         \App\Console\Commands\PurgeRoomsAndRelatedData::class,
+        \App\Console\Commands\SendCityAlerts::class,
     ];
 
     /**
@@ -24,6 +25,8 @@ class Kernel extends ConsoleKernel
     {
         // Example: regenerate sitemap daily at 02:00
         $schedule->command('sitemap:generate')->dailyAt('02:00');
+
+        $schedule->command('alerts:send-city --hours=24')->hourly();
     }
 
     /**
