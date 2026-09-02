@@ -32,6 +32,7 @@
         <div class="mx-auto flex max-w-7xl gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Business settings sections">
             @foreach([
                 ['general', 'fa-sliders-h', 'General & Fees'],
+                ['broker', 'fa-handshake text-emerald-600', 'Broker & Agent'],
                 ['appearance', 'fa-paint-brush', 'Appearance'],
                 ['payment', 'fa-credit-card', 'Payment'],
                 ['integrations', 'fa-plug', 'Integrations'],
@@ -126,28 +127,6 @@
                                     </div>
                                     <input type="number" name="unlock_fee" value="{{ \App\Models\Setting::get('unlock_fee', 49) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900" placeholder="0.00">
                                 </div>
-                                <p class="mt-2 text-xs text-gray-500">Amount is saved even while the fee toggle is OFF.</p>
-                            </div>
-                            <div class="rounded-xl border border-gray-200 p-4">
-                                <label class="mb-4 flex items-start justify-between gap-4">
-                                    <span>
-                                        <span class="block text-sm font-bold text-gray-800">Enable Broker Listing Fee</span>
-                                        <span class="mt-1 block text-xs text-gray-500">OFF = broker listings are free</span>
-                                    </span>
-                                    <span class="relative inline-flex shrink-0 items-center">
-                                        <input type="checkbox" name="broker_listing_fee_enabled" value="1" class="peer sr-only" @checked(filter_var(\App\Models\BrokerSetting::get('broker_listing_charges_enabled', '0'), FILTER_VALIDATE_BOOLEAN))>
-                                        <span class="admin-switch-track h-6 w-11 rounded-full transition"></span>
-                                        <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
-                                    </span>
-                                </label>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Broker Listing Fee (per room)</label>
-                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-[rgba(var(--admin-primary-rgb),.2)]">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 font-medium sm:text-sm">&#8377;</span>
-                                    </div>
-                                    <input type="number" name="broker_listing_fee" value="{{ \App\Models\BrokerSetting::get('broker_per_listing_charge', 199) }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-medium text-gray-900" placeholder="0.00">
-                                </div>
-                                <p class="mt-2 text-xs text-gray-500">Amount is saved even while the fee toggle is OFF.</p>
                             </div>
                         </div>
                     </div>
@@ -1005,6 +984,187 @@
                                     <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400">hours</span>
                                 </div>
                                 <p class="mt-1 text-xs text-gray-400">Once dismissed, how many hours to wait before showing again (Default: 24h). Set 0 for every session.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Broker & Agent Section -->
+                <div data-settings-panel="broker" class="space-y-6" hidden>
+                    @php
+                        $brokerOn = fn ($key, $default = '1') => \App\Models\BrokerSetting::isEnabled($key, $default);
+                        $brokerVal = fn ($key, $default = '') => \App\Models\BrokerSetting::get($key, $default);
+                    @endphp
+
+                    <!-- 1. Broker Fee Configuration (with Direct ON/OFF Toggles) -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                        <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
+                            <div class="h-10 w-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mr-4">
+                                <i class="fas fa-indian-rupee-sign text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800">Broker Fee Configuration</h2>
+                                <p class="text-sm text-gray-500">Toggle fees ON/OFF directly. If OFF, the service will be 100% free for brokers.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Fee 1: Broker Listing Fee -->
+                            <div class="rounded-xl border border-gray-200 p-5 bg-slate-50/50">
+                                <label class="mb-4 flex items-start justify-between gap-4">
+                                    <span>
+                                        <span class="block text-sm font-bold text-gray-800">Enable Listing Fee</span>
+                                        <span class="mt-1 block text-xs text-gray-500">OFF = all broker listings are free</span>
+                                    </span>
+                                    <span class="relative inline-flex shrink-0 items-center">
+                                        <input type="checkbox" name="broker_listing_charges_enabled" value="1" class="peer sr-only" @checked($brokerOn('broker_listing_charges_enabled', '0'))>
+                                        <span class="admin-switch-track h-6 w-11 rounded-full transition"></span>
+                                        <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                    </span>
+                                </label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Listing Fee (per room)</label>
+                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-[rgba(var(--admin-primary-rgb),.2)]">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 font-medium">₹</div>
+                                    <input type="number" step="0.01" min="0" name="broker_per_listing_charge" value="{{ $brokerVal('broker_per_listing_charge', '199') }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg bg-white focus:bg-white text-sm font-bold text-gray-900" placeholder="0.00">
+                                </div>
+                                <p class="mt-2 text-xs text-gray-400">Price is saved even when toggle is OFF.</p>
+                            </div>
+
+                            <!-- Fee 2: Broker Featured Listing Fee -->
+                            <div class="rounded-xl border border-gray-200 p-5 bg-slate-50/50">
+                                <label class="mb-4 flex items-start justify-between gap-4">
+                                    <span>
+                                        <span class="block text-sm font-bold text-gray-800">Enable Featured Fee</span>
+                                        <span class="mt-1 block text-xs text-gray-500">OFF = brokers cannot feature listings</span>
+                                    </span>
+                                    <span class="relative inline-flex shrink-0 items-center">
+                                        <input type="checkbox" name="broker_featured_enabled" value="1" class="peer sr-only" @checked($brokerOn('broker_featured_enabled', '1'))>
+                                        <span class="admin-switch-track h-6 w-11 rounded-full transition"></span>
+                                        <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                    </span>
+                                </label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Featured Listing Fee</label>
+                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-[rgba(var(--admin-primary-rgb),.2)]">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 font-medium">₹</div>
+                                    <input type="number" step="0.01" min="0" name="broker_featured_charge" value="{{ $brokerVal('broker_featured_charge', '99') }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg bg-white focus:bg-white text-sm font-bold text-gray-900" placeholder="0.00">
+                                </div>
+                                <p class="mt-2 text-xs text-gray-400">Promotes broker listing to top badge.</p>
+                            </div>
+
+                            <!-- Fee 3: Broker Lead Unlock Fee -->
+                            <div class="rounded-xl border border-gray-200 p-5 bg-slate-50/50">
+                                <label class="mb-4 flex items-start justify-between gap-4">
+                                    <span>
+                                        <span class="block text-sm font-bold text-gray-800">Enable Lead Charge</span>
+                                        <span class="mt-1 block text-xs text-gray-500">OFF = tenant leads sent free</span>
+                                    </span>
+                                    <span class="relative inline-flex shrink-0 items-center">
+                                        <input type="checkbox" name="broker_lead_charge_enabled" value="1" class="peer sr-only" @checked($brokerOn('broker_lead_charge_enabled', '0'))>
+                                        <span class="admin-switch-track h-6 w-11 rounded-full transition"></span>
+                                        <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                    </span>
+                                </label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Lead Unlock Fee</label>
+                                <div class="relative rounded-lg shadow-sm group transition-all focus-within:ring-2 ring-[rgba(var(--admin-primary-rgb),.2)]">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 font-medium">₹</div>
+                                    <input type="number" step="0.01" min="0" name="broker_lead_charge" value="{{ $brokerVal('broker_lead_charge', '49') }}" class="block w-full pl-8 pr-3 py-3 border-gray-200 rounded-lg bg-white focus:bg-white text-sm font-bold text-gray-900" placeholder="0.00">
+                                </div>
+                                <p class="mt-2 text-xs text-gray-400">Charged per tenant lead inquiry unlocked.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Broker Quotas & Validity Rules -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                        <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
+                            <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mr-4">
+                                <i class="fas fa-sliders text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800">Broker Quotas & Validity</h2>
+                                <p class="text-sm text-gray-500">Set free listing allowance and listing active duration</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Free Listing Quota -->
+                            <div class="rounded-xl border border-gray-200 p-5 bg-slate-50/50">
+                                <label class="block text-sm font-bold text-gray-800 mb-1">Free Listing Quota</label>
+                                <p class="text-xs text-gray-500 mb-3">Number of initial listings given for free before charging fee.</p>
+                                <div class="relative rounded-lg shadow-sm">
+                                    <input type="number" step="1" min="0" name="broker_free_listing_limit" value="{{ $brokerVal('broker_free_listing_limit', '0') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg bg-white text-sm font-bold text-gray-900" placeholder="0">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400">listings (0 = None)</span>
+                                </div>
+                            </div>
+
+                            <!-- Listing Expiry Duration -->
+                            <div class="rounded-xl border border-gray-200 p-5 bg-slate-50/50">
+                                <label class="block text-sm font-bold text-gray-800 mb-1">Listing Expiry Validity</label>
+                                <p class="text-xs text-gray-500 mb-3">Duration after which a broker property expires and requires renewal.</p>
+                                <div class="relative rounded-lg shadow-sm">
+                                    <input type="number" step="1" min="1" name="broker_listing_expiry_days" value="{{ $brokerVal('broker_listing_expiry_days', '30') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg bg-white text-sm font-bold text-gray-900" placeholder="30">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400">days</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Module & Policy Controls -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                        <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
+                            <div class="h-10 w-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mr-4">
+                                <i class="fas fa-user-shield text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800">Module & Verification Policies</h2>
+                                <p class="text-sm text-gray-500">Configure broker onboarding and commission tracking policies</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Broker Module Global -->
+                            <div class="rounded-xl border border-gray-200 p-4 bg-slate-50/50">
+                                <label class="flex items-start justify-between gap-4">
+                                    <span>
+                                        <span class="block text-sm font-bold text-gray-800">Broker Module Active</span>
+                                        <span class="mt-1 block text-xs text-gray-500">Enable/disable entire agent module</span>
+                                    </span>
+                                    <span class="relative inline-flex shrink-0 items-center">
+                                        <input type="checkbox" name="broker_module_enabled" value="1" class="peer sr-only" @checked($brokerOn('broker_module_enabled', '1'))>
+                                        <span class="admin-switch-track h-6 w-11 rounded-full transition"></span>
+                                        <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <!-- Broker Verification -->
+                            <div class="rounded-xl border border-gray-200 p-4 bg-slate-50/50">
+                                <label class="flex items-start justify-between gap-4">
+                                    <span>
+                                        <span class="block text-sm font-bold text-gray-800">Admin Approval Required</span>
+                                        <span class="mt-1 block text-xs text-gray-500">OFF = instant auto-approval on register</span>
+                                    </span>
+                                    <span class="relative inline-flex shrink-0 items-center">
+                                        <input type="checkbox" name="broker_verification_enabled" value="1" class="peer sr-only" @checked($brokerOn('broker_verification_enabled', '1'))>
+                                        <span class="admin-switch-track h-6 w-11 rounded-full transition"></span>
+                                        <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <!-- Future Brokerage System -->
+                            <div class="rounded-xl border border-gray-200 p-4 bg-slate-50/50">
+                                <label class="flex items-start justify-between gap-4">
+                                    <span>
+                                        <span class="block text-sm font-bold text-gray-800">Commission Tracking</span>
+                                        <span class="mt-1 block text-xs text-gray-500">Track deals and brokerage rates</span>
+                                    </span>
+                                    <span class="relative inline-flex shrink-0 items-center">
+                                        <input type="checkbox" name="broker_future_brokerage_enabled" value="1" class="peer sr-only" @checked($brokerOn('broker_future_brokerage_enabled', '0'))>
+                                        <span class="admin-switch-track h-6 w-11 rounded-full transition"></span>
+                                        <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                    </span>
+                                </label>
                             </div>
                         </div>
                     </div>

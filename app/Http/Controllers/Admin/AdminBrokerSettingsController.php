@@ -12,30 +12,15 @@ class AdminBrokerSettingsController extends Controller
     public function index(Request $request)
     {
         $admin = $request->user();
-        abort_if(!$admin->hasAdminPermission('brokers.settings'), 403);
+        abort_if(!$admin->hasAdminPermission('brokers.settings') && !$admin->hasAdminPermission('settings.manage'), 403);
 
-        $settings = BrokerSetting::all()->keyBy('key');
-
-        return view('admin.broker-settings.index', compact('settings'));
+        return redirect(route('admin.settings') . '#broker');
     }
 
     public function update(Request $request)
     {
         $admin = $request->user();
-        abort_if(!$admin->hasAdminPermission('brokers.settings'), 403);
-
-        $request->validate([
-            'broker_module_enabled' => 'nullable|boolean',
-            'broker_verification_enabled' => 'nullable|boolean',
-            'broker_listing_charges_enabled' => 'nullable|boolean',
-            'broker_featured_enabled' => 'nullable|boolean',
-            'broker_future_brokerage_enabled' => 'nullable|boolean',
-            'broker_per_listing_charge' => 'nullable|numeric|min:0',
-            'broker_featured_charge' => 'nullable|numeric|min:0',
-            'broker_listing_expiry_days' => 'nullable|integer|min:1',
-            'broker_free_listing_limit' => 'nullable|integer|min:0',
-            'broker_lead_charge' => 'nullable|numeric|min:0',
-        ]);
+        abort_if(!$admin->hasAdminPermission('brokers.settings') && !$admin->hasAdminPermission('settings.manage'), 403);
 
         $data = $request->only([
             'broker_module_enabled',
@@ -55,6 +40,6 @@ class AdminBrokerSettingsController extends Controller
             BrokerSetting::set($key, $value);
         }
 
-        return back()->with('success', 'Broker settings updated successfully.');
+        return redirect(route('admin.settings') . '#broker')->with('success', 'Broker settings updated successfully.');
     }
 }

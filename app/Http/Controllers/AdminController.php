@@ -182,6 +182,23 @@ class AdminController extends Controller
         if ($request->filled('kyc')) {
             $query->whereHas('owner', fn ($q) => $q->where('verification_status', $request->kyc));
         }
+        if ($request->filled('listed_by')) {
+            if ($request->listed_by === 'owner') {
+                $query->where(function ($q) {
+                    $q->where('listing_type', 'owner')
+                      ->orWhere(function ($sq) {
+                          $sq->whereNull('listing_type')
+                             ->whereHas('owner', fn ($u) => $u->where('role', 'owner'));
+                      });
+                });
+            } elseif ($request->listed_by === 'broker') {
+                $query->where(function ($q) {
+                    $q->where('listing_type', 'broker')
+                      ->orWhereNotNull('broker_id')
+                      ->orWhereHas('owner', fn ($u) => $u->where('role', 'broker'));
+                });
+            }
+        }
         $perPage = in_array((int) $request->input('per_page', 10), [10, 25, 50], true)
             ? (int) $request->input('per_page', 10)
             : 10;

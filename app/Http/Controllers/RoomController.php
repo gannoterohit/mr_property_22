@@ -338,9 +338,12 @@ class RoomController extends Controller {
             $data['user_id'] = Auth::id();
 
             // Set broker_id and listed_by based on role
-            if (Auth::user()->role === 'broker') {
+            $isBroker = Auth::user()->role === 'broker';
+            if ($isBroker) {
                 $data['broker_id'] = Auth::id();
                 $data['listed_by'] = 'broker';
+                $expiryDays = (int) \App\Models\BrokerSetting::get('broker_listing_expiry_days', 30);
+                $data['expires_at'] = now()->addDays($expiryDays > 0 ? $expiryDays : 30);
             } else {
                 $data['listed_by'] = 'owner';
             }
@@ -396,12 +399,21 @@ class RoomController extends Controller {
             // keeping the configured listing amount saved for future use.
             $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
 
-            // Broker-specific listing fee logic
-            $isBroker = Auth::user()->role === 'broker';
+            // Broker-specific listing fee and free quota logic
             $brokerListingChargesEnabled = \App\Models\BrokerSetting::isEnabled('broker_listing_charges_enabled', false);
 
-            if ($isBroker && !$brokerListingChargesEnabled) {
-                $listingFeeEnabled = false;
+            if ($isBroker) {
+                if (!$brokerListingChargesEnabled) {
+                    $listingFeeEnabled = false;
+                } else {
+                    $freeQuota = (int) \App\Models\BrokerSetting::get('broker_free_listing_limit', 0);
+                    if ($freeQuota > 0) {
+                        $existingBrokerRooms = Room::where('broker_id', Auth::id())->where('id', '!=', $room->id)->count();
+                        if ($existingBrokerRooms < $freeQuota) {
+                            $listingFeeEnabled = false; // Eligible under free listing quota
+                        }
+                    }
+                }
             }
 
             if (!$listingFeeEnabled) {
@@ -911,11 +923,21 @@ class RoomController extends Controller {
         DB::beginTransaction();
         try {
             if ($isBroker) {
-                $featuredFee = \App\Models\BrokerSetting::get('broker_featured_charge', 99);
+                $featuredFee = (float) \App\Models\BrokerSetting::get('broker_featured_charge', 99);
             } else {
-                $featuredFee = Setting::get('featured_fee', 99);
+                $featuredFee = (float) Setting::get('featured_fee', 99);
             }
             $user = Auth::user();
+
+            if ($featuredFee <= 0) {
+                $room->update(['is_featured' => true]);
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Room featured successfully!'
+                ]);
+            }
 
             // Wallet Payment
             if ($request->payment_method === 'wallet' && $featuredFee > 0) {

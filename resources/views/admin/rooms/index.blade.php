@@ -69,6 +69,11 @@
                 @endif
             </summary>
             <div class="room-filter-advanced mt-3">
+                <select name="listed_by" class="h-10 rounded-xl text-xs">
+                    <option value="">Listed by (All)</option>
+                    <option value="owner" @selected(request('listed_by')==='owner')>Direct Owner</option>
+                    <option value="broker" @selected(request('listed_by')==='broker')>Broker / Agent</option>
+                </select>
                 <select name="moderation_status" class="h-10 rounded-xl text-xs">
                     <option value="">Moderation</option>
                     @foreach(['normal'=>'Normal','suspended'=>'Suspended','reported'=>'Reported'] as $k=>$v)

@@ -191,7 +191,32 @@ class BusinessSettingsController extends Controller
 
             });
 
-            if ($request->has('broker_listing_fee_enabled') || $request->has('broker_listing_fee')) {
+            if ($request->input('_active_tab') === 'broker' || $request->has('broker_module_enabled') || $request->has('broker_per_listing_charge')) {
+                $brokerToggles = [
+                    'broker_module_enabled',
+                    'broker_verification_enabled',
+                    'broker_listing_charges_enabled',
+                    'broker_featured_enabled',
+                    'broker_lead_charge_enabled',
+                    'broker_future_brokerage_enabled',
+                ];
+                foreach ($brokerToggles as $bToggle) {
+                    \App\Models\BrokerSetting::set($bToggle, $request->boolean($bToggle) ? '1' : '0');
+                }
+
+                $brokerInputs = [
+                    'broker_per_listing_charge',
+                    'broker_featured_charge',
+                    'broker_listing_expiry_days',
+                    'broker_free_listing_limit',
+                    'broker_lead_charge',
+                ];
+                foreach ($brokerInputs as $bInput) {
+                    if ($request->has($bInput)) {
+                        \App\Models\BrokerSetting::set($bInput, (string) $request->input($bInput, '0'));
+                    }
+                }
+            } elseif ($request->has('broker_listing_fee_enabled') || $request->has('broker_listing_fee')) {
                 \App\Models\BrokerSetting::set('broker_listing_charges_enabled', $request->boolean('broker_listing_fee_enabled') ? '1' : '0');
                 if ($request->filled('broker_listing_fee')) {
                     \App\Models\BrokerSetting::set('broker_per_listing_charge', (string) $request->input('broker_listing_fee'));
@@ -211,7 +236,7 @@ class BusinessSettingsController extends Controller
         }
 
         $tab = in_array($request->input('_active_tab'), [
-            'general','appearance','payment','integrations','firebase','sms','seo','mail','referral','modal'
+            'general','broker','appearance','payment','integrations','firebase','sms','seo','mail','referral','modal'
         ]) ? $request->input('_active_tab') : 'general';
 
         if ($request->wantsJson()) {

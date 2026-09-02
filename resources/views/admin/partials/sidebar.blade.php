@@ -42,6 +42,7 @@
         ]],
         'settings' => ['label' => 'Settings', 'icon' => 'fa-gear', 'items' => [
             ['route' => 'admin.settings', 'match' => 'admin.settings*', 'icon' => 'fa-cog', 'label' => 'Business Settings'],
+            ['route' => 'admin.broker-settings.index', 'match' => 'admin.broker-settings*', 'icon' => 'fa-sliders', 'label' => 'Broker Settings'],
             ['route' => 'admin.cities.index', 'match' => 'admin.cities*', 'icon' => 'fa-map-location-dot', 'label' => 'Operational Cities'],
             ['route' => 'admin.maintenance', 'match' => 'admin.maintenance*', 'icon' => 'fa-screwdriver-wrench', 'label' => 'Maintenance'],
             ['route' => 'admin.data-maintenance.index', 'match' => 'admin.data-maintenance*', 'icon' => 'fa-database', 'label' => 'Data Maintenance'],
@@ -107,7 +108,7 @@
                             : ($adminUser->hasAdminPermission('finance.view') || $adminUser->hasAdminPermission('finance.manage')),
                         'content' => $adminUser->hasAdminPermission('content.view') || $adminUser->hasAdminPermission('content.manage'),
                         'reports' => $adminUser->hasAdminPermission('reports.view') || $adminUser->hasAdminPermission('settings.manage'),
-                        'settings' => $adminUser->hasAdminPermission('settings.manage'),
+                        'settings' => $adminUser->hasAdminPermission('settings.manage') || $adminUser->hasAdminPermission('brokers.settings') || $adminUser->hasAdminPermission('brokers.manage'),
                         'administration' => str_starts_with($item['route'], 'admin.activity')
                             ? $adminUser->hasAdminPermission('activity.view')
                             : $adminUser->hasAdminPermission('staff.manage'),
