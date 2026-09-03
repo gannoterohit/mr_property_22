@@ -177,7 +177,7 @@ class BusinessSettingsController extends Controller
                 foreach ($data as $key => $value) {
                     $setting = Setting::where('key', $key)->first();
                     if ($request->hasFile($key) && $setting?->value) {
-                        $oldFiles[] = $setting->value;
+                        $oldFiles[] = trim((string) $setting->value);
                     }
 
                     Setting::updateOrCreate(
@@ -227,6 +227,8 @@ class BusinessSettingsController extends Controller
             foreach (array_unique($oldFiles) as $oldFile) {
                 Storage::disk('public')->delete($oldFile);
             }
+
+            Setting::clearCache();
         } catch (\Throwable $e) {
             foreach ($newFiles as $newFile) {
                 Storage::disk('public')->delete($newFile);
@@ -299,7 +301,7 @@ class BusinessSettingsController extends Controller
             'website_logo' => 'logo',
             'website_favicon' => 'favicon',
             'promo_modal_image' => 'offer_image',
-            'default_hero_image' => 'city_hero',
+            'default_hero_image' => 'default_hero',
             default => 'logo',
         };
 

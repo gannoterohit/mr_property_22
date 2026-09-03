@@ -63,6 +63,13 @@ class SettingsSeeder extends Seeder
                 'description' => 'Website logo image'
             ],
             [
+                'key' => 'default_hero_image',
+                'value' => null,
+                'type' => 'image',
+                'group' => 'appearance',
+                'description' => 'Homepage hero image used when no city image is available'
+            ],
+            [
                 'key' => 'contact_email',
                 'value' => 'support@roomrental.com',
                 'type' => 'text',

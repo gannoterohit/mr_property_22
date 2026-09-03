@@ -120,7 +120,7 @@ class City extends Model
         }
 
         if (empty($images)) {
-            $defaultHero = \App\Models\Setting::get('default_hero_image');
+            $defaultHero = trim((string) \App\Models\Setting::get('default_hero_image'));
             if ($defaultHero && Storage::disk('public')->exists(ltrim($defaultHero, '/'))) {
                 $images[] = asset('storage/' . ltrim($defaultHero, '/'));
             }

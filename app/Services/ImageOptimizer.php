@@ -42,6 +42,13 @@ class ImageOptimizer
                 'thumb' => ['width' => 400, 'height' => 200, 'quality' => 75],
             ],
         ],
+        'default_hero' => [
+            'max_width' => 1920,
+            'max_height' => 800,
+            'quality' => 75,
+            'format' => 'webp',
+            'thumbnails' => [],
+        ],
         'logo' => [
             'max_width' => 400,
             'max_height' => 200,

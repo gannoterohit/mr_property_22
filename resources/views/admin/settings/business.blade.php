@@ -261,9 +261,6 @@
                                      <input type="text" name="website_name" value="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
                                  </div>
                              </div>
-                         </div>
-
-                         <div data-appearance-subpanel="colors" class="space-y-6" hidden>
                              <div>
                                  <label class="block text-sm font-semibold text-gray-700 mb-3">Default Hero Image</label>
                                  <div class="flex items-start gap-6">
@@ -283,7 +280,9 @@
                                      </div>
                                  </div>
                              </div>
+                         </div>
 
+                         <div data-appearance-subpanel="colors" class="space-y-6" hidden>
                              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                  <div>
                                      <label class="block text-sm font-semibold text-gray-700 mb-2">Primary Color</label>

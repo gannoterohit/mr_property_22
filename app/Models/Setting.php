@@ -93,7 +93,7 @@ class Setting extends Model
             return $path;
         }
 
-        $path = ltrim($path, '/');
+        $path = ltrim(trim($path), '/');
         if (str_starts_with($path, 'storage/')) {
             $path = substr($path, strlen('storage/'));
         }
