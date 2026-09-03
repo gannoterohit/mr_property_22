@@ -1,0 +1,1080 @@
+/* Mobile App Framework - App-like experience for mobile devices */
+
+/* Base Mobile App Reset */
+.mobile-app-view {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
+}
+
+/* App Container */
+.mobile-app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8fafc;
+}
+
+/* App Header - iOS/Android style */
+.mobile-app-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    box-sizing: border-box;
+}
+
+.mobile-app-header .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mobile-app-header .app-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.mobile-app-header .app-icon i {
+    color: white;
+    font-size: 20px;
+}
+
+.mobile-app-header .header-content h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.mobile-app-header .header-content p {
+    font-size: 12px;
+    color: #64748b;
+    margin: 2px 0 0 0;
+    font-weight: 500;
+}
+
+.mobile-app-header .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.mobile-app-header .menu-toggle {
+    width: 40px;
+    height: 40px;
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mobile-app-header .menu-toggle:hover {
+    background: color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.mobile-app-header .menu-toggle i {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+/* App Status Bar (iOS-like) */
+.mobile-status-bar {
+    height: 20px;
+    background: #f8fafc;
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.mobile-status-bar .status-time {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 500;
+}
+
+.mobile-status-bar .status-icons {
+    display: flex;
+    gap: 4px;
+}
+
+/* App Bottom Navigation - Native iOS/Android style */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 6px 0 0 0;
+    z-index: 1000;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06), 0 -1px 2px rgba(0, 0, 0, 0.04);
+    padding-bottom: env(safe-area-inset-bottom, 14px);
+    height: 64px;
+    box-sizing: border-box;
+}
+
+.bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 600;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 1;
+    padding: 6px 0;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.bottom-nav-item:active {
+    transform: scale(0.92);
+}
+
+.bottom-nav-item i {
+    font-size: 22px;
+    margin-bottom: 3px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: transparent;
+}
+
+.bottom-nav-item.active {
+    color: var(--primary) !important;
+}
+
+.bottom-nav-item.active i {
+    transform: translateY(-2px) scale(1.1);
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+.bottom-nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--primary) !important;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+    animation: dot-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes dot-appear {
+    from {
+        transform: translateX(-50%) scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Ripple effect */
+.bottom-nav-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(var(--primary-rgb), 0.12) 0%, transparent 70%);
+    border-radius: 16px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.4s ease;
+    pointer-events: none;
+}
+
+.bottom-nav-item:active::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Override any hardcoded red/blue/green active state */
+.bottom-nav a.text-red-600,
+.bottom-nav a.text-blue-600,
+.bottom-nav a.text-green-600,
+.bottom-nav a.text-indigo-600 {
+    color: var(--primary) !important;
+}
+
+/* Floating Action Button - Native App Style */
+.app-fab {
+    position: fixed;
+    bottom: 84px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 85%, #000) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.35), 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+    color: white;
+    border: none;
+    cursor: pointer;
+    z-index: 999;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.app-fab:hover {
+    transform: translateX(-50%) scale(1.08);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.4), 0 0 0 6px rgba(var(--primary-rgb), 0.12);
+}
+
+.app-fab:active {
+    transform: translateX(-50%) scale(0.95);
+    transition: all 0.1s ease;
+}
+
+.app-fab i {
+    font-size: 22px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* Bottom nav item specific styles */
+.bottom-nav .nav-icon {
+    font-size: 20px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bottom-nav .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.25s ease;
+}
+
+/* Content padding for bottom nav */
+@media (max-width: 1023px) {
+    main {
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 14px) + 16px);
+    }
+}
+
+/* App Card - Modern iOS style */
+.app-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin: 12px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.app-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s;
+}
+
+.app-card .card-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.app-card .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.app-card:hover .card-image img {
+    transform: scale(1.05);
+}
+
+.app-card .card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    padding: 16px;
+    color: white;
+}
+
+.app-card .card-content {
+    padding: 16px;
+}
+
+.app-card .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.app-card .card-subtitle {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0 0 12px 0;
+}
+
+.app-card .card-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+}
+
+/* App Button - Modern style */
+.app-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+}
+
+.app-btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.app-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.app-btn-secondary {
+    background: #f1f5f9;
+    color: var(--primary);
+}
+
+.app-btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+/* App Input - Modern style */
+.app-input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    transition: all 0.2s;
+    background: white;
+}
+
+.app-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+/* App Search Bar */
+.app-search {
+    position: relative;
+    margin: 16px;
+}
+
+.app-search input {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.app-search i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 16px;
+}
+
+/* App Section Header */
+.app-section-header {
+    padding: 20px 16px 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.app-section-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin: 4px 0 0 0;
+}
+
+.app-section-action {
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* App Grid */
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 0 12px 12px 12px;
+}
+
+/* App List */
+.app-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.app-list-item {
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.2s;
+}
+
+.app-list-item:last-child {
+    border-bottom: none;
+}
+
+.app-list-item:active {
+    background: #f8fafc;
+}
+
+/* App Badge */
+.app-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.app-badge-verified {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.app-badge-featured {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.app-badge-new {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* App Divider */
+.app-divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 16px 0;
+}
+
+/* App Modal */
+.app-modal {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s;
+    z-index: 2000;
+}
+
+.app-modal.active {
+    transform: translateY(0);
+}
+
+.app-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.app-modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* App Switch */
+.app-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.app-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.app-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e2e8f0;
+    transition: .4s;
+    border-radius: 28px;
+}
+
+.app-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.app-switch input:checked+.app-switch-slider {
+    background-color: var(--primary);
+}
+
+.app-switch input:checked+.app-switch-slider:before {
+    transform: translateX(22px);
+}
+
+/* App Tab Navigation */
+.app-tabs {
+    display: flex;
+    background: white;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 0 16px;
+}
+
+.app-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.app-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+/* App Loading Spinner */
+.app-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* App Empty State */
+.app-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #64748b;
+}
+
+.app-empty i {
+    font-size: 48px;
+    color: #cbd5e1;
+    margin-bottom: 16px;
+}
+
+.app-empty h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+}
+
+.app-empty p {
+    font-size: 14px;
+    margin: 0 0 20px 0;
+}
+
+/* App Avatar */
+.app-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* App Rating */
+.app-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.app-rating i {
+    color: #f59e0b;
+    font-size: 14px;
+}
+
+.app-rating span {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* App Chip */
+.app-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #f1f5f9;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* App Progress Bar */
+.app-progress {
+    width: 100%;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.app-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    transition: width 0.3s;
+}
+
+/* App Toast */
+.app-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: toast-in 0.3s, toast-out 0.3s 2.7s forwards;
+}
+
+@keyframes toast-in {
+    from {
+        transform: translateX(-50%) translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toast-out {
+    from {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(-50%) translateY(20px);
+        opacity: 0;
+    }
+}
+
+/* App Context Menu */
+.app-context-menu {
+    position: absolute;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    z-index: 2000;
+    min-width: 180px;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.app-context-menu.active {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.app-context-menu-item {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #1e293b;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.app-context-menu-item:hover {
+    background: #f1f5f9;
+}
+
+.app-context-menu-divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 4px 0;
+}
+
+/* App Pull-to-Refresh */
+.app-ptr {
+    position: absolute;
+    top: -60px;
+    left: 0;
+    right: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: top 0.3s;
+}
+
+.app-ptr.active {
+    top: 0;
+}
+
+.app-ptr-icon {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* App Haptic Feedback */
+@media (hover: none) and (pointer: coarse) {
+    .app-card:active {
+        transform: scale(0.96);
+    }
+
+    .app-btn:active {
+        transform: scale(0.95);
+    }
+
+    .app-list-item:active {
+        background: #f1f5f9;
+    }
+}
+
+/* App Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .mobile-app-container {
+        background-color: #0f172a;
+    }
+
+    .app-card {
+        background: #1e293b;
+        border-color: #334155;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .app-card .card-title,
+    .app-card .card-subtitle,
+    .app-card .card-content {
+        color: #f1f5f9;
+    }
+
+    .app-input {
+        background: #1e293b;
+        border-color: #334155;
+        color: #f1f5f9;
+    }
+
+    .app-input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 375px) {
+    .app-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+
+    .app-section-title {
+        font-size: 18px;
+    }
+}
+
+@media (min-width: 768px) {
+
+    .mobile-app-header,
+    .bottom-nav,
+    .mobile-status-bar {
+        display: none !important;
+    }
+}
+
+/* Mobile Room Card Animations */
+.mobile-room-card {
+    animation: cardSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.mobile-room-card:nth-child(1) { animation-delay: 0.05s; }
+.mobile-room-card:nth-child(2) { animation-delay: 0.1s; }
+.mobile-room-card:nth-child(3) { animation-delay: 0.15s; }
+.mobile-room-card:nth-child(4) { animation-delay: 0.2s; }
+.mobile-room-card:nth-child(5) { animation-delay: 0.25s; }
+.mobile-room-card:nth-child(6) { animation-delay: 0.3s; }
+
+@keyframes cardSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Skeleton Loader for Mobile Cards */
+.skeleton-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #f1f5f9;
+    margin-bottom: 16px;
+}
+
+.skeleton-image {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-content {
+    padding: 16px;
+}
+
+.skeleton-line {
+    height: 12px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.skeleton-line.short {
+    width: 60%;
+}
+
+.skeleton-line.medium {
+    width: 80%;
+}
+
+.skeleton-line.title {
+    height: 16px;
+    width: 90%;
+    margin-bottom: 12px;
+}
+
+.skeleton-tags {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.skeleton-tag {
+    height: 24px;
+    width: 60px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+}
+
+.skeleton-button {
+    height: 40px;
+    width: 120px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 10px;
+    margin-top: 12px;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Hide scrollbar for horizontal scroll areas */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Line clamp utilities */
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Mobile card image placeholder */
+.mobile-room-card .placeholder-image {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+/* Touch feedback for mobile cards */
+@media (hover: none) {
+    .mobile-room-card:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+}
+
+/* Better spacing for mobile cards */
+.mobile-room-card {
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-bottom: 20px;
+}
+
+.mobile-room-card:last-child {
+    margin-bottom: 24px;
+}
+
+/* Featured Stays Horizontal Scroll */
+@media (max-width: 1023px) {
+    .md\:hidden .snap-x {
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+
+    .md\:hidden .snap-center {
+        scroll-snap-align: center;
+    }
+
+    .md\:hidden .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .md\:hidden .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+}

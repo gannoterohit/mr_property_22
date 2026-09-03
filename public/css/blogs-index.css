@@ -1,0 +1,15 @@
+    .blog-theme-primary { color: var(--primary); }
+    .blog-theme-primary-soft { background: rgba(var(--primary-rgb), .08); color: var(--primary); }
+    .blog-theme-primary-bg { background: var(--primary); color: #fff; }
+    .blog-theme-secondary { color: var(--secondary); }
+    .blog-theme-secondary-soft { background: rgba(var(--secondary-rgb), .08); color: var(--secondary); }
+    .blog-theme-secondary-bg { background: var(--secondary); color: #fff; }
+    .blog-theme-gradient { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+    .blog-card:hover .blog-card-title,
+    .blog-popular-link:hover .blog-popular-title { color: var(--primary); }
+    .blog-trending-card:hover .blog-trending-title { color: rgba(var(--secondary-rgb), .8); }
+    .blog-newsletter { background: var(--primary); }
+    .blog-newsletter p { color: rgba(255, 255, 255, .75); }
+    .blog-newsletter button { color: var(--primary); }
+    .blog-newsletter button:hover { background: rgba(var(--primary-rgb), .08); }
+

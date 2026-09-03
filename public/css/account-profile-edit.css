@@ -1,0 +1,112 @@
+/* Account & Agent Profile Layout Styles */
+.account-container {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 2-Column Responsive Layout Grids */
+.profile-layout,
+.agent-profile-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+    width: 100%;
+}
+
+@media (min-width: 1024px) {
+    .profile-layout,
+    .agent-profile-grid {
+        grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+        gap: 1.5rem;
+    }
+}
+
+.profile-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.profile-card,
+.agent-profile-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 1.5rem;
+    background: #ffffff;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+@media (min-width: 640px) {
+    .profile-card,
+    .agent-profile-card {
+        padding: 2rem;
+    }
+}
+
+.agent-form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .agent-form-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+}
+
+/* Input Fields Styling */
+.profile-card input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),
+.profile-card select,
+.profile-card textarea,
+.agent-profile-card input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),
+.agent-profile-card select,
+.agent-profile-card textarea {
+    width: 100%;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0.75rem !important;
+    background-color: #f8fafc !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.875rem !important;
+    color: #0f172a !important;
+    font-weight: 500 !important;
+    box-sizing: border-box !important;
+    transition: all 0.2s ease !important;
+}
+
+.profile-card input:focus,
+.profile-card select:focus,
+.profile-card textarea:focus,
+.agent-profile-card input:focus,
+.agent-profile-card select:focus,
+.agent-profile-card textarea:focus {
+    border-color: #6366f1 !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+    outline: none !important;
+}
+
+.profile-card button[type="submit"],
+.agent-profile-card button[type="submit"] {
+    border-radius: 0.75rem !important;
+    font-weight: 700 !important;
+}
+
+.profile-card section > header {
+    display: none;
+}
+
+.profile-danger {
+    border-color: #fecaca;
+    background-color: #ffffff;
+}
+
+@media (max-width: 639px) {
+    .profile-card,
+    .agent-profile-card {
+        padding: 1.25rem;
+        border-radius: 1rem;
+    }
+}

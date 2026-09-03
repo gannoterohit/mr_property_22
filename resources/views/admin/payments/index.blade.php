@@ -1,0 +1,50 @@
+@extends('layouts.admin')
+@section('title','Payment Management')
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin-shared.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-list.css') }}">@endpush
+@section('admin-content')
+<div class="space-y-5 p-5 lg:p-6"><header class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Finance & collections</p><h1 class="mt-1 text-2xl font-extrabold">Payment Management</h1><p class="text-sm text-slate-500">Track collections, pending transactions and payment references.</p></div><div class="flex flex-wrap gap-2"><x-admin.data-actions dataset="payments" /><a href="{{ route('admin.reports') }}" class="rounded-xl border bg-white px-4 py-2.5 text-xs font-bold"><i class="fas fa-chart-line mr-2 admin-theme-text"></i>Financial reports</a></div></header>
+<section class="payment-kpis admin-kpis">@foreach([['Collected','₹'.number_format($paymentStats['collected'],2),'fa-indian-rupee-sign','text-emerald-600','bg-emerald-50'],['Transactions',$paymentStats['total'],'fa-receipt','admin-theme-text','admin-theme-soft'],['Completed',$paymentStats['completed'],'fa-circle-check','text-blue-600','bg-blue-50'],['Pending / failed',$paymentStats['pending'].' / '.$paymentStats['failed'],'fa-clock','text-amber-600','bg-amber-50']] as [$label,$value,$icon,$tone,$bg])<article class="rounded-2xl border bg-white p-4"><div class="flex items-center justify-between"><div><p class="text-[10px] font-bold uppercase text-slate-400">{{ $label }}</p><p class="mt-2 text-2xl font-extrabold">{{ $value }}</p></div><span class="flex h-10 w-10 items-center justify-center rounded-xl {{ $bg }} {{ $tone }}"><i class="fas {{ $icon }}"></i></span></div></article>@endforeach</section>
+<form method="GET" class="rounded-2xl border bg-white p-4">
+    <div class="payment-filters admin-filter-bar items-end">
+        <div class="relative">
+            <i class="fas fa-search absolute left-3 top-3.5 text-xs text-slate-400"></i>
+            <input name="search" value="{{ request('search') }}" placeholder="User, email, transaction or order ID" class="h-10 w-full rounded-xl pl-9 text-xs">
+        </div>
+        <select name="status" class="h-10 rounded-xl text-xs">
+            <option value="">All statuses</option>
+            @foreach(['completed','pending','failed'] as $value)
+                <option value="{{ $value }}" @selected(request('status')===$value)>{{ ucfirst($value) }}</option>
+            @endforeach
+        </select>
+        <select name="type" class="h-10 rounded-xl text-xs">
+            <option value="">All payment types</option>
+            @foreach($types as $value)
+                <option value="{{ $value }}" @selected(request('type')===$value)>{{ ucfirst($value) }}</option>
+            @endforeach
+        </select>
+        <select name="gateway" class="h-10 rounded-xl text-xs">
+            <option value="">All gateways</option>
+            @foreach($gateways as $value)
+                <option value="{{ $value }}" @selected(request('gateway')===$value)>{{ ucfirst($value) }}</option>
+            @endforeach
+        </select>
+        <input type="date" name="from" value="{{ request('from') }}" title="From date" class="h-10 rounded-xl text-xs">
+        <input type="date" name="to" value="{{ request('to') }}" title="To date" class="h-10 rounded-xl text-xs">
+        <input type="number" min="0" step="0.01" name="min_amount" value="{{ request('min_amount') }}" placeholder="Min amount" class="h-10 rounded-xl text-xs">
+        <input type="number" min="0" step="0.01" name="max_amount" value="{{ request('max_amount') }}" placeholder="Max amount" class="h-10 rounded-xl text-xs">
+        <div class="flex gap-2 justify-end">
+            <a href="{{ route('admin.payments.index') }}" class="flex h-10 items-center rounded-xl border px-4 text-xs font-bold">Reset</a>
+            <button class="h-10 rounded-xl bg-slate-900 px-5 text-xs font-bold text-white">Apply filters</button>
+        </div>
+    </div>
+</form>
+<section class="overflow-hidden rounded-2xl border bg-white"><div class="flex items-center justify-between border-b px-5 py-4">
+    <div>
+        <h2 class="text-sm font-extrabold">Transactions</h2>
+        <p class="text-xs text-slate-500">{{ $payments->total() }} matching payments</p>
+    </div>
+    <span class="rounded-full admin-theme-soft px-3 py-1 text-xs font-bold admin-theme-text whitespace-nowrap">Page {{ $payments->currentPage() }} of {{ $payments->lastPage() }}</span>
+</div><div class="overflow-x-auto"><table class="payment-table admin-table-base"><thead><tr><th>User</th><th>Type</th><th>Amount</th><th>Gateway</th><th>Transaction reference</th><th>Status</th><th>Date & time</th></tr></thead><tbody class="divide-y">@forelse($payments as $payment)<tr class="hover:bg-slate-50"><td class="px-5"><div class="flex items-center gap-3"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-xs font-bold text-slate-600">{{ strtoupper(substr($payment->user?->name??'U',0,1)) }}</span><span class="min-w-0"><strong class="block truncate text-xs">{{ $payment->user?->name??'Deleted user' }}</strong><small class="block truncate text-[10px] text-slate-400">{{ $payment->user?->email??'Account unavailable' }}</small></span></div></td><td class="px-5"><span class="rounded-full admin-theme-soft px-2.5 py-1 text-[10px] font-bold capitalize admin-theme-text">{{ $payment->type }}</span></td><td class="px-5 text-sm font-extrabold">₹{{ number_format($payment->amount,2) }}</td><td class="px-5 text-xs font-bold uppercase text-slate-600">{{ $payment->gateway?:'—' }}</td><td class="px-5"><p class="truncate font-mono text-[10px] text-slate-600" title="{{ $payment->transaction_id }}">{{ $payment->transaction_id?:'No transaction ID' }}</p><p class="mt-1 truncate font-mono text-[9px] text-slate-400" title="{{ $payment->gateway_order_id }}">{{ $payment->gateway_order_id?:$payment->reference_id }}</p></td><td class="px-5"><span class="rounded-full px-2.5 py-1 text-[10px] font-bold {{ $payment->status==='completed'?'bg-emerald-50 text-emerald-700':($payment->status==='pending'?'bg-amber-50 text-amber-700':'bg-red-50 text-red-700') }}">{{ ucfirst($payment->status) }}</span></td><td class="px-5"><p class="text-xs font-semibold">{{ $payment->created_at->format('d M Y') }}</p><p class="text-[10px] text-slate-400">{{ $payment->created_at->format('h:i A') }}</p></td></tr>@empty<tr><td colspan="7" class="p-14 text-center"><i class="fas fa-receipt text-3xl text-slate-300"></i><p class="mt-2 text-sm font-bold">No matching payments</p><p class="text-xs text-slate-400">Try adjusting the filters.</p></td></tr>@endforelse</tbody></table></div>@if($payments->hasPages())<div class="border-t p-4">{{ $payments->links() }}</div>@endif</section></div>
+@endsection

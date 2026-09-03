@@ -1,0 +1,130 @@
+/* admin-business.css */
+    /* Hide main site footer and mobile nav on settings page for better full-height layout */
+    footer, .mobile-bottom-nav, #fixed-footer {
+        display: none !important;
+    }
+    #settings-form {
+        display: block !important;
+        width: 100% !important;
+    }
+    #settings-form > [data-settings-panel] {
+        display: block;
+        width: 100% !important;
+        min-width: 0;
+    }
+    #settings-form > [data-settings-panel][hidden] {
+        display: none !important;
+    }
+    #settings-form > [data-settings-panel] > div {
+        width: 100%;
+    }
+    #settings-save-bar {
+        display: flex !important;
+        width: 100% !important;
+        clear: both;
+    }
+    [data-settings-panel="appearance"] > .bg-white {
+        border-color: #e5e7eb;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    }
+    [data-settings-panel="appearance"] > .bg-white > .space-y-8 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+    [data-settings-panel="appearance"] > .bg-white > .space-y-8 > * {
+        margin-top: 0 !important;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        background: #fff;
+        padding: 18px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
+    }
+    [data-settings-panel="appearance"] > .bg-white > .space-y-8 > :nth-child(n+5) {
+        grid-column: 1 / -1;
+    }
+    [data-settings-panel="appearance"] > .bg-white > .space-y-8 > :nth-child(5),
+    [data-settings-panel="appearance"] > .bg-white > .space-y-8 > :nth-child(7) {
+        grid-column: auto;
+    }
+    [data-settings-panel="appearance"] .h-24.w-24 {
+        height: 88px;
+        width: 88px;
+        border-width: 1px;
+        border-color: #cbd5e1;
+        border-radius: 14px;
+        background: #f8fafc;
+        flex-shrink: 0;
+    }
+    [data-settings-panel="appearance"] label.inline-flex {
+        min-height: 38px;
+    }
+    [data-settings-panel="appearance"] input:not([type=checkbox]):not([type=radio]):not([type=color]),
+    [data-settings-panel="appearance"] textarea {
+        border-radius: 12px !important;
+        background: #f8fafc !important;
+        font-size: 13px !important;
+    }
+    [data-settings-panel="appearance"] input[type=color] {
+        border-radius: 12px;
+        border: 1px solid #dbe1ea;
+        background: #fff;
+        padding: 4px;
+    }
+    @media(max-width:1023px) {
+        [data-settings-panel="appearance"] > .bg-white > .space-y-8 {
+            grid-template-columns: 1fr;
+        }
+        [data-settings-panel="appearance"] > .bg-white > .space-y-8 > :nth-child(5),
+        [data-settings-panel="appearance"] > .bg-white > .space-y-8 > :nth-child(7) {
+            grid-column: 1 / -1;
+        }
+    }
+    @media(max-width:639px) {
+        [data-settings-panel="appearance"] > .bg-white {
+            padding: 16px;
+        }
+        [data-settings-panel="appearance"] .flex.items-start.gap-6 {
+            align-items: flex-start;
+            gap: 12px;
+        }
+        [data-settings-panel="appearance"] .h-24.w-24 {
+            height: 72px;
+            width: 72px;
+        }
+    }
+    .settings-subtabs {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        background: #fff;
+        padding: 8px;
+    }
+    .settings-subtabs button {
+        display: inline-flex;
+        height: 38px;
+        flex-shrink: 0;
+        align-items: center;
+        gap: 8px;
+        border-radius: 10px;
+        padding: 0 14px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #475569;
+        transition: .15s ease;
+    }
+    .settings-subtabs button[aria-selected="true"] {
+        background: var(--admin-primary);
+        color: #fff;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .08);
+    }
+    [data-seo-part][hidden],
+    [data-seo-subpanel][hidden],
+    [data-appearance-subpanel][hidden] {
+        display: none !important;
+    }
+

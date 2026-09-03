@@ -1,0 +1,45 @@
+@media (max-width:1023px) {
+    .mobile-app-header {
+        width:100%!important;
+        height:70px!important;
+        min-height:70px!important;
+        padding:9px 14px!important;
+        align-items:center!important;
+        background:#fff!important;
+        box-sizing:border-box!important;
+    }
+    .mobile-app-header .header-left {
+        display:flex!important;
+        min-width:0!important;
+        height:52px!important;
+        align-items:center!important;
+    }
+    .mobile-app-header .mobile-brand-logo-link {
+        display:flex!important;
+        width:150px!important;
+        max-width:45vw!important;
+        height:50px!important;
+        flex:0 0 150px!important;
+        align-items:center!important;
+        overflow:hidden!important;
+        border:0!important;
+        background:transparent!important;
+    }
+    .mobile-app-header .mobile-brand-logo {
+        display:block!important;
+        width:150px!important;
+        max-width:100%!important;
+        height:50px!important;
+        padding:0!important;
+        object-fit:contain!important;
+        object-position:left center!important;
+    }
+    .mobile-app-header .header-right { margin-left:auto!important; }
+    .mobile-app-header .menu-toggle {
+        display:flex!important;
+        width:42px!important;
+        height:42px!important;
+        align-items:center!important;
+        justify-content:center!important;
+    }
+}
