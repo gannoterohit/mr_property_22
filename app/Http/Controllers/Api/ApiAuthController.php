@@ -210,7 +210,7 @@ class ApiAuthController extends BaseApiController
             'name'          => 'required|string|max:255',
             'email'         => 'nullable|email|unique:users,email',
             'phone'         => 'nullable|string',
-            'role'          => 'nullable|in:user,owner',
+            'role'          => 'nullable|in:user,owner,broker',
             'otp'           => 'required|string|min:6|max:6',
             'referral_code' => 'nullable|string',
             'fcm_token'     => 'nullable|string',

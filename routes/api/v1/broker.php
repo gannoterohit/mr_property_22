@@ -3,8 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiBrokerController;
 use App\Http\Controllers\Api\ApiRoomController;
+use App\Http\Controllers\Api\ApiRoomDraftController;
 
-Route::middleware(['auth:sanctum', 'role:broker'])->prefix('broker')->group(function () {
+Route::middleware(['auth:sanctum', 'role:broker', 'broker.active'])->prefix('broker')->group(function () {
 
     Route::get('/dashboard',    [ApiBrokerController::class, 'dashboard']);
     Route::get('/properties',   [ApiBrokerController::class, 'properties']);
@@ -13,6 +14,11 @@ Route::middleware(['auth:sanctum', 'role:broker'])->prefix('broker')->group(func
     Route::get('/transactions', [ApiBrokerController::class, 'transactions']);
     Route::get('/profile',      [ApiBrokerController::class, 'profile']);
     Route::patch('/profile',    [ApiBrokerController::class, 'updateProfile']);
+    Route::get('/rooms/drafts', [ApiRoomDraftController::class, 'index']);
+    Route::get('/rooms/drafts/latest', [ApiRoomDraftController::class, 'latest']);
+    Route::get('/rooms/drafts/{id}', [ApiRoomDraftController::class, 'show']);
+    Route::post('/rooms/drafts/save', [ApiRoomDraftController::class, 'save']);
+    Route::delete('/rooms/drafts/{id}', [ApiRoomDraftController::class, 'destroy']);
 
     // ── Room Management (Broker) ────────────
     Route::get('/rooms',                        [ApiRoomController::class, 'myRooms']);

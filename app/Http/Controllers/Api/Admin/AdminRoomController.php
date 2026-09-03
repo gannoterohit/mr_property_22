@@ -38,7 +38,7 @@ class AdminRoomController extends BaseApiController
     {
         $room = Room::find($id);
         if (!$room) return $this->sendError('Room not found');
-        $room->update(['listing_status' => 'approved']);
+        $room->update(['listing_status' => 'approved', 'status' => 'active']);
 
         try {
             Mail::to($room->owner->email)->send(new \App\Mail\RoomApprovedMail($room, $room->owner));

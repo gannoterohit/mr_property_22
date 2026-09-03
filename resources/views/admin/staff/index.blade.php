@@ -2,7 +2,7 @@
 @section('title', 'Admin Staff')
 
 @section('admin-content')
-<div class="space-y-6 p-5 lg:p-7" x-data="{ open: {{ $errors->any() ? 'true' : 'false' }}, edit: null }">
+<div class="space-y-6 p-5 lg:p-7" x-data="staffForm" @if($errors->any()) x-init="open = true" @endif>
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <p class="text-xs font-bold uppercase tracking-widest admin-theme-text">Access control</p>
@@ -11,7 +11,7 @@
         </div>
         <div class="flex flex-wrap gap-2">
             <x-admin.data-actions dataset="staff" />
-            <x-admin.button type="button" variant="primary" icon="fa-user-plus" @click="open = true; edit = null">Add staff member</x-admin.button>
+            <x-admin.button type="button" variant="primary" icon="fa-user-plus" @click="resetForm">Add staff member</x-admin.button>
         </div>
     </div>
 
@@ -94,7 +94,7 @@
                                         <x-admin.action-icon variant="view" icon="fa-rotate-left" type="submit" title="Restore" />
                                     </form>
                                 @else
-                                    <x-admin.action-icon variant="edit" type="button" @click='edit = {{ \Illuminate\Support\Js::from($editPayload) }}; open = true' />
+                                    <x-admin.action-icon variant="edit" type="button" @click='editStaff({{ \Illuminate\Support\Js::from($editPayload) }})' />
                                     @if(auth()->id() !== $member->id)
                                         <form method="POST" action="{{ route('admin.staff.destroy', $member) }}" class="admin-confirm" data-confirm-title="Delete {{ $member->name }}?" data-confirm-text="This staff account will be soft deleted and can be restored later." data-confirm-button="Yes, delete staff">
                                             @csrf
@@ -122,8 +122,8 @@
                 @csrf
                 <template x-if="edit"><input type="hidden" name="_method" value="PUT"></template>
                 <div class="space-y-5 p-5">
-                    <section><div class="mb-3"><h3 class="text-sm font-extrabold text-slate-900">Basic information</h3><p class="text-[11px] text-slate-500">Use the employee's real contact details.</p></div><div class="grid gap-4 sm:grid-cols-2"><div><label class="text-xs font-bold">Full name *</label><input name="name" required :value="edit?.name || ''" placeholder="Employee name" class="mt-1 w-full rounded-xl"></div><div><label class="text-xs font-bold">Phone number</label><input name="phone" :value="edit?.phone || ''" placeholder="+91 98765 43210" class="mt-1 w-full rounded-xl"></div></div><div class="mt-4"><label class="text-xs font-bold">Official email *</label><input type="email" name="email" required :value="edit?.email || ''" placeholder="staff@apnanest.com" class="mt-1 w-full rounded-xl"></div></section>
-                    <section class="border-t border-slate-100 pt-5"><div class="mb-3"><h3 class="text-sm font-extrabold text-slate-900">Access role</h3><p class="text-[11px] text-slate-500">The role decides which admin modules this person can open.</p></div><select name="admin_role_id" required class="w-full rounded-xl bg-slate-50">@foreach($roles as $role)<option value="{{ $role->id }}" :selected="edit?.admin_role_id == {{ $role->id }}">{{ $role->name }} - {{ $role->description }}</option>@endforeach</select><a href="{{ route('admin.roles.index') }}" class="mt-2 inline-flex text-[11px] font-bold admin-theme-text"><i class="fas fa-arrow-up-right-from-square mr-1"></i>Review role permissions</a></section>
+                    <section><div class="mb-3"><h3 class="text-sm font-extrabold text-slate-900">Basic information</h3><p class="text-[11px] text-slate-500">Use the employee's real contact details.</p></div><div class="grid gap-4 sm:grid-cols-2"><div><label class="text-xs font-bold">Full name *</label><input name="name" required :value="(edit && edit.name) || ''" placeholder="Employee name" class="mt-1 w-full rounded-xl"></div><div><label class="text-xs font-bold">Phone number</label><input name="phone" :value="(edit && edit.phone) || ''" placeholder="+91 98765 43210" class="mt-1 w-full rounded-xl"></div></div><div class="mt-4"><label class="text-xs font-bold">Official email *</label><input type="email" name="email" required :value="(edit && edit.email) || ''" placeholder="staff@apnanest.com" class="mt-1 w-full rounded-xl"></div></section>
+                    <section class="border-t border-slate-100 pt-5"><div class="mb-3"><h3 class="text-sm font-extrabold text-slate-900">Access role</h3><p class="text-[11px] text-slate-500">The role decides which admin modules this person can open.</p></div><select name="admin_role_id" required class="w-full rounded-xl bg-slate-50">@foreach($roles as $role)<option value="{{ $role->id }}" :selected="(edit && edit.admin_role_id) == {{ $role->id }}">{{ $role->name }} - {{ $role->description }}</option>@endforeach</select><a href="{{ route('admin.roles.index') }}" class="mt-2 inline-flex text-[11px] font-bold admin-theme-text"><i class="fas fa-arrow-up-right-from-square mr-1"></i>Review role permissions</a></section>
                     <section class="border-t border-slate-100 pt-5"><div class="mb-3"><h3 class="text-sm font-extrabold text-slate-900" x-text="edit ? 'Change password' : 'Set initial password'"></h3><p class="text-[11px] text-slate-500" x-text="edit ? 'Leave both fields blank to keep the current password.' : 'Use at least 8 characters and share it securely.'"></p></div><div class="grid gap-4 sm:grid-cols-2"><div><label class="text-xs font-bold">Password <span x-show="edit" class="text-slate-400">(optional)</span></label><input type="password" name="password" :required="!edit" autocomplete="new-password" class="mt-1 w-full rounded-xl"></div><div><label class="text-xs font-bold">Confirm password</label><input type="password" name="password_confirmation" :required="!edit" autocomplete="new-password" class="mt-1 w-full rounded-xl"></div></div></section>
                 </div>
                 <div class="sticky bottom-0 flex justify-end gap-3 border-t border-slate-200 bg-white px-5 py-4"><x-admin.button type="button" @click="open = false">Cancel</x-admin.button><x-admin.button type="submit" variant="primary" icon="fa-floppy-disk"><span x-text="edit ? 'Save changes' : 'Create staff account'"></span></x-admin.button></div>

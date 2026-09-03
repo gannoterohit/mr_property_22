@@ -46,9 +46,16 @@ class PaymentFulfillmentService
 
     private function applyAction(Payment $payment): void
     {
-        if ($payment->type === 'listing') {
-            $updated = Room::whereKey($payment->reference_id)->where('user_id', $payment->user_id)
-                ->update(['listing_fee_paid' => true, 'status' => 'active']);
+        if (in_array($payment->type, ['listing', 'broker_listing'], true)) {
+            $query = Room::whereKey($payment->reference_id);
+            if ($payment->type === 'broker_listing') {
+                $query->where(function ($roomQuery) use ($payment) {
+                    $roomQuery->where('broker_id', $payment->user_id)->orWhere('user_id', $payment->user_id);
+                });
+            } else {
+                $query->where('user_id', $payment->user_id);
+            }
+            $updated = $query->update(['listing_fee_paid' => true, 'status' => 'active', 'listing_payment_id' => $payment->id]);
             if ($updated !== 1) {
                 throw new \RuntimeException('Listing room was not found or is not owned by the payer.');
             }

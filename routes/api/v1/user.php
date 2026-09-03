@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ApiGeneralController;
 use App\Http\Controllers\Api\ApiSubscriptionController;
 use App\Http\Controllers\Api\ApiComplaintController;
 use App\Http\Controllers\Api\ApiAccountController;
+use App\Http\Controllers\Api\ApiRoomController;
 
 use App\Http\Controllers\Api\ApiFcmTokenController;
 use App\Http\Controllers\Api\ApiNotificationController;
@@ -38,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // ── Dashboard ─────────────────────────────
     Route::get('/dashboard',        [ApiDashboardController::class, 'index']);
     Route::get('/referral-stats',   [ApiDashboardController::class, 'referralStats']);
+    Route::post('/rooms/set-city',  [ApiRoomController::class, 'setCity']);
 
     // ── Payments ──────────────────────────────
     Route::post('/payments/create-order', [ApiPaymentController::class, 'createOrder'])->middleware('throttle:10,1');

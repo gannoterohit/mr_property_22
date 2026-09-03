@@ -1,12 +1,14 @@
 @extends('layouts.base')
 
 @push('styles')
-<link rel="preload" href="{{ asset('css/admin.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="{{ asset('css/admin.css') }}"></noscript>
+<style>[x-cloak] { display: none !important; }</style>
+@endpush
+
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
 @endpush
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 @endpush
 
 @push('sweetalert')

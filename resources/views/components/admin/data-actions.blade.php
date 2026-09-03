@@ -4,13 +4,13 @@
     'label' => 'Data actions',
 ])
 
-<div class="admin-data-actions relative inline-flex" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+<div class="admin-data-actions relative inline-flex" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.outside="open = false">
     <button type="button" class="admin-btn" @click="open = !open" aria-haspopup="true" :aria-expanded="open ? 'true' : 'false'">
         <i class="fas fa-file-export"></i>
         {{ $label }}
         <i class="fas fa-chevron-down text-[9px]"></i>
     </button>
-    <div x-cloak x-show="open" x-transition class="absolute right-0 top-full z-40 mt-2 w-72 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+    <div x-cloak x-show="open" x-transition style="display: none;" class="absolute right-0 top-full z-40 mt-2 w-72 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
         <a href="{{ route('admin.data-tools.export', $dataset) }}" class="admin-data-action-item">
             <i class="fas fa-file-excel text-emerald-600"></i>
             <span><strong>Export Excel</strong><small>Download current table data</small></span>

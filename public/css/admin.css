@@ -1,3 +1,5 @@
+    [x-cloak] { display: none !important; }
+
     body > nav, body > footer, body > .mobile-app-header, body > .mobile-bottom-nav,
     body > #mobile-app-menu { display: none !important; }
     body { background: #f4f6f9 !important; color: #1f2937; }
@@ -261,6 +263,46 @@
         font-size: .65rem;
         font-weight: 600;
         line-height: 1.2;
+    }
+    .audit-summary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .45rem;
+    }
+    .audit-summary span,
+    .audit-summary em {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        min-height: 2rem;
+        border: 1px solid #e2e8f0;
+        border-radius: .65rem;
+        background: #fff;
+        padding: .4rem .65rem;
+        color: #64748b;
+        font-size: .65rem;
+        font-style: normal;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+    .audit-summary strong { color: #0f172a; font-size: .75rem; }
+    .audit-summary em { border-color: #bbf7d0; background: #f0fdf4; color: #15803d; }
+    .audit-filters {
+        display: grid;
+        grid-template-columns: minmax(12rem, 1.6fr) repeat(4, minmax(8rem, 1fr)) auto auto;
+        gap: .65rem;
+        align-items: center;
+    }
+    @media (max-width: 1100px) {
+        .audit-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .audit-filters > .relative { grid-column: span 3; }
+    }
+    @media (max-width: 640px) {
+        .audit-summary { justify-content: flex-start; }
+        .audit-filters { grid-template-columns: 1fr 1fr; }
+        .audit-filters > .relative { grid-column: span 2; }
+        .audit-filters > button { width: 100%; }
     }
     .admin-theme-avatar {
         background: var(--admin-primary);
