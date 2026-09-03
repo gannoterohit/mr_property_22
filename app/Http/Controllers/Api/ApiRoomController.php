@@ -24,6 +24,16 @@ class ApiRoomController extends BaseApiController
      */
     public function index(Request $request)
     {
+        $request->validate([
+            'min_rent' => ['nullable', 'numeric', 'min:0'],
+            'max_rent' => ['nullable', 'numeric', 'min:0'],
+            'min_area_sqft' => ['nullable', 'numeric', 'min:0'],
+            'max_area_sqft' => ['nullable', 'numeric', 'min:0'],
+            'listing_type' => ['nullable', 'in:owner,broker'],
+            'lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'lng' => ['nullable', 'numeric', 'between:-180,180'],
+        ]);
+
         $query = Room::query()
             ->with(['owner', 'propertyType', 'propertyCategory'])
             ->publicVisible();
@@ -335,6 +345,7 @@ class ApiRoomController extends BaseApiController
             } else {
                 $data['listed_by'] = 'owner';
             }
+            $data['listing_type'] = $isBroker ? 'broker' : 'owner';
 
             if ($request->hasFile('photos')) {
                 $photos = [];
@@ -596,6 +607,7 @@ class ApiRoomController extends BaseApiController
             }
 
             $data = $this->mapRoomOptionData($data);
+            $data['listing_type'] = Auth::user()->role === 'broker' ? 'broker' : 'owner';
             $data['listing_status'] = 'pending';
             $room->update($data);
             DB::commit();

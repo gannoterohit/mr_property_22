@@ -107,7 +107,7 @@ class ImageOptimizer
     public static function optimize(UploadedFile $file, string $preset = 'default', string $disk = 'public'): string
     {
         if (!self::hasImageProcessingSupport()) {
-            return $file->store($preset, $disk);
+            throw new \RuntimeException('Image processing support is unavailable.');
         }
 
         $config = self::$presets[$preset] ?? self::$presets['default'];
@@ -128,7 +128,7 @@ class ImageOptimizer
         };
 
         if (!$image) {
-            return $file->store($preset, $disk);
+            throw new \RuntimeException('Uploaded image could not be decoded.');
         }
 
         $originalWidth = imagesx($image);
@@ -172,13 +172,7 @@ class ImageOptimizer
     public static function optimizeToPublicPath(UploadedFile $file, string $preset, string $publicDirectory, int $quality = 75, string $format = 'webp'): string
     {
         if (!self::hasImageProcessingSupport()) {
-            $filename = self::generateFilename($preset, pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION));
-            $destination = public_path($publicDirectory);
-            if (!is_dir($destination)) {
-                mkdir($destination, 0755, true);
-            }
-            $file->move($destination, $filename);
-            return $publicDirectory . '/' . $filename;
+            throw new \RuntimeException('Image processing support is unavailable.');
         }
 
         $mimeType = $file->getMimeType();
@@ -192,13 +186,7 @@ class ImageOptimizer
         };
 
         if (!$image) {
-            $filename = self::generateFilename($preset, pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION));
-            $destination = public_path($publicDirectory);
-            if (!is_dir($destination)) {
-                mkdir($destination, 0755, true);
-            }
-            $file->move($destination, $filename);
-            return $publicDirectory . '/' . $filename;
+            throw new \RuntimeException('Uploaded image could not be decoded.');
         }
 
         $originalWidth = imagesx($image);

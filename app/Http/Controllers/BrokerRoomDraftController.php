@@ -31,6 +31,10 @@ class BrokerRoomDraftController extends Controller
             'step'      => ['required', 'integer', 'min:1', 'max:6'],
             'data'      => ['required', 'array'],
             'title'     => ['nullable', 'string', 'max:255'],
+            'photos'    => ['nullable', 'array', 'max:5'],
+            'photos.*'  => ['string', 'not_regex:/\.\./', 'regex:/^room_photo\/[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/'],
+            'video_path' => ['nullable', 'string', 'not_regex:/\.\./', 'regex:/^rooms\/videos\/[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/'],
+            'video_url' => ['nullable', 'url', 'max:255'],
         ]);
 
         if ($validator->fails()) {

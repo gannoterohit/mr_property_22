@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Room;
+            $data['listing_type'] = Auth::user()->role === 'broker' ? 'broker' : 'owner';
 use App\Models\Payment;
 use App\Models\Enquiry;
 use App\Models\RoomOption;
@@ -16,10 +17,20 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class RoomController extends Controller {
     public function index(Request $request)
     {
+        $request->validate([
+            'min_rent' => ['nullable', 'numeric', 'min:0'],
+            'max_rent' => ['nullable', 'numeric', 'min:0'],
+            'min_area_sqft' => ['nullable', 'numeric', 'min:0'],
+            'max_area_sqft' => ['nullable', 'numeric', 'min:0'],
+            'listing_type' => ['nullable', 'in:owner,broker'],
+        ]);
+
         $query = Room::query();
     
         // Check if owner wants to see their OWN rooms (management view)
@@ -231,25 +242,50 @@ class RoomController extends Controller {
         }
     }
     
-    $propertyTypeCounts = Room::publicVisible()
+    $filterCacheKey = 'rooms.filter-stats:' . md5((string) ($cityContext['activeCityName'] ?? ''));
+    $filterStats = Cache::remember($filterCacheKey, now()->addMinutes(5), function () use ($cityContext) {
+        $cityFilter = fn ($q) => $q->when($cityContext['activeCityName'], fn ($query) => $query->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'));
+
+        return [
+            'property_type_counts' => $cityFilter(Room::publicVisible())
         ->select('property_type_id', DB::raw('count(*) as total'))
-        ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
         ->whereNotNull('property_type_id')
         ->groupBy('property_type_id')
         ->pluck('total', 'property_type_id')
         ->map(fn ($total) => (int) $total)
-        ->toArray();
+        ->toArray(),
+            'property_category_counts' => $cityFilter(Room::publicVisible())
+                ->select('property_category_id', DB::raw('count(*) as total'))
+                ->whereNotNull('property_category_id')
+                ->groupBy('property_category_id')
+                ->pluck('total', 'property_category_id')
+                ->map(fn ($total) => (int) $total)
+                ->toArray(),
+            'rent_bounds' => $cityFilter(Room::publicVisible())
+                ->selectRaw('MIN(rent) as min_rent, MAX(rent) as max_rent')
+                ->first(),
+            'tenant_type_counts' => $cityFilter(Room::publicVisible())
+                ->select('tenant_option_id', DB::raw('count(*) as total'))
+                ->whereNotNull('tenant_option_id')
+                ->groupBy('tenant_option_id')
+                ->pluck('total', 'tenant_option_id')
+                ->map(fn ($total) => (int) $total)
+                ->toArray(),
+            'furnishing_counts' => $cityFilter(Room::publicVisible())
+                ->select('furnishing_option_id', DB::raw('count(*) as total'))
+                ->whereNotNull('furnishing_option_id')
+                ->groupBy('furnishing_option_id')
+                ->pluck('total', 'furnishing_option_id')
+                ->map(fn ($total) => (int) $total)
+                ->toArray(),
+        ];
+    });
+
+    $propertyTypeCounts = $filterStats['property_type_counts'];
 
     $propertyTypes = PropertyType::cachedActive();
 
-    $propertyCategoryCounts = Room::publicVisible()
-        ->select('property_category_id', DB::raw('count(*) as total'))
-        ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
-        ->whereNotNull('property_category_id')
-        ->groupBy('property_category_id')
-        ->pluck('total', 'property_category_id')
-        ->map(fn ($total) => (int) $total)
-        ->toArray();
+    $propertyCategoryCounts = $filterStats['property_category_counts'];
 
     $propertyCategories = PropertyCategory::with('propertyType:id,name')
         ->publicSelectable()
@@ -258,30 +294,13 @@ class RoomController extends Controller {
         ->get(['id', 'property_type_id', 'name']);
 
     // Dynamic rent bounds from actual DB data
-    $rentBounds = Room::publicVisible()
-        ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
-        ->selectRaw('MIN(rent) as min_rent, MAX(rent) as max_rent')
-        ->first();
+    $rentBounds = $filterStats['rent_bounds'];
 
     // Tenant type counts (girls/boys/family/any)
-    $tenantTypeCounts = Room::publicVisible()
-        ->select('tenant_option_id', DB::raw('count(*) as total'))
-        ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
-        ->whereNotNull('tenant_option_id')
-        ->groupBy('tenant_option_id')
-        ->pluck('total', 'tenant_option_id')
-        ->map(fn ($total) => (int) $total)
-        ->toArray();
+    $tenantTypeCounts = $filterStats['tenant_type_counts'];
 
     // Furnishing counts from DB
-    $furnishingCounts = Room::publicVisible()
-        ->select('furnishing_option_id', DB::raw('count(*) as total'))
-        ->when($cityContext['activeCityName'], fn ($q) => $q->where('city', 'like', '%' . $cityContext['activeCityName'] . '%'))
-        ->whereNotNull('furnishing_option_id')
-        ->groupBy('furnishing_option_id')
-        ->pluck('total', 'furnishing_option_id')
-        ->map(fn ($total) => (int) $total)
-        ->toArray();
+    $furnishingCounts = $filterStats['furnishing_counts'];
 
     return view('rooms.index', compact(
         'rooms', 'popularCities', 'propertyTypes', 'propertyTypeCounts',
@@ -352,6 +371,7 @@ class RoomController extends Controller {
                 $data['expires_at'] = now()->addDays($expiryDays > 0 ? $expiryDays : 30);
             } else {
                 $data['listed_by'] = 'owner';
+                $data['listing_type'] = 'owner';
             }
 
             $data['status'] = 'pending';

@@ -106,7 +106,7 @@ class HtmlSanitizer
         }
 
         foreach (['href', 'src'] as $attribute) {
-            if ($element->hasAttribute($attribute) && ! $this->safeUrl($element->getAttribute($attribute))) {
+            if ($element->hasAttribute($attribute) && ! self::safeUrl($element->getAttribute($attribute))) {
                 $element->removeAttribute($attribute);
             }
         }
