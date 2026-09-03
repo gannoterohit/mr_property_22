@@ -70,7 +70,7 @@
                                 <td class="p-4"><div class="flex justify-end gap-2"><x-admin.action-icon variant="edit" :href="route('admin.how-it-works.items.edit', $item)" /><form method="POST" action="{{ route('admin.how-it-works.items.destroy', $item) }}" class="admin-confirm" data-confirm-title="Delete {{ $item->title }}?" data-confirm-text="This item will be permanently removed." data-confirm-button="Yes, delete item">@csrf @method('DELETE')<x-admin.action-icon variant="delete" type="submit" /></form></div></td>
                             </tr>
                         @empty
-                            <tr><td colspan="5" class="p-10 text-center text-sm text-slate-500">No items yet.</td></tr>
+                            <tr><td colspan="5" class="p-14 text-center"><i class="fas fa-route text-3xl admin-theme-text"></i><p class="mt-3 text-sm font-extrabold text-slate-800">No steps yet</p><p class="mt-1 text-xs text-slate-500">Add the first step to explain your platform process.</p><a href="{{ route('admin.how-it-works.items.create', ['group' => $groupKey]) }}" class="mt-4 inline-flex items-center gap-2 rounded-xl admin-theme-bg px-4 py-2.5 text-xs font-bold text-white"><i class="fas fa-plus"></i>Add step</a></td></tr>
                         @endforelse
                     </tbody>
                 </table>

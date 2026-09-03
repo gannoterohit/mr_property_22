@@ -83,7 +83,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="p-12 text-center text-sm text-slate-500">No CMS pages found.</td></tr>
+                        <tr><td colspan="6" class="p-14 text-center"><i class="fas fa-file-circle-plus text-3xl admin-theme-text"></i><p class="mt-3 text-sm font-extrabold text-slate-800">No CMS pages yet</p><p class="mt-1 text-xs text-slate-500">Create the first page to publish content on your website.</p><a href="{{ route('admin.cms-pages.create') }}" class="mt-4 inline-flex items-center gap-2 rounded-xl admin-theme-bg px-4 py-2.5 text-xs font-bold text-white"><i class="fas fa-plus"></i>Create page</a></td></tr>
                     @endforelse
                 </tbody>
             </table>

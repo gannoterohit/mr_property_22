@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 use App\Models\Room;
-            $data['listing_type'] = Auth::user()->role === 'broker' ? 'broker' : 'owner';
 use App\Models\Payment;
 use App\Models\Enquiry;
 use App\Models\RoomOption;

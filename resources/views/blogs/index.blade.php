@@ -8,6 +8,7 @@
 @endpush
 
 @section('content')
+@if($blogs->count() > 0)
 <!-- App-like Blog Header -->
 <div class="bg-white border-b border-gray-100 sticky top-0 z-30 lg:relative">
     <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -26,6 +27,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <div class="bg-gray-50 min-h-screen py-8">
     <div class="container mx-auto px-4">
@@ -173,12 +175,18 @@
             </div>
 
         @else
-            <div class="text-center py-16">
-                <div class="inline-flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full text-gray-400 mb-3" aria-hidden="true">
-                    <i class="fas fa-archive"></i>
+            <section class="blog-empty-state" aria-labelledby="blog-empty-title">
+                <div class="blog-empty-icon" aria-hidden="true">
+                    <i class="fas fa-book-open"></i>
                 </div>
-                <h3 class="text-sm font-medium text-gray-900">No content yet</h3>
-            </div>
+                <span class="blog-empty-kicker">The Rental Journal</span>
+                <h2 id="blog-empty-title">Fresh stories are on their way</h2>
+                <p>Helpful rental guides, city notes and practical tips will appear here soon.</p>
+                <a href="{{ route('home') }}" class="blog-empty-action">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    Back to home
+                </a>
+            </section>
         @endif
         
     </div>

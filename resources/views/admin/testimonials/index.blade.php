@@ -63,7 +63,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="p-12 text-center text-sm text-slate-500">No testimonials found.</td></tr>
+                        <tr><td colspan="6" class="p-14 text-center"><i class="fas fa-star text-3xl text-amber-400"></i><p class="mt-3 text-sm font-extrabold text-slate-800">No testimonials yet</p><p class="mt-1 text-xs text-slate-500">Add a customer review to show social proof on the homepage.</p><a href="{{ route('admin.testimonials.create') }}" class="mt-4 inline-flex items-center gap-2 rounded-xl admin-theme-bg px-4 py-2.5 text-xs font-bold text-white"><i class="fas fa-plus"></i>Add testimonial</a></td></tr>
                     @endforelse
                 </tbody>
             </table>
