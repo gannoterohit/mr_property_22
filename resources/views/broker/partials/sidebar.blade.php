@@ -98,11 +98,11 @@
     {{-- Bottom: Agent info + Logout --}}
     <div class="p-3 border-t border-slate-100">
         <div class="flex items-center gap-2.5 px-2 py-2 mb-2 rounded-xl hover:bg-slate-50 transition">
-            <img src="{{ $broker?->avatar ? asset('storage/'.$broker->avatar) : asset('assets/images/default-avatar.svg') }}"
+            @if($broker?->avatar)<img src="{{ asset('storage/'.$broker->avatar) }}"
                  width="200" height="200"
-                 onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'"
                  alt="Agent profile"
                  class="w-8 h-8 rounded-full border border-slate-200 object-cover flex-shrink-0">
+            @else <div class="w-8 h-8 rounded-full border border-slate-200 bg-slate-100 text-slate-600 flex items-center justify-center"><i class="fas fa-user-tie" aria-hidden="true"></i><span class="sr-only">Agent profile</span></div>@endif
             <span class="min-w-0">
                 <strong class="block text-xs text-slate-800 truncate leading-tight">{{ $broker?->name }}</strong>
                 <small class="block text-[10px] text-slate-400 font-medium">Agent</small>

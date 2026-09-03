@@ -81,7 +81,7 @@
 
     <div class="p-3 border-t border-slate-100">
         <div class="flex items-center gap-3 px-3 py-2 mb-1">
-            <img src="{{ $customer?->avatar ? asset('storage/'.$customer->avatar) : asset('assets/images/default-avatar.svg') }}" width="200" height="200" onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'" alt="Customer profile" class="w-8 h-8 rounded-full border border-slate-200 owner-theme-soft object-cover">
+            @if($customer?->avatar)<img src="{{ asset('storage/'.$customer->avatar) }}" width="200" height="200" alt="Customer profile" class="w-8 h-8 rounded-full border border-slate-200 owner-theme-soft object-cover">@else<div class="w-8 h-8 rounded-full border border-slate-200 owner-theme-soft flex items-center justify-center"><i class="fas fa-user" aria-hidden="true"></i><span class="sr-only">Customer profile</span></div>@endif
             <span class="min-w-0">
                 <strong class="block text-xs text-slate-800 truncate">{{ $customer?->name }}</strong>
                 <small class="block text-[10px] text-slate-400 truncate">Customer</small>

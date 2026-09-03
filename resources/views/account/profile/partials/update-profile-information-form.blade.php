@@ -11,7 +11,7 @@
         <div class="flex items-center gap-5 p-4 bg-slate-50 rounded-2xl border border-slate-200/70">
             <div class="relative group shrink-0">
                 <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white shadow-md bg-white flex items-center justify-center">
-                    <img id="avatar_preview" src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('assets/images/default-avatar.svg') }}" onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'" alt="{{ $user->name }} profile" class="w-full h-full object-cover">
+                    @if($user->avatar)<img id="avatar_preview" src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }} profile" class="w-full h-full object-cover">@else<div id="avatar_preview" class="w-full h-full flex items-center justify-center bg-indigo-50 text-indigo-700"><i class="fas fa-user" aria-hidden="true"></i><span class="sr-only">{{ $user->name }} profile</span></div>@endif
                 </div>
                 <label for="avatar" class="absolute -bottom-1 -right-1 w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl flex items-center justify-center cursor-pointer shadow-md transition-all group-hover:scale-105 border-2 border-white">
                     <i class="fas fa-camera text-xs"></i>
@@ -91,7 +91,7 @@ function previewImage(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            preview.src = e.target.result;
+            preview.outerHTML = `<img id="avatar_preview" src="${e.target.result}" alt="Profile preview" class="w-full h-full object-cover">`;
         }
         reader.readAsDataURL(input.files[0]);
     }

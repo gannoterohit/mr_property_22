@@ -60,7 +60,7 @@
             <section class="profile-card">
                 <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Account Overview</p>
                 <div class="mt-4 flex items-center gap-4">
-                    <img src="{{ $user->avatar ? asset('storage/'.$user->avatar) : asset('assets/images/default-avatar.svg') }}" width="200" height="200" onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'" alt="{{ $user->name }} profile" class="h-14 w-14 rounded-2xl object-cover ring-2 ring-indigo-100 bg-indigo-50 shadow-sm shrink-0">
+                    @if($user->avatar)<img src="{{ asset('storage/'.$user->avatar) }}" width="200" height="200" alt="{{ $user->name }} profile" class="h-14 w-14 rounded-2xl object-cover ring-2 ring-indigo-100 bg-indigo-50 shadow-sm shrink-0">@else<div class="h-14 w-14 rounded-2xl ring-2 ring-indigo-100 bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0"><i class="fas fa-user" aria-hidden="true"></i><span class="sr-only">{{ $user->name }} profile</span></div>@endif
                     <div class="min-w-0">
                         <h2 class="truncate font-extrabold text-slate-900 text-base">{{ $user->name }}</h2>
                         <p class="truncate text-xs text-slate-500">{{ $user->email }}</p>

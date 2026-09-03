@@ -157,10 +157,7 @@
                             <button x-ref="trigger"
                                     @click="toggle()"
                                     class="theme-nav-link h-10 flex items-center gap-2 text-slate-700 transition-colors duration-200 bg-slate-50 hover:bg-slate-100 px-3 rounded-xl border border-slate-200/60 whitespace-nowrap">
-                                <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('assets/images/default-avatar.svg') }}"
-                                     onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'"
-                                     alt="{{ Auth::user()->name }}"
-                                     class="w-7 h-7 rounded-full object-cover border border-slate-200">
+                                  @if(Auth::user()->avatar)<img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="w-7 h-7 rounded-full object-cover border border-slate-200">@else<div class="w-7 h-7 rounded-full flex items-center justify-center bg-slate-100 text-slate-600 border border-slate-200"><i class="fas fa-user" aria-hidden="true"></i><span class="sr-only">{{ Auth::user()->name }}</span></div>@endif
                                 <span class="hidden xl:inline text-xs font-semibold">{{ Str::limit(Auth::user()->name, 12) }}</span>
                                 <i class="fas fa-chevron-down text-[9px] text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
                             </button>

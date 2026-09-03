@@ -94,10 +94,7 @@
                                     </div>
 
                                     <div class="room-owner-row">
-                                        <img src="{{ $room->user?->avatar ? asset('storage/'.$room->user->avatar) : asset('assets/images/default-avatar.svg') }}"
-                                             alt="{{ $room->user?->name ?? 'Property Lister' }}"
-                                             loading="lazy"
-                                             onerror="this.onerror=null;this.src='{{ asset('assets/images/default-avatar.svg') }}'">
+                                        @if($room->user?->avatar)<img src="{{ asset('storage/'.$room->user->avatar) }}" alt="{{ $room->user?->name ?? 'Property Lister' }}" loading="lazy">@else<div class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center"><i class="fas fa-user" aria-hidden="true"></i><span class="sr-only">Property lister</span></div>@endif
                                         @if($room->listing_type === 'broker')
                                             <span>Agent: <strong>{{ $room->user?->agency_name ?: ($room->user?->name ?? 'Verified Agent') }}</strong></span>
                                         @else
