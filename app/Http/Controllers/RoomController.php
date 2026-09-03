@@ -291,11 +291,17 @@ class RoomController extends Controller {
     }
     
 
-    public function create() {
-        if (Auth::check() && Auth::user()->role === 'broker') {
-            return view('broker.rooms.create');
+    public function create(Request $request) {
+        $propertyTypes = \App\Models\PropertyType::orderBy('name')->get(['id', 'name']);
+        $amenities = \App\Models\RoomOption::optionsFor('amenity')->pluck('label')->all();
+        if (empty($amenities)) {
+            $amenities = ['WiFi', 'Parking', 'AC', 'Power Backup', 'Lift', 'Security', 'CCTV'];
         }
-        return view('owner.rooms.create');
+
+        $storeRoute = route('owner.rooms.store');
+        $draftsIndex = route('owner.rooms.drafts');
+
+        return view('owner.rooms.create-multistep', compact('propertyTypes', 'amenities', 'storeRoute', 'draftsIndex'));
     }
 
     public function store(Request $req) {
@@ -382,6 +388,20 @@ class RoomController extends Controller {
             $room = Room::create($data);
             \Illuminate\Support\Facades\Cache::forget('public_cities_list');
             \Illuminate\Support\Facades\Cache::forget('popular_cities_web');
+
+            // Clean up the source draft (if any) — published so don't keep it
+            if ($req->filled('draft_id')) {
+                try {
+                    $draft = \App\Models\RoomDraft::where('id', $req->input('draft_id'))
+                        ->where('user_id', Auth::id())
+                        ->first();
+                    if ($draft) {
+                        $draft->update(['is_published' => true]);
+                    }
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
 
             try {
                 \App\Models\AdminNotification::send(

@@ -9,6 +9,7 @@
         'listings' => ['label' => 'My Listings', 'icon' => 'fa-building', 'items' => [
             ['route' => 'agent.properties', 'match' => 'agent.properties', 'icon' => 'fa-list', 'label' => 'All Properties'],
             ['route' => 'agent.rooms.create', 'match' => 'agent.rooms.create', 'icon' => 'fa-plus-circle', 'label' => 'Add New Property'],
+            ['route' => 'agent.rooms.drafts', 'match' => 'agent.rooms.drafts*', 'icon' => 'fa-folder-open', 'label' => 'My Drafts'],
         ]],
         'leads' => ['label' => 'Leads', 'icon' => 'fa-address-card', 'items' => [
             ['route' => 'agent.enquiries', 'match' => 'agent.enquiries', 'icon' => 'fa-inbox', 'label' => 'All Enquiries'],

@@ -9,6 +9,7 @@
         'properties' => ['label' => 'My Properties', 'icon' => 'fa-building', 'items' => [
             ['route' => 'owner.rooms', 'match' => 'owner.rooms', 'icon' => 'fa-list', 'label' => 'All Properties'],
             ['route' => 'owner.rooms.create', 'match' => 'owner.rooms.create', 'icon' => 'fa-plus', 'label' => 'Add New Property'],
+            ['route' => 'owner.rooms.drafts', 'match' => 'owner.rooms.drafts*', 'icon' => 'fa-folder-open', 'label' => 'My Drafts'],
         ]],
         'plans' => ['label' => 'Plans', 'icon' => 'fa-tags', 'items' => [
             ['route' => 'owner.plans', 'match' => 'owner.plans', 'icon' => 'fa-layer-group', 'label' => 'Listing Plans'],

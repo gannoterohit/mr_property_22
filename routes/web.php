@@ -25,6 +25,9 @@ use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RazorpayController;
+use App\Http\Controllers\BrokerRoomController;
+use App\Http\Controllers\BrokerRoomDraftController;
+use App\Http\Controllers\OwnerRoomDraftController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriptionController;
@@ -88,7 +91,14 @@ Route::middleware(['auth', 'role:broker', 'broker.active'])->prefix('agent')->na
     Route::get('/pending', [BrokerDashboardController::class, 'pending'])->name('pending');
     Route::get('/properties', [BrokerDashboardController::class, 'properties'])->name('properties');
     Route::get('/enquiries', [BrokerDashboardController::class, 'enquiries'])->name('enquiries');
-    Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
+
+    Route::get('/rooms/drafts', [BrokerRoomDraftController::class, 'index'])->name('rooms.drafts');
+    Route::post('/rooms/drafts/save', [BrokerRoomDraftController::class, 'save'])->name('rooms.drafts.save');
+    Route::get('/rooms/drafts/latest', [BrokerRoomDraftController::class, 'latest'])->name('rooms.drafts.latest');
+    Route::get('/rooms/drafts/{id}', [BrokerRoomDraftController::class, 'load'])->name('rooms.drafts.load');
+    Route::delete('/rooms/drafts/{id}', [BrokerRoomDraftController::class, 'destroy'])->name('rooms.drafts.destroy');
+
+    Route::get('/rooms/create', [BrokerRoomController::class, 'create'])->name('rooms.create');
     Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
     Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
     Route::get('/rooms/{room}/edit', [RoomController::class, 'edit'])->name('rooms.edit');
@@ -370,6 +380,13 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
 Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->group(function () {
     Route::get('/dashboard', [OwnerController::class, 'dashboard'])->name('dashboard');
     Route::get('/rooms', [OwnerController::class, 'rooms'])->name('rooms');
+
+    Route::get('/rooms/drafts', [OwnerRoomDraftController::class, 'index'])->name('rooms.drafts');
+    Route::post('/rooms/drafts/save', [OwnerRoomDraftController::class, 'save'])->name('rooms.drafts.save');
+    Route::get('/rooms/drafts/latest', [OwnerRoomDraftController::class, 'latest'])->name('rooms.drafts.latest');
+    Route::get('/rooms/drafts/{id}', [OwnerRoomDraftController::class, 'load'])->name('rooms.drafts.load');
+    Route::delete('/rooms/drafts/{id}', [OwnerRoomDraftController::class, 'destroy'])->name('rooms.drafts.destroy');
+
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
     Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
     Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
