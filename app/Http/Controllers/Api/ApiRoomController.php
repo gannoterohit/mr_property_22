@@ -437,7 +437,6 @@ class ApiRoomController extends BaseApiController
             // Check Owner Subscription
             $activeSub = \App\Models\Subscription::where('user_id', Auth::id())
                 ->where('status', 'active')
-                ->whereDate('end_date', '>=', today())
                 ->whereHas('plan', fn ($q) => $q->where('type', 'owner')->where('is_active', true))
                 ->lockForUpdate()
                 ->with('plan')
@@ -737,7 +736,6 @@ class ApiRoomController extends BaseApiController
                 // 1. Check Owner Subscription
                 $activeSub = \App\Models\Subscription::where('user_id', Auth::id())
                     ->where('status', 'active')
-                    ->whereDate('end_date', '>=', today())
                     ->whereHas('plan', fn ($q) => $q->where('type', 'owner')->where('is_active', true))
                     ->with('plan')
                     ->first();

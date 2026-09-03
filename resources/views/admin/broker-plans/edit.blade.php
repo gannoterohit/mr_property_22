@@ -42,15 +42,10 @@
                 <input type="number" name="price" value="{{ old('price', $brokerPlan->price) }}" step="0.01" class="w-full rounded-lg border-slate-200 py-2.5 px-3 text-sm" required>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-bold text-slate-700 mb-1">Max Listings</label>
-                <input type="number" name="max_listings" value="{{ old('max_listings', $brokerPlan->max_listings) }}" class="w-full rounded-lg border-slate-200 py-2.5 px-3 text-sm">
-            </div>
-            <div>
-                <label class="block text-sm font-bold text-slate-700 mb-1">Duration (Days)</label>
-                <input type="number" name="duration_days" value="{{ old('duration_days', $brokerPlan->duration_days) }}" class="w-full rounded-lg border-slate-200 py-2.5 px-3 text-sm">
-            </div>
+        <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1">Max Listings <span class="text-slate-400 text-xs font-medium">(-1 for unlimited)</span></label>
+            <input type="number" name="max_listings" value="{{ old('max_listings', $brokerPlan->max_listings) }}" min="-1" class="w-full rounded-lg border-slate-200 py-2.5 px-3 text-sm" placeholder="-1 for Unlimited">
+            <p class="mt-1 text-xs text-slate-500">How many properties broker can post with this plan.</p>
         </div>
         <div class="flex items-center gap-2">
             <input type="checkbox" name="is_featured_included" id="is_featured" value="1" {{ old('is_featured_included', $brokerPlan->is_featured_included) ? 'checked' : '' }}>

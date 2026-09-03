@@ -104,7 +104,6 @@ class UnlockController extends Controller
             // Check subscription first - count based, not date based
             $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())
                 ->where('status', 'active')
-                ->whereDate('end_date', '>=', today())
                 ->whereHas('plan', fn ($query) => $query->where('type', 'user')->where('is_active', true))
                 ->lockForUpdate()
                 ->with('plan')

@@ -499,7 +499,6 @@ class RoomController extends Controller {
             // Owner subscription check or broker payment required
             $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())
                 ->where('status', 'active')
-                ->whereDate('end_date', '>=', today())
                 ->whereHas('plan', fn ($query) => $query->where('type', 'owner')->where('is_active', true))
                 ->lockForUpdate()
                 ->with('plan')
@@ -701,7 +700,6 @@ class RoomController extends Controller {
                 // Check subscription first - count based, not date based
                 $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())
                     ->where('status', 'active')
-                    ->whereDate('end_date', '>=', today())
                     ->whereHas('plan', fn ($query) => $query->where('type', 'user')->where('is_active', true))
                     ->with('plan')
                     ->first();
@@ -1126,7 +1124,6 @@ class RoomController extends Controller {
                 // Check owner subscription for room listing - count based, not date based
                 $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())
                     ->where('status', 'active')
-                    ->whereDate('end_date', '>=', today())
                     ->whereHas('plan', fn ($query) => $query->where('type', 'owner')->where('is_active', true))
                     ->with('plan')
                     ->first();

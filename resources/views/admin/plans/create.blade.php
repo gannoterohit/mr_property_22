@@ -25,13 +25,21 @@
                 </div>
             </div>
 
-            @if($errors->any())
-                <div class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-                    {{ $errors->first() }}
-                </div>
-            @endif
+    @if($errors->any())
+        <div class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+            {{ $errors->first() }}
+        </div>
+    @endif
 
-            <div class="mt-5 grid gap-5 md:grid-cols-2">
+    <div class="rounded-xl border border-indigo-200 bg-indigo-50 p-4 flex items-start gap-3">
+        <i class="fas fa-lightbulb text-indigo-600 text-lg mt-0.5"></i>
+        <div class="text-sm text-indigo-900">
+            <p class="font-bold mb-1">Quota-Based Plans (No Time Limit)</p>
+            <p>Plans work purely on <b>quota basis</b>. User buys a plan with X contacts or X listings and can use them <b>anytime</b> until quota is exhausted. <b>No expiration date!</b></p>
+        </div>
+    </div>
+
+    <div class="mt-5 grid gap-5 md:grid-cols-2">
                 <div class="md:col-span-2">
                     <label for="name" class="block text-xs font-bold text-slate-700">Plan Name</label>
                     <div class="relative mt-2">
@@ -46,15 +54,6 @@
                         <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">&#8377;</span>
                         <input type="number" name="price" id="price" value="{{ old('price') }}" required min="0" step="0.01" class="admin-plan-field pl-9" placeholder="499">
                     </div>
-                </div>
-
-                <div>
-                    <label for="duration_days" class="block text-xs font-bold text-slate-700">Duration (Days)</label>
-                    <div class="relative mt-2">
-                        <i class="fas fa-calendar-alt pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
-                        <input type="number" name="duration_days" id="duration_days" value="{{ old('duration_days') }}" required min="1" class="admin-plan-field pl-9" placeholder="30">
-                    </div>
-                    <p class="mt-1 text-xs text-slate-500">Validity period in days.</p>
                 </div>
 
                 <div>

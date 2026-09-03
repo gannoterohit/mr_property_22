@@ -27,7 +27,6 @@ class ApiSubscriptionController extends BaseApiController
 
         $activeSubscription = \App\Models\Subscription::where('user_id', $user->id)
             ->where('status', 'active')
-            ->whereDate('end_date', '>=', today())
             ->whereHas('plan', fn ($q) => $q->where('type', $user->role))
             ->with('plan')
             ->first();
@@ -135,7 +134,7 @@ class ApiSubscriptionController extends BaseApiController
                     'user_id'    => $user->id,
                     'plan_id'    => $plan->id,
                     'start_date' => now(),
-                    'end_date'   => now()->addDays($plan->duration_days),
+                    'end_date'   => null,
                     'status'     => 'active',
                 ]);
 
@@ -170,7 +169,7 @@ class ApiSubscriptionController extends BaseApiController
                     'user_id'    => $user->id,
                     'plan_id'    => $plan->id,
                     'start_date' => now(),
-                    'end_date'   => now()->addDays($plan->duration_days),
+                    'end_date'   => null,
                     'status'     => 'active',
                 ]);
 
@@ -199,7 +198,7 @@ class ApiSubscriptionController extends BaseApiController
                 'user_id'    => $user->id,
                 'plan_id'    => $plan->id,
                 'start_date' => now(),
-                'end_date'   => now()->addDays($plan->duration_days),
+                'end_date'   => null,
                 'status'     => 'pending',
             ]);
 

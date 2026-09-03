@@ -31,7 +31,6 @@ class ApiOwnerController extends BaseApiController
 
         $activeSubscription = \App\Models\Subscription::where('user_id', $user->id)
             ->where('status', 'active')
-            ->whereDate('end_date', '>=', today())
             ->whereHas('plan', fn ($q) => $q->where('type', 'owner')->where('is_active', true))
             ->with('plan')
             ->first();

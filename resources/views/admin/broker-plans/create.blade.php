@@ -18,6 +18,14 @@
         </div>
     @endif
 
+    <div class="rounded-xl border border-indigo-200 bg-indigo-50 p-4 flex items-start gap-3">
+        <i class="fas fa-lightbulb text-indigo-600 text-lg mt-0.5"></i>
+        <div class="text-sm text-indigo-900">
+            <p class="font-bold mb-1">Quota-Based Plans (No Time Limit)</p>
+            <p>Brokers can post up to <b>Max Listings</b> anytime until quota is used. <b>No expiration date!</b></p>
+        </div>
+    </div>
+
     <form action="{{ route('admin.broker-plans.store') }}" method="POST" class="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
         @csrf
         <div>
@@ -42,15 +50,10 @@
                 <input type="number" name="price" value="{{ old('price') }}" step="0.01" class="w-full rounded-lg border-slate-200 py-2.5 px-3 text-sm" required>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-bold text-slate-700 mb-1">Max Listings</label>
-                <input type="number" name="max_listings" value="{{ old('max_listings') }}" class="w-full rounded-lg border-slate-200 py-2.5 px-3 text-sm">
-            </div>
-            <div>
-                <label class="block text-sm font-bold text-slate-700 mb-1">Duration (Days)</label>
-                <input type="number" name="duration_days" value="{{ old('duration_days') }}" class="w-full rounded-lg border-slate-200 py-2.5 px-3 text-sm">
-            </div>
+        <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1">Max Listings <span class="text-slate-400 text-xs font-medium">(-1 for unlimited)</span></label>
+            <input type="number" name="max_listings" value="{{ old('max_listings', 5) }}" min="-1" class="w-full rounded-lg border-slate-200 py-2.5 px-3 text-sm" placeholder="-1 for Unlimited">
+            <p class="mt-1 text-xs text-slate-500">How many properties broker can post with this plan.</p>
         </div>
         <div class="flex items-center gap-2">
             <input type="checkbox" name="is_featured_included" id="is_featured" value="1" {{ old('is_featured_included') ? 'checked' : '' }}>

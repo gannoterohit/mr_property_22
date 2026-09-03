@@ -38,8 +38,7 @@ class PlanController extends Controller
                 ->where(fn ($q) => $q->where('contacts_limit', '>', 0)->orWhere('contacts_limit', -1))
                 ->where('is_active', true)
                 ->get();
-            $activeSubscription = Auth::user()->subscriptions()->where('status', 'active')->whereDate('end_date', '>=', today())
-                ->whereHas('plan', fn ($q) => $q->where('type', 'user'))->with('plan')->latest()->first();
+            $activeSubscription = Auth::user()->subscriptions()->where('status', 'active')                ->whereHas('plan', fn ($q) => $q->where('type', 'user'))->with('plan')->latest()->first();
             return view('account.plans', ['plans' => $contactPlans, 'activeSubscription' => $activeSubscription, 'coupons' => $coupons]);
         }
         
@@ -49,8 +48,7 @@ class PlanController extends Controller
                 ->where(fn ($q) => $q->where('listing_limit', '>', 0)->orWhere('listing_limit', -1))
                 ->where('is_active', true)
                 ->get();
-            $activeSubscription = Auth::user()->subscriptions()->where('status', 'active')->whereDate('end_date', '>=', today())
-                ->whereHas('plan', fn ($q) => $q->where('type', 'owner'))->with('plan')->latest()->first();
+            $activeSubscription = Auth::user()->subscriptions()->where('status', 'active')                ->whereHas('plan', fn ($q) => $q->where('type', 'owner'))->with('plan')->latest()->first();
             return view('account.plans', ['plans' => $listingPlans, 'activeSubscription' => $activeSubscription, 'coupons' => $coupons]);
         }
 
@@ -77,7 +75,7 @@ class PlanController extends Controller
         $data = $request->validate([
             'name' => 'required',
             'price' => 'required|numeric|min:0',
-            'duration_days' => 'required|integer|min:1',
+            'duration_days' => 'nullable|integer|min:0',
             'listing_limit' => 'nullable|integer|min:-1',
             'contacts_limit' => 'nullable|integer|min:-1',
             'type' => 'required|in:owner,user,broker',
@@ -102,7 +100,7 @@ class PlanController extends Controller
         $data = $request->validate([
             'name' => 'required',
             'price' => 'required|numeric|min:0',
-            'duration_days' => 'required|integer|min:1',
+            'duration_days' => 'nullable|integer|min:0',
             'listing_limit' => 'nullable|integer|min:-1',
             'contacts_limit' => 'nullable|integer|min:-1',
             'type' => 'required|in:owner,user,broker',
@@ -130,3 +128,4 @@ class PlanController extends Controller
         return redirect()->route('admin.plans.index')->with('success', "Plan {$status} successfully!");
     }
 }
+

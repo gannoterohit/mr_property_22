@@ -50,14 +50,6 @@
                 </div>
 
                 <div>
-                    <label for="duration_days" class="block text-xs font-bold text-slate-700">Duration (Days)</label>
-                    <div class="relative mt-2">
-                        <i class="fas fa-calendar-alt pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
-                        <input type="number" name="duration_days" id="duration_days" value="{{ old('duration_days', $plan->duration_days) }}" required min="1" class="admin-plan-field pl-9">
-                    </div>
-                </div>
-
-                <div>
                     <label for="type" class="block text-xs font-bold text-slate-700">Plan Type</label>
                     <select name="type" id="type" onchange="toggleLimitFields()" class="admin-plan-field mt-2">
                         <option value="user" @selected(old('type', $plan->type) === 'user')>User (Contact Unlocks)</option>

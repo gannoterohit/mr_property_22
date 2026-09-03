@@ -88,8 +88,8 @@ class SubscriptionController extends Controller
                     'user_id'    => $user->id,
                     'plan_id'    => $plan->id,
                     'start_date' => Carbon::now(),
-                    'end_date'   => Carbon::now()->addDays($plan->duration_days),
-                    'status'     => 'active'
+                    'end_date'   => null,
+                    'status'     => 'active',
                 ]);
 
                 $payment = Payment::create([
@@ -130,8 +130,8 @@ class SubscriptionController extends Controller
                     'user_id'    => $user->id,
                     'plan_id'    => $plan->id,
                     'start_date' => Carbon::now(),
-                    'end_date'   => Carbon::now()->addDays($plan->duration_days),
-                    'status'     => 'active'
+                    'end_date'   => null,
+                    'status'     => 'active',
                 ]);
 
                 // Create payment record for wallet usage
@@ -165,7 +165,7 @@ class SubscriptionController extends Controller
                 'user_id'    => Auth::id(),
                 'plan_id'    => $plan->id,
                 'start_date' => Carbon::now(),
-                'end_date'   => Carbon::now()->addDays($plan->duration_days),
+                'end_date'   => null,
                 'status'     => 'pending'
             ]);
 
