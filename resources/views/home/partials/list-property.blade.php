@@ -20,14 +20,10 @@
                 </a>
             </div>
             <div class="owner-cta-image">
-<<<<<<< HEAD
                 @php $ownerCtaImage = \App\Models\Setting::mediaUrl(\App\Models\Setting::get('owner_cta_image')); @endphp
                 @if($ownerCtaImage)
                     <img src="{{ $ownerCtaImage }}" alt="Property" loading="lazy" onerror="this.style.display='none'">
                 @endif
-=======
-                <img src="{{ \App\Models\Setting::get('owner_cta_image') ? asset('storage/' . \App\Models\Setting::get('owner_cta_image')) : asset('assets/images/proparty.png') }}" alt="Property" loading="lazy" onerror="this.style.display='none'">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                 <i class="fas fa-building" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;color:rgba(255,255,255,.25);z-index:1;pointer-events:none;"></i>
             </div>
         </div>

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class City extends Model
 {
@@ -83,11 +84,7 @@ class City extends Model
     public static function resolveHeroImage(?string $cityName): string
     {
         $images = static::resolveHeroImages($cityName);
-<<<<<<< HEAD
         return $images[0] ?? '';
-=======
-        return $images[0] ?? asset('assets/images/hero-bg.webp');
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
     }
 
     public static function resolveHeroImages(?string $cityName): array
@@ -122,24 +119,20 @@ class City extends Model
             }
         }
 
-<<<<<<< HEAD
-=======
         if (empty($images)) {
-            $images[] = asset('assets/images/hero-bg.webp');
+            $defaultHero = \App\Models\Setting::get('default_hero_image');
+            if ($defaultHero && Storage::disk('public')->exists(ltrim($defaultHero, '/'))) {
+                $images[] = asset('storage/' . ltrim($defaultHero, '/'));
+            }
         }
 
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
         return array_values(array_unique($images));
     }
 
     public static function resolveImageUrl(?string $value): string
     {
         if (empty($value)) {
-<<<<<<< HEAD
             return '';
-=======
-            return asset('assets/images/hero-bg.webp');
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
         }
 
         if (filter_var($value, FILTER_VALIDATE_URL)) {
@@ -176,10 +169,6 @@ class City extends Model
             return asset('storage/' . ltrim($normalized, '/'));
         }
 
-<<<<<<< HEAD
         return '';
-=======
-        return asset('assets/images/hero-bg.webp');
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
     }
 }

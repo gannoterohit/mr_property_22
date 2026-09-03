@@ -2,11 +2,7 @@
     $siteName = \App\Models\Setting::get('website_name', 'RoomRental');
     $defaultDescription = \App\Models\Setting::get('seo_meta_description', 'Find your perfect room in your city. Browse verified room listings.');
     $defaultKeywords = \App\Models\Setting::get('seo_meta_keywords', 'room rental, apartment, house, property');
-<<<<<<< HEAD
     $defaultImage = \App\Models\Setting::mediaUrl(\App\Models\Setting::get('website_logo'));
-=======
-    $defaultImage = asset('storage/' . (\App\Models\Setting::get('website_logo') ?? 'default-room.jpg'));
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
     $siteUrl = trim((string) \App\Models\Setting::get('website_url', ''));
     $siteBase = $siteUrl !== '' ? rtrim($siteUrl, '/') : null;
     $toPublicUrl = function ($url) use ($siteBase) {

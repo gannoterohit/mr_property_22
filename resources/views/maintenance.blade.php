@@ -66,11 +66,7 @@
     <div class="grid"></div><div class="glow one"></div><div class="glow two"></div>
     <section class="shell">
         <header class="top">
-<<<<<<< HEAD
             <a class="brand" href="{{ url('/') }}"><span class="brand-mark">@if($logo)<img src="{{ \App\Models\Setting::mediaUrl($logo) }}" alt="{{ $siteName }}">@else<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></svg>@endif</span><span>{{ $siteName }}</span></a>
-=======
-            <a class="brand" href="{{ url('/') }}"><span class="brand-mark">@if($logo)<img src="{{ asset('storage/'.$logo) }}" alt="{{ $siteName }}">@else<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></svg>@endif</span><span>{{ $siteName }}</span></a>
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
             <span class="secure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>System status notice</span>
         </header>
         <div class="content">

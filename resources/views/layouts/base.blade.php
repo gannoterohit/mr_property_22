@@ -18,20 +18,11 @@
     <!-- Favicon -->
     @php
         $favicon = \App\Models\Setting::get('website_favicon');
-<<<<<<< HEAD
         $faviconUrl = \App\Models\Setting::mediaUrl($favicon);
     @endphp
     @if($faviconUrl)
         <link rel="icon" type="image/x-icon" href="{{ $faviconUrl }}">
         <link rel="shortcut icon" href="{{ $faviconUrl }}">
-=======
-    @endphp
-    @if($favicon)
-        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $favicon) }}">
-        <link rel="shortcut icon" href="{{ asset('storage/' . $favicon) }}">
-    @else
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
     @endif
     
     @yield('layout-seo')

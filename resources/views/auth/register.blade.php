@@ -18,11 +18,7 @@
             <a href="{{ route('home') }}" class="auth-brand">
                 @php $authLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo'); @endphp
                 @if($authLogo)
-<<<<<<< HEAD
                     <img src="{{ \App\Models\Setting::mediaUrl($authLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'ApnaNest') }}" class="auth-brand-img">
-=======
-                    <img src="{{ asset('storage/' . $authLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'ApnaNest') }}" class="auth-brand-img">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                 @else
                     Apna<span>Nest</span>
                 @endif

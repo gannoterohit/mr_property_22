@@ -101,6 +101,7 @@ class BusinessSettingsController extends Controller
             'website_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'website_favicon' => ['nullable', 'file', 'mimes:ico,png', 'max:1024'],
             'owner_cta_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'default_hero_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
             // SMS Gateway
             'otp_delivery'  => ['nullable', 'in:email,phone,both'],
             'sms_gateway'   => ['nullable', 'in:log,msg91,twilio,fast2sms'],
@@ -162,7 +163,7 @@ class BusinessSettingsController extends Controller
         $oldFiles = [];
 
         try {
-            foreach (['navbar_logo', 'footer_logo', 'website_logo', 'website_favicon', 'owner_cta_image', 'promo_modal_image'] as $fileKey) {
+            foreach (['navbar_logo', 'footer_logo', 'website_logo', 'website_favicon', 'owner_cta_image', 'promo_modal_image', 'default_hero_image'] as $fileKey) {
                 if (! $request->hasFile($fileKey)) {
                     continue;
                 }
@@ -298,6 +299,7 @@ class BusinessSettingsController extends Controller
             'website_logo' => 'logo',
             'website_favicon' => 'favicon',
             'promo_modal_image' => 'offer_image',
+            'default_hero_image' => 'city_hero',
             default => 'logo',
         };
 

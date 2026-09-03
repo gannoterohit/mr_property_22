@@ -7,11 +7,7 @@
     $siteName = \App\Models\Setting::get('website_name', 'ApnaNest');
     $text = fn (string $key, string $fallback = '') => \App\Models\Setting::get($key, $fallback);
     $heroImages = \App\Models\City::resolveHeroImages($homeCity ?? $displayCity ?? null);
-<<<<<<< HEAD
     $heroImage = $heroImages[0] ?? null;
-=======
-    $heroImage = $heroImages[0] ?? asset('assets/images/hero-bg.webp');
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
     $heroDescription = $text('home_hero_description', 'Discover verified rooms, PGs and flats for rent. Connect directly with genuine property owners.');
 @endphp
 
@@ -21,13 +17,9 @@
 
 @push('styles')
 @include('partials.listings-ld')
-<<<<<<< HEAD
 @if($heroImage)
 <link rel="preload" href="{{ $heroImage }}" as="image" fetchpriority="high">
 @endif
-=======
-<link rel="preload" href="{{ $heroImage }}" as="image" fetchpriority="high">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
 <link rel="stylesheet" href="{{ asset('css/home.css') }}?v={{ filemtime(public_path('css/home.css')) }}">
 @endpush
 

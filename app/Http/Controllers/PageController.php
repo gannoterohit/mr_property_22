@@ -101,11 +101,7 @@ class PageController extends Controller
             return $this->renderPage($page, $view);
         }
 
-<<<<<<< HEAD
         $content = Setting::get($settingKey, '');
-=======
-        $content = Setting::get($settingKey, config("cms.defaults.{$settingKey}", ''));
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
         $content = $this->replaceContentTokens((string) $content);
         $title = $fallbackTitle;
         $pageTitle = $fallbackTitle;

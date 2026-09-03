@@ -44,11 +44,7 @@
             <div class="space-y-4">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-2">
                     @if($footerLogo)
-<<<<<<< HEAD
                         <img src="{{ \App\Models\Setting::mediaUrl($footerLogo) }}" alt="{{ $websiteName }}" class="h-10 w-auto">
-=======
-                        <img src="{{ asset('storage/' . $footerLogo) }}" alt="{{ $websiteName }}" class="h-10 w-auto">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                     @else
                         <div class="flex items-center gap-2">
                             <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center">

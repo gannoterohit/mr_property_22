@@ -159,11 +159,7 @@
                                 <div class="flex items-start gap-6">
                                     <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
                                          @if(\App\Models\Setting::get('navbar_logo'))
-<<<<<<< HEAD
                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('navbar_logo')) }}" class="h-full w-full object-contain p-2">
-=======
-                                            <img src="{{ asset('storage/' . \App\Models\Setting::get('navbar_logo')) }}" class="h-full w-full object-contain p-2">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                         @else
                                             <i class="fas fa-image text-gray-300 text-3xl"></i>
                                         @endif
@@ -183,11 +179,7 @@
                                 <div class="flex items-start gap-6">
                                     <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
                                          @if(\App\Models\Setting::get('footer_logo'))
-<<<<<<< HEAD
                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('footer_logo')) }}" class="h-full w-full object-contain p-2">
-=======
-                                            <img src="{{ asset('storage/' . \App\Models\Setting::get('footer_logo')) }}" class="h-full w-full object-contain p-2">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                         @else
                                             <i class="fas fa-image text-gray-300 text-3xl"></i>
                                         @endif
@@ -207,11 +199,7 @@
                                 <div class="flex items-start gap-6">
                                     <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
                                          @if(\App\Models\Setting::get('website_logo'))
-<<<<<<< HEAD
                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('website_logo')) }}" class="h-full w-full object-contain p-2">
-=======
-                                            <img src="{{ asset('storage/' . \App\Models\Setting::get('website_logo')) }}" class="h-full w-full object-contain p-2">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                         @else
                                             <i class="fas fa-image text-gray-300 text-3xl"></i>
                                         @endif
@@ -231,11 +219,7 @@
                                 <div class="flex items-start gap-6">
                                     <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
                                          @if(\App\Models\Setting::get('website_favicon'))
-<<<<<<< HEAD
                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('website_favicon'), 'favicon.ico') }}" class="h-full w-full object-contain p-2">
-=======
-                                            <img src="{{ asset('storage/' . \App\Models\Setting::get('website_favicon')) }}" class="h-full w-full object-contain p-2">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                         @else
                                             <i class="fas fa-star text-gray-300 text-3xl"></i>
                                         @endif
@@ -256,11 +240,7 @@
                                  <div class="flex items-start gap-6">
                                      <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
                                          @if(\App\Models\Setting::get('owner_cta_image'))
-<<<<<<< HEAD
                                              <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('owner_cta_image'), 'assets/images/proparty.png') }}" class="h-full w-full object-cover">
-=======
-                                             <img src="{{ asset('storage/' . \App\Models\Setting::get('owner_cta_image')) }}" class="h-full w-full object-cover">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                          @else
                                              <i class="fas fa-image text-gray-300 text-3xl"></i>
                                          @endif
@@ -284,6 +264,26 @@
                          </div>
 
                          <div data-appearance-subpanel="colors" class="space-y-6" hidden>
+                             <div>
+                                 <label class="block text-sm font-semibold text-gray-700 mb-3">Default Hero Image</label>
+                                 <div class="flex items-start gap-6">
+                                     <div class="h-24 w-40 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
+                                         @if(\App\Models\Setting::get('default_hero_image'))
+                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('default_hero_image')) }}" class="h-full w-full object-cover">
+                                         @else
+                                             <i class="fas fa-panorama text-gray-300 text-3xl"></i>
+                                         @endif
+                                     </div>
+                                     <div class="flex-1">
+                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
+                                             <i class="fas fa-upload mr-2"></i> Upload Default Hero Image
+                                             <input type="file" name="default_hero_image" class="hidden" accept="image/jpeg,image/png,image/webp">
+                                         </label>
+                                         <p class="mt-2 text-xs text-gray-500">Shown on the homepage when no city-specific hero image is available. Recommended: 1920x800px. Max: 3MB.</p>
+                                     </div>
+                                 </div>
+                             </div>
+
                              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                  <div>
                                      <label class="block text-sm font-semibold text-gray-700 mb-2">Primary Color</label>
@@ -974,11 +974,7 @@
                                 <div class="h-24 w-40 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden shrink-0">
                                     @php $modalImg = \App\Models\Setting::get('promo_modal_image'); @endphp
                                     @if($modalImg)
-<<<<<<< HEAD
                                         <img src="{{ \App\Models\Setting::mediaUrl($modalImg, 'assets/images/proparty.png') }}" class="h-full w-full object-cover">
-=======
-                                        <img src="{{ asset('storage/' . $modalImg) }}" class="h-full w-full object-cover">
->>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                     @else
                                         <span class="text-xs text-gray-400 font-medium">No Banner</span>
                                     @endif
@@ -1473,6 +1469,7 @@ setupImagePreview('website_logo');
 setupImagePreview('website_favicon');
 setupImagePreview('owner_cta_image');
 setupImagePreview('promo_modal_image');
+setupImagePreview('default_hero_image');
 
 const settingsForm = document.getElementById('settings-form');
 if (settingsForm) {
