@@ -47,6 +47,16 @@
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">@foreach($summary['counts'] as $item)<div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><p class="text-xs font-semibold text-slate-500">{{ $item['label'] }}</p><strong class="mt-1 block text-lg text-slate-900">{{ number_format($item['count']) }}</strong></div>@endforeach</div>
     </section>
 
+    <section class="rounded-2xl border border-sky-200 bg-sky-50 p-5 shadow-sm lg:p-6">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="font-extrabold text-sky-950"><i class="fas fa-download mr-2"></i>Database backup</h2>
+                <p class="mt-1 text-sm text-sky-800">Download a complete SQL backup before maintenance or major changes. The backup is streamed directly and is not stored on the server.</p>
+            </div>
+            <form action="{{ route('admin.data-maintenance.backup') }}" method="POST">@csrf<button type="submit" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-sky-600 px-5 py-3 text-sm font-bold text-white hover:bg-sky-700"><i class="fas fa-database"></i>Download backup</button></form>
+        </div>
+    </section>
+
     @if(count($summary['last_result']))
     <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5"><div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><h2 class="text-sm font-extrabold text-emerald-900"><i class="fas fa-clock-rotate-left mr-2"></i>Last cleanup result</h2><p class="mt-1 text-xs text-emerald-700">{{ $summary['last_run_at'] ? \Carbon\Carbon::parse($summary['last_run_at'])->format('d M Y, h:i A') : '' }}</p></div><div class="flex flex-wrap gap-2">@foreach($summary['last_result'] as $key=>$count)@continue($key === 'orphan_media_bytes' || !$count)<span class="rounded-lg bg-white px-3 py-2 text-[10px] font-bold text-emerald-800">{{ ucfirst(str_replace('_',' ',$key)) }}: {{ number_format($count) }}</span>@endforeach</div></div></section>
     @endif

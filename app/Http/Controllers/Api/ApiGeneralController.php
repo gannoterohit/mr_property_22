@@ -37,7 +37,7 @@ class ApiGeneralController extends BaseApiController
             });
         }
 
-        $blogs = $query->paginate($request->get('limit', 10));
+        $blogs = $query->paginate(max(1, min(50, $request->integer('limit', 10))));
         return BlogResource::collection($blogs)->additional(['status' => 'success']);
     }
 

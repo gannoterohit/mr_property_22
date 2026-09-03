@@ -23,8 +23,13 @@ class SmsService
         }
 
         // Mode 1: Log / Demo Mode
+        if (($provider === 'log' || empty($apiKey)) && app()->environment('production')) {
+            Log::warning('SMS OTP delivery is not configured in production.');
+            return false;
+        }
+
         if ($provider === 'log' || empty($apiKey)) {
-            Log::info("SMS OTP [DEMO/LOG] sent to +{$cleanPhone}: OTP code is {$otp}");
+            Log::info("SMS OTP [DEMO/LOG] sent to +{$cleanPhone}");
             return true;
         }
 
@@ -43,8 +48,8 @@ class SmsService
             return self::sendViaFast2Sms($cleanPhone, $otp, $apiKey);
         }
 
-        Log::info("SMS OTP sent to +{$cleanPhone}: {$otp} via {$provider}");
-        return true;
+        Log::warning('Unsupported SMS provider configured: '.$provider);
+        return false;
     }
 
     /**

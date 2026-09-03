@@ -40,7 +40,13 @@ class ApiComplaintController extends BaseApiController
             'category' => ['required', Rule::in(array_keys(Complaint::CATEGORIES))],
             'subject' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'min:20', 'max:10000'],
-            'room_id' => ['nullable', 'integer', 'exists:rooms,id'],
+            'room_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('rooms', 'id')->where(function ($query) use ($request) {
+                    $query->where('user_id', $request->user()->id);
+                }),
+            ],
             'priority' => ['nullable', Rule::in(['low', 'medium', 'high', 'urgent'])],
             'evidence' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
         ]);

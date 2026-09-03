@@ -53,7 +53,7 @@ class ApiSubscriptionController extends BaseApiController
             'active_subscription' => $activeSubscription ? [
                 'id' => $activeSubscription->id,
                 'plan_name' => $activeSubscription->plan->name,
-                'end_date' => $activeSubscription->end_date->toDateString(),
+                'end_date' => $activeSubscription->end_date?->toDateString(),
             ] : null,
             'applicable_coupons' => $applicableCoupons->map(fn ($c) => [
                 'id' => $c->id,
@@ -90,9 +90,8 @@ class ApiSubscriptionController extends BaseApiController
             $usageType = $plan->type === 'owner' ? 'listing' : 'contact';
             $limit = $plan->type === 'owner' ? $activeSub->plan->listing_limit : $activeSub->plan->contacts_limit;
             $exhausted = $limit !== -1 && $activeSub->usages()->where('usage_type', $usageType)->count() >= (int) $limit;
-            $expired = $activeSub->end_date && $activeSub->end_date->endOfDay()->isPast();
-            if ($exhausted || $expired) {
-                $activeSub->update(['status' => 'expired']);
+            if ($exhausted) {
+                $activeSub->update(['status' => 'expired', 'end_date' => null]);
                 $activeSub = null;
             }
         }
@@ -129,6 +128,16 @@ class ApiSubscriptionController extends BaseApiController
 
         DB::beginTransaction();
         try {
+            $user = Auth::user()->newQuery()->whereKey(Auth::id())->lockForUpdate()->firstOrFail();
+            $activeSub = Subscription::where('user_id', $user->id)
+                ->where('status', 'active')
+                ->whereHas('plan', fn ($q) => $q->where('type', $plan->type))
+                ->with('plan')->lockForUpdate()->first();
+            if ($activeSub) {
+                DB::rollBack();
+                return $this->sendError('You already have an active ' . $plan->type . ' subscription', [], 400);
+            }
+
             if ($finalPrice <= 0 && $appliedOffer) {
                 $subscription = Subscription::create([
                     'user_id'    => $user->id,
@@ -164,6 +173,7 @@ class ApiSubscriptionController extends BaseApiController
                 }
 
                 $user->decrement('wallet_balance', $finalPrice);
+                $user->refresh();
 
                 $subscription = Subscription::create([
                     'user_id'    => $user->id,

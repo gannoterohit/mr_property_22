@@ -27,7 +27,6 @@ class OwnerController extends Controller
         // Active subscription plan
         $activePlan = \App\Models\Subscription::where('user_id', Auth::id())
             ->where('status', 'active')
-            ->where('end_date', '>=', now())
             ->with('plan')
             ->latest()
             ->first();

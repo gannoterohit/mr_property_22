@@ -66,7 +66,7 @@ class ApiBrokerController extends BaseApiController
             $query->where('listing_status', $listingStatus);
         }
 
-        $properties = $query->latest()->paginate($request->get('limit', 20));
+        $properties = $query->latest()->paginate(max(1, min(50, $request->integer('limit', 20))));
 
         $roomCounts = [
             'all'     => Room::where('broker_id', $broker->id)->count(),
@@ -92,7 +92,7 @@ class ApiBrokerController extends BaseApiController
             $query->where('unlocked', $request->boolean('status'));
         }
 
-        $enquiries = $query->latest()->paginate($request->get('limit', 20));
+        $enquiries = $query->latest()->paginate(max(1, min(50, $request->integer('limit', 20))));
 
         return $this->sendSuccess($enquiries);
     }

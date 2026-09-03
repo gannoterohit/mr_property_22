@@ -161,8 +161,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/payment/razorpay/verify', [RazorpayController::class, 'verifyPayment'])->middleware('throttle:10,1')->name('razorpay.verify');
 
     Route::get('/plans', [PlanController::class, 'index'])->name('plans');
-    Route::post('/subscription/purchase', [\App\Http\Controllers\SubscriptionController::class, 'store'])->name('subscription.purchase');
-    Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscribe');
+    Route::post('/subscription/purchase', [\App\Http\Controllers\SubscriptionController::class, 'store'])->middleware('throttle:5,1')->name('subscription.purchase');
+    Route::post('/subscribe', [SubscriptionController::class, 'store'])->middleware('throttle:5,1')->name('subscribe');
 
     // Referral Dashboard
     Route::get('/refer-and-earn', [\App\Http\Controllers\ReferralController::class, 'index'])->name('referral.index');
@@ -232,6 +232,7 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])-
     Route::get('/maintenance', [BusinessSettingsController::class, 'maintenance'])->name('maintenance');
     Route::post('/maintenance', [BusinessSettingsController::class, 'updateMaintenance'])->name('maintenance.update');
     Route::get('/data-maintenance', [\App\Http\Controllers\Admin\DataMaintenanceController::class, 'index'])->name('data-maintenance.index');
+    Route::post('/data-maintenance/backup', [\App\Http\Controllers\Admin\DataMaintenanceController::class, 'backup'])->name('data-maintenance.backup');
     Route::put('/data-maintenance/retention', [\App\Http\Controllers\Admin\DataMaintenanceController::class, 'update'])->name('data-maintenance.update');
     Route::post('/data-maintenance/cleanup', [\App\Http\Controllers\Admin\DataMaintenanceController::class, 'cleanup'])->name('data-maintenance.cleanup');
     Route::get('/data-tools', [DataTransferController::class, 'index'])->name('data-tools.index');

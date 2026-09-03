@@ -53,7 +53,7 @@ class ApiOwnerController extends BaseApiController
             'active_subscription' => $activeSubscription ? [
                 'id'              => $activeSubscription->id,
                 'plan_name'       => $activeSubscription->plan->name,
-                'end_date'        => $activeSubscription->end_date->toDateString(),
+                'end_date'        => null,
                 'listing_limit'   => $activeSubscription->plan->listing_limit,
                 'used_listings'   => $activeSubscription->usages()->where('usage_type', 'listing')->count(),
             ] : null,

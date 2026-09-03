@@ -14,10 +14,10 @@ class DataMaintenanceService
         'otp_days' => 1,
         'session_days' => 7,
         'payment_days' => 30,
-        'analytics_days' => 180,
-        'search_log_days' => 180,
-        'activity_log_days' => 365,
-        'contact_message_days' => 180,
+        'analytics_days' => 90,
+        'search_log_days' => 90,
+        'activity_log_days' => 180,
+        'contact_message_days' => 90,
     ];
 
     public function retention(): array
@@ -133,8 +133,10 @@ class DataMaintenanceService
         $deleted['orphan_media'] = 0;
         $deleted['orphan_media_bytes'] = 0;
         if ($deleteOrphanMedia) {
+            $quarantineRoot = 'maintenance-quarantine/'.now()->format('Ymd-His');
             foreach ($this->orphanMedia() as $file) {
-                if (Storage::disk('public')->delete($file['path'])) {
+                $quarantinePath = $quarantineRoot.'/'.$file['path'];
+                if (Storage::disk('public')->move($file['path'], $quarantinePath)) {
                     $deleted['orphan_media']++;
                     $deleted['orphan_media_bytes'] += $file['bytes'];
                 }

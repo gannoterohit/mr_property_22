@@ -37,10 +37,9 @@ class SubscriptionController extends Controller
             $limit = $plan->type === 'owner' ? $activeSubscription->plan->listing_limit : $activeSubscription->plan->contacts_limit;
             $usageType = $plan->type === 'owner' ? 'listing' : 'contact';
             $used = $activeSubscription->usages()->where('usage_type', $usageType)->count();
-            $expired = $activeSubscription->end_date && $activeSubscription->end_date->endOfDay()->isPast();
             $exhausted = $limit !== -1 && $used >= (int) $limit;
-            if ($expired || $exhausted) {
-                $activeSubscription->update(['status' => 'expired']);
+            if ($exhausted) {
+                $activeSubscription->update(['status' => 'expired', 'end_date' => null]);
                 $activeSubscription = null;
             }
         }
@@ -80,7 +79,15 @@ class SubscriptionController extends Controller
 
         DB::beginTransaction();
         try {
-            $user = Auth::user();
+            $user = Auth::user()->newQuery()->whereKey(Auth::id())->lockForUpdate()->firstOrFail();
+            $activeSubscription = Subscription::where('user_id', $user->id)
+                ->where('status', 'active')
+                ->whereHas('plan', fn ($query) => $query->where('type', $plan->type))
+                ->with('plan')->lockForUpdate()->first();
+            if ($activeSubscription) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'You already have an active subscription of this type!'], 400);
+            }
             
             // 100% Free coupon scenario (finalPrice == 0)
             if ($finalPrice <= 0 && $appliedOffer) {
@@ -124,6 +131,7 @@ class SubscriptionController extends Controller
                 
                 // Deduct from wallet_balance
                 $user->decrement('wallet_balance', $finalPrice);
+                $user->refresh();
                 
                 // Create subscription - active immediately
                 $subscription = Subscription::create([

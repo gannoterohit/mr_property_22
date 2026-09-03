@@ -19,7 +19,7 @@ class ApiWalletController extends BaseApiController
         $user = Auth::user();
         $transactions = \App\Models\Payment::where('user_id', $user->id)
             ->latest()
-            ->paginate($request->get('limit', 15));
+            ->paginate(max(1, min(50, $request->integer('limit', 15))));
 
         return $this->sendSuccess([
             'points' => (float) ($user->wallet ?? 0),
@@ -41,17 +41,16 @@ class ApiWalletController extends BaseApiController
             return $this->sendError('Please check your input and try again.', $validator->errors(), 422);
         }
 
-        $user = Auth::user();
-
-        if ($user->wallet < $request->points) {
-            return $this->sendError('Insufficient points', [], 422);
-        }
-
         // Conversion Rate: 100 Points = ₹1
         $amount = ($request->points / 100) * 1;
 
         DB::beginTransaction();
         try {
+            $user = User::whereKey(Auth::id())->lockForUpdate()->firstOrFail();
+            if ($user->wallet < $request->points) {
+                DB::rollBack();
+                return $this->sendError('Insufficient points', [], 422);
+            }
             $user->decrement('wallet', $request->points);
             $user->increment('wallet_balance', $amount);
 

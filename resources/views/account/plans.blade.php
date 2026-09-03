@@ -37,7 +37,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-6 sm:text-right">
                     <div><p class="text-xs text-slate-500">Credits left</p><p class="text-lg font-extrabold text-slate-950">{{ $remainingCredits }}</p></div>
-                    <div><p class="text-xs text-slate-500">Valid until</p><p class="text-sm font-bold text-slate-900">{{ $activeSubscription->end_date->format('d M Y') }}</p></div>
+                    <div><p class="text-xs text-slate-500">Credits</p><p class="text-sm font-bold text-slate-900">{{ $remainingCredits }} available</p></div>
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@
                         <span class="plan-badge">Most popular</span>
                     @endif
                     <div class="flex items-start justify-between gap-3">
-                        <div><h3 class="font-heading text-lg font-bold text-slate-950">{{ $plan->name }}</h3><p class="mt-1 text-sm text-slate-500">{{ $plan->duration_days }} days validity</p></div>
+                        <div><h3 class="font-heading text-lg font-bold text-slate-950">{{ $plan->name }}</h3><p class="mt-1 text-sm text-slate-500">Usage-based credits</p></div>
                          <span class="plan-icon"><i class="fas {{ $isOwner ? 'fa-house-circle-check' : 'fa-address-card' }}"></i></span>
                     </div>
                     <div class="mt-6 flex items-end gap-2"><span class="text-4xl font-extrabold tracking-tight text-slate-950">&#8377;{{ number_format($plan->price) }}</span><span class="pb-1 text-sm text-slate-500">one time</span></div>
@@ -106,7 +106,7 @@
                     </div>
                     <ul class="my-6 space-y-3 text-sm text-slate-600">
                         <li class="flex gap-3"><i class="fas fa-check mt-1 text-emerald-600"></i><span>{{ $isBroker || $isOwner ? 'One credit for every new room' : 'One credit for every unlocked room' }}</span></li>
-                        <li class="flex gap-3"><i class="fas fa-check mt-1 text-emerald-600"></i><span>Credits valid for {{ $plan->duration_days }} days</span></li>
+                        <li class="flex gap-3"><i class="fas fa-check mt-1 text-emerald-600"></i><span>Credits remain available until used</span></li>
                         <li class="flex gap-3"><i class="fas fa-check mt-1 text-emerald-600"></i><span>No automatic renewal</span></li>
                         @foreach(array_slice($plan->benefits ?? [], 0, 2) as $benefit)
                             <li class="flex gap-3"><i class="fas fa-check mt-1 text-emerald-600"></i><span>{{ $benefit }}</span></li>

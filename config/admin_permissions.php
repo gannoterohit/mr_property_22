@@ -16,6 +16,7 @@ return [
         'reports.view' => ['Reports', 'View reports and search analytics'],
         'reports.manage' => ['Reports: manage', 'Delete search analytics history'],
         'settings.manage' => ['Settings', 'Manage business, integration and maintenance settings'],
+        'data.backup' => ['Database backup', 'Create and download database backups'],
         'staff.manage' => ['Staff & roles', 'Create staff and manage role permissions'],
         'activity.view' => ['Activity logs', 'View administrative activity history'],
         'brokers.view' => ['Brokers: view', 'View broker profiles and listings'],

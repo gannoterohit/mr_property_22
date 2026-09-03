@@ -9,6 +9,7 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 use App\Mail\BrandedMessageMail;
 
 class ComplaintController extends Controller
@@ -31,7 +32,13 @@ class ComplaintController extends Controller
             'category' => ['required', 'in:' . implode(',', array_keys(Complaint::CATEGORIES))],
             'subject' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'min:20', 'max:10000'],
-            'room_id' => ['nullable', 'integer', 'exists:rooms,id'],
+            'room_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('rooms', 'id')->where(function ($query) use ($request) {
+                    $query->where('user_id', $request->user()->id);
+                }),
+            ],
             'evidence' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
         ]);
 

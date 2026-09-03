@@ -17,7 +17,7 @@ class ApiNotificationController extends BaseApiController
 
         $notifications = UserNotification::where('user_id', $user->id)
             ->latest()
-            ->paginate($request->input('limit', 20));
+            ->paginate(max(1, min(50, $request->integer('limit', 20))));
 
         $unreadCount = UserNotification::where('user_id', $user->id)->unread()->count();
 

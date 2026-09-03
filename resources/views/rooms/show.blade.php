@@ -402,7 +402,7 @@
                                 </div>
                                 @auth
                                     @php
-                                        $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())->where('status', 'active')->whereDate('end_date', '>=', today())->whereHas('plan', fn ($q) => $q->where('type', 'user')->where('is_active', true))->with('plan')->first();
+                                        $activeSubscription = \App\Models\Subscription::where('user_id', Auth::id())->where('status', 'active')->whereHas('plan', fn ($q) => $q->where('type', 'user')->where('is_active', true))->with('plan')->first();
                                         $subscriptionRemaining = 0;
                                         if ($activeSubscription && $activeSubscription->plan && $activeSubscription->plan->type === 'user') {
                                             $usedContacts = $activeSubscription->usages()->where('usage_type', 'contact')->count();

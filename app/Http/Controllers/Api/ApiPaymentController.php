@@ -5,14 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Payment;
 use App\Models\Setting;
-use App\Models\Room;
-use App\Models\Subscription;
-use App\Models\Enquiry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Razorpay\Api\Api;
+use App\Services\PaymentFulfillmentService;
 
 class ApiPaymentController extends BaseApiController
 {
@@ -37,7 +35,8 @@ class ApiPaymentController extends BaseApiController
     public function createOrder(Request $request)
     {
         $request->validate([
-            'payment_record_id' => 'required|integer|exists:payments,id'
+            'payment_record_id' => 'required|integer|exists:payments,id',
+            'idempotency_key' => 'required|string|max:100',
         ]);
 
         try {
@@ -48,7 +47,23 @@ class ApiPaymentController extends BaseApiController
 
             $payment = Payment::whereKey($request->payment_record_id)
                 ->where('user_id', Auth::id())->where('status', 'pending')->firstOrFail();
+            $existing = Payment::where('user_id', Auth::id())->where('idempotency_key', $request->idempotency_key)
+                ->where('id', '<>', $payment->id)->first();
+            if ($existing) {
+                return $this->sendError('Idempotency key has already been used.', [], 409);
+            }
+            if ($payment->idempotency_key === $request->idempotency_key && $payment->gateway_order_id) {
+                return $this->sendSuccess([
+                    'order_id' => $payment->gateway_order_id,
+                    'payment_id' => $payment->id,
+                    'amount' => $payment->amount,
+                    'key' => $key,
+                ], 'Order already created');
+            }
             $amount_paise = (int) round($payment->amount * 100);
+            if ($amount_paise <= 0) {
+                return $this->sendError('Payment amount must be greater than zero.', [], 422);
+            }
 
             $order = $this->api->order->create([
                 'receipt' => 'payment_' . $payment->id,
@@ -57,7 +72,7 @@ class ApiPaymentController extends BaseApiController
                 'payment_capture' => 1
             ]);
 
-            $payment->update(['gateway_order_id' => $order->id]);
+            $payment->update(['gateway_order_id' => $order->id, 'idempotency_key' => $request->idempotency_key]);
 
             return $this->sendSuccess([
                 'order_id' => $order->id,
@@ -82,7 +97,8 @@ class ApiPaymentController extends BaseApiController
             'razorpay_order_id' => 'required',
             'razorpay_payment_id' => 'required',
             'razorpay_signature' => 'required',
-            'payment_record_id' => 'required'
+            'payment_record_id' => 'required',
+            'idempotency_key' => 'required|string|max:100',
         ]);
 
         $key = trim(Setting::get('razorpay_key', ''));
@@ -122,6 +138,11 @@ class ApiPaymentController extends BaseApiController
                 return $this->sendError('Payment is no longer pending', [], 409);
             }
 
+            if ($payment->idempotency_key !== $request->idempotency_key) {
+                DB::rollBack();
+                return $this->sendError('Payment idempotency key mismatch', [], 409);
+            }
+
             if ($payment->gateway_order_id !== $request->razorpay_order_id
                 || ($gatewayPayment['order_id'] ?? null) !== $payment->gateway_order_id
                 || (int) ($gatewayPayment['amount'] ?? 0) !== (int) round($payment->amount * 100)
@@ -132,11 +153,10 @@ class ApiPaymentController extends BaseApiController
 
             $payment->update([
                 'transaction_id' => $request->razorpay_payment_id,
-                'status' => 'completed'
             ]);
 
             // Execute action based on type
-            $this->processPaymentAction($payment);
+            app(PaymentFulfillmentService::class)->fulfill($payment);
 
             DB::commit();
             return $this->sendSuccess([], 'Payment verified successfully');
@@ -149,41 +169,4 @@ class ApiPaymentController extends BaseApiController
         }
     }
 
-    private function processPaymentAction($payment)
-    {
-        $type = $payment->type;
-        $refId = $payment->reference_id;
-
-        if ($type === 'listing') {
-            Room::where('id', $refId)->update(['listing_fee_paid' => true, 'status' => 'active']);
-        } elseif ($type === 'featured') {
-            Room::where('id', $refId)->update(['is_featured' => true]);
-        } elseif ($type === 'unlock') {
-            Enquiry::updateOrCreate(
-                ['room_id' => $refId, 'user_id' => $payment->user_id],
-                ['payment_id' => $payment->id, 'unlocked' => true, 'unlocked_at' => now()]
-            );
-        } elseif ($type === 'subscription') {
-            $sub = Subscription::find($refId);
-            if ($sub) {
-                $sub->update([
-                    'status' => 'active',
-                    'start_date' => now(),
-                    'end_date' => now()->addDays($sub->plan->duration_days),
-                    'payment_id' => $payment->id
-                ]);
-            }
-        }
-
-        $user = User::find($payment->user_id);
-        if ($user) {
-            if ($type === 'unlock' && $refId) {
-                $room = Room::find($refId);
-                if ($room) {
-                    \App\Services\NotificationService::notifyContactUnlocked($user, $room);
-                }
-            }
-            \App\Services\NotificationService::notifyPaymentSuccess($user, $payment);
-        }
-    }
 }

@@ -8,6 +8,11 @@ use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Enquiry;
+use App\Models\Room;
+use App\Models\Subscription;
+use App\Models\User;
+use App\Services\PaymentFulfillmentService;
 
 class RazorpayController extends Controller
 {
@@ -171,82 +176,10 @@ class RazorpayController extends Controller
 
             $payment->update([
                 'transaction_id' => $paymentId,
-                'status' => 'completed'
             ]);
 
-            // Handle based on payment type
-            if ($paymentType === 'listing' && $referenceId) {
-            // Activate room after listing fee payment
-            $room = \App\Models\Room::whereKey($referenceId)->where('user_id', $payment->user_id)->first();
-            if ($room) {
-                $room->update([
-                    'listing_fee_paid' => true,
-                    'status' => 'active'
-                ]);
-            }
-        } elseif ($paymentType === 'featured' && $referenceId) {
-            // Make room featured
-            $room = \App\Models\Room::whereKey($referenceId)->where('user_id', $payment->user_id)->first();
-            if ($room) {
-                $room->update(['is_featured' => true]);
-            }
-        } elseif ($paymentType === 'unlock' && $referenceId) {
-            $unlockRoom = \App\Models\Room::publicVisible()->whereKey($referenceId)->firstOrFail();
-            // Unlock contact details
-            $enquiry = \App\Models\Enquiry::where('room_id', $referenceId)
-                ->where('user_id', $payment->user_id)
-                ->where('payment_id', $payment->id)
-                ->first();
-            
-            if ($enquiry) {
-                $enquiry->update([
-                    'unlocked' => true,
-                    'unlocked_at' => now()
-                ]);
-            } else {
-                // If enquiry not found, try to find by room_id and user_id only
-                $enquiry = \App\Models\Enquiry::where('room_id', $referenceId)
-                    ->where('user_id', $payment->user_id)
-                    ->first();
-                
-                if ($enquiry) {
-                    $enquiry->update([
-                        'payment_id' => $payment->id,
-                        'unlocked' => true,
-                        'unlocked_at' => now()
-                    ]);
-                } else {
-                    // Create enquiry if it doesn't exist
-                    \App\Models\Enquiry::create([
-                        'user_id' => $payment->user_id,
-                        'room_id' => $referenceId,
-                        'payment_id' => $payment->id,
-                        'unlocked' => true,
-                        'unlocked_at' => now()
-                    ]);
-                }
-            }
-        } elseif ($paymentType === 'subscription' && $referenceId) {
-            $subscription = \App\Models\Subscription::whereKey($referenceId)->where('user_id', $payment->user_id)->first();
-            if ($subscription) {
-                $subscription->update([
-                    'status' => 'active',
-                    'start_date' => now(),
-                    'end_date' => now()->addDays($subscription->plan->duration_days),
-                    'payment_id' => $payment->id
-                ]);
-            }
-        }
-
-        DB::commit();
-
-        $payerUser = Auth::user() ?: \App\Models\User::find($payment->user_id);
-        if ($payerUser) {
-            if ($paymentType === 'unlock' && isset($unlockRoom) && $unlockRoom) {
-                \App\Services\NotificationService::notifyContactUnlocked($payerUser, $unlockRoom);
-            }
-            \App\Services\NotificationService::notifyPaymentSuccess($payerUser, $payment, $unlockRoom ?? null);
-        }
+            $payment = app(PaymentFulfillmentService::class)->fulfill($payment);
+            DB::commit();
         
         // Prepare conversion tracking data for Google Ads
         $conversionData = [
@@ -335,6 +268,9 @@ class RazorpayController extends Controller
             'status' => $paymentEntity['status'] ?? null,
         ]);
 
+        $eventId = (string) ($data['id'] ?? 'payload-'.hash('sha256', $payload));
+        $eventId = strlen($eventId) > 100 ? hash('sha256', $eventId) : $eventId;
+
         // Handle payment.captured event
         if ($data['event'] === 'payment.captured') {
             $paymentId = $paymentEntity['id'] ?? null;
@@ -345,87 +281,54 @@ class RazorpayController extends Controller
                 return response('invalid payload', 400);
             }
 
+            DB::beginTransaction();
+            if (!DB::table('razorpay_webhook_events')->insertOrIgnore([
+                'event_id' => $eventId,
+                'event' => $data['event'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])) {
+                DB::rollBack();
+                return response('ok', 200);
+            }
             // Find existing payment record with lock to prevent duplicate processing
-            $payment = Payment::where('transaction_id', $paymentId)
-                ->when($orderId, fn ($query) => $query->orWhere('gateway_order_id', $orderId))
+            $payment = Payment::where(function ($query) use ($paymentId, $orderId) {
+                    $query->where('transaction_id', $paymentId);
+                    if ($orderId) {
+                        $query->orWhere('gateway_order_id', $orderId);
+                    }
+                })
                 ->lockForUpdate()
                 ->first();
 
             if ($payment && $payment->status === 'pending') {
-                \DB::beginTransaction();
                 try {
                     // Double-check status after acquiring lock
                     if ($payment->status !== 'pending') {
-                        \DB::rollBack();
+                        DB::rollBack();
                         return response('ok', 200);
+                    }
+
+                    if (($paymentEntity['order_id'] ?? null) !== $payment->gateway_order_id
+                        || (int) ($paymentEntity['amount'] ?? 0) !== (int) round($payment->amount * 100)
+                        || ($paymentEntity['currency'] ?? null) !== 'INR') {
+                        DB::rollBack();
+                        Log::warning('Webhook payment details did not match local payment', ['payment_id' => $payment->id]);
+                        return response('payment mismatch', 400);
                     }
 
                     $payment->update([
                         'transaction_id' => $paymentId,
-                        'status' => 'completed'
                     ]);
 
-                    // Handle unlock
-                    if ($payment->type === 'unlock' && $payment->reference_id) {
-                        $enquiry = \App\Models\Enquiry::where('room_id', $payment->reference_id)
-                            ->where('user_id', $payment->user_id)
-                            ->where('payment_id', $payment->id)
-                            ->first();
-                        
-                        if ($enquiry) {
-                            $enquiry->update([
-                                'unlocked' => true,
-                                'unlocked_at' => now()
-                            ]);
-                        } else {
-                            // If enquiry not found, try to find by room_id and user_id only
-                            $enquiry = \App\Models\Enquiry::where('room_id', $payment->reference_id)
-                                ->where('user_id', $payment->user_id)
-                                ->first();
-                            
-                            if ($enquiry) {
-                                $enquiry->update([
-                                    'payment_id' => $payment->id,
-                                    'unlocked' => true,
-                                    'unlocked_at' => now()
-                                ]);
-                            } else {
-                                // Create enquiry if it doesn't exist
-                                \App\Models\Enquiry::create([
-                                    'user_id' => $payment->user_id,
-                                    'room_id' => $payment->reference_id,
-                                    'payment_id' => $payment->id,
-                                    'unlocked' => true,
-                                    'unlocked_at' => now()
-                                ]);
-                            }
-                        }
-                    }
-
-                    // Handle subscription
-                    if ($payment->type === 'subscription' && $payment->reference_id) {
-                        $subscription = \App\Models\Subscription::find($payment->reference_id);
-                        if ($subscription && $subscription->status === 'pending') {
-                            $subscription->update(['status' => 'active']);
-                        }
-                    }
-
-                    \DB::commit();
-
-                    $payerUser = \App\Models\User::find($payment->user_id);
-                    if ($payerUser) {
-                        if ($payment->type === 'unlock' && $payment->reference_id) {
-                            $unlockedRoom = \App\Models\Room::find($payment->reference_id);
-                            if ($unlockedRoom) {
-                                \App\Services\NotificationService::notifyContactUnlocked($payerUser, $unlockedRoom);
-                            }
-                        }
-                        \App\Services\NotificationService::notifyPaymentSuccess($payerUser, $payment);
-                    }
+                    app(PaymentFulfillmentService::class)->fulfill($payment);
+                    DB::commit();
                 } catch (\Exception $e) {
                     \DB::rollBack();
                     Log::error('Webhook error: '.$e->getMessage());
                 }
+            } else {
+                DB::commit();
             }
         }
 
@@ -435,25 +338,31 @@ class RazorpayController extends Controller
             $orderId = $paymentEntity['order_id'] ?? null;
 
             if ($paymentId) {
-                $payment = Payment::where('transaction_id', $paymentId)
-                    ->when($orderId, fn ($query) => $query->orWhere('gateway_order_id', $orderId))
-                    ->lockForUpdate()
-                    ->first();
+                DB::transaction(function () use ($paymentId, $orderId, $paymentEntity, $eventId, $data): void {
+                    if (!DB::table('razorpay_webhook_events')->insertOrIgnore([
+                        'event_id' => $eventId,
+                        'event' => $data['event'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ])) {
+                        return;
+                    }
+                    $payment = Payment::where(function ($query) use ($paymentId, $orderId) {
+                            $query->where('transaction_id', $paymentId);
+                            if ($orderId) {
+                                $query->orWhere('gateway_order_id', $orderId);
+                            }
+                        })->lockForUpdate()->first();
 
-                if ($payment && $payment->status === 'pending') {
-                    $payment->update([
-                        'status' => 'failed',
-                        'metadata' => array_merge($payment->metadata ?? [], [
-                            'failure_reason' => $paymentEntity['error_description'] ?? 'Unknown error',
-                            'failure_code' => $paymentEntity['error_code'] ?? null,
-                        ])
-                    ]);
+                    if ($payment && $payment->status === 'pending') {
+                        $payment->update(['status' => 'failed']);
 
-                    Log::info('Payment marked as failed via webhook', [
-                        'payment_id' => $payment->id,
-                        'reason' => $paymentEntity['error_description'] ?? 'Unknown',
-                    ]);
-                }
+                        Log::info('Payment marked as failed via webhook', [
+                            'payment_id' => $payment->id,
+                            'reason' => $paymentEntity['error_description'] ?? 'Unknown',
+                        ]);
+                    }
+                });
             }
         }
 
@@ -462,24 +371,26 @@ class RazorpayController extends Controller
             $paymentId = $paymentEntity['payment_id'] ?? $paymentEntity['id'] ?? null;
 
             if ($paymentId) {
-                $payment = Payment::where('transaction_id', $paymentId)
-                    ->lockForUpdate()
-                    ->first();
+                DB::transaction(function () use ($paymentId, $paymentEntity, $eventId, $data): void {
+                    if (!DB::table('razorpay_webhook_events')->insertOrIgnore([
+                        'event_id' => $eventId,
+                        'event' => $data['event'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ])) {
+                        return;
+                    }
+                    $payment = Payment::where('transaction_id', $paymentId)->lockForUpdate()->first();
 
-                if ($payment && $payment->status === 'completed') {
-                    $payment->update([
-                        'status' => 'refunded',
-                        'metadata' => array_merge($payment->metadata ?? [], [
+                    if ($payment && $payment->status === 'completed') {
+                        $payment->update(['status' => 'refunded']);
+
+                        Log::info('Payment marked as refunded via webhook', [
+                            'payment_id' => $payment->id,
                             'refund_id' => $paymentEntity['id'] ?? null,
-                            'refund_amount' => $paymentEntity['amount'] ?? null,
-                        ])
-                    ]);
-
-                    Log::info('Payment marked as refunded via webhook', [
-                        'payment_id' => $payment->id,
-                        'refund_id' => $paymentEntity['id'] ?? null,
-                    ]);
-                }
+                        ]);
+                    }
+                });
             }
         }
 

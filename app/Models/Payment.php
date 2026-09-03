@@ -12,6 +12,7 @@ class Payment extends Model
         'amount',
         'gateway',
         'gateway_order_id',
+        'idempotency_key',
         'transaction_id',
         'reference_id',
         'status',

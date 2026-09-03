@@ -40,15 +40,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/referral-stats',   [ApiDashboardController::class, 'referralStats']);
 
     // ── Payments ──────────────────────────────
-    Route::post('/payments/create-order', [ApiPaymentController::class, 'createOrder']);
-    Route::post('/payments/verify',       [ApiPaymentController::class, 'verifyPayment']);
+    Route::post('/payments/create-order', [ApiPaymentController::class, 'createOrder'])->middleware('throttle:10,1');
+    Route::post('/payments/verify',       [ApiPaymentController::class, 'verifyPayment'])->middleware('throttle:20,1');
 
     // ── Transactions ──────────────────────────
-    Route::post('/unlock/{room}', [ApiUnlockController::class, 'unlock']);
+    Route::post('/unlock/{room}', [ApiUnlockController::class, 'unlock'])->middleware('throttle:10,1');
 
     // ── Wallet & Wishlist ─────────────────────
     Route::get('/wallet',          [ApiWalletController::class, 'index']);
-    Route::post('/wallet/convert', [ApiWalletController::class, 'convertPoints']);
+    Route::post('/wallet/convert', [ApiWalletController::class, 'convertPoints'])->middleware('throttle:10,1');
     Route::get('/wishlist',                     [ApiWishlistController::class, 'index']);
     Route::post('/wishlist/toggle/{roomId}',    [ApiWishlistController::class, 'toggle']);
 
@@ -58,12 +58,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/city-alerts/{id}',  [ApiGeneralController::class, 'removeCityAlert']);
 
     // ── Coupons ───────────────────────────────
-    Route::post('/coupon/apply',  [ApiCouponController::class, 'apply']);
-    Route::post('/coupon/remove', [ApiCouponController::class, 'remove']);
+    Route::post('/coupon/apply',  [ApiCouponController::class, 'apply'])->middleware('throttle:20,1');
+    Route::post('/coupon/remove', [ApiCouponController::class, 'remove'])->middleware('throttle:20,1');
 
     // ── Subscriptions ─────────────────────────
     Route::get('/plans',                    [ApiSubscriptionController::class, 'plans']);
-    Route::post('/subscriptions/purchase',  [ApiSubscriptionController::class, 'purchase']);
+    Route::post('/subscriptions/purchase',  [ApiSubscriptionController::class, 'purchase'])->middleware('throttle:5,1');
     Route::get('/subscriptions',             [ApiAccountController::class, 'subscriptions']);
     Route::get('/payments',                  [ApiAccountController::class, 'payments']);
     Route::get('/unlocks',                   [ApiAccountController::class, 'unlocks']);
