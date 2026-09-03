@@ -18,7 +18,11 @@
         <meta property="og:description" content="@yield('og_description', \App\Models\Setting::get('seo_meta_description', 'Find your perfect room.'))">
         <meta property="og:url" content="@yield('og_url', url()->current())">
         @if(\App\Models\Setting::get('website_logo'))
+<<<<<<< HEAD
             <meta property="og:image" content="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('website_logo')) }}">
+=======
+            <meta property="og:image" content="{{ asset('storage/' . \App\Models\Setting::get('website_logo')) }}">
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
         @endif
         
         <!-- Google Search Console Verification -->

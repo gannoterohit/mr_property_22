@@ -29,7 +29,11 @@
         @php $menuLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo'); @endphp
         @if($menuLogo)
             <a href="{{ route('home') }}" class="mb-3">
+<<<<<<< HEAD
                 <img src="{{ \App\Models\Setting::mediaUrl($menuLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="h-14 w-auto rounded-xl shadow-lg">
+=======
+                <img src="{{ asset('storage/' . $menuLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="h-14 w-auto rounded-xl shadow-lg">
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
             </a>
         @else
             <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-3 shadow-lg">

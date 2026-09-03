@@ -15,7 +15,11 @@
                     @php $mobileLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo'); @endphp
                     @if($mobileLogo)
                         <a href="{{ route('home') }}" class="mobile-brand-logo-link" aria-label="{{ \App\Models\Setting::get('website_name', 'RoomRental') }} home">
+<<<<<<< HEAD
                             <img src="{{ \App\Models\Setting::mediaUrl($mobileLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="mobile-brand-logo">
+=======
+                            <img src="{{ asset('storage/' . $mobileLogo) }}" alt="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="mobile-brand-logo">
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                         </a>
                     @else
                         <div class="app-icon">
@@ -47,7 +51,11 @@
                         $navbarLogo = \App\Models\Setting::get('navbar_logo');
                     @endphp
                      @if($navbarLogo)
+<<<<<<< HEAD
                          <img src="{{ \App\Models\Setting::mediaUrl($navbarLogo) }}"
+=======
+                         <img src="{{ asset('storage/' . $navbarLogo) }}"
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                               alt="ApnaNest Logo"
                               width="200"
                               height="50"

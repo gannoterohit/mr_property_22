@@ -159,7 +159,11 @@
                                 <div class="flex items-start gap-6">
                                     <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
                                          @if(\App\Models\Setting::get('navbar_logo'))
+<<<<<<< HEAD
                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('navbar_logo')) }}" class="h-full w-full object-contain p-2">
+=======
+                                            <img src="{{ asset('storage/' . \App\Models\Setting::get('navbar_logo')) }}" class="h-full w-full object-contain p-2">
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                         @else
                                             <i class="fas fa-image text-gray-300 text-3xl"></i>
                                         @endif
@@ -179,7 +183,11 @@
                                 <div class="flex items-start gap-6">
                                     <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
                                          @if(\App\Models\Setting::get('footer_logo'))
+<<<<<<< HEAD
                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('footer_logo')) }}" class="h-full w-full object-contain p-2">
+=======
+                                            <img src="{{ asset('storage/' . \App\Models\Setting::get('footer_logo')) }}" class="h-full w-full object-contain p-2">
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                         @else
                                             <i class="fas fa-image text-gray-300 text-3xl"></i>
                                         @endif
@@ -199,7 +207,11 @@
                                 <div class="flex items-start gap-6">
                                     <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
                                          @if(\App\Models\Setting::get('website_logo'))
+<<<<<<< HEAD
                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('website_logo')) }}" class="h-full w-full object-contain p-2">
+=======
+                                            <img src="{{ asset('storage/' . \App\Models\Setting::get('website_logo')) }}" class="h-full w-full object-contain p-2">
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                         @else
                                             <i class="fas fa-image text-gray-300 text-3xl"></i>
                                         @endif
@@ -219,7 +231,11 @@
                                 <div class="flex items-start gap-6">
                                     <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
                                          @if(\App\Models\Setting::get('website_favicon'))
+<<<<<<< HEAD
                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('website_favicon'), 'favicon.ico') }}" class="h-full w-full object-contain p-2">
+=======
+                                            <img src="{{ asset('storage/' . \App\Models\Setting::get('website_favicon')) }}" class="h-full w-full object-contain p-2">
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                         @else
                                             <i class="fas fa-star text-gray-300 text-3xl"></i>
                                         @endif
@@ -240,7 +256,11 @@
                                  <div class="flex items-start gap-6">
                                      <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
                                          @if(\App\Models\Setting::get('owner_cta_image'))
+<<<<<<< HEAD
                                              <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('owner_cta_image'), 'assets/images/proparty.png') }}" class="h-full w-full object-cover">
+=======
+                                             <img src="{{ asset('storage/' . \App\Models\Setting::get('owner_cta_image')) }}" class="h-full w-full object-cover">
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                          @else
                                              <i class="fas fa-image text-gray-300 text-3xl"></i>
                                          @endif
@@ -954,7 +974,11 @@
                                 <div class="h-24 w-40 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden shrink-0">
                                     @php $modalImg = \App\Models\Setting::get('promo_modal_image'); @endphp
                                     @if($modalImg)
+<<<<<<< HEAD
                                         <img src="{{ \App\Models\Setting::mediaUrl($modalImg, 'assets/images/proparty.png') }}" class="h-full w-full object-cover">
+=======
+                                        <img src="{{ asset('storage/' . $modalImg) }}" class="h-full w-full object-cover">
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
                                     @else
                                         <span class="text-xs text-gray-400 font-medium">No Banner</span>
                                     @endif

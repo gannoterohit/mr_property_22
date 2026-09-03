@@ -156,8 +156,11 @@ class LandingPageController extends Controller
         $latestBlogs = FacadesCache::remember('home.latest_blogs', 600, function () {
             return \App\Models\Blog::published()->orderBy('created_at', 'desc')->take(3)->get();
         });
+<<<<<<< HEAD
         $faqs = json_decode((string) \App\Models\Setting::get('faq_content', '[]'), true);
         $faqs = is_array($faqs) ? collect($faqs)->filter(fn ($faq) => !empty($faq['question']) && !empty($faq['answer']))->values() : collect();
+=======
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
         $homeFeatures = FacadesCache::remember('home.home_features', 600, function () {
             return HomeFeature::active()->orderBy('sort_order')->orderBy('id')->take(6)->get();
         });
@@ -213,7 +216,10 @@ class LandingPageController extends Controller
         return view('home.index', compact(
             'rooms', 'otherRooms', 'otherRoomGroups', 'popularCities', 'popularLocations', 'propertyTypes', 'propertyCategories', 'latestBlogs',
             'homeFeatures', 'testimonials',
+<<<<<<< HEAD
             'faqs',
+=======
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
             'heroRoom', 'totalRooms', 'totalOwners', 'totalUsers', 'totalAreas',
             'cityContext', 'hiwItems', 'ownerCtaItems'
         ));

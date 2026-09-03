@@ -7,7 +7,10 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Storage;
+=======
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
 
 class Setting extends Model
 {
@@ -83,6 +86,7 @@ class Setting extends Model
         return $settings[$key] ?? $default;
     }
 
+<<<<<<< HEAD
     public static function mediaUrl(?string $path, string $default = ''): string
     {
         if (! $path) {
@@ -105,6 +109,8 @@ class Setting extends Model
         return $default !== '' ? asset($default) : '';
     }
 
+=======
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
     /**
      * Clear settings cache
      */

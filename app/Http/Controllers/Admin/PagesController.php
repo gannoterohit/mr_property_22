@@ -185,7 +185,11 @@ class PagesController extends Controller
     {
         $setting = Setting::where('key', $key)->first();
         if (!$setting) {
+<<<<<<< HEAD
             $setting = new Setting(['key' => $key, 'value' => '']);
+=======
+            $setting = new Setting(['key' => $key, 'value' => config("cms.defaults.{$key}", '')]);
+>>>>>>> 98b94930f294609982bf4ef143712b3784a5d50a
         }
         $route = route($routeName);
         $previewUrl = $previewRouteName ? route($previewRouteName) : null;
