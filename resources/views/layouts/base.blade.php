@@ -7,6 +7,7 @@
     <meta name="format-detection" content="telephone=no">
 
     @vite(['resources/css/app.css', 'resources/css/mobile-app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/auth-modal-reference.css') }}">
     <title>@yield('title', \App\Models\Setting::get('website_name', 'RoomRental') . ' - Find Your Perfect Room')</title>
     <meta name="description" content="@yield('description', \App\Models\Setting::get('seo_meta_description', 'Find your perfect room in your city. Browse verified room listings.'))">
     <meta name="keywords" content="@yield('keywords', \App\Models\Setting::get('seo_meta_keywords', 'room rental, apartment, house, property'))">
@@ -135,7 +136,7 @@
 
     @yield('layout-footer')
     @yield('layout-bottom-navigation')
-
+    @include('partials.auth-modal')
 
     <!-- Google Ads Conversion Tracking (Fire after successful payment) -->
     @if(session('google_ads_conversion') && app()->environment('production') && \App\Models\Setting::get('google_ads_enabled') == '1')

@@ -24,17 +24,22 @@
                 @endif
             </a>
             <span class="auth-kicker"><i class="fas fa-home"></i> Built for renters, owners and brokers</span>
-            <h1>Your next room, tenant, or deal starts here.</h1>
-            <p>Create one secure account. Choose how you want to use ApnaNest — find a room, list a property, or manage listings as a broker.</p>
+            <h1>Start your next move with ApnaNest.</h1>
+            <p>Create one secure account and choose how you want to use the platform — find a room, list a property, or manage deals as a broker.</p>
+            <div class="auth-trust-tags">
+                <span class="auth-badge"><i class="fas fa-search"></i> Search smart</span>
+                <span class="auth-badge"><i class="fas fa-building"></i> List fast</span>
+                <span class="auth-badge"><i class="fas fa-chart-line"></i> Grow leads</span>
+            </div>
             <div class="auth-benefits">
-                <div><i class="fas fa-check"></i><span><strong>Browse verified listings</strong><small>Compare rooms, locations and monthly rent</small></span></div>
-                <div><i class="fas fa-check"></i><span><strong>List and manage properties</strong><small>Owners and brokers control listings from one workspace</small></span></div>
-                <div><i class="fas fa-check"></i><span><strong>Secure email verification</strong><small>No password is stored or required</small></span></div>
+                <div><i class="fas fa-check"></i><span><strong>Browse verified listings</strong><small>Compare rooms, locations, and price</small></span></div>
+                <div><i class="fas fa-check"></i><span><strong>List and manage properties</strong><small>Owners and brokers manage everything in one place</small></span></div>
+                <div><i class="fas fa-check"></i><span><strong>Fast verification</strong><small>Secure OTP confirms your identity quickly</small></span></div>
             </div>
         </aside>
 
         <div class="auth-panel">
-            <div class="auth-panel-head"><span class="auth-step">Create your account</span><h2>Join ApnaNest</h2><p>Tell us a little about yourself. We will verify your email before creating the account.</p></div>
+            <div class="auth-panel-head"><span class="auth-step">Create account</span><h2>Join ApnaNest</h2><p>Choose your role and set up your account in under a minute. We will verify your email before activation.</p></div>
             <div id="status-message" class="auth-alert hidden" role="alert"><i></i><span></span></div>
 
             <div id="details-step">

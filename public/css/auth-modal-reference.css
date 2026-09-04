@@ -1,0 +1,194 @@
+/* Compact Housing-style public auth presentation. Behaviour remains in auth-modal.blade.php. */
+#publicAuthModal:not(.hidden) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#publicAuthModal > div:nth-child(2) {
+    width: min(92vw, 430px);
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: 26px;
+}
+
+#publicAuthModal [data-auth-tab],
+#publicAuthModal [data-auth-panel="login"] > p,
+#publicAuthModal [data-auth-panel="login"] > div + div {
+    display: none;
+}
+
+#publicAuthModal [data-auth-panel="login"] h3 {
+    text-align: center;
+    font-size: 20px;
+}
+
+#publicAuthModal [data-auth-panel="login"] h3::after {
+    content: "Rent";
+    display: block;
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#publicAuthModal [data-auth-panel="login"] label {
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+#publicAuthModal [data-auth-panel="login"] input {
+    border-radius: 12px;
+    background: #fff;
+    padding-left: 44px;
+}
+
+#publicAuthModal [data-auth-panel="login"] input::placeholder {
+    color: #94a3b8;
+}
+
+#publicAuthModal [data-auth-panel="login"] .fa-user {
+    display: none;
+}
+
+#publicAuthModal[data-otp-mode="phone"] [data-auth-panel="login"] input {
+    padding-left: 64px;
+}
+
+#publicAuthModal[data-otp-mode="phone"] [data-auth-panel="login"] .relative::before {
+    content: "+91";
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    z-index: 1;
+    transform: translateY(-50%);
+    border-right: 1px solid #e2e8f0;
+    padding-right: 12px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#publicAuthModal [data-auth-panel="login"] button[type="submit"] {
+    border-radius: 12px;
+    background: #2563eb;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, .24);
+}
+
+#publicAuthModal [data-auth-panel="login"] button[type="submit"] span {
+    font-size: 14px;
+}
+
+@media (max-width: 640px) {
+    #publicAuthModal > div:nth-child(2) {
+        width: min(92vw, 410px);
+        max-height: 86vh;
+    }
+}
+
+/* Branded visual layer for the compact login card. */
+#publicAuthModal > div:nth-child(2) {
+    border-color: rgba(255, 255, 255, .8);
+    box-shadow: 0 32px 90px rgba(15, 23, 42, .38), 0 0 0 8px rgba(255, 255, 255, .12);
+    animation: auth-modal-enter .28s ease-out both;
+}
+
+#publicAuthModal > div:nth-child(2) > div:first-of-type {
+    min-height: 174px;
+    padding: 28px 20px 20px;
+    background-image: linear-gradient(180deg, rgba(9, 30, 66, .08), rgba(9, 30, 66, .82));
+    background-position: center;
+    background-size: cover;
+    border-bottom: 0;
+    position: relative;
+    isolation: isolate;
+}
+
+#publicAuthModal > div:nth-child(2) > div:first-of-type::after {
+    content: "Find a place that feels like home";
+    position: absolute;
+    left: 20px;
+    bottom: 18px;
+    color: rgba(255, 255, 255, .94);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-shadow: 0 2px 10px rgba(15, 23, 42, .35);
+    z-index: 0;
+}
+
+#publicAuthModal > div:nth-child(2) > div:first-of-type > div {
+    align-items: flex-end;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+#publicAuthModal > div:nth-child(2) > div:first-of-type > div > div {
+    border-color: rgba(255, 255, 255, .5);
+    background: rgba(255, 255, 255, .94);
+    color: #1d4ed8;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, .18);
+    text-transform: none;
+    letter-spacing: .02em;
+    padding: 9px 13px;
+}
+
+#publicAuthModal > div:nth-child(2) > div:nth-of-type(2) {
+    padding: 26px 25px 28px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+}
+
+#publicAuthModal [data-auth-panel="login"] h3 {
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 22px;
+}
+
+#publicAuthModal [data-auth-panel="login"] h3::after {
+    color: #2563eb;
+    font-weight: 700;
+    letter-spacing: .01em;
+}
+
+#publicAuthModal [data-auth-panel="login"] form > div {
+    margin-top: 20px;
+}
+
+#publicAuthModal [data-auth-panel="login"] .auth-modal-input {
+    min-height: 50px;
+    border-color: #dbe3ef;
+    background: rgba(255, 255, 255, .92);
+    box-shadow: 0 5px 16px rgba(15, 23, 42, .055);
+}
+
+#publicAuthModal [data-auth-panel="login"] .auth-modal-input:hover {
+    border-color: #bfdbfe;
+}
+
+#publicAuthModal [data-auth-panel="login"] button[type="submit"] {
+    min-height: 50px;
+    font-size: 15px;
+    letter-spacing: .01em;
+    box-shadow: 0 12px 24px rgba(37, 99, 235, .28);
+}
+
+#publicAuthModal [data-auth-panel="login"] button[type="submit"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 15px 28px rgba(37, 99, 235, .34);
+}
+
+#publicAuthModal [data-auth-panel="login"] button[type="submit"] i {
+    margin-left: 6px;
+    font-size: 11px;
+}
+
+#publicAuthClose {
+    background: rgba(255, 255, 255, .88);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, .12);
+}
+
+@keyframes auth-modal-enter {
+    from { opacity: 0; transform: translateY(10px) scale(.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}

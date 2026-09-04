@@ -38,10 +38,10 @@
             <span class="nav-label">Account</span>
         </a>
     @else
-        <a href="{{ route('login') }}" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full {{ Route::is('login') ? 'active' : '' }}" data-nav="account">
+        <button type="button" data-auth-trigger="login" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full bg-transparent border-0 p-0 {{ Route::is('login') ? 'active' : '' }}" data-nav="account">
             <i class="far fa-user-circle nav-icon"></i>
             <span class="nav-label">Login</span>
-        </a>
+        </button>
     @endauth
 </div>
 

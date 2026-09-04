@@ -226,18 +226,18 @@
                         @endif
                     @else
                         <!-- Guest Actions -->
-                        <a href="{{ route('login') }}" 
-                           class="theme-nav-link h-10 inline-flex items-center text-slate-700 font-bold transition-colors duration-200 text-sm px-3 whitespace-nowrap">
+                        <button type="button" data-auth-trigger="login"
+                           class="theme-nav-link h-10 inline-flex items-center text-slate-700 font-bold transition-colors duration-200 text-sm px-3 whitespace-nowrap bg-transparent border-0 cursor-pointer">
                             Login
-                        </a>
-                        <a href="{{ route('register') }}"
-                           class="theme-primary-button h-10 inline-flex items-center px-4 rounded-xl text-sm font-bold transition-all duration-200 shadow-md whitespace-nowrap">
+                        </button>
+                                <a href="{{ route('register') }}"
+                                    class="theme-primary-button h-10 inline-flex items-center px-4 rounded-xl text-sm font-bold transition-all duration-200 shadow-md whitespace-nowrap">
                             Sign Up
-                        </a>
-                        <a href="{{ route('register') }}?role=owner"
-                           class="theme-secondary-button h-10 inline-flex items-center border px-4 rounded-xl text-sm font-bold transition-all duration-200 whitespace-nowrap">
+                                </a>
+                                <a href="{{ route('register') }}?role=owner"
+                                    class="theme-secondary-button h-10 inline-flex items-center border px-4 rounded-xl text-sm font-bold transition-all duration-200 whitespace-nowrap">
                             Post Property
-                        </a>
+                                </a>
                     @endauth
                 </div>
             </div>

@@ -180,7 +180,7 @@
             </form>
         @else
             <div class="grid grid-cols-2 gap-3 p-2">
-                <a href="{{ route('login') }}" class="text-white font-bold py-3 rounded-xl text-center text-sm shadow-lg app-btn" style="background-color: var(--primary);">Login</a>
+                <button type="button" data-auth-trigger="login" class="text-white font-bold py-3 rounded-xl text-center text-sm shadow-lg app-btn border-0" style="background-color: var(--primary);">Login</button>
                 <a href="{{ route('register') }}" class="bg-gray-100 text-gray-700 font-bold py-3 rounded-xl text-center text-sm app-btn">Sign Up</a>
             </div>
         @endauth
