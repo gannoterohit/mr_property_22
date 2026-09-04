@@ -1,194 +1,1618 @@
-/* Compact Housing-style public auth presentation. Behaviour remains in auth-modal.blade.php. */
-#publicAuthModal:not(.hidden) {
+/* =========================================================
+   APNANEST PUBLIC AUTH MODAL
+   Premium Split Login Design
+========================================================= */
+
+#publicAuthModal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
+    padding: 20px;
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
 }
 
-#publicAuthModal > div:nth-child(2) {
-    width: min(92vw, 430px);
-    max-height: 92vh;
-    overflow-y: auto;
-    border-radius: 26px;
+
+/* =========================================================
+   HIDDEN STATE
+========================================================= */
+
+#publicAuthModal.hidden {
+    display: none !important;
 }
 
-#publicAuthModal [data-auth-tab],
-#publicAuthModal [data-auth-panel="login"] > p,
-#publicAuthModal [data-auth-panel="login"] > div + div {
-    display: none;
-}
 
-#publicAuthModal [data-auth-panel="login"] h3 {
-    text-align: center;
-    font-size: 20px;
-}
+/* =========================================================
+   BACKDROP
+========================================================= */
 
-#publicAuthModal [data-auth-panel="login"] h3::after {
-    content: "Rent";
-    display: block;
-    margin-top: 5px;
-    color: #64748b;
-    font-size: 13px;
-    font-weight: 500;
-}
-
-#publicAuthModal [data-auth-panel="login"] label {
-    text-transform: none;
-    letter-spacing: 0;
-}
-
-#publicAuthModal [data-auth-panel="login"] input {
-    border-radius: 12px;
-    background: #fff;
-    padding-left: 44px;
-}
-
-#publicAuthModal [data-auth-panel="login"] input::placeholder {
-    color: #94a3b8;
-}
-
-#publicAuthModal [data-auth-panel="login"] .fa-user {
-    display: none;
-}
-
-#publicAuthModal[data-otp-mode="phone"] [data-auth-panel="login"] input {
-    padding-left: 64px;
-}
-
-#publicAuthModal[data-otp-mode="phone"] [data-auth-panel="login"] .relative::before {
-    content: "+91";
+#publicAuthModal .auth-modal-backdrop {
     position: absolute;
-    left: 16px;
-    top: 50%;
-    z-index: 1;
-    transform: translateY(-50%);
-    border-right: 1px solid #e2e8f0;
-    padding-right: 12px;
-    color: #334155;
-    font-size: 14px;
-    font-weight: 600;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(15, 23, 42, .72),
+            rgba(30, 41, 59, .58)
+        );
+
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
 }
 
-#publicAuthModal [data-auth-panel="login"] button[type="submit"] {
-    border-radius: 12px;
-    background: #2563eb;
-    box-shadow: 0 10px 22px rgba(37, 99, 235, .24);
-}
 
-#publicAuthModal [data-auth-panel="login"] button[type="submit"] span {
-    font-size: 14px;
-}
+/* =========================================================
+   MAIN CARD
+========================================================= */
 
-@media (max-width: 640px) {
-    #publicAuthModal > div:nth-child(2) {
-        width: min(92vw, 410px);
-        max-height: 86vh;
-    }
-}
-
-/* Branded visual layer for the compact login card. */
-#publicAuthModal > div:nth-child(2) {
-    border-color: rgba(255, 255, 255, .8);
-    box-shadow: 0 32px 90px rgba(15, 23, 42, .38), 0 0 0 8px rgba(255, 255, 255, .12);
-    animation: auth-modal-enter .28s ease-out both;
-}
-
-#publicAuthModal > div:nth-child(2) > div:first-of-type {
-    min-height: 174px;
-    padding: 28px 20px 20px;
-    background-image: linear-gradient(180deg, rgba(9, 30, 66, .08), rgba(9, 30, 66, .82));
-    background-position: center;
-    background-size: cover;
-    border-bottom: 0;
+#publicAuthModal .auth-modal-card {
     position: relative;
+    z-index: 2;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    width: min(94vw, 800px);
+
+    min-height: 500px;
+    max-height: calc(100vh - 40px);
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .85);
+
+    border-radius: 27px;
+
+    background: #fff;
+
+    box-shadow:
+        0 35px 90px rgba(15, 23, 42, .35),
+        0 12px 35px rgba(15, 23, 42, .12);
+
+    animation:
+        authModalIn .32s
+        cubic-bezier(.2, .8, .2, 1)
+        both;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+#publicAuthModal .auth-close-btn {
+    position: absolute;
+
+    top: 12px;
+    left: 12px;
+
+    z-index: 50;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, .95);
+
+    color: #475569;
+
+    box-shadow:
+        0 5px 18px rgba(15, 23, 42, .16);
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        color .2s ease;
+}
+
+#publicAuthModal .auth-close-btn:hover {
+    transform: rotate(90deg) scale(1.05);
+
+    background: #fff;
+
+    color: #0f172a;
+}
+
+#publicAuthModal .auth-close-btn i {
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   RIGHT IMAGE / VISUAL
+========================================================= */
+
+#publicAuthModal .auth-visual-panel {
+    position: relative;
+
+    grid-column: 2;
+    grid-row: 1;
+
+    min-height: 500px;
+
+    overflow: hidden;
+
+    background:
+        #172554
+        center / cover
+        no-repeat;
+
     isolation: isolate;
 }
 
-#publicAuthModal > div:nth-child(2) > div:first-of-type::after {
-    content: "Find a place that feels like home";
+
+/* Dark blue fallback */
+#publicAuthModal .auth-visual-panel::before {
+    content: "";
+
     position: absolute;
-    left: 20px;
-    bottom: 18px;
-    color: rgba(255, 255, 255, .94);
+    inset: 0;
+
+    z-index: -2;
+
+    background:
+        linear-gradient(
+            145deg,
+            #24356f 0%,
+            #172554 52%,
+            #12204c 100%
+        );
+}
+
+
+/* =========================================================
+   IMAGE OVERLAY
+========================================================= */
+
+#publicAuthModal .auth-visual-overlay {
+    position: absolute;
+    inset: 0;
+
+    z-index: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(15, 23, 42, .04) 0%,
+            rgba(15, 23, 42, .02) 45%,
+            rgba(15, 23, 42, .38) 100%
+        );
+}
+
+
+/* =========================================================
+   DECORATIVE CIRCLES
+========================================================= */
+
+#publicAuthModal .auth-visual-panel::after {
+    content: "";
+
+    position: absolute;
+
+    width: 410px;
+    height: 410px;
+
+    top: -135px;
+    left: -110px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .12);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 22px rgba(255,255,255,.035),
+        0 0 0 50px rgba(255,255,255,.025);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   SECURE BADGE
+========================================================= */
+
+#publicAuthModal .auth-secure-badge {
+    position: absolute;
+
+    top: 38px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 5;
+
+    display: inline-flex;
+
+    align-items: center;
+    gap: 7px;
+
+    padding: 8px 13px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.17);
+
+    border-radius: 999px;
+
+    background:
+        rgba(74, 94, 184, .42);
+
+    color: rgba(255,255,255,.94);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: .06em;
+
+    white-space: nowrap;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+#publicAuthModal .auth-secure-icon {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 19px;
+    height: 19px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(99, 102, 241, .65);
+
+    color: #dbeafe;
+
+    font-size: 8px;
+}
+
+
+/* =========================================================
+   TRUST CARD
+========================================================= */
+
+#publicAuthModal .auth-trust-card {
+    position: absolute;
+
+    right: 22px;
+    bottom: 82px;
+
+    z-index: 5;
+
+    display: flex;
+
+    flex-direction: column;
+
+    width: 170px;
+
+    padding: 12px 14px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+
+    border-radius: 15px;
+
+    background:
+        rgba(255,255,255,.15);
+
+    color: #fff;
+
+    box-shadow:
+        0 15px 35px rgba(15,23,42,.18);
+
+    backdrop-filter: blur(13px);
+    -webkit-backdrop-filter: blur(13px);
+}
+
+#publicAuthModal .auth-trust-title {
+    margin-bottom: 3px;
+
+    font-size: 12px;
+    font-weight: 900;
+}
+
+#publicAuthModal .auth-trust-text {
+    font-size: 10px;
+    line-height: 1.45;
+
+    color:
+        rgba(255,255,255,.78);
+}
+
+
+/* =========================================================
+   VISUAL FOOTER
+========================================================= */
+
+#publicAuthModal .auth-visual-footer {
+    position: absolute;
+
+    left: 24px;
+    right: 20px;
+    bottom: 20px;
+
+    z-index: 5;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    color:
+        rgba(255,255,255,.91);
+
+    font-size: 9px;
+    font-weight: 800;
+
+    line-height: 1.4;
+}
+
+#publicAuthModal .auth-visual-footer i {
+    margin-right: 3px;
+
+    color:
+        rgba(255,255,255,.8);
+
+    font-size: 8px;
+}
+
+
+/* =========================================================
+   LEFT CONTENT
+========================================================= */
+
+#publicAuthModal .auth-content-panel {
+    position: relative;
+
+    grid-column: 1;
+    grid-row: 1;
+
+    min-width: 0;
+
+    overflow-y: auto;
+
+    padding:
+        34px 40px 27px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #ffffff 68%,
+            #f4f6ff 100%
+        );
+}
+
+
+/* subtle background decoration */
+#publicAuthModal .auth-content-panel::after {
+    content: "";
+
+    position: absolute;
+
+    right: -110px;
+    bottom: -110px;
+
+    width: 240px;
+    height: 240px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(99,102,241,.13),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+#publicAuthModal .auth-brand {
+    position: relative;
+    z-index: 3;
+
+    height: 38px;
+
+    margin-bottom: 34px;
+
+    display: flex;
+    align-items: center;
+}
+
+#publicAuthModal .auth-modal-logo {
+    display: block;
+
+    width: auto;
+    max-width: 170px;
+
+    height: 34px;
+
+    object-fit: contain;
+    object-position: left center;
+}
+
+#publicAuthModal .auth-modal-wordmark {
+    color: #2939b9;
+
+    font-size: 19px;
+    font-weight: 900;
+
+    letter-spacing: -.045em;
+}
+
+
+/* =========================================================
+   TABS
+   Kept in DOM for JS but hidden from visual design
+========================================================= */
+
+#publicAuthModal .auth-tabs {
+    display: none;
+}
+
+#publicAuthModal .auth-modal-tab {
+    border: 0;
+    background: transparent;
+}
+
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+#publicAuthModal .auth-modal-panel {
+    position: relative;
+    z-index: 2;
+}
+
+#publicAuthModal .auth-modal-panel.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   HEADING
+========================================================= */
+
+#publicAuthModal .auth-heading {
+    margin-bottom: 21px;
+}
+
+#publicAuthModal .auth-heading h3 {
+    margin: 0;
+
+    color: #111c3b;
+
+    font-size: 29px;
+    font-weight: 900;
+
+    line-height: 1.05;
+
+    letter-spacing: -.045em;
+}
+
+#publicAuthModal .auth-heading-role {
+    display: block;
+
+    margin-top: 7px;
+
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 500;
+}
+
+#publicAuthModal .auth-heading p {
+    max-width: 300px;
+
+    margin: 7px 0 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+#publicAuthModal .auth-login-form,
+#publicAuthModal .auth-register-form,
+#publicAuthModal .auth-otp-form {
+    position: relative;
+    z-index: 3;
+}
+
+#publicAuthModal .auth-form-group {
+    margin-bottom: 15px;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+#publicAuthModal .auth-field-label {
+    display: flex;
+
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 7px;
+
+    color: #334155;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: .035em;
+}
+
+#publicAuthModal .auth-label-icon {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 21px;
+    height: 21px;
+
+    border-radius: 7px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   INPUT WRAPPER
+========================================================= */
+
+#publicAuthModal .auth-input-shell {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    min-height: 50px;
+
+    border:
+        1px solid
+        #dbe3ef;
+
+    border-radius: 14px;
+
+    background: #fff;
+
+    box-shadow:
+        0 5px 15px
+        rgba(15,23,42,.045);
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+#publicAuthModal .auth-input-shell:focus-within {
+    border-color: #818cf8;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(99,102,241,.10),
+        0 8px 20px
+        rgba(37,99,235,.07);
+}
+
+
+/* =========================================================
+   INPUT ICON
+========================================================= */
+
+#publicAuthModal .auth-input-icon {
+    position: absolute;
+
+    left: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   COUNTRY CODE
+========================================================= */
+
+#publicAuthModal .auth-country-code {
+    position: absolute;
+
+    left: 14px;
+
+    z-index: 2;
+
+    padding-right: 11px;
+
+    border-right:
+        1px solid
+        #e2e8f0;
+
+    color: #334155;
+
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: .02em;
-    text-shadow: 0 2px 10px rgba(15, 23, 42, .35);
-    z-index: 0;
 }
 
-#publicAuthModal > div:nth-child(2) > div:first-of-type > div {
-    align-items: flex-end;
-    height: 100%;
-    position: relative;
-    z-index: 1;
+#publicAuthModal
+.auth-country-code
++ .auth-input-icon {
+    left: 57px;
 }
 
-#publicAuthModal > div:nth-child(2) > div:first-of-type > div > div {
-    border-color: rgba(255, 255, 255, .5);
-    background: rgba(255, 255, 255, .94);
-    color: #1d4ed8;
-    box-shadow: 0 8px 20px rgba(15, 23, 42, .18);
-    text-transform: none;
-    letter-spacing: .02em;
-    padding: 9px 13px;
-}
 
-#publicAuthModal > div:nth-child(2) > div:nth-of-type(2) {
-    padding: 26px 25px 28px;
-    background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
-}
+/* =========================================================
+   INPUT
+========================================================= */
 
-#publicAuthModal [data-auth-panel="login"] h3 {
+#publicAuthModal .auth-modal-input {
+    width: 100%;
+
+    min-height: 48px;
+
+    border: 0 !important;
+
+    outline: none !important;
+
+    border-radius: 13px;
+
+    padding:
+        0 14px 0 43px;
+
+    background: transparent !important;
+
     color: #0f172a;
+
+    font-size: 13px;
+
+    box-shadow: none !important;
+}
+
+#publicAuthModal .auth-modal-input::placeholder {
+    color: #94a3b8;
+}
+
+#publicAuthModal .auth-modal-input.standalone {
+    border:
+        1px solid
+        #dbe3ef !important;
+
+    background: #fff !important;
+
+    border-radius: 13px;
+
+    padding-left: 14px;
+
+    box-shadow:
+        0 5px 15px
+        rgba(15,23,42,.045) !important;
+}
+
+#publicAuthModal .auth-modal-input.standalone:focus {
+    border-color:
+        #818cf8 !important;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(99,102,241,.10) !important;
+}
+
+
+/* =========================================================
+   CTA BUTTON
+========================================================= */
+
+#publicAuthModal .auth-cta-btn {
+    position: relative;
+    z-index: 3;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    width: 100%;
+
+    min-height: 49px;
+
+    margin-top: 5px;
+
+    border: 0;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            100deg,
+            #4054ff 0%,
+            #8745ed 100%
+        );
+
+    color: #fff;
+
+    font-size: 13px;
     font-weight: 800;
-    font-size: 22px;
+
+    letter-spacing: .005em;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 13px 27px
+        rgba(79,70,229,.25);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease;
 }
 
-#publicAuthModal [data-auth-panel="login"] h3::after {
-    color: #2563eb;
-    font-weight: 700;
-    letter-spacing: .01em;
-}
-
-#publicAuthModal [data-auth-panel="login"] form > div {
-    margin-top: 20px;
-}
-
-#publicAuthModal [data-auth-panel="login"] .auth-modal-input {
-    min-height: 50px;
-    border-color: #dbe3ef;
-    background: rgba(255, 255, 255, .92);
-    box-shadow: 0 5px 16px rgba(15, 23, 42, .055);
-}
-
-#publicAuthModal [data-auth-panel="login"] .auth-modal-input:hover {
-    border-color: #bfdbfe;
-}
-
-#publicAuthModal [data-auth-panel="login"] button[type="submit"] {
-    min-height: 50px;
-    font-size: 15px;
-    letter-spacing: .01em;
-    box-shadow: 0 12px 24px rgba(37, 99, 235, .28);
-}
-
-#publicAuthModal [data-auth-panel="login"] button[type="submit"]:hover {
+#publicAuthModal .auth-cta-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 15px 28px rgba(37, 99, 235, .34);
+
+    box-shadow:
+        0 16px 31px
+        rgba(79,70,229,.32);
+
+    filter: brightness(1.02);
 }
 
-#publicAuthModal [data-auth-panel="login"] button[type="submit"] i {
-    margin-left: 6px;
+#publicAuthModal .auth-cta-btn:active {
+    transform: translateY(0);
+}
+
+#publicAuthModal .auth-cta-btn i {
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+#publicAuthModal .auth-divider {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin:
+        20px 0 13px;
+}
+
+#publicAuthModal .auth-divider span {
+    flex: 1;
+
+    height: 1px;
+
+    background: #e7eaf1;
+}
+
+#publicAuthModal .auth-divider strong {
+    color: #98a2b3;
+
+    font-size: 8px;
+    font-weight: 800;
+
+    letter-spacing: .13em;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   SOCIAL BUTTONS
+========================================================= */
+
+#publicAuthModal .auth-social-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 9px;
+}
+
+#publicAuthModal .auth-social-btn {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 42px;
+
+    border:
+        1px solid
+        #e0e5ef;
+
+    border-radius: 11px;
+
+    background: #fff;
+
+    color: #344054;
+
     font-size: 11px;
+    font-weight: 800;
+
+    text-decoration: none;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
 }
 
-#publicAuthClose {
-    background: rgba(255, 255, 255, .88);
-    box-shadow: 0 4px 12px rgba(15, 23, 42, .12);
+#publicAuthModal .auth-social-btn:hover {
+    transform: translateY(-1px);
+
+    border-color: #c7d2fe;
+
+    box-shadow:
+        0 8px 17px
+        rgba(37,99,235,.09);
+
+    background: #fafbff;
 }
 
-@keyframes auth-modal-enter {
-    from { opacity: 0; transform: translateY(10px) scale(.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+#publicAuthModal .auth-social-btn.facebook {
+    border-color: #2563eb;
+
+    background: #4264e8;
+
+    color: #fff;
+}
+
+#publicAuthModal .auth-social-btn.facebook:hover {
+    background: #3556d7;
+
+    border-color: #3556d7;
+}
+
+
+/* =========================================================
+   BOTTOM TEXT
+========================================================= */
+
+#publicAuthModal .auth-bottom-text {
+    position: relative;
+    z-index: 3;
+
+    margin:
+        17px 0 0;
+
+    text-align: center;
+
+    color: #98a2b3;
+
+    font-size: 10px;
+}
+
+#publicAuthModal .auth-bottom-text button {
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    color: #3155d9;
+
+    font-size: inherit;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   REGISTER
+========================================================= */
+
+#publicAuthModal .auth-role-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 7px;
+}
+
+#publicAuthModal .auth-role-card {
+    position: relative;
+
+    cursor: pointer;
+}
+
+#publicAuthModal .auth-role-card input {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+#publicAuthModal .auth-role-card span {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+    min-height: 68px;
+
+    border:
+        1px solid
+        #e2e8f0;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+    transition: .2s ease;
+}
+
+#publicAuthModal .auth-role-card i {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 25px;
+    height: 25px;
+
+    border-radius: 8px;
+
+    background: #e2e8f0;
+
+    font-size: 9px;
+}
+
+#publicAuthModal .auth-role-card small {
+    font-size: 9px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .04em;
+}
+
+#publicAuthModal
+.auth-role-card
+input:checked
++ span {
+    border-color: #818cf8;
+
+    background: #eef2ff;
+
+    color: #3155d9;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(99,102,241,.08);
+}
+
+#publicAuthModal
+.auth-role-card
+input:checked
++ span
+i {
+    background: #4054ff;
+
+    color: #fff;
+}
+
+
+/* =========================================================
+   OTP
+========================================================= */
+
+#publicAuthModal .auth-otp-heading {
+    text-align: center;
+
+    margin-bottom: 24px;
+}
+
+#publicAuthModal .auth-otp-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+
+    margin:
+        0 auto 13px;
+
+    border-radius: 16px;
+
+    background: #eef2ff;
+
+    color: #4054ff;
+
+    font-size: 19px;
+}
+
+#publicAuthModal .auth-otp-heading h3 {
+    margin: 0;
+
+    color: #111c3b;
+
+    font-size: 27px;
+    font-weight: 900;
+
+    letter-spacing: -.04em;
+}
+
+#publicAuthModal .auth-otp-heading p {
+    max-width: 300px;
+
+    margin:
+        7px auto 0;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    line-height: 1.55;
+}
+
+#publicAuthModal .auth-otp-input {
+    width: 100%;
+
+    height: 58px;
+
+    border:
+        1px solid
+        #dbe3ef;
+
+    outline: none;
+
+    border-radius: 14px;
+
+    background: #fff;
+
+    color: #0f172a;
+
+    text-align: center;
+
+    font-size: 23px;
+    font-weight: 900;
+
+    letter-spacing: .45em;
+
+    padding-left: .45em;
+
+    box-shadow:
+        0 5px 15px
+        rgba(15,23,42,.045);
+}
+
+#publicAuthModal .auth-otp-input:focus {
+    border-color: #818cf8;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(99,102,241,.10);
+}
+
+#publicAuthModal .auth-otp-input::placeholder {
+    color: #cbd5e1;
+}
+
+
+/* =========================================================
+   OTP ACTIONS
+========================================================= */
+
+#publicAuthModal .auth-otp-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    margin:
+        9px 2px 15px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+}
+
+#publicAuthModal .auth-otp-actions button {
+    border: 0;
+
+    background: transparent;
+
+    color: #3155d9;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+#publicAuthModal .auth-back-btn {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    width: 100%;
+
+    min-height: 42px;
+
+    margin-top: 9px;
+
+    border:
+        1px solid
+        #e2e8f0;
+
+    border-radius: 12px;
+
+    background: #fff;
+
+    color: #475569;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease;
+}
+
+#publicAuthModal .auth-back-btn:hover {
+    background: #f8fafc;
+
+    border-color: #cbd5e1;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#publicAuthModal .auth-status {
+    position: relative;
+    z-index: 10;
+
+    margin-top: 13px;
+
+    padding:
+        9px 11px;
+
+    border-radius: 10px;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    line-height: 1.4;
+}
+
+#publicAuthModal .auth-status.hidden {
+    display: none;
+}
+
+#publicAuthModal .auth-status.error {
+    border: 1px solid #fecaca;
+
+    background: #fef2f2;
+
+    color: #b91c1c;
+}
+
+#publicAuthModal .auth-status.success {
+    border: 1px solid #bbf7d0;
+
+    background: #f0fdf4;
+
+    color: #15803d;
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes authModalIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(14px)
+            scale(.975);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 760px) {
+
+    #publicAuthModal {
+        padding: 15px;
+    }
+
+    #publicAuthModal .auth-modal-card {
+        width: min(94vw, 440px);
+
+        display: flex;
+
+        flex-direction: column;
+
+        max-height: calc(100vh - 30px);
+
+        overflow-y: auto;
+    }
+
+    #publicAuthModal .auth-visual-panel {
+        order: 1;
+
+        min-height: 165px;
+
+        height: 165px;
+
+        flex: 0 0 165px;
+    }
+
+    #publicAuthModal .auth-content-panel {
+        order: 2;
+
+        padding:
+            25px 24px 27px;
+    }
+
+    #publicAuthModal .auth-secure-badge {
+        top: 20px;
+    }
+
+    #publicAuthModal .auth-trust-card {
+        right: 16px;
+        bottom: 20px;
+
+        width: 145px;
+
+        padding: 9px 11px;
+    }
+
+    #publicAuthModal .auth-visual-footer {
+        left: 18px;
+        right: 165px;
+        bottom: 20px;
+
+        font-size: 8px;
+    }
+
+    #publicAuthModal .auth-brand {
+        margin-bottom: 25px;
+    }
+
+    #publicAuthModal .auth-heading h3 {
+        font-size: 26px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 430px) {
+
+    #publicAuthModal {
+        padding: 10px;
+    }
+
+    #publicAuthModal .auth-modal-card {
+        width: 100%;
+
+        max-height: calc(100vh - 20px);
+
+        border-radius: 22px;
+    }
+
+    #publicAuthModal .auth-visual-panel {
+        min-height: 145px;
+        height: 145px;
+        flex-basis: 145px;
+    }
+
+    #publicAuthModal .auth-content-panel {
+        padding:
+            22px 20px 24px;
+    }
+
+    #publicAuthModal .auth-modal-logo {
+        max-width: 145px;
+        height: 30px;
+    }
+
+    #publicAuthModal .auth-heading h3 {
+        font-size: 24px;
+    }
+
+    #publicAuthModal .auth-heading p {
+        font-size: 11px;
+    }
+
+    #publicAuthModal .auth-trust-card {
+        width: 132px;
+
+        right: 13px;
+        bottom: 14px;
+    }
+
+    #publicAuthModal .auth-trust-title {
+        font-size: 10px;
+    }
+
+    #publicAuthModal .auth-trust-text {
+        font-size: 8px;
+    }
+
+    #publicAuthModal .auth-visual-footer {
+        left: 14px;
+        right: 150px;
+        bottom: 14px;
+
+        gap: 4px;
+
+        font-size: 7px;
+    }
+
+    #publicAuthModal .auth-social-grid {
+        gap: 7px;
+    }
+
+    #publicAuthModal .auth-social-btn {
+        min-height: 40px;
+
+        font-size: 10px;
+    }
+
+    #publicAuthModal .auth-role-grid {
+        gap: 5px;
+    }
+
+    #publicAuthModal .auth-role-card span {
+        min-height: 62px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #publicAuthModal .auth-modal-card {
+        animation: none;
+    }
+
+    #publicAuthModal * {
+        transition: none !important;
+    }
+}
+
+/* Keep the admin-uploaded transparent artwork visible on a light canvas. */
+#publicAuthModal .auth-visual-panel[style*="background-image"] {
+    background-color: #dfe7ff;
+    background-size: cover;
+    background-position: center;
+}
+
+#publicAuthModal .auth-visual-panel[style*="background-image"]::before {
+    background: linear-gradient(145deg, rgba(219, 234, 254, .72), rgba(129, 140, 248, .22));
+    z-index: -1;
+}
+
+#publicAuthModal .auth-visual-panel[style*="background-image"] .auth-visual-overlay {
+    background: linear-gradient(180deg, rgba(255, 255, 255, .01), rgba(30, 64, 175, .04));
+}
+
+/* Keep the compact card fixed inside the viewport with no browser scrollbars. */
+#publicAuthModal,
+#publicAuthModal .auth-modal-card,
+#publicAuthModal .auth-content-panel {
+    overflow: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#publicAuthModal::-webkit-scrollbar,
+#publicAuthModal .auth-modal-card::-webkit-scrollbar,
+#publicAuthModal .auth-content-panel::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+#publicAuthModal .auth-modal-card {
+    max-height: calc(100vh - 28px);
+}
+
+#publicAuthModal .auth-content-panel {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#publicAuthModal .auth-visual-panel[style*="background-image"] {
+    background-color: #eef4ff !important;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: normal;
+}
+
+#publicAuthModal .auth-visual-panel[style*="background-image"]::before {
+    background: transparent !important;
+}
+
+#publicAuthModal .auth-visual-panel[style*="background-image"] .auth-visual-overlay {
+    background: transparent !important;
+}
+
+/* Compact final card and high-contrast image-side copy. */
+#publicAuthModal .auth-modal-card {
+    width: min(90vw, 700px);
+    min-height: 430px;
+    max-height: calc(100vh - 32px);
+    border-radius: 22px;
+}
+
+#publicAuthModal .auth-visual-panel {
+    min-height: 430px;
+}
+
+#publicAuthModal .auth-visual-panel[style*="background-image"] {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#publicAuthModal .auth-secure-badge,
+#publicAuthModal .auth-secure-badge span,
+#publicAuthModal .auth-secure-badge i,
+#publicAuthModal .auth-trust-card,
+#publicAuthModal .auth-trust-title,
+#publicAuthModal .auth-trust-text,
+#publicAuthModal .auth-visual-footer,
+#publicAuthModal .auth-visual-footer span,
+#publicAuthModal .auth-visual-footer i {
+    color: #fff !important;
+    text-shadow: 0 1px 4px rgba(15, 23, 42, .35);
+}
+
+#publicAuthModal .auth-secure-badge {
+    background: rgba(30, 64, 175, .78);
+    border-color: rgba(255, 255, 255, .55);
+}
+
+#publicAuthModal .auth-trust-card {
+    background: rgba(30, 41, 59, .58);
+    border-color: rgba(255, 255, 255, .58);
+}
+
+#publicAuthModal .auth-visual-footer {
+    bottom: 16px;
+    font-size: 9px;
+    color: #0f172a !important;
+    text-shadow: none;
+}
+
+#publicAuthModal .auth-visual-footer span,
+#publicAuthModal .auth-visual-footer i {
+    color: #0f172a !important;
+    text-shadow: none;
+}
+
+@media (max-width: 760px) {
+    #publicAuthModal .auth-modal-card {
+        width: min(92vw, 410px);
+        min-height: 0;
+    }
+
+    #publicAuthModal .auth-visual-panel {
+        min-height: 150px;
+        height: 150px;
+    }
+
+    #publicAuthModal .auth-visual-panel[style*="background-image"] {
+        background-size: contain;
+    }
 }

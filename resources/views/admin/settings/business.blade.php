@@ -280,6 +280,25 @@
                                      </div>
                                  </div>
                              </div>
+                             <div>
+                                 <label class="block text-sm font-semibold text-gray-700 mb-3">Login Modal Image</label>
+                                 <div class="flex items-start gap-6">
+                                     <div class="h-24 w-40 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
+                                         @if(\App\Models\Setting::get('auth_modal_image'))
+                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('auth_modal_image')) }}" class="h-full w-full object-cover">
+                                         @else
+                                             <i class="fas fa-right-left text-gray-300 text-3xl"></i>
+                                         @endif
+                                     </div>
+                                     <div class="flex-1">
+                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
+                                             <i class="fas fa-upload mr-2"></i> Upload Login Image
+                                             <input type="file" name="auth_modal_image" class="hidden" accept="image/jpeg,image/png,image/webp">
+                                         </label>
+                                         <p class="mt-2 text-xs text-gray-500">Used only on the login popup. Recommended: 900x1100px portrait or 1200x800px landscape. Max: 3MB.</p>
+                                     </div>
+                                 </div>
+                             </div>
                          </div>
 
                          <div data-appearance-subpanel="colors" class="space-y-6" hidden>
@@ -473,9 +492,9 @@
                  <!-- Integrations Section -->
                  <div data-settings-panel="integrations" class="space-y-6" hidden>
                      <div class="settings-subtabs" role="tablist" aria-label="Integrations settings sections">
-                         <button type="button" data-integrations-tab="maps" aria-selected="true"><i class="fas fa-map-marked-alt"></i>Google Maps</button>
+                         <button type="button" data-integrations-tab="maps" aria-selected="false"><i class="fas fa-map-marked-alt"></i>Google Maps</button>
                          <button type="button" data-integrations-tab="mobile_app" aria-selected="false"><i class="fas fa-mobile-screen-button"></i>Mobile App</button>
-                         <button type="button" data-integrations-tab="social_login" aria-selected="false"><i class="fas fa-share-nodes"></i>Social Login</button>
+                         <button type="button" data-integrations-tab="social_login" aria-selected="true"><i class="fas fa-share-nodes"></i>Social Login</button>
                      </div>
 
                      <div data-integrations-subpanel="maps" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
@@ -534,11 +553,11 @@
                                          <span class="block text-sm font-bold text-gray-800">Google Login</span>
                                          <span class="mt-1 block text-xs text-gray-500">Allow users to sign in with their Google account</span>
                                      </div>
-                                     <span class="relative inline-flex shrink-0 items-center">
+                                     <label class="relative inline-flex shrink-0 cursor-pointer items-center" title="Enable Google Login">
                                          <input type="checkbox" name="google_login_enabled" value="1" class="peer sr-only" @checked(\App\Models\Setting::isEnabled('google_login_enabled', false))>
-                                         <span class="admin-switch-track h-6 w-11 rounded-full bg-gray-200 transition"></span>
-                                         <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
-                                     </span>
+                                         <span class="admin-switch-track h-6 w-11 rounded-full bg-gray-200 transition peer-checked:bg-indigo-600"></span>
+                                         <span class="pointer-events-none absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                     </label>
                                  </div>
                                  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                      <div>
@@ -562,11 +581,11 @@
                                          <span class="block text-sm font-bold text-gray-800">Facebook Login</span>
                                          <span class="mt-1 block text-xs text-gray-500">Allow users to sign in with their Facebook account</span>
                                      </div>
-                                     <span class="relative inline-flex shrink-0 items-center">
+                                     <label class="relative inline-flex shrink-0 cursor-pointer items-center" title="Enable Facebook Login">
                                          <input type="checkbox" name="facebook_login_enabled" value="1" class="peer sr-only" @checked(\App\Models\Setting::isEnabled('facebook_login_enabled', false))>
-                                         <span class="admin-switch-track h-6 w-11 rounded-full bg-gray-200 transition"></span>
-                                         <span class="absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
-                                     </span>
+                                         <span class="admin-switch-track h-6 w-11 rounded-full bg-gray-200 transition peer-checked:bg-indigo-600"></span>
+                                         <span class="pointer-events-none absolute left-1 h-4 w-4 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                     </label>
                                  </div>
                                  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                      <div>
@@ -1322,7 +1341,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const activateTab = (tabName, updateUrl = true) => {
-        const activeTab = validTabs.includes(tabName) ? tabName : 'general';
+        const socialLoginRequested = tabName === 'social_login';
+        const activeTab = validTabs.includes(tabName) ? tabName : (socialLoginRequested ? 'integrations' : 'general');
 
         tabs.forEach((tab) => {
             const selected = tab.dataset.settingsTab === activeTab;
@@ -1343,7 +1363,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (activeTab === 'integrations') {
-            activateIntegrationsTab(integrationsTabs.find((tab) => tab.getAttribute('aria-selected') === 'true')?.dataset.integrationsTab || 'maps');
+            activateIntegrationsTab(socialLoginRequested ? 'social_login' : (integrationsTabs.find((tab) => tab.getAttribute('aria-selected') === 'true')?.dataset.integrationsTab || 'social_login'));
         }
 
         if (updateUrl) {
@@ -1371,7 +1391,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     activateAppearanceTab('branding');
 
-    activateIntegrationsTab('maps');
+    activateIntegrationsTab('social_login');
 
     activateTab(location.hash.replace('#', '') || 'general', false);
 
@@ -1469,6 +1489,7 @@ setupImagePreview('website_favicon');
 setupImagePreview('owner_cta_image');
 setupImagePreview('promo_modal_image');
 setupImagePreview('default_hero_image');
+setupImagePreview('auth_modal_image');
 
 const settingsForm = document.getElementById('settings-form');
 if (settingsForm) {

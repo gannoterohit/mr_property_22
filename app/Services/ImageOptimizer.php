@@ -49,6 +49,13 @@ class ImageOptimizer
             'format' => 'webp',
             'thumbnails' => [],
         ],
+        'auth_modal' => [
+            'max_width' => 1200,
+            'max_height' => 1200,
+            'quality' => 80,
+            'format' => 'webp',
+            'thumbnails' => [],
+        ],
         'logo' => [
             'max_width' => 400,
             'max_height' => 200,
