@@ -185,6 +185,17 @@ class AdminBroadcastController extends Controller
             'fa-bullhorn'
         );
 
-        return back()->with('success', "Broadcast announcement successfully sent to {$sentCount} recipient(s) in " . ($request->target_city ?: 'all cities') . "!");
+        $successMessage = "Broadcast announcement successfully sent to {$sentCount} recipient(s) in " . ($request->target_city ?: 'all cities') . "!";
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'success' => true,
+                'message' => $successMessage,
+                'data' => ['sent_count' => $sentCount],
+            ]);
+        }
+
+        return back()->with('success', $successMessage);
     }
 }

@@ -21,6 +21,14 @@ Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.acti
     Route::get('/dashboard',        [AdminDashboardController::class, 'index']);
     Route::get('/analytics',        [AdminDashboardController::class, 'analytics']);
     Route::get('/search-analytics', [AdminDashboardController::class, 'searchAnalytics']);
+    Route::get('/home-page',        [AdminPlatformController::class, 'homePage']);
+    Route::put('/home-page',        [AdminPlatformController::class, 'updateHomePage']);
+
+    Route::get('/notifications', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'index']);
+    Route::post('/notifications/{notification}/read', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'markRead']);
+    Route::post('/notifications/read-all', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'markAllRead']);
+    Route::get('/notifications/unread-count', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'unreadCount']);
+    Route::post('/broadcast/send', [\App\Http\Controllers\Admin\AdminBroadcastController::class, 'send']);
 
     // ── User & Owner Management ─────────────
     Route::get('/users',                    [AdminUserController::class, 'users']);

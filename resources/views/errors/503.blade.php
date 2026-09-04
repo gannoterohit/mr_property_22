@@ -20,7 +20,7 @@
             Try Again
         </button>
         @if($contactPageLive)
-            <a href="{{ route('pages.contact') }}" class="inline-flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out shadow-sm">
+            <a href="{{ url('/contact-us') }}" class="inline-flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out shadow-sm">
                 Contact Support
             </a>
         @endif

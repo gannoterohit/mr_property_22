@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HowItWorksItem;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class HowItWorksController extends Controller
@@ -25,12 +26,16 @@ class HowItWorksController extends Controller
             'hiw_hero_title' => ['required', 'string', 'max:160'],
             'hiw_hero_highlight' => ['nullable', 'string', 'max:160'],
             'hiw_hero_description' => ['required', 'string', 'max:700'],
+            'hiw_hero_images' => ['nullable', 'array', 'max:6'],
+            'hiw_hero_images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:4096'],
+            'hiw_existing_hero_images' => ['nullable', 'array'],
+            'hiw_existing_hero_images.*' => ['string'],
             'hiw_primary_button_label' => ['required', 'string', 'max:80'],
             'hiw_secondary_button_label' => ['required', 'string', 'max:80'],
             'hiw_seeker_eyebrow' => ['required', 'string', 'max:120'],
             'hiw_seeker_title' => ['required', 'string', 'max:160'],
             'hiw_seeker_description' => ['required', 'string', 'max:500'],
-            'hiw_owner_eyebrow' => ['required', 'string', 'max:120'],
+            'hiw_owner_eyebrow' => ['required', 'string', 'max:160'],
             'hiw_owner_title' => ['required', 'string', 'max:160'],
             'hiw_owner_description' => ['required', 'string', 'max:500'],
             'hiw_owner_button_label' => ['required', 'string', 'max:80'],
@@ -39,11 +44,44 @@ class HowItWorksController extends Controller
             'hiw_safety_button_label' => ['required', 'string', 'max:80'],
         ]);
 
-        foreach ($data as $key => $value) {
+        $previousRaw = Setting::get('hiw_hero_images');
+        $previous = is_string($previousRaw) ? json_decode($previousRaw, true) : (is_array($previousRaw) ? $previousRaw : []);
+        if (!is_array($previous)) $previous = [];
+
+        $existing = $request->input('hiw_existing_hero_images', []);
+        if (!is_array($existing)) {
+            $existing = [];
+        }
+
+        $newPaths = [];
+        if ($request->hasFile('hiw_hero_images')) {
+            foreach ($request->file('hiw_hero_images') as $file) {
+                $newPaths[] = $file->store('how-it-works', 'public');
+            }
+        }
+
+        $allImages = array_values(array_merge($existing, $newPaths));
+        Setting::set('hiw_hero_images', $allImages ? json_encode($allImages) : null);
+
+        $toDelete = array_values(array_diff($previous, $existing));
+        foreach ($toDelete as $path) {
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+        }
+
+        $settingsToSave = collect($data)->except(['hiw_hero_images', 'hiw_existing_hero_images'])->all();
+        foreach ($settingsToSave as $key => $value) {
             Setting::set($key, $value);
         }
 
-        return back()->with('success', 'How It Works page settings updated.');
+        $removedCount = count($toDelete);
+        $message = 'How It Works page settings updated.';
+        if ($removedCount > 0) {
+            $message .= " {$removedCount} image(s) permanently deleted.";
+        }
+
+        return back()->with('success', $message);
     }
 
     public function create()

@@ -5,9 +5,12 @@ use App\Http\Controllers\Api\ApiBrokerController;
 use App\Http\Controllers\Api\ApiRoomController;
 use App\Http\Controllers\Api\ApiRoomDraftController;
 
-Route::middleware(['auth:sanctum', 'role:broker', 'broker.active'])->prefix('broker')->group(function () {
+Route::middleware(['auth:sanctum', 'role:broker'])->prefix('broker')->group(function () {
 
     Route::get('/dashboard',    [ApiBrokerController::class, 'dashboard']);
+    Route::get('/pending',      [ApiBrokerController::class, 'pending']);
+
+    Route::middleware('broker.active')->group(function () {
     Route::get('/properties',   [ApiBrokerController::class, 'properties']);
     Route::get('/enquiries',    [ApiBrokerController::class, 'enquiries']);
     Route::get('/payments',     [ApiBrokerController::class, 'payments']);
@@ -28,5 +31,8 @@ Route::middleware(['auth:sanctum', 'role:broker', 'broker.active'])->prefix('bro
     Route::post('/rooms/{room}',                [ApiRoomController::class, 'update']);
     Route::delete('/rooms/{room}',              [ApiRoomController::class, 'destroy']);
     Route::post('/rooms/{room}/toggle-status',  [ApiRoomController::class, 'toggleStatus']);
+    Route::post('/rooms/{room}/booked',          [ApiRoomController::class, 'markBooked']);
+    Route::post('/rooms/{room}/available',       [ApiRoomController::class, 'markAvailable']);
     Route::post('/rooms/{room}/feature',        [ApiRoomController::class, 'makeFeatured']);
+    });
 });

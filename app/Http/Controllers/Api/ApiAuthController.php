@@ -13,14 +13,56 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
 use App\Models\Setting;
 use App\Mail\OtpMail;
 use App\Services\SmsService;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules;
+use Illuminate\Auth\Events\PasswordReset;
 use Laravel\Socialite\Facades\Socialite;
 
 class ApiAuthController extends BaseApiController
 {
+    public function sendPasswordResetLink(Request $request)
+    {
+        $data = $request->validate(['email' => ['required', 'email']]);
+        $status = Password::sendResetLink(['email' => $data['email']]);
+
+        if ($status !== Password::RESET_LINK_SENT) {
+            return $this->sendError(__($status), ['email' => [__($status)]], 422);
+        }
+
+        return $this->sendSuccess([], __($status));
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $data = $request->validate([
+            'token' => ['required', 'string'],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $status = Password::reset(
+            $data,
+            function (User $user) use ($data) {
+                $user->forceFill([
+                    'password' => Hash::make($data['password']),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status !== Password::PASSWORD_RESET) {
+            return $this->sendError(__($status), ['email' => [__($status)]], 422);
+        }
+
+        return $this->sendSuccess([], __($status));
+    }
+
     private function otpMode(): string
     {
         return Setting::get('otp_delivery', 'email');

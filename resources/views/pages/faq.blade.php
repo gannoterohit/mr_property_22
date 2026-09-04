@@ -44,7 +44,7 @@
             Still need help?
             @php $contactPageLive = \App\Models\CmsPage::published()->where('slug', 'contact-us')->exists(); @endphp
             @if($contactPageLive)
-                <a href="{{ route('pages.contact') }}" class="font-bold text-indigo-600 hover:text-indigo-700">Contact support</a>
+                <a href="{{ url('/contact-us') }}" class="font-bold text-indigo-600 hover:text-indigo-700">Contact support</a>
             @endif
         </div>
     </div>

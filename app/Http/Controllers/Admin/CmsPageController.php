@@ -28,7 +28,7 @@ class CmsPageController extends Controller
 
     public function create()
     {
-        $page = new CmsPage(['status' => 'draft', 'template' => 'default']);
+        $page = new CmsPage(['status' => 'draft', 'template' => 'default', 'is_system' => false]);
         return view('admin.cms-pages.form', compact('page'));
     }
 
@@ -122,6 +122,12 @@ class CmsPageController extends Controller
         }
 
         unset($data['faqs']);
+        
+        // Ensure new pages are not marked as system pages
+        if (!$page) {
+            $data['is_system'] = false;
+        }
+        
         return $data;
     }
 }

@@ -75,19 +75,20 @@
                 <h3 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Quick Links</h3>
                 <ul class="space-y-2.5 text-sm">
                     <li><a href="{{ route('rooms.index') }}" class="text-slate-400 hover:text-white transition">Browse Properties</a></li>
+                    <li><a href="{{ route('pages.how-it-works') }}" class="{{ request()->routeIs('pages.how-it-works') ? 'text-indigo-400 font-semibold' : 'text-slate-400' }} hover:text-white transition">How It Works</a></li>
+                    <li><a href="{{ route('pages.faq') }}" class="{{ request()->routeIs('pages.faq') ? 'text-indigo-400 font-semibold' : 'text-slate-400' }} hover:text-white transition">FAQ</a></li>
                     <li><a href="{{ route('blogs.index') }}" class="text-slate-400 hover:text-white transition">Blog</a></li>
-                    <li><a href="{{ route('pages.faq') }}" class="text-slate-400 hover:text-white transition">FAQ</a></li>
-                    <li><a href="{{ Auth::check() ? route('complaints.create') : route('login') }}" class="text-slate-400 hover:text-white transition">Report an Issue</a></li>
                 </ul>
             </div>
 
             <!-- Information (CMS Pages) -->
+            @if($allCmsPages->count() > 0)
             <div>
                 <h3 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Information</h3>
                 <ul class="space-y-2.5 text-sm">
                     @forelse($allCmsPages as $cmsPage)
                         <li>
-                            <a href="{{ url($cmsPage->slug) }}" class="{{ request()->is($cmsPage->slug) ? 'text-indigo-400 font-semibold' : 'text-slate-400' }} hover:text-white transition">
+                            <a href="{{ route('pages.show', ['slug' => $cmsPage->slug]) }}" class="{{ request()->is('page/'.$cmsPage->slug) ? 'text-indigo-400 font-semibold' : 'text-slate-400' }} hover:text-white transition">
                                 {{ $cmsPage->title }}
                             </a>
                         </li>
@@ -96,6 +97,7 @@
                     @endforelse
                 </ul>
             </div>
+            @endif
 
             <!-- Contact -->
             <div>

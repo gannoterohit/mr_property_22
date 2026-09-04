@@ -829,6 +829,36 @@ class ApiRoomController extends BaseApiController
         }
     }
 
+    public function markBooked(Request $request, $id)
+    {
+        $room = Room::find($id);
+
+        if (! $room || $room->user_id !== Auth::id()) {
+            return $this->sendError('Unauthorized or room not found', [], 403);
+        }
+
+        if ($room->status !== 'active') {
+            return $this->sendSuccess(['new_status' => $room->status], 'Room is already '.$room->status);
+        }
+
+        return $this->toggleStatus($request, $id);
+    }
+
+    public function markAvailable(Request $request, $id)
+    {
+        $room = Room::find($id);
+
+        if (! $room || $room->user_id !== Auth::id()) {
+            return $this->sendError('Unauthorized or room not found', [], 403);
+        }
+
+        if ($room->status !== 'booked') {
+            return $this->sendSuccess(['new_status' => $room->status], 'Room is already '.$room->status);
+        }
+
+        return $this->toggleStatus($request, $id);
+    }
+
     /**
      * Make room featured
      */

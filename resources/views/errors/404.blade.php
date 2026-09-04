@@ -20,7 +20,7 @@
             Go Back Home
         </a>
         @if($contactPageLive)
-            <a href="{{ route('pages.contact') }}" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 active:bg-gray-100 transition duration-150 ease-in-out shadow-sm min-h-[44px]">
+            <a href="{{ url('/contact-us') }}" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 active:bg-gray-100 transition duration-150 ease-in-out shadow-sm min-h-[44px]">
                 Contact Support
             </a>
         @endif

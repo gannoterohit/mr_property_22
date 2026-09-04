@@ -139,7 +139,7 @@ class PageController extends Controller
             route('rooms.index'),
             route('register', ['role' => 'owner']),
             route('plans'),
-            route('pages.safety-tips'),
+            url('/safety-tips'),
         ], $content);
     }
 

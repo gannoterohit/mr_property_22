@@ -54,6 +54,14 @@ class ApiBrokerController extends BaseApiController
         ]);
     }
 
+    public function pending()
+    {
+        return $this->sendSuccess([
+            'pending_approval' => ! Auth::user()->is_broker_active,
+            'broker' => Auth::user(),
+        ], 'Broker approval status fetched successfully.');
+    }
+
     public function properties(Request $request)
     {
         $broker = Auth::user();

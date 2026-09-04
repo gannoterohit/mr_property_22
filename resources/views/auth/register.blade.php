@@ -66,9 +66,9 @@
                         <input type="checkbox" id="terms_checkbox" required>
                         <span>
                             I agree to the
-                            @if($termsLive)<a href="{{ route('pages.terms') }}" target="_blank">Terms and Conditions</a>@else<span>Terms and Conditions</span>@endif
+                            @if($termsLive)<a href="{{ url('/terms-and-conditions') }}" target="_blank">Terms and Conditions</a>@else<span>Terms and Conditions</span>@endif
                             and acknowledge the
-                            @if($privacyLive)<a href="{{ route('pages.privacy') }}" target="_blank">Privacy Policy</a>@else<span>Privacy Policy</span>@endif.
+                            @if($privacyLive)<a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>@else<span>Privacy Policy</span>@endif.
                         </span>
                     </label>
                      <button type="submit" id="send-otp-btn" class="auth-primary"><span>Continue to email verification</span><i class="fas fa-arrow-right"></i></button>

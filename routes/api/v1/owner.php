@@ -25,5 +25,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(functi
     Route::post('/rooms/{room}',                [ApiRoomController::class, 'update']); // Multipart photo/video edits
     Route::delete('/rooms/{room}',              [ApiRoomController::class, 'destroy']);
     Route::post('/rooms/{room}/toggle-status',  [ApiRoomController::class, 'toggleStatus']);
+    Route::post('/rooms/{room}/booked',          [ApiRoomController::class, 'markBooked']);
+    Route::post('/rooms/{room}/available',       [ApiRoomController::class, 'markAvailable']);
     Route::post('/rooms/{room}/feature',        [ApiRoomController::class, 'makeFeatured']);
 });

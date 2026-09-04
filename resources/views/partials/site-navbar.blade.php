@@ -85,6 +85,7 @@
                     @endif
                     <a href="{{ Auth::check() ? (Auth::user()->role === 'owner' ? route('owner.dashboard') : route('dashboard')) : route('register', ['role' => 'owner']) }}" class="theme-nav-link {{ request()->routeIs('owner.*') || (request()->routeIs('register') && request('role') === 'owner') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition">For Owners</a>
                     <a href="{{ route('blogs.index') }}" class="theme-nav-link {{ request()->routeIs('blogs.*') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition">Blog</a>
+                    <a href="{{ route('pages.contact') }}" class="theme-nav-link {{ request()->routeIs('pages.contact') ? 'theme-nav-link-active' : '' }} px-3 py-2 rounded-lg text-slate-600 hover:bg-white text-xs font-bold transition">Contact Us</a>
                 </div>
                 
                 <!-- Right Side Actions -->

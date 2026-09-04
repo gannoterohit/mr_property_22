@@ -18,11 +18,9 @@ use App\Http\Controllers\Api\ApiFcmTokenController;
 use App\Http\Controllers\Api\ApiNotificationController;
 use App\Http\Controllers\Api\ApiCouponController;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'role:user'])->group(function () {
 
     // ── Auth & Profile ────────────────────────
-    Route::get('/auth/me',      [ApiAuthController::class, 'user']);
-    Route::post('/auth/logout', [ApiAuthController::class, 'logout']);
     Route::get('/profile',             [ApiProfileController::class, 'show']);
     Route::post('/profile/update',      [ApiProfileController::class, 'update']);
     Route::post('/profile/delete-otp',  [ApiProfileController::class, 'sendDeleteOtp']);
@@ -70,12 +68,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/payments',                  [ApiAccountController::class, 'payments']);
     Route::get('/unlocks',                   [ApiAccountController::class, 'unlocks']);
 
-    // Unified support for both renters and owners.
-    Route::get('/complaint-options',                          [ApiComplaintController::class, 'options']);
-    Route::get('/complaints',                                [ApiComplaintController::class, 'index']);
-    Route::post('/complaints',                               [ApiComplaintController::class, 'store'])->middleware('throttle:public_form');
-    Route::get('/complaints/{complaint}',                    [ApiComplaintController::class, 'show']);
-    Route::post('/complaints/{complaint}/replies',           [ApiComplaintController::class, 'reply'])->middleware('throttle:public_form');
-    Route::get('/complaints/{complaint}/evidence',           [ApiComplaintController::class, 'evidence']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/auth/me', [ApiAuthController::class, 'user']);
+    Route::post('/auth/logout', [ApiAuthController::class, 'logout']);
+});
+
+// Support is shared by renters, owners, and brokers.
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/complaint-options', [ApiComplaintController::class, 'options']);
+    Route::get('/complaints', [ApiComplaintController::class, 'index']);
+    Route::post('/complaints', [ApiComplaintController::class, 'store'])->middleware('throttle:public_form');
+    Route::get('/complaints/{complaint}', [ApiComplaintController::class, 'show']);
+    Route::post('/complaints/{complaint}/replies', [ApiComplaintController::class, 'reply'])->middleware('throttle:public_form');
+    Route::get('/complaints/{complaint}/evidence', [ApiComplaintController::class, 'evidence']);
     Route::get('/complaints/{complaint}/replies/{reply}/attachment', [ApiComplaintController::class, 'attachment']);
 });
