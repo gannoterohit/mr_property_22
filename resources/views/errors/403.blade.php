@@ -1,26 +1,2 @@
-@extends('layouts.public')
-
-@section('content')
-<div class="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
-    <div class="relative mb-8">
-        <h1 class="text-9xl font-extrabold text-gray-100 tracking-widest select-none">403</h1>
-        <div class="bg-amber-600 text-white px-4 py-1 text-sm rounded rotate-12 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-lg">
-            Access Denied
-        </div>
-    </div>
-
-    <h2 class="text-3xl font-bold text-gray-800 mb-4">You don't have access to this page.</h2>
-    <p class="text-gray-600 mb-8 max-w-md">
-        This area is restricted. If you believe this is a mistake, please login with the correct account or contact support.
-    </p>
-
-    <div class="flex flex-col sm:flex-row gap-4">
-        <a href="{{ url('/') }}" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition duration-150 ease-in-out shadow-md">
-            Go Back Home
-        </a>
-        <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out shadow-sm">
-            Login
-        </a>
-    </div>
-</div>
-@endsection
+@php $status = '403'; @endphp
+@include('errors._layout')
