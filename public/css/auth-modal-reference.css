@@ -1605,3 +1605,207 @@ i {
         background-size: contain;
     }
 }
+
+/* Final responsive system for all viewport formats. */
+#publicAuthModal,
+#publicAuthModal *,
+#publicAuthModal *::before,
+#publicAuthModal *::after {
+    box-sizing: border-box;
+}
+
+#publicAuthModal {
+    width: 100%;
+    max-width: 100vw;
+    padding: clamp(10px, 2vw, 24px);
+    overflow: hidden;
+}
+
+#publicAuthModal .auth-modal-card {
+    width: min(100%, 700px);
+    max-width: 100%;
+    min-width: 0;
+    min-height: min(430px, calc(100vh - 32px));
+    max-height: calc(100dvh - 24px);
+}
+
+#publicAuthModal .auth-visual-panel,
+#publicAuthModal .auth-content-panel {
+    min-width: 0;
+    max-width: 100%;
+}
+
+#publicAuthModal .auth-visual-panel[style*="background-image"] {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#publicAuthModal .auth-content-panel {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#publicAuthModal .auth-social-grid,
+#publicAuthModal .auth-role-grid {
+    min-width: 0;
+}
+
+@media (max-width: 900px) and (min-width: 761px) {
+    #publicAuthModal .auth-modal-card {
+        width: min(94vw, 680px);
+        min-height: 410px;
+    }
+
+    #publicAuthModal .auth-content-panel {
+        padding: 26px 28px 24px;
+    }
+
+    #publicAuthModal .auth-visual-panel {
+        min-height: 410px;
+    }
+
+    #publicAuthModal .auth-brand {
+        margin-bottom: 22px;
+    }
+
+    #publicAuthModal .auth-heading h3 {
+        font-size: 27px;
+    }
+}
+
+@media (max-width: 760px) {
+    #publicAuthModal {
+        align-items: center;
+        padding: 10px;
+    }
+
+    #publicAuthModal .auth-modal-card {
+        display: flex;
+        flex-direction: column;
+        width: min(100%, 430px);
+        min-height: 0;
+        max-height: calc(100dvh - 20px);
+        overflow: hidden;
+    }
+
+    #publicAuthModal .auth-visual-panel {
+        order: 1;
+        flex: 0 0 170px;
+        width: 100%;
+        min-height: 170px;
+        height: 170px;
+        border-radius: 0;
+        background-position: 72% center;
+    }
+
+    #publicAuthModal .auth-secure-badge {
+        top: 12px;
+        right: 14px;
+        left: auto;
+        transform: none;
+        padding: 6px 9px;
+        font-size: 9px;
+    }
+
+    #publicAuthModal .auth-content-panel {
+        order: 2;
+        flex: 1 1 auto;
+        width: 100%;
+        padding: 24px 22px 26px;
+    }
+
+    #publicAuthModal .auth-modal-logo {
+        max-width: 150px;
+        height: 32px;
+    }
+
+    #publicAuthModal .auth-heading h3 {
+        font-size: 27px;
+    }
+
+    #publicAuthModal .auth-visual-footer {
+        left: 16px;
+        right: 150px;
+        bottom: 14px;
+        font-size: 8px;
+    }
+
+    #publicAuthModal .auth-trust-card {
+        right: 14px;
+        bottom: 18px;
+        width: 135px;
+        padding: 9px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    #publicAuthModal .auth-modal-card {
+        width: 100%;
+        border-radius: 18px;
+    }
+
+    #publicAuthModal .auth-visual-panel {
+        flex-basis: 145px;
+        min-height: 145px;
+        height: 145px;
+        background-position: 72% center;
+    }
+
+    #publicAuthModal .auth-content-panel {
+        padding: 21px 18px 23px;
+    }
+
+    #publicAuthModal .auth-brand {
+        height: 30px;
+        margin-bottom: 19px;
+    }
+
+    #publicAuthModal .auth-modal-logo {
+        max-width: 135px;
+        height: 29px;
+    }
+
+    #publicAuthModal .auth-heading h3 {
+        font-size: 24px;
+    }
+
+    #publicAuthModal .auth-heading p {
+        font-size: 11px;
+    }
+
+    #publicAuthModal .auth-social-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    #publicAuthModal .auth-social-btn {
+        min-height: 40px;
+        padding: 8px 5px;
+        font-size: 10px;
+    }
+
+    #publicAuthModal .auth-otp-input {
+        font-size: 23px;
+        letter-spacing: .28em;
+    }
+}
+
+@media (max-width: 360px) {
+    #publicAuthModal .auth-content-panel {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    #publicAuthModal .auth-visual-panel {
+        flex-basis: 130px;
+        min-height: 130px;
+        height: 130px;
+        background-position: 72% center;
+    }
+
+    #publicAuthModal .auth-trust-card {
+        width: 120px;
+        font-size: 9px;
+    }
+}
