@@ -532,17 +532,6 @@
     letter-spacing: -.045em;
 }
 
-#publicAuthModal .auth-heading-role {
-    display: block;
-
-    margin-top: 7px;
-
-    color: #64748b;
-
-    font-size: 12px;
-    font-weight: 500;
-}
-
 #publicAuthModal .auth-heading p {
     max-width: 300px;
 

@@ -148,10 +148,6 @@
                         Welcome back
                     </h3>
 
-                    <span class="auth-heading-role">
-                        Rent
-                    </span>
-
                     <p>
                         @if($otpMode === 'phone')
                             Use your mobile number to receive a secure OTP.
