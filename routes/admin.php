@@ -19,9 +19,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PlanController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/admin-login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'adminAccess'])
+Route::get('/portal/access-check', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'adminAccess'])
     ->name('admin.login-access');
-Route::post('/admin-login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'adminAuthenticate'])
+Route::post('/portal/access-check', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'adminAuthenticate'])
     ->middleware('throttle:strict_login')->name('admin.login.submit');
 
 Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])

@@ -317,10 +317,19 @@
                                           <input type="color" id="secondary_color" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="h-12 w-16 rounded-lg cursor-pointer border border-gray-200 p-1">
                                           <input type="text" name="secondary_color" value="{{ \App\Models\Setting::get('secondary_color', '#10B981') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm font-mono" placeholder="#10B981" id="secondary_color_text">
                                      </div>
-                                     <p class="mt-1 text-xs text-gray-500">Accent color for success states, highlights</p>
-                                 </div>
-                             </div>
-                         </div>
+                              <p class="mt-1 text-xs text-gray-500">Accent color for success states, highlights</p>
+                                  </div>
+                              </div>
+
+                              <div class="mt-6 p-5 rounded-xl border border-amber-200 bg-amber-50/60">
+                                  <div class="flex items-center gap-2 mb-3">
+                                      <i class="fas fa-shield-halved text-amber-600"></i>
+                                      <label class="block text-sm font-bold text-gray-800">Admin Portal Access Key</label>
+                                  </div>
+                                  <input type="text" name="admin_access_key" value="{{ \App\Models\Setting::get('admin_access_key') ? '••••••••••••' : '' }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0 transition-colors bg-white focus:bg-white sm:text-sm font-mono" placeholder="Enter secret passkey for admin portal">
+                                  <p class="mt-2 text-xs text-gray-600">This passkey is required before entering admin credentials at <code class="bg-white px-1.5 py-0.5 rounded border border-gray-200 text-amber-700">/portal/access-check</code>. Leave blank to keep the current key unchanged. Admin accounts use this as a first layer of protection.</p>
+                              </div>
+                          </div>
 
                          <div data-appearance-subpanel="contact" class="space-y-6" hidden>
                              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -23,6 +23,7 @@ class Setting extends Model
         'sms_api_key',
         'google_client_secret',
         'facebook_client_secret',
+        'admin_access_key',
     ];
 
     protected $fillable = [

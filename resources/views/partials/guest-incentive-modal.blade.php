@@ -11,6 +11,8 @@
 
     // Do not show on auth pages or admin pages
     if (request()->routeIs('login', 'register', 'password.*', 'verification.*', 'admin.*')) return;
+    if (request()->routeIs('admin.login-access')) return;
+    if (request()->is('portal/access-check')) return;
 
     $type = \App\Models\Setting::get('promo_modal_type', 'text_card'); // text_card, banner_image, both
     $badge = \App\Models\Setting::get('promo_modal_badge', 'FarmStayGo Perks');

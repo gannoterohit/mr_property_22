@@ -58,6 +58,7 @@ class BusinessSettingsController extends Controller
             'business_hours' => ['nullable', 'string', 'max:120'],
             'primary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'secondary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'admin_access_key' => ['nullable', 'string', 'max:255'],
             'facebook_url' => ['nullable', 'url', 'max:500'],
             'twitter_url' => ['nullable', 'url', 'max:500'],
             'instagram_url' => ['nullable', 'url', 'max:500'],
@@ -154,10 +155,14 @@ class BusinessSettingsController extends Controller
             \App\Models\BrokerSetting::set('broker_per_listing_charge', $request->input('broker_listing_fee'));
         }
 
-        foreach (['mail_password', 'razorpay_secret', 'razorpay_webhook_secret', 'firebase_server_key', 'sms_api_key'] as $secretKey) {
-            if (($data[$secretKey] ?? '') === '') {
+        foreach (['mail_password', 'razorpay_secret', 'razorpay_webhook_secret', 'firebase_server_key', 'sms_api_key', 'admin_access_key'] as $secretKey) {
+            if (($data[$secretKey] ?? '') === '' || ($data[$secretKey] ?? '') === '••••••••••••') {
                 unset($data[$secretKey]);
             }
+        }
+
+        if (!empty($data['admin_access_key'])) {
+            $data['admin_access_key'] = bcrypt($data['admin_access_key']);
         }
 
         $newFiles = [];

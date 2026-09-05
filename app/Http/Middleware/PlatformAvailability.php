@@ -75,7 +75,7 @@ class PlatformAvailability
 
     private function alwaysAllowed(Request $request): bool
     {
-        return $request->is('admin', 'admin/*', 'admin-login', 'login', 'logout', 'up', 'storage/*', 'build/*')
+        return $request->is('admin', 'admin/*', 'portal/access-check', 'login', 'logout', 'up', 'storage/*', 'build/*')
             || $request->routeIs('login', 'logout', 'razorpay.verify', 'razorpay.webhook')
             || $request->is(
                 'webhook/razorpay',
