@@ -253,6 +253,37 @@
                 });
         }
 
+        // Detect the visitor city on the home page as well as the rooms index.
+        @if(request()->routeIs('home') && !request()->filled('city') && !session('no_auto'))
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('apnanest_location_checked')) return;
+
+            const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            if (!navigator.geolocation || !isSecure) return;
+
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                sessionStorage.setItem('apnanest_location_checked', '1');
+
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+                    const data = await response.json();
+                    const city = data.address?.city || data.address?.town || data.address?.village || data.address?.suburb || data.address?.state_district;
+
+                    if (city) {
+                        await fetch(`{{ route('set-city') }}?city=${encodeURIComponent(city)}&lat=${lat}&lng=${lng}&verified=true`);
+                        window.location.href = `{{ route('home') }}?lat=${lat}&lng=${lng}&city=${encodeURIComponent(city)}`;
+                    }
+                } catch (error) {
+                    console.warn('Location detection failed:', error);
+                }
+            }, () => {
+                sessionStorage.setItem('apnanest_location_checked', '1');
+            }, { enableHighAccuracy: false, timeout: 6000, maximumAge: 300000 });
+        });
+        @endif
+
         // Global Razorpay Loader
         window.loadRazorpaySDK = function() {
             return new Promise((resolve, reject) => {

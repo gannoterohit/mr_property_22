@@ -595,6 +595,7 @@ const ROOM_SECONDARY_COLOR = '{{ \App\Models\Setting::get("secondary_color", "#1
                 const city = data.address.city || data.address.town || data.address.village || data.address.suburb || data.address.state_district;
                 
                 if (city) {
+                    sessionStorage.setItem('apnanest_location_checked', '1');
                     if (cityInput) {
                         cityInput.value = city;
                         cityInput.placeholder = originalPlaceholder;
@@ -614,9 +615,11 @@ const ROOM_SECONDARY_COLOR = '{{ \App\Models\Setting::get("secondary_color", "#1
         });
     }
 
-    @if(!request('city') && !session('user_city') && !session('no_auto'))
+    @if(!request('city') && !session('no_auto'))
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => detectLocation(), 2000);
+            if (!sessionStorage.getItem('apnanest_location_checked')) {
+                setTimeout(() => detectLocation(), 1200);
+            }
         });
     @endif
 </script>
