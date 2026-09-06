@@ -148,6 +148,7 @@
 
                          <div class="settings-subtabs mb-6" role="tablist" aria-label="Appearance settings sections">
                              <button type="button" data-appearance-tab="branding" aria-selected="true"><i class="fas fa-image"></i>Branding</button>
+                             <button type="button" data-appearance-tab="images" aria-selected="false"><i class="fas fa-panorama"></i>Images</button>
                              <button type="button" data-appearance-tab="colors" aria-selected="false"><i class="fas fa-droplet"></i>Colors</button>
                              <button type="button" data-appearance-tab="contact" aria-selected="false"><i class="fas fa-address-book"></i>Contact</button>
                              <button type="button" data-appearance-tab="social" aria-selected="false"><i class="fas fa-share-nodes"></i>Social</button>
@@ -235,6 +236,15 @@
                                 </div>
                              </div>
                              
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                 <div>
+                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Website Name</label>
+                                     <input type="text" name="website_name" value="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
+                                 </div>
+                             </div>
+                         </div>
+
+                         <div data-appearance-subpanel="images" class="space-y-8" hidden>
                              <div>
                                  <label class="block text-sm font-semibold text-gray-700 mb-3">Owner CTA Section Image</label>
                                  <div class="flex items-start gap-6">
@@ -246,19 +256,12 @@
                                          @endif
                                      </div>
                                      <div class="flex-1">
-                                          <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
+                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
                                              <i class="fas fa-upload mr-2"></i> Upload Owner CTA Image
                                              <input type="file" name="owner_cta_image" class="hidden">
                                          </label>
                                          <p class="mt-2 text-xs text-gray-500">Shown in the "For Property Owners" section. Recommended: 600x400px. Max: 2MB.</p>
                                      </div>
-                                 </div>
-                             </div>
-                             
-                              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                 <div>
-                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Website Name</label>
-                                     <input type="text" name="website_name" value="{{ \App\Models\Setting::get('website_name', 'RoomRental') }}" class="block w-full px-4 py-3 border-gray-200 rounded-lg focus:ring-0  transition-colors bg-gray-50 focus:bg-white sm:text-sm">
                                  </div>
                              </div>
                              <div>
