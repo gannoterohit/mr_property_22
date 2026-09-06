@@ -668,6 +668,12 @@
                                 <p class="mt-1 text-xs text-gray-500">Found in Firebase Console &rarr; Project Settings &rarr; Cloud Messaging &rarr; Server Key</p>
                             </div>
 
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Firebase Service Account JSON (HTTP v1)</label>
+                                <textarea name="firebase_service_account_json" rows="5" autocomplete="off" placeholder="Paste the downloaded Firebase service-account JSON here" class="block w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-3 font-mono text-xs focus:bg-white focus:ring-0"></textarea>
+                                <p class="mt-1 text-xs text-gray-500">Required for HTTP v1 push delivery. Paste the JSON from Firebase Console &rarr; Project Settings &rarr; Service accounts. It is encrypted in the database. Leave blank to keep the current credential.</p>
+                            </div>
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Firebase Project ID</label>

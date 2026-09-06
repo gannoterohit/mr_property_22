@@ -88,4 +88,4 @@ Route::get('/youtube-proxy/{videoId}', function ($videoId) {
 
 // City landing pages
 Route::get('/{citySlug}', [LandingPageController::class, 'city'])
-    ->where('citySlug', 'bhopal|indore|pune|mumbai|delhi|bangalore|hyderabad')->name('cities.show');
+    ->where('citySlug', '[A-Za-z0-9\-_]+')->name('cities.show');

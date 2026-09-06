@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'admin_bootstrap_passkey' => env('ADMIN_BOOTSTRAP_PASSKEY'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

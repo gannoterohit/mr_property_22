@@ -10,6 +10,51 @@ use Illuminate\Support\Facades\Storage;
 
 class BusinessSettingsController extends Controller
 {
+    private const TAB_FIELDS = [
+        'general' => [
+            'listing_fee', 'featured_fee', 'unlock_fee', 'listing_fee_enabled', 'unlock_fee_enabled',
+        ],
+        'broker' => [
+            'broker_module_enabled', 'broker_verification_enabled', 'broker_listing_charges_enabled',
+            'broker_featured_enabled', 'broker_lead_charge_enabled', 'broker_future_brokerage_enabled',
+            'broker_per_listing_charge', 'broker_featured_charge', 'broker_listing_expiry_days',
+            'broker_free_listing_limit', 'broker_lead_charge',
+        ],
+        'appearance' => [
+            'website_name', 'primary_color', 'secondary_color', 'admin_access_key', 'facebook_url',
+            'twitter_url', 'instagram_url', 'linkedin_url', 'navbar_logo', 'footer_logo', 'website_logo',
+            'website_favicon', 'owner_cta_image', 'default_hero_image', 'auth_modal_image',
+            'registration_image', 'contact_phone', 'contact_email', 'company_address', 'business_hours',
+        ],
+        'payment' => [
+            'razorpay_key', 'razorpay_secret', 'razorpay_webhook_secret', 'wallet_enabled',
+        ],
+        'integrations' => [
+            'google_maps_api_key', 'play_store_url', 'app_store_url', 'google_login_enabled',
+            'google_client_id', 'google_client_secret', 'google_redirect_url', 'facebook_login_enabled',
+            'facebook_client_id', 'facebook_client_secret', 'facebook_redirect_url',
+        ],
+        'firebase' => [
+            'firebase_push_enabled', 'firebase_project_id', 'firebase_web_api_key', 'firebase_app_id',
+            'firebase_messaging_sender_id', 'firebase_vapid_key', 'firebase_server_key', 'firebase_service_account_json',
+        ],
+        'sms' => ['otp_delivery', 'sms_gateway', 'sms_api_key', 'sms_sender_id', 'sms_dlt_te_id'],
+        'seo' => [
+            'website_url', 'seo_meta_description', 'seo_meta_keywords', 'google_search_console_code',
+            'ga4_measurement_id', 'google_ads_enabled', 'google_ads_tag_id', 'google_ads_conversion_label',
+            'google_ads_signup_label', 'google_ads_room_view_label', 'meta_pixel_enabled', 'meta_pixel_id',
+            'adsense_enabled', 'adsense_client_id', 'adsense_home_top_id', 'adsense_home_bottom_id',
+            'adsense_room_content_id', 'adsense_room_sidebar_id',
+        ],
+        'mail' => ['mail_host', 'mail_port', 'mail_username', 'mail_password'],
+        'referral' => ['referral_enabled'],
+        'modal' => [
+            'promo_enabled', 'promo_modal_enabled', 'promo_modal_audience', 'promo_modal_type',
+            'promo_modal_badge', 'promo_modal_title', 'promo_modal_description', 'promo_modal_btn_text',
+            'promo_modal_btn_url', 'promo_modal_delay', 'promo_modal_cooldown_hours', 'promo_modal_image',
+        ],
+    ];
+
     public function index()
     {
         $settings = Setting::orderBy('group')->orderBy('key')->get()->groupBy('group');
@@ -47,7 +92,7 @@ class BusinessSettingsController extends Controller
 
     public function update(Request $request)
     {
-        $data = $request->validate([
+        $rules = [
             'listing_fee' => ['nullable', 'numeric', 'min:0'],
             'featured_fee' => ['nullable', 'numeric', 'min:0'],
             'unlock_fee' => ['nullable', 'numeric', 'min:0'],
@@ -75,6 +120,7 @@ class BusinessSettingsController extends Controller
             'razorpay_webhook_secret' => ['nullable', 'string', 'max:500'],
             'google_maps_api_key' => ['nullable', 'string', 'max:500'],
             'firebase_server_key' => ['nullable', 'string', 'max:1000'],
+            'firebase_service_account_json' => ['nullable', 'string', 'max:20000'],
             'firebase_project_id' => ['nullable', 'string', 'max:255'],
             'firebase_web_api_key' => ['nullable', 'string', 'max:500'],
             'firebase_app_id' => ['nullable', 'string', 'max:255'],
@@ -132,12 +178,18 @@ class BusinessSettingsController extends Controller
             'promo_modal_delay' => ['nullable', 'numeric', 'min:0', 'max:60'],
             'promo_modal_cooldown_hours' => ['nullable', 'integer', 'min:0', 'max:720'],
             'promo_modal_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
-        ]);
+        ];
+
+        $activeTab = array_key_exists($request->input('_active_tab'), self::TAB_FIELDS)
+            ? $request->input('_active_tab')
+            : 'general';
+        $activeFields = array_flip(self::TAB_FIELDS[$activeTab]);
+        $data = $request->validate(array_intersect_key($rules, $activeFields));
 
         $brokerFeeEnabled = $request->boolean('broker_listing_fee_enabled');
         $brokerListingFee = $request->input('broker_listing_fee');
 
-        foreach ([
+        foreach (array_intersect([
             'google_ads_enabled',
             'adsense_enabled',
             'meta_pixel_enabled',
@@ -147,7 +199,7 @@ class BusinessSettingsController extends Controller
             'google_login_enabled',
             'facebook_login_enabled',
             'promo_modal_enabled',
-        ] as $booleanKey) {
+        ], self::TAB_FIELDS[$activeTab]) as $booleanKey) {
             $data[$booleanKey] = $request->boolean($booleanKey) ? '1' : '0';
         }
 
@@ -156,7 +208,7 @@ class BusinessSettingsController extends Controller
             \App\Models\BrokerSetting::set('broker_per_listing_charge', $request->input('broker_listing_fee'));
         }
 
-        foreach (['mail_password', 'razorpay_secret', 'razorpay_webhook_secret', 'firebase_server_key', 'sms_api_key', 'admin_access_key'] as $secretKey) {
+        foreach (['mail_password', 'razorpay_secret', 'razorpay_webhook_secret', 'firebase_server_key', 'firebase_service_account_json', 'sms_api_key', 'admin_access_key'] as $secretKey) {
             if (($data[$secretKey] ?? '') === '' || ($data[$secretKey] ?? '') === '••••••••••••') {
                 unset($data[$secretKey]);
             }
@@ -199,7 +251,7 @@ class BusinessSettingsController extends Controller
 
             });
 
-            if ($request->input('_active_tab') === 'broker' || $request->has('broker_module_enabled') || $request->has('broker_per_listing_charge')) {
+            if ($activeTab === 'broker') {
                 $brokerToggles = [
                     'broker_module_enabled',
                     'broker_verification_enabled',
@@ -224,11 +276,6 @@ class BusinessSettingsController extends Controller
                         \App\Models\BrokerSetting::set($bInput, (string) $request->input($bInput, '0'));
                     }
                 }
-            } elseif ($request->has('broker_listing_fee_enabled') || $request->has('broker_listing_fee')) {
-                \App\Models\BrokerSetting::set('broker_listing_charges_enabled', $request->boolean('broker_listing_fee_enabled') ? '1' : '0');
-                if ($request->filled('broker_listing_fee')) {
-                    \App\Models\BrokerSetting::set('broker_per_listing_charge', (string) $request->input('broker_listing_fee'));
-                }
             }
 
             foreach (array_unique($oldFiles) as $oldFile) {
@@ -245,9 +292,9 @@ class BusinessSettingsController extends Controller
             return back()->withInput()->with('error', 'Unable to update settings. Please try again.');
         }
 
-        $tab = in_array($request->input('_active_tab'), [
+        $tab = in_array($activeTab, [
             'general','broker','appearance','payment','integrations','firebase','sms','seo','mail','referral','modal'
-        ]) ? $request->input('_active_tab') : 'general';
+        ]) ? $activeTab : 'general';
 
         if ($request->wantsJson()) {
             return response()->json(['success' => true, 'message' => 'Settings updated successfully!']);

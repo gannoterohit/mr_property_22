@@ -13,7 +13,7 @@
 
 @section('title', ($homeCity ? 'Verified Rooms & PG in '.$homeCity : 'Verified Rooms, PG & Apartments') . ' | ' . $siteName)
 @section('description', $homeCity ? 'Find verified rooms, PG and apartments in '.$homeCity.'. Connect directly with property owners.' : 'Find verified rooms, PG and apartments. Compare rentals and connect directly with property owners.')
-@section('canonical', route('home'))
+@section('canonical', request()->routeIs('cities.show') ? url()->current() : route('home'))
 
 @push('styles')
 @include('partials.listings-ld')

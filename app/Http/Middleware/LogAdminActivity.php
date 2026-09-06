@@ -17,8 +17,7 @@ class LogAdminActivity
             $route = $request->route();
             $parameters = collect($route?->parameters() ?? []);
             $subject = $parameters->first(fn ($value) => is_object($value) && method_exists($value, 'getKey'));
-            $safe = collect($request->except(['password','password_confirmation','mail_password','razorpay_secret','razorpay_webhook_secret','_token','_method']))
-                ->map(fn ($value) => is_string($value) ? mb_substr($value, 0, 300) : $value)->take(20)->all();
+            $safe = $this->redact($request->except(['_token', '_method']));
             AdminActivityLog::create([
                 'actor_id' => $request->user()->id,
                 'action' => strtolower($request->method()).':' . ($route?->getName() ?? 'admin.action'),
@@ -35,5 +34,29 @@ class LogAdminActivity
     private function description(Request $request): string
     {
         return ucfirst(strtolower($request->method())).' action on '.str_replace(['admin.','.', '-'], ['', ' ', ' '], (string)$request->route()?->getName());
+    }
+
+    private function redact(array $input): array
+    {
+        $redacted = [];
+
+        foreach (array_slice($input, 0, 20, true) as $key => $value) {
+            $normalizedKey = strtolower((string) $key);
+            $isSecret = preg_match('/password|secret|api[_-]?key|server[_-]?key|vapid[_-]?key|access[_-]?key|token/', $normalizedKey) === 1;
+
+            if ($isSecret) {
+                $redacted[$key] = '[REDACTED]';
+                continue;
+            }
+
+            if (is_array($value)) {
+                $redacted[$key] = $this->redact($value);
+                continue;
+            }
+
+            $redacted[$key] = is_string($value) ? mb_substr($value, 0, 300) : $value;
+        }
+
+        return $redacted;
     }
 }

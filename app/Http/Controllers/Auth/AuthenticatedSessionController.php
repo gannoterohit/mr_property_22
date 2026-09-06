@@ -14,7 +14,6 @@ use Illuminate\View\View;
 class AuthenticatedSessionController extends Controller
 {
     private const SESSION_PASSKEY = 'admin_passkey_verified';
-    private const FALLBACK_PASSKEY = '122905';
 
     public function adminAccess(Request $request): RedirectResponse|View
     {
@@ -45,9 +44,10 @@ class AuthenticatedSessionController extends Controller
         if ($request->filled('access_passkey')) {
             $stored = \App\Models\Setting::get('admin_access_key');
             $provided = $request->input('access_passkey');
-            $isValid = blank($stored)
-                ? hash_equals(self::FALLBACK_PASSKEY, (string) $provided)
-                : Hash::check($provided, (string) $stored);
+            $bootstrap = (string) config('app.admin_bootstrap_passkey', '');
+            $isValid = filled($stored)
+                ? Hash::check($provided, (string) $stored)
+                : ($bootstrap !== '' && hash_equals($bootstrap, (string) $provided));
 
             if (!$isValid) {
                 throw ValidationException::withMessages([

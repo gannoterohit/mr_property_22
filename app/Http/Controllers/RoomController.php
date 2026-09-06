@@ -23,6 +23,7 @@ class RoomController extends Controller {
     public function index(Request $request)
     {
         $request->validate([
+            'q' => ['nullable', 'string', 'max:120'],
             'min_rent' => ['nullable', 'numeric', 'min:0'],
             'max_rent' => ['nullable', 'numeric', 'min:0'],
             'min_area_sqft' => ['nullable', 'numeric', 'min:0'],
@@ -114,6 +115,17 @@ class RoomController extends Controller {
 
     if ($request->filled('max_rent')) {
         $query->where('rent', '<=', $request->max_rent);
+    }
+
+    if ($request->filled('q')) {
+        $search = trim($request->input('q'));
+        $query->where(function ($searchQuery) use ($search) {
+            $searchQuery->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('city', 'like', "%{$search}%")
+                ->orWhere('address', 'like', "%{$search}%")
+                ->orWhere('landmarks', 'like', "%{$search}%");
+        });
     }
 
     // Advanced Filters

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use App\Models\CmsPage;
 use App\Models\Blog;
+use App\Models\City;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 
@@ -41,6 +42,15 @@ class SitemapController extends Controller
             'changefreq' => 'daily',
             'priority' => '0.9'
         ];
+
+        foreach (City::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(['slug', 'updated_at']) as $city) {
+            $urls[] = [
+                'loc' => $publicUrl($city->slug),
+                'lastmod' => optional($city->updated_at)->toAtomString() ?? now()->toAtomString(),
+                'changefreq' => 'daily',
+                'priority' => '0.8',
+            ];
+        }
 
         $latestBlog = Blog::published()->latest('updated_at')->first();
 

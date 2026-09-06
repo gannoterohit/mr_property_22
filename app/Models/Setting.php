@@ -20,6 +20,7 @@ class Setting extends Model
         'razorpay_webhook_secret',
         'google_maps_api_key',
         'firebase_server_key',
+        'firebase_service_account_json',
         'sms_api_key',
         'google_client_secret',
         'facebook_client_secret',
