@@ -26,7 +26,7 @@ class AdminRoleController extends Controller
     {
         $data=$request->validate(['name'=>'required|string|max:80','description'=>'nullable|string|max:255','permissions'=>'array','permissions.*'=>'in:'.implode(',',array_keys(config('admin_permissions.catalog')))]);
         $permissions = $data['permissions'] ?? [];
-        foreach (['listings','people','support','finance','content','reports'] as $module) {
+        foreach (['listings','people','support','finance','content','reports','brokers'] as $module) {
             if (in_array($module.'.manage', $permissions, true) && !in_array($module.'.view', $permissions, true)) {
                 $permissions[] = $module.'.view';
             }

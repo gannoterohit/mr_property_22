@@ -15,6 +15,10 @@
         ['Business settings', 'Configuration and maintenance', 'fa-gear', null, 'settings.manage'],
         ['Staff & roles', 'Staff accounts and permissions', 'fa-user-shield', null, 'staff.manage'],
         ['Activity logs', 'Administrative audit history', 'fa-clock-rotate-left', 'activity.view', null],
+        ['Database backup', 'Create and download database backups', 'fa-database', 'data.backup', null],
+        ['Brokers', 'Broker profiles, approval and listings', 'fa-handshake', 'brokers.view', 'brokers.manage'],
+        ['Broker settings', 'Broker pricing and module settings', 'fa-sliders', null, 'brokers.settings'],
+        ['Broker plans', 'Manage broker subscription plans', 'fa-layer-group', null, 'brokers.plans.manage'],
     ];
 @endphp
 <div class="space-y-4 p-5 lg:p-6" x-data="{ activeRole: @js($firstRole) }">

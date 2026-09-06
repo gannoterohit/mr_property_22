@@ -27,6 +27,9 @@ class AdminPermission
         $write = !in_array($request->method(), ['GET', 'HEAD'], true);
         if ($request->is('api/v1/admin/*')) {
             $path = ltrim((string) $request->path(), '/');
+            if (str_contains($path, '/home-page')) return $write ? 'content.manage' : 'content.view';
+            if (str_contains($path, '/broadcast')) return 'support.manage';
+            if (str_contains($path, '/notifications')) return $write ? 'support.manage' : 'support.view';
             if (str_contains($path, '/staff') || str_contains($path, '/roles') || str_contains($path, '/permission-catalog')) return 'staff.manage';
             if (str_contains($path, '/activity-logs')) return 'activity.view';
             if (str_contains($path, '/rooms') || str_contains($path, '/room-options') || str_contains($path, '/property-types') || str_contains($path, '/property-categories') || str_contains($path, '/rejection-reasons')) return $write ? 'listings.manage' : 'listings.view';
@@ -39,6 +42,8 @@ class AdminPermission
             if (str_ends_with($path, '/dashboard')) return 'dashboard.view';
         }
         if ($route === 'admin.dashboard') return 'dashboard.view';
+        if (str_starts_with($route, 'admin.broadcast')) return 'support.manage';
+        if (str_starts_with($route, 'admin.notifications')) return $write ? 'support.manage' : 'support.view';
         if (str_starts_with($route, 'admin.staff') || str_starts_with($route, 'admin.roles')) return 'staff.manage';
         if (str_starts_with($route, 'admin.activity')) return 'activity.view';
         if (str_starts_with($route, 'admin.rooms') || $route === 'admin.all-rooms' || str_starts_with($route, 'admin.room-options') || str_starts_with($route, 'admin.property-types') || str_starts_with($route, 'admin.property-categories') || str_starts_with($route, 'admin.rejection-reasons')) return $write ? 'listings.manage' : 'listings.view';

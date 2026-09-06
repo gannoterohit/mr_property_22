@@ -42,6 +42,7 @@ class AdminStaffController extends Controller
 
     public function store(Request $request)
     {
+        $this->guardSuperAdminAssignment($request);
         $data = $this->validated($request);
         $data += ['role' => 'admin', 'is_verified' => true, 'is_staff_active' => true, 'email_verified_at' => now()];
         $data['password'] = Hash::make($data['password']);
@@ -54,6 +55,7 @@ class AdminStaffController extends Controller
     public function update(Request $request, User $staff)
     {
         abort_unless($staff->role === 'admin', 404);
+        $this->guardSuperAdminAssignment($request);
 
         $data = $this->validated($request, $staff);
         if (!empty($data['password'])) {
@@ -106,5 +108,14 @@ class AdminStaffController extends Controller
             'password' => $passwordRule,
             'admin_role_id' => ['required', 'integer', 'exists:admin_roles,id'],
         ]);
+    }
+
+    private function guardSuperAdminAssignment(Request $request): void
+    {
+        $role = AdminRole::find($request->input('admin_role_id'));
+        $actorRole = auth()->user()?->adminRole;
+        $actorIsSuperAdmin = !$actorRole || $actorRole->slug === 'super_admin';
+
+        abort_if($role?->slug === 'super_admin' && !$actorIsSuperAdmin, 403, 'Only a Super Admin can assign the Super Admin role.');
     }
 }
