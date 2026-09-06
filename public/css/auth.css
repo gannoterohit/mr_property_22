@@ -1,6 +1,9 @@
 .auth-page{min-height:calc(100vh - 72px);padding:48px 20px 64px;background:radial-gradient(circle at 12% 10%,rgba(var(--primary-rgb,37,99,235),.11),transparent 30%),linear-gradient(180deg,#f8fbff 0%,#f1f5f9 100%);display:flex;align-items:center;justify-content:center}
 .auth-shell{width:min(1060px,100%);min-height:610px;display:grid;grid-template-columns:.92fr 1.08fr;background:#fff;border:1px solid #dbe4f0;border-radius:24px;overflow:hidden;box-shadow:0 24px 70px rgba(15,23,42,.12)}
 .auth-story{position:relative;padding:48px;color:#fff;background:linear-gradient(145deg,#0f172a 0%,var(--primary-dark,var(--primary,#172554)) 58%,var(--primary,#2563eb) 145%);overflow:hidden}
+.auth-story-has-image{background-color:#0f172a;background-size:cover;background-position:center center;background-repeat:no-repeat}
+.auth-story-has-image:before{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(15,23,42,.82) 0%,rgba(15,23,42,.42) 52%,rgba(var(--primary-rgb,37,99,235),.68) 100%);z-index:0}
+.auth-story-has-image>*{position:relative;z-index:1}
 .auth-story:after{content:"";position:absolute;width:330px;height:330px;border:70px solid rgba(var(--primary-rgb,37,99,235),.14);border-radius:50%;right:-190px;bottom:-170px}
 .auth-brand{display:inline-block;color:#fff;text-decoration:none;font-size:25px;font-weight:900;letter-spacing:-1px;margin-bottom:70px}
 .auth-brand span{color:var(--secondary,var(--primary,#60a5fa))}
@@ -58,3 +61,92 @@
 .auth-social-facebook svg path{fill:#fff}
 @media(max-width:520px){.auth-social{grid-template-columns:1fr}.auth-social-btn{height:48px}}
 @media(max-width:600px){.role-options{grid-template-columns:1fr}}
+@media(min-width:851px){
+	.auth-page{padding:32px 16px 44px}
+	.auth-shell-register{min-height:560px}
+	.auth-shell-register .auth-story{padding:34px 38px}
+	.auth-shell-register .auth-brand{margin-bottom:46px}
+	.auth-shell-register .auth-story h1{font-size:32px;margin:14px 0 11px}
+	.auth-shell-register .auth-story>p{font-size:13px;line-height:1.55}
+	.auth-shell-register .auth-trust-tags{margin-top:15px}
+	.auth-shell-register .auth-benefits{gap:14px;margin-top:22px}
+	.auth-shell-register .auth-benefits strong{font-size:13px}
+	.auth-shell-register .auth-benefits small{font-size:11px}
+	.auth-shell-register .auth-panel{padding:30px 44px}
+	.auth-shell-register .auth-panel-head{margin-bottom:18px}
+	.auth-shell-register .auth-panel h2{font-size:26px}
+	.auth-shell-register .auth-panel-head p{font-size:13px;line-height:1.45}
+	.auth-shell-register .auth-label{font-size:11px;margin-bottom:6px}
+	.auth-shell-register .auth-field-group{margin-bottom:12px}
+	.auth-shell-register .auth-input-wrap input,.auth-shell-register .auth-field{height:44px;font-size:13px}
+	.auth-shell-register .role-options{gap:8px}
+	.auth-shell-register .role-card>span{min-height:62px;padding:9px;gap:8px}
+	.auth-shell-register .role-card i{width:30px;height:30px}
+	.auth-shell-register .role-card b{font-size:11px}
+	.auth-shell-register .role-card small{font-size:9px}
+	.auth-shell-register .auth-primary{height:46px;margin-top:12px;font-size:13px}
+	.auth-shell-register .auth-divider{margin:14px 0 10px}
+	.auth-shell-register .auth-social-btn{height:40px;font-size:12px}
+	.auth-shell-register .auth-switch{margin-top:16px;font-size:12px}
+}
+
+/* Modern responsive registration layout */
+.auth-page{padding:28px 16px 40px;background:radial-gradient(circle at 8% 12%,rgba(var(--primary-rgb,37,99,235),.14),transparent 26%),radial-gradient(circle at 92% 88%,rgba(var(--secondary-rgb,16,185,129),.10),transparent 24%),#f6f8fc}
+.auth-shell-register{width:min(1000px,100%);min-height:0;border:1px solid rgba(148,163,184,.28);border-radius:20px;box-shadow:0 22px 55px rgba(15,23,42,.13)}
+.auth-shell-register .auth-story{padding:32px 34px;background-color:#111827}
+.auth-shell-register .auth-story:after{width:260px;height:260px;border-width:54px;right:-155px;bottom:-145px}
+.auth-shell-register .auth-brand{margin-bottom:38px;font-size:22px}
+.auth-shell-register .auth-brand-img{height:32px;max-width:155px}
+.auth-shell-register .auth-kicker{padding:6px 9px;font-size:9px;letter-spacing:.07em}
+.auth-shell-register .auth-story h1{max-width:350px;font-size:30px;line-height:1.12;letter-spacing:-.8px}
+.auth-shell-register .auth-story>p{max-width:350px;font-size:12px;line-height:1.55}
+.auth-shell-register .auth-trust-tags{gap:7px;margin-top:14px}
+.auth-shell-register .auth-badge{padding:6px 8px;font-size:10px}
+.auth-shell-register .auth-benefits{gap:13px;margin-top:22px}
+.auth-shell-register .auth-benefits>div{gap:10px}
+.auth-shell-register .auth-benefits>div>i{width:23px;height:23px}
+.auth-shell-register .auth-benefits strong{font-size:12px}
+.auth-shell-register .auth-benefits small{font-size:10px}
+.auth-shell-register .auth-panel{padding:30px 40px}
+.auth-shell-register .auth-panel-head{margin-bottom:16px}
+.auth-shell-register .auth-step{font-size:9px;margin-bottom:6px}
+.auth-shell-register .auth-panel h2{font-size:25px;letter-spacing:-.5px}
+.auth-shell-register .auth-panel-head p{font-size:12px}
+.auth-shell-register .auth-field-group{margin-bottom:11px}
+.auth-shell-register .auth-input-wrap input,.auth-shell-register .auth-field{height:42px;font-size:12px;border-radius:9px}
+.auth-shell-register .auth-grid{gap:11px}
+.auth-shell-register .role-options{gap:7px}
+.auth-shell-register .role-card>span{min-height:58px;padding:8px;border-radius:10px;gap:7px}
+.auth-shell-register .role-card i{width:27px;height:27px;font-size:10px}
+.auth-shell-register .role-card b{font-size:10px}
+.auth-shell-register .role-card small{font-size:8px}
+.auth-shell-register .terms-row{font-size:10px}
+.auth-shell-register .auth-primary{height:43px;border-radius:9px;font-size:12px;box-shadow:0 8px 18px rgba(var(--primary-rgb,37,99,235),.18)}
+.auth-shell-register .auth-divider{margin:12px 0 9px;font-size:9px}
+.auth-shell-register .auth-social-btn{height:37px;border-radius:9px;font-size:11px}
+.auth-shell-register .auth-switch{margin-top:13px;font-size:11px}
+
+@media(max-width:850px){
+	.auth-page{min-height:calc(100vh - 64px);padding:18px 12px 28px;align-items:flex-start}
+	.auth-shell-register{display:flex;flex-direction:column;width:min(620px,100%);border-radius:18px}
+	.auth-shell-register .auth-story{min-height:245px;padding:24px 24px 26px}
+	.auth-shell-register .auth-brand{margin-bottom:25px}
+	.auth-shell-register .auth-story h1{max-width:420px;font-size:27px}
+	.auth-shell-register .auth-story>p{max-width:470px}
+	.auth-shell-register .auth-benefits{display:none}
+	.auth-shell-register .auth-panel{padding:26px 24px 28px}
+}
+
+@media(max-width:600px){
+	.auth-shell-register .auth-story{min-height:210px;padding:20px}
+	.auth-shell-register .auth-brand{margin-bottom:20px}
+	.auth-shell-register .auth-kicker{font-size:8px}
+	.auth-shell-register .auth-story h1{font-size:24px}
+	.auth-shell-register .auth-story>p{font-size:11px}
+	.auth-shell-register .auth-trust-tags{margin-top:10px}
+	.auth-shell-register .auth-panel{padding:22px 18px 24px}
+	.auth-shell-register .auth-grid{grid-template-columns:1fr}
+	.auth-shell-register .role-options{grid-template-columns:1fr;gap:7px}
+	.auth-shell-register .role-card>span{min-height:49px;padding:8px 10px}
+	.auth-shell-register .auth-social{grid-template-columns:1fr}
+}

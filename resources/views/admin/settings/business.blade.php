@@ -299,6 +299,25 @@
                                      </div>
                                  </div>
                              </div>
+                             <div>
+                                 <label class="block text-sm font-semibold text-gray-700 mb-3">Registration Page Image</label>
+                                 <div class="flex items-start gap-6">
+                                     <div class="h-24 w-40 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
+                                         @if(\App\Models\Setting::get('registration_image'))
+                                             <img src="{{ \App\Models\Setting::mediaUrl(\App\Models\Setting::get('registration_image')) }}" class="h-full w-full object-cover">
+                                         @else
+                                             <i class="fas fa-id-card text-gray-300 text-3xl"></i>
+                                         @endif
+                                     </div>
+                                     <div class="flex-1">
+                                         <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition shadow-sm admin-theme-hover-card admin-theme-hover-text">
+                                             <i class="fas fa-upload mr-2"></i> Upload Registration Image
+                                             <input type="file" name="registration_image" class="hidden" accept="image/jpeg,image/png,image/webp">
+                                         </label>
+                                         <p class="mt-2 text-xs text-gray-500">Used only on the registration page. Best fit: 900x1100px portrait. The image will cover the left panel without distortion. Max: 3MB.</p>
+                                     </div>
+                                 </div>
+                             </div>
                          </div>
 
                          <div data-appearance-subpanel="colors" class="space-y-6" hidden>

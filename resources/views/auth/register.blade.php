@@ -11,10 +11,14 @@
     }
     $termsLive = $publishedCmsSlugs->has('terms-and-conditions');
     $privacyLive = $publishedCmsSlugs->has('privacy-policy');
+    $authPageImage = \App\Models\Setting::mediaUrl(\App\Models\Setting::get('registration_image'));
 @endphp
 <section class="auth-page">
     <div class="auth-shell auth-shell-register">
-        <aside class="auth-story">
+        <aside
+            class="auth-story{{ $authPageImage ? ' auth-story-has-image' : '' }}"
+            @if($authPageImage) style="background-image: url('{{ $authPageImage }}');" @endif
+        >
             <a href="{{ route('home') }}" class="auth-brand">
                 @php $authLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo'); @endphp
                 @if($authLogo)

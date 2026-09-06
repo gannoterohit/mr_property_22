@@ -104,6 +104,7 @@ class BusinessSettingsController extends Controller
             'owner_cta_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'default_hero_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
             'auth_modal_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'registration_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
             // SMS Gateway
             'otp_delivery'  => ['nullable', 'in:email,phone,both'],
             'sms_gateway'   => ['nullable', 'in:log,msg91,twilio,fast2sms'],
@@ -169,7 +170,7 @@ class BusinessSettingsController extends Controller
         $oldFiles = [];
 
         try {
-            foreach (['navbar_logo', 'footer_logo', 'website_logo', 'website_favicon', 'owner_cta_image', 'promo_modal_image', 'default_hero_image', 'auth_modal_image'] as $fileKey) {
+            foreach (['navbar_logo', 'footer_logo', 'website_logo', 'website_favicon', 'owner_cta_image', 'promo_modal_image', 'default_hero_image', 'auth_modal_image', 'registration_image'] as $fileKey) {
                 if (! $request->hasFile($fileKey)) {
                     continue;
                 }
@@ -309,6 +310,7 @@ class BusinessSettingsController extends Controller
             'promo_modal_image' => 'offer_image',
             'default_hero_image' => 'default_hero',
             'auth_modal_image' => 'auth_modal',
+            'registration_image' => 'auth_modal',
             default => 'logo',
         };
 
