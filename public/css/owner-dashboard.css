@@ -149,3 +149,5 @@
         .agent-welcome-banner { padding: 1.1rem 1.25rem; }
         .agent-welcome-banner .welcome-text h2 { font-size: 1rem; }
     }
+@media(min-width:1600px){.owner-shell,.dashboard-shell{max-width:1600px;margin-inline:auto}}
+@media(min-width:1920px){.owner-shell,.dashboard-shell{max-width:1800px;margin-inline:auto}}

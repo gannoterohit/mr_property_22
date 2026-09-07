@@ -235,3 +235,18 @@
         .rooms-results-head h2{font-size:1.35rem!important}
         .rooms-trust-strip{display:none}
     }
+@media(min-width:1600px){
+    .rooms-search-shell > .container,
+    .rooms-main > .container,
+    .rooms-trust-strip > .container {max-width: 1600px !important}
+}
+@media(min-width:1920px){
+    .rooms-search-shell > .container,
+    .rooms-main > .container,
+    .rooms-trust-strip > .container {max-width: 1800px !important}
+}
+@media(min-width:2560px){
+    .rooms-search-shell > .container,
+    .rooms-main > .container,
+    .rooms-trust-strip > .container {max-width: 2000px !important}
+}

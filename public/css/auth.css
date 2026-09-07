@@ -150,3 +150,17 @@
 	.auth-shell-register .role-card>span{min-height:49px;padding:8px 10px}
 	.auth-shell-register .auth-social{grid-template-columns:1fr}
 }
+@media(min-width:1600px){
+    .auth-shell{max-width:1200px}
+    .auth-shell-register{max-width:1260px}
+    .auth-shell .auth-story h1{font-size:42px}
+    .auth-shell-register .auth-story h1{font-size:34px}
+}
+@media(min-width:1920px){
+    .auth-shell{max-width:1320px}
+    .auth-shell-register{max-width:1380px}
+}
+@media(min-width:2560px){
+    .auth-shell{max-width:1500px}
+    .auth-shell-register{max-width:1560px}
+}

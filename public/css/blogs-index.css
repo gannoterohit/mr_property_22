@@ -13,6 +13,46 @@
     .blog-newsletter button { color: var(--primary); }
     .blog-newsletter button:hover { background: rgba(var(--primary-rgb), .08); }
 
+    /* Balanced Typography on /blog */
+    .container {
+        max-width: 1320px !important;
+    }
+    .blog-trending-title {
+        font-size: 13px !important;
+        line-height: 1.35 !important;
+        font-weight: 700 !important;
+    }
+    .blog-card .p-6 {
+        padding: 16px 18px !important;
+    }
+    .blog-card-title {
+        font-size: 14px !important;
+        line-height: 1.45 !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+        margin-bottom: 6px !important;
+        min-height: 2.7em;
+    }
+    .blog-card-title a {
+        color: #0f172a !important;
+        text-decoration: none;
+    }
+    .blog-card-title a:hover {
+        color: var(--primary) !important;
+    }
+    .blog-card p {
+        font-size: 12px !important;
+        line-height: 1.55 !important;
+        color: #64748b !important;
+        margin-bottom: 12px !important;
+    }
+    .blog-popular-title {
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+    }
+
     .blog-empty-state {
         min-height: 420px;
         display: flex;

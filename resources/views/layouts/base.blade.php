@@ -109,12 +109,13 @@
         @font-face { font-family: 'Font Awesome 6 Free'; font-display: swap; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-premium); color: var(--text-main); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; }
-        html, body { display: flex; flex-direction: column; min-height: 100vh; }
+        html, body { display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
         main { flex: 1; }
         footer { margin-top: auto; }
     </style>
     <link rel="stylesheet" href="{{ asset('css/base.css') }}">
-    
+    <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
+
     <link rel="stylesheet" href="{{ asset('assets/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}">
 
