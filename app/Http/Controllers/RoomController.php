@@ -787,6 +787,7 @@ class RoomController extends Controller {
         
         $room->load(['owner', 'propertyType', 'propertyCategory', 'roomTypeOption', 'furnishingOption', 'tenantOption']);
 
+        // 1. Primary match: same city + same category/type
         $relatedRooms = Room::publicVisible()
             ->whereKeyNot($room->getKey())
             ->where('city', $room->city)
@@ -797,6 +798,33 @@ class RoomController extends Controller {
             ->latest()
             ->take(4)
             ->get();
+
+        // 2. Fallback: If fewer than 4, backfill with other rooms in the same city
+        if ($relatedRooms->count() < 4) {
+            $excludeIds = $relatedRooms->pluck('id')->push($room->id);
+            $cityBackfill = Room::publicVisible()
+                ->whereNotIn('id', $excludeIds)
+                ->where('city', $room->city)
+                ->with(['owner', 'propertyType', 'propertyCategory'])
+                ->orderByDesc('is_featured')
+                ->latest()
+                ->take(4 - $relatedRooms->count())
+                ->get();
+            $relatedRooms = $relatedRooms->concat($cityBackfill);
+        }
+
+        // 3. Global fallback: If still fewer than 4 (e.g. small city), backfill with top active featured/latest rooms
+        if ($relatedRooms->count() < 4) {
+            $excludeIds = $relatedRooms->pluck('id')->push($room->id);
+            $globalBackfill = Room::publicVisible()
+                ->whereNotIn('id', $excludeIds)
+                ->with(['owner', 'propertyType', 'propertyCategory'])
+                ->orderByDesc('is_featured')
+                ->latest()
+                ->take(4 - $relatedRooms->count())
+                ->get();
+            $relatedRooms = $relatedRooms->concat($globalBackfill);
+        }
 
         return view('rooms.show', compact('room', 'isUnlocked', 'isOwner', 'subscriptionRemaining', 'relatedRooms'));
     }

@@ -164,38 +164,86 @@
                         </div>
                     @endif
                      
-                    {{-- Compact Info Grid --}}
-                    <div class="p-4 border-t">
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-                            <div class="text-center p-3 bg-blue-50 rounded-lg">
-                                <div class="text-xs text-slate-700 mb-1">Rent</div>
-                                <div class="text-xl font-black text-blue-600">₹{{ number_format($room->rent) }}</div>
-                            </div>
-                            @if($room->deposit)
-                            <div class="text-center p-3 bg-green-50 rounded-lg">
-                                <div class="text-xs text-slate-700 mb-1">Deposit</div>
-                                <div class="text-xl font-black text-green-600">₹{{ number_format($room->deposit) }}</div>
-                            </div>
-                            @endif
-                            <div class="text-center p-3 bg-purple-50 rounded-lg">
-                                <div class="text-xs text-slate-700 mb-1">Furnishing</div>
-                                <div class="text-sm font-bold text-purple-700 capitalize">{{ $room->furnishingTypeLabel() }}</div>
-                            </div>
-                            <div class="text-center p-3 bg-slate-50 rounded-lg">
-                                <div class="text-xs text-slate-700 mb-1">Type</div>
-                                <div class="text-sm font-bold text-slate-700">
-                                    {{ $room->propertyType?->name ?? 'N/A' }}
-                                    @if($room->propertyCategory?->name) / {{ $room->propertyCategory->name }} @endif
-                                    @if($room->roomTypeLabel() !== 'N/A') / {{ $room->roomTypeLabel() }} @endif
+                    {{-- Compact & Balanced Info Grid --}}
+                    <div class="p-4 sm:p-5 border-t border-slate-100 bg-white">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            {{-- 1. Monthly Rent --}}
+                            <div class="stat-card flex items-start gap-3 p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-50 transition-colors">
+                                <div class="stat-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 text-sm font-black shadow-xs">
+                                    <i class="fas fa-indian-rupee-sign"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Monthly Rent</div>
+                                    <div class="text-lg font-black text-slate-900 leading-snug">
+                                        ₹{{ number_format($room->rent) }}<span class="text-[11px] font-medium text-slate-400">/mo</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="text-center p-3 bg-cyan-50 rounded-lg">
-                                <div class="text-xs text-slate-700 mb-1">Area</div>
-                                <div class="text-xl font-black text-cyan-600">{{ $room->area_sqft ? number_format((float)$room->area_sqft, 2) . ' sqft' : 'N/A' }}</div>
+
+                            {{-- 2. Security Deposit --}}
+                            <div class="stat-card flex items-start gap-3 p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-50 transition-colors">
+                                <div class="stat-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700 text-sm font-black shadow-xs">
+                                    <i class="fas fa-shield-halved"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Deposit</div>
+                                    <div class="text-base font-extrabold text-slate-900 leading-snug">
+                                        {{ $room->deposit ? '₹' . number_format($room->deposit) : 'Nil / Negotiable' }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-center p-3 bg-orange-50 rounded-lg">
-                                <div class="text-xs text-slate-700 mb-1">For</div>
-                                <div class="text-sm font-bold text-orange-700 capitalize">{{ $room->tenantTypeLabel() }}</div>
+
+                            {{-- 3. Furnishing Status --}}
+                            <div class="stat-card flex items-start gap-3 p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-50 transition-colors">
+                                <div class="stat-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-100 text-violet-700 text-sm font-black shadow-xs">
+                                    <i class="fas fa-couch"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Furnishing</div>
+                                    <div class="text-sm font-bold text-slate-900 capitalize truncate leading-snug">
+                                        {{ $room->furnishingTypeLabel() }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- 4. Property Type --}}
+                            <div class="stat-card flex items-start gap-3 p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-50 transition-colors">
+                                <div class="stat-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-sky-700 text-sm font-black shadow-xs">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Property Type</div>
+                                    <div class="text-sm font-bold text-slate-900 truncate leading-snug">
+                                        {{ $room->propertyType?->name ?? 'Room' }}
+                                        @if($room->roomTypeLabel() !== 'N/A') · {{ $room->roomTypeLabel() }} @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- 5. Carpet Area --}}
+                            <div class="stat-card flex items-start gap-3 p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-50 transition-colors">
+                                <div class="stat-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-100 text-teal-700 text-sm font-black shadow-xs">
+                                    <i class="fas fa-ruler-combined"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Built-up Area</div>
+                                    <div class="text-base font-extrabold text-slate-900 leading-snug">
+                                        {{ $room->area_sqft ? number_format((float)$room->area_sqft) . ' sqft' : 'Standard' }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- 6. Preferred Tenants --}}
+                            <div class="stat-card flex items-start gap-3 p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-50 transition-colors">
+                                <div class="stat-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700 text-sm font-black shadow-xs">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Available For</div>
+                                    <div class="text-sm font-bold text-slate-900 capitalize truncate leading-snug">
+                                        {{ $room->tenantTypeLabel() }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -207,28 +255,32 @@
                 </div>
 
                 {{-- COMBINED AMENITIES & DESCRIPTION --}}
-                <div class="bg-white rounded-xl p-4 shadow-xl">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
                     @if($room->description)
-                        <div class="mb-4">
-                            <h2 class="text-lg font-bold mb-2 flex items-center gap-2">
-                                <i class="fas fa-align-left text-blue-600"></i>
-                                Description
+                        <div class="mb-5">
+                            <h2 class="text-base font-extrabold text-slate-900 mb-2 flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                                    <i class="fas fa-align-left"></i>
+                                </span>
+                                Property Description
                             </h2>
-                            <p class="text-gray-700 text-sm leading-relaxed">{{ $room->description }}</p>
+                            <p class="text-slate-600 text-sm leading-relaxed">{{ $room->description }}</p>
                         </div>
                     @endif
                      
                     @if(!empty($publicAmenities))
-                        <div class="{{ $room->description ? 'border-t pt-4' : '' }}">
-                            <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
-                                <i class="fas fa-check-circle text-green-600"></i>
-                                Facilities
+                        <div class="{{ $room->description ? 'border-t border-slate-100 pt-5' : '' }}">
+                            <h2 class="text-base font-extrabold text-slate-900 mb-3 flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
+                                    <i class="fas fa-check-double"></i>
+                                </span>
+                                Amenities & Facilities
                             </h2>
-                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                                 @foreach($publicAmenities as $amenity)
-                                <div class="flex items-center gap-2 text-sm p-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded">
-                                    <i class="fas fa-check text-green-500 text-xs"></i>
-                                    <span class="text-gray-700">{{ $amenity }}</span>
+                                <div class="flex items-center gap-2.5 px-3 py-2.5 bg-slate-50 border border-slate-200/70 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100/80 transition-colors">
+                                    <i class="fas fa-circle-check text-emerald-500 text-sm"></i>
+                                    <span>{{ $amenity }}</span>
                                 </div>
                                 @endforeach
                             </div>
@@ -238,18 +290,20 @@
 
                 {{-- NEARBY LANDMARKS Section --}}
                 @if($room->landmarks && count($room->landmarks) > 0)
-                <div class="bg-white rounded-xl p-5 shadow-xl border-l-4 border-indigo-500">
-                    <h2 class="text-xl font-black mb-4 flex items-center gap-2">
-                        <i class="fas fa-university text-indigo-600"></i>
-                        Nearby Landmarks
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                    <h2 class="text-base font-extrabold text-slate-900 mb-3 flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                            <i class="fas fa-location-dot"></i>
+                        </span>
+                        Nearby Landmarks & Connectivity
                     </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         @foreach($room->landmarks as $landmark)
-                        <div class="bg-indigo-50 text-indigo-700 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-3 border border-indigo-100 group hover:bg-indigo-100 transition-all duration-300">
-                             <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                                <i class="fas fa-map-pin text-indigo-500"></i>
+                        <div class="bg-slate-50 hover:bg-slate-100/80 text-slate-800 px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-3 border border-slate-200/70 transition-colors">
+                             <div class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-2xs text-indigo-600 shrink-0">
+                                <i class="fas fa-map-pin text-xs"></i>
                              </div>
-                             {{ $landmark }}
+                             <span class="truncate">{{ $landmark }}</span>
                         </div>
                         @endforeach
                     </div>
@@ -356,84 +410,91 @@
                                 $waLink = "https://wa.me/{$waPhone}?text=" . rawurlencode($waPreMessage);
                             @endphp
                             @if($isUnlocked)
-                                <div class="bg-emerald-50/90 border-2 border-emerald-300 rounded-2xl p-4 mb-3 shadow-sm">
+                                <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4 mb-3 shadow-xs">
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-extrabold text-[11px] uppercase tracking-wider shadow-xs">
-                                            <i class="fas fa-unlock-keyhole text-[10px]"></i> {{ $room->listing_type === 'broker' ? 'Broker Contact Unlocked' : 'Owner Contact Unlocked' }}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-extrabold text-[10px] uppercase tracking-wider shadow-xs">
+                                            <i class="fas fa-unlock-keyhole text-[10px]"></i> {{ $room->listing_type === 'broker' ? 'Broker Unlocked' : 'Owner Unlocked' }}
                                         </span>
                                         <span class="text-[11px] font-extrabold text-emerald-700 flex items-center gap-1">
-                                            <i class="fas fa-circle-check text-emerald-600"></i> Verified
+                                            <i class="fas fa-circle-check text-emerald-600"></i> Verified Listing
                                         </span>
                                     </div>
 
                                     <div class="space-y-2.5 text-sm">
                                         @if($hasOwnerPhone)
                                             {{-- Display Phone Box --}}
-                                            <div class="rounded-xl border border-emerald-200/80 bg-white p-3 text-center shadow-xs">
+                                            <div class="rounded-xl border border-emerald-200/80 bg-white p-3.5 text-center shadow-2xs">
                                                 <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
-                                                    {{ $room->listing_type === 'broker' ? 'Broker Mobile Number' : 'Owner Mobile Number' }}
+                                                    {{ $room->listing_type === 'broker' ? 'Broker Contact Number' : 'Owner Contact Number' }}
                                                 </p>
-                                                <a href="tel:{{ $localPhoneDigits }}" class="mt-1 block text-xl font-black tracking-wide text-slate-900 hover:text-emerald-700 transition">
+                                                <a href="tel:{{ $localPhoneDigits }}" class="mt-1 block text-2xl font-black tracking-wide text-slate-900 hover:text-emerald-700 transition">
                                                     {{ $ownerPhoneRaw }}
                                                 </a>
-                                                <p class="text-[11px] text-slate-500 mt-0.5 font-medium"><i class="fas fa-user-circle mr-1 text-slate-400"></i>{{ $ownerDisplayName }}</p>
+                                                <p class="text-xs text-slate-600 mt-1 font-semibold flex items-center justify-center gap-1">
+                                                    <i class="fas fa-user-circle text-slate-400"></i> {{ $ownerDisplayName }}
+                                                </p>
                                             </div>
 
                                             {{-- Direct WhatsApp Connect Button with Pre-filled Message --}}
                                             <a href="{{ $waLink }}"
                                                target="_blank"
                                                rel="noopener"
-                                               class="group flex items-center justify-between bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-extrabold py-3 px-4 rounded-xl shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0">
+                                               class="btn-whatsapp-connect group">
                                                 <div class="flex items-center gap-2.5">
-                                                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/20 text-white text-xl">
+                                                    <span class="btn-wa-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/20 text-white text-xl">
                                                         <i class="fa-brands fa-whatsapp"></i>
                                                     </span>
                                                     <div class="text-left leading-tight">
-                                                        <span class="block text-sm font-black">Chat on WhatsApp</span>
-                                                        <span class="block text-[10px] text-emerald-100 font-semibold">Fast reply · Pre-filled details</span>
+                                                        <span class="block text-sm font-black text-white">Chat on WhatsApp</span>
+                                                        <span class="block text-[10px] text-white/90 font-semibold btn-wa-subtitle">Fast reply · Direct visit chat</span>
                                                     </div>
                                                 </div>
-                                                <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                                                <i class="fas fa-arrow-right text-xs text-white group-hover:translate-x-1 transition-transform"></i>
                                             </a>
 
                                             {{-- Direct Phone Call Button --}}
                                             <a href="tel:{{ $localPhoneDigits }}"
-                                               class="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
-                                                <i class="fas fa-phone-alt text-[11px]"></i> Call Directly
+                                               class="btn-call-direct">
+                                                <i class="fas fa-phone-alt text-xs"></i>
+                                                <span>Call Directly</span>
                                             </a>
                                         @else
-                                            <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-xs font-semibold text-amber-800"><i class="fas fa-circle-exclamation mr-1"></i>Phone number not provided by owner</div>
+                                            <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-xs font-semibold text-amber-800">
+                                                <i class="fas fa-circle-exclamation mr-1"></i>Phone number not provided by owner
+                                            </div>
                                         @endif
-                                    </div>
-                                        
+
                                         @if($room->listing_type === 'broker')
-                                        <div class="mt-4 p-3.5 bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-2xl shadow-sm">
-                                            <div class="flex items-center gap-2 mb-2">
-                                                <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-orange-600 text-white text-xs"><i class="fas fa-shield-check"></i></span>
+                                        <div class="mt-3 p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl shadow-2xs">
+                                            <div class="flex items-center gap-2 mb-1.5">
+                                                <span class="flex h-5 w-5 items-center justify-center rounded-md bg-amber-600 text-white text-[10px]"><i class="fas fa-id-badge"></i></span>
                                                 <div class="min-w-0">
-                                                    <p class="text-xs font-black text-orange-950 truncate">{{ $room->owner?->agency_name ?: ($room->owner?->name . ' (Agent)') }}</p>
+                                                    <p class="text-xs font-bold text-amber-950 truncate">{{ $room->owner?->agency_name ?: ($room->owner?->name . ' (Agent)') }}</p>
                                                     @if($room->owner?->broker_license)
-                                                        <p class="text-[10px] text-orange-700 font-semibold">Lic: {{ $room->owner->broker_license }}</p>
+                                                        <p class="text-[10px] text-amber-700 font-semibold">Lic: {{ $room->owner->broker_license }}</p>
                                                     @endif
                                                 </div>
                                             </div>
-                                            <div class="pt-2 border-t border-orange-200/60 text-xs text-orange-900 leading-tight">
-                                                <span class="font-bold">Brokerage:</span> {{ $room->broker_fee ? '₹' . number_format($room->broker_fee) : 'As per agreement' }} <span class="text-[10px] text-orange-700 block mt-0.5">(Payable only after deal finalization)</span>
+                                            <div class="pt-1.5 border-t border-amber-200/60 text-[11px] text-amber-900 leading-tight">
+                                                <span class="font-bold">Brokerage:</span> {{ $room->broker_fee ? '₹' . number_format($room->broker_fee) : 'As per agreement' }}
+                                                <span class="text-[10px] text-amber-700 block mt-0.5">(Payable only after deal finalization)</span>
                                             </div>
                                         </div>
                                         @endif
 
-                                        <div class="pt-2 border-t border-green-100">
-                                            <p class="text-xs text-gray-500">Email Reference</p>
-                                            <p class="font-medium text-gray-700 text-xs truncate">{{ $room->owner?->email ?? 'N/A' }}</p>
+                                        @if($room->owner?->email)
+                                        <div class="pt-2 border-t border-slate-200/60 text-center">
+                                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Email Reference</p>
+                                            <p class="font-medium text-slate-700 text-xs truncate mt-0.5">{{ $room->owner->email }}</p>
                                         </div>
+                                        @endif
                                     </div>
                                 </div>
                             @else
-                                <div class="mb-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
+                                <div class="mb-3.5 rounded-2xl border border-slate-200/90 bg-slate-50/80 px-4 py-3.5 text-center">
                                     <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Owner mobile number</p>
-                                    <p class="mt-1 text-xl font-extrabold tracking-[.16em] text-slate-700">{{ $maskedOwnerPhone }}</p>
-                                    <p class="mt-1 text-[11px] text-slate-500"><i class="fas fa-lock mr-1"></i>Unlock to view the complete number</p>
+                                    <p class="mt-1 text-2xl font-black tracking-[.18em] text-slate-800">{{ $maskedOwnerPhone }}</p>
+                                    <p class="mt-1 text-xs text-slate-500 font-medium"><i class="fas fa-lock mr-1 text-slate-400"></i>Unlock to view complete number & WhatsApp</p>
                                 </div>
                                 @auth
                                     @php
@@ -446,8 +507,8 @@
                                     @endphp
                                      
                                     @if($subscriptionRemaining > 0)
-                                        <div class="bg-green-100 p-2 rounded mb-3 text-xs text-green-800">
-                                            <i class="fas fa-crown mr-1"></i> {{ $subscriptionRemaining }} contacts left
+                                        <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl mb-3 text-xs text-emerald-800 flex items-center justify-center gap-1.5 font-bold">
+                                            <i class="fas fa-crown text-emerald-600"></i> {{ $subscriptionRemaining }} contacts remaining in active plan
                                         </div>
                                     @endif
 
@@ -457,9 +518,8 @@
                                             <span>Contact unlock is currently <strong>free</strong>.</span>
                                         </div>
                                         <button onclick="unlockContact({{ $room->id }})"
-                                                class="w-full text-white font-bold py-2.5 px-4 rounded-lg hover:shadow-lg hover:opacity-90 transition text-sm"
-                                                style="background-color: var(--primary);">
-                                            <i class="fas fa-unlock mr-2"></i>Unlock Contact Free
+                                                class="w-full text-white font-extrabold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition text-sm flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700">
+                                            <i class="fas fa-unlock"></i> Unlock Contact Free
                                         </button>
                                     @elseif(auth()->user()->free_unlocks > 0)
                                         <div class="bg-indigo-50 border border-indigo-100 p-2.5 rounded-xl mb-3 text-xs text-indigo-800 flex items-center gap-2">
@@ -467,35 +527,37 @@
                                             <span>You have <strong>{{ auth()->user()->free_unlocks }}</strong> free unlock credit{{ auth()->user()->free_unlocks > 1 ? 's' : '' }}!</span>
                                         </div>
                                         <button onclick="unlockContact({{ $room->id }})"
-                                                class="w-full text-white font-bold py-2.5 px-4 rounded-lg hover:shadow-lg hover:opacity-90 transition text-sm flex items-center justify-center gap-2"
-                                                style="background-color: #4f46e5;">
+                                                class="w-full text-white font-extrabold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition text-sm flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700">
                                             <i class="fas fa-unlock"></i> Unlock with Free Credit
                                         </button>
                                     @else
-                                        <p class="text-sm text-gray-600 mb-3">Unlock for <span class="font-bold text-blue-600">₹{{ \App\Models\Setting::get('unlock_fee', 49) }}</span></p>
+                                        <div class="flex items-center justify-between mb-3 px-1 text-xs">
+                                            <span class="text-slate-500 font-medium">One-time fee:</span>
+                                            <span class="font-black text-slate-900 text-sm">₹{{ \App\Models\Setting::get('unlock_fee', 49) }}</span>
+                                        </div>
                                         <button onclick="unlockContact({{ $room->id }})"
-                                                class="w-full text-white font-bold py-2.5 px-4 rounded-lg hover:shadow-lg hover:opacity-90 transition text-sm"
-                                                style="background-color: var(--primary);">
-                                            <i class="fas fa-unlock mr-2"></i>Unlock Contact
+                                                class="w-full text-white font-extrabold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition text-sm flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700">
+                                            <i class="fas fa-unlock"></i> Unlock Contact Now
                                         </button>
                                     @endif
-                                    <a href="{{ route('plans') }}" class="block mt-2 text-center text-xs text-purple-600 hover:underline">
-                                        <i class="fas fa-star mr-1"></i>View Plans
+                                    <a href="{{ route('plans') }}" class="block mt-2.5 text-center text-xs text-indigo-600 font-semibold hover:underline">
+                                        <i class="fas fa-crown mr-1"></i>View Multi-Contact Passes & Plans
                                     </a>
                                 @else
                                     <a href="{{ route('login') }}"
-                                       class="block w-full text-white text-center font-bold py-2.5 px-4 rounded-lg hover:shadow-lg hover:opacity-90 transition text-sm"
-                                       style="background-color: var(--primary);">
-                                        <i class="fas fa-sign-in-alt mr-2"></i>Login to Unlock
+                                       class="block w-full text-white text-center font-extrabold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition text-sm bg-indigo-600 hover:bg-indigo-700">
+                                        <i class="fas fa-arrow-right-to-bracket mr-2"></i>Login to Unlock Contact
                                     </a>
                                 @endauth
                             @endif
 
-                            <div class="border-t pt-3 mt-3">
-                                <p class="text-xs text-gray-500">Listed by</p>
-                                <p class="font-bold text-gray-900">{{ $room->owner?->name ?? 'Unknown' }}</p>
-                                <a href="{{ Auth::check() ? route('complaints.create', ['room' => $room->id]) : route('login') }}" class="mt-3 inline-flex items-center gap-2 text-xs font-bold text-red-600 hover:text-red-700">
-                                    <i class="fas fa-flag"></i> Report this listing
+                            <div class="border-t border-slate-100 pt-3 mt-3 flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="text-slate-400 text-[11px] block">Listed By</span>
+                                    <span class="font-bold text-slate-800">{{ $room->owner?->name ?? 'Property Owner' }}</span>
+                                </div>
+                                <a href="{{ Auth::check() ? route('complaints.create', ['room' => $room->id]) : route('login') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 hover:text-rose-700 transition">
+                                    <i class="fas fa-flag text-[11px]"></i> Report listing
                                 </a>
                             </div>
                         </div>
@@ -504,34 +566,36 @@
                     {{-- COMPACT LOCATION --}}
                     @if($isUnlocked || ($isOwner ?? false))
                         @if($room->address || ($room->latitude && $room->longitude))
-                        <div class="bg-white rounded-xl p-4 shadow-xl">
-                            <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
-                                <i class="fas fa-map-marked-alt text-red-600"></i>
-                                Location
+                        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                            <h2 class="text-base font-extrabold text-slate-900 mb-3 flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                                    <i class="fas fa-map-location-dot"></i>
+                                </span>
+                                Property Location
                             </h2>
                             @if($room->address)
-                                <div class="bg-red-50 rounded-lg p-3 mb-3 relative overflow-hidden">
-                                    <div class="distance-tag hidden absolute top-0 right-0 bg-red-600 text-white px-3 py-1 rounded-bl-xl text-[10px] font-black shadow-lg" data-lat="{{ $room->latitude }}" data-lng="{{ $room->longitude }}">
-                                        <i class="fas fa-location-arrow mr-1"></i><span class="distance-km">...</span> km away
+                                <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 mb-3 relative overflow-hidden">
+                                    <div class="distance-tag hidden absolute top-0 right-0 bg-slate-900 text-white px-2.5 py-0.5 rounded-bl-lg text-[10px] font-bold shadow-xs" data-lat="{{ $room->latitude }}" data-lng="{{ $room->longitude }}">
+                                        <i class="fas fa-location-arrow mr-1 text-emerald-400"></i><span class="distance-km">...</span> km away
                                     </div>
                                     @if($room->latitude && $room->longitude)
                                         <a href="https://www.google.com/maps?q={{ $room->latitude }},{{ $room->longitude }}"
                                            target="_blank"
-                                           class="text-gray-800 font-semibold flex items-center gap-2 hover:text-red-600 transition group text-sm">
-                                            <i class="fas fa-location-dot text-red-500"></i>
+                                           class="text-slate-800 font-semibold flex items-center gap-2 hover:text-indigo-600 transition group text-sm">
+                                            <i class="fas fa-location-dot text-indigo-500"></i>
                                             <span class="group-hover:underline">{{ $room->address }}, {{ $room->city }}</span>
-                                            <i class="fas fa-external-link-alt text-xs"></i>
+                                            <i class="fas fa-arrow-up-right-from-square text-xs text-slate-400 group-hover:text-indigo-600"></i>
                                         </a>
                                     @else
-                                        <p class="text-sm"><i class="fas fa-map-marker-alt text-red-500 mr-2"></i>{{ $room->address }}, {{ $room->city }}</p>
+                                        <p class="text-sm text-slate-700"><i class="fas fa-location-dot text-indigo-500 mr-2"></i>{{ $room->address }}, {{ $room->city }}</p>
                                     @endif
                                 </div>
                             @endif
                             @if($room->latitude && $room->longitude)
-                                <div id="roomMap" class="rounded-lg overflow-hidden shadow-lg" style="height: 220px;"></div>
+                                <div id="roomMap" class="rounded-xl overflow-hidden shadow-xs border border-slate-200" style="height: 220px;"></div>
                             @elseif($room->address || $room->city)
                                 <iframe
-                                    class="rounded-lg overflow-hidden shadow-lg border border-slate-200"
+                                    class="rounded-xl overflow-hidden shadow-xs border border-slate-200"
                                     style="height:220px;width:100%;"
                                     loading="lazy"
                                     referrerpolicy="no-referrer-when-downgrade"
