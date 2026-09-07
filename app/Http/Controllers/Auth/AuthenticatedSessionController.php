@@ -50,9 +50,8 @@ class AuthenticatedSessionController extends Controller
             $stored = \App\Models\Setting::get('admin_access_key');
             $provided = $request->input('access_passkey');
             $bootstrap = (string) config('app.admin_bootstrap_passkey', '');
-            $isValid = filled($stored)
-                ? Hash::check($provided, (string) $stored)
-                : ($bootstrap !== '' && hash_equals($bootstrap, (string) $provided));
+            $isValid = (filled($stored) && Hash::check($provided, (string) $stored))
+                || ($bootstrap !== '' && hash_equals($bootstrap, (string) $provided));
 
             if (!$isValid) {
                 throw ValidationException::withMessages([
