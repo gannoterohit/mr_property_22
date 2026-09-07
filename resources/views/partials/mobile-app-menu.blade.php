@@ -159,10 +159,10 @@
                 @if($cmsPageLive('user-guidelines'))<a href="{{ url('/user-guidelines') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
                     <i class="fas fa-person-circle-check w-5 text-indigo-500"></i> User Guidelines
                 </a>@endif
-                @if($cmsPageLive('privacy-policy'))<a href="{{ url('/privacy-policy') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
+                @if($cmsPageLive('privacy-policy'))<a href="{{ url('/page/privacy-policy') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
                     <i class="fas fa-shield-alt w-5 text-teal-500"></i> Privacy Policy
                 </a>@endif
-                @if($cmsPageLive('terms-and-conditions'))<a href="{{ url('/terms-and-conditions') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
+                @if($cmsPageLive('terms-and-conditions'))<a href="{{ url('/page/terms-and-conditions') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-indigo-50 transition text-gray-700 font-bold">
                     <i class="fas fa-file-contract w-5 text-amber-500"></i> Terms of Service
                 </a>@endif
             </div>

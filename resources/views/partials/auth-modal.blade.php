@@ -113,26 +113,9 @@
                 @endif
             </div>
 
-            {{-- Login/Register tabs
-                 Hidden visually in desktop design but retained
-                 for existing JS functionality.
-            --}}
-            <div class="auth-tabs" aria-hidden="true">
-                <button
-                    type="button"
-                    data-auth-tab="login"
-                    class="auth-modal-tab active"
-                >
-                    Login
-                </button>
-
-                <button
-                    type="button"
-                    data-auth-tab="register"
-                    class="auth-modal-tab"
-                >
-                    Create account
-                </button>
+            {{-- Title (login only — registration happens on /register) --}}
+            <div class="auth-tabs auth-tabs-single" aria-hidden="true">
+                <span class="auth-modal-tab active">Login</span>
             </div>
 
             {{-- =====================================================
@@ -311,155 +294,9 @@
 
                 <p class="auth-bottom-text">
                     New here?
-                    <button
-                        type="button"
-                        data-auth-tab-switch="register"
-                    >
+                    <a href="{{ route('register') }}">
                         Create an account
-                    </button>
-                </p>
-            </div>
-
-
-            {{-- =====================================================
-                 REGISTER
-            ====================================================== --}}
-            <div
-                data-auth-panel="register"
-                class="auth-modal-panel hidden"
-            >
-                <div class="auth-heading">
-                    <h3>Create account</h3>
-
-                    <p>
-                        Choose your role and verify your identity quickly.
-                    </p>
-                </div>
-
-                <form
-                    id="publicAuthRegisterForm"
-                    class="auth-register-form"
-                >
-
-                    <div class="auth-form-group">
-                        <label class="auth-field-label">
-                            I am
-                        </label>
-
-                        <div class="auth-role-grid">
-
-                            <label class="auth-role-card">
-                                <input
-                                    type="radio"
-                                    name="auth_role"
-                                    value="user"
-                                    checked
-                                >
-
-                                <span>
-                                    <i class="fas fa-search"></i>
-                                    <small>Find room</small>
-                                </span>
-                            </label>
-
-                            <label class="auth-role-card">
-                                <input
-                                    type="radio"
-                                    name="auth_role"
-                                    value="owner"
-                                >
-
-                                <span>
-                                    <i class="fas fa-building"></i>
-                                    <small>Owner</small>
-                                </span>
-                            </label>
-
-                            <label class="auth-role-card">
-                                <input
-                                    type="radio"
-                                    name="auth_role"
-                                    value="broker"
-                                >
-
-                                <span>
-                                    <i class="fas fa-handshake"></i>
-                                    <small>Broker</small>
-                                </span>
-                            </label>
-
-                        </div>
-                    </div>
-
-                    <div class="auth-form-group">
-                        <label
-                            class="auth-field-label"
-                            for="publicAuthRegisterName"
-                        >
-                            Full name
-                        </label>
-
-                        <input
-                            id="publicAuthRegisterName"
-                            type="text"
-                            name="name"
-                            placeholder="Your full name"
-                            class="auth-modal-input standalone"
-                        >
-                    </div>
-
-                    <div class="auth-form-group">
-                        <label
-                            class="auth-field-label"
-                            for="publicAuthRegisterEmail"
-                        >
-                            Email
-                        </label>
-
-                        <input
-                            id="publicAuthRegisterEmail"
-                            type="email"
-                            name="email"
-                            placeholder="name@example.com"
-                            class="auth-modal-input standalone"
-                        >
-                    </div>
-
-                    <div class="auth-form-group">
-                        <label
-                            class="auth-field-label"
-                            for="publicAuthRegisterPhone"
-                        >
-                            Phone
-                        </label>
-
-                        <input
-                            id="publicAuthRegisterPhone"
-                            type="tel"
-                            name="phone"
-                            placeholder="9876543210"
-                            class="auth-modal-input standalone"
-                        >
-                    </div>
-
-                    <button
-                        type="submit"
-                        class="auth-cta-btn"
-                    >
-                        <span>Continue</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-
-                </form>
-
-                <p class="auth-bottom-text">
-                    Already have an account?
-                    <button
-                        type="button"
-                        data-auth-tab-switch="login"
-                    >
-                        Login
-                    </button>
+                    </a>
                 </p>
             </div>
 
@@ -679,7 +516,6 @@
 
         document.getElementById('publicAuthOtpForm')?.reset();
         document.getElementById('publicAuthLoginForm')?.reset();
-        document.getElementById('publicAuthRegisterForm')?.reset();
 
     };
 
@@ -811,19 +647,13 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Send OTP
+    | Send OTP (login only — registration uses dedicated /register page)
     |--------------------------------------------------------------------------
     */
 
     const validateAndSendOtp = async (mode) => {
 
         hideStatus();
-
-        /*
-        |--------------------------------------------------------------------------
-        | LOGIN
-        |--------------------------------------------------------------------------
-        */
 
         if (mode === 'login') {
 
@@ -867,88 +697,7 @@
             return;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | REGISTER
-        |--------------------------------------------------------------------------
-        */
-
-        const name =
-            document
-                .getElementById('publicAuthRegisterName')
-                ?.value
-                .trim();
-
-        const email =
-            document
-                .getElementById('publicAuthRegisterEmail')
-                ?.value
-                .trim();
-
-        const phone =
-            document
-                .getElementById('publicAuthRegisterPhone')
-                ?.value
-                .trim();
-
-        const role =
-            document
-                .querySelector(
-                    'input[name="auth_role"]:checked'
-                )
-                ?.value || 'user';
-
-
-        if (!name || name.length < 2) {
-
-            showStatus(
-                'Please enter your full name.'
-            );
-
-            return;
-        }
-
-
-        if (
-            !email ||
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-        ) {
-
-            showStatus(
-                'Please enter a valid email address.'
-            );
-
-            return;
-        }
-
-
-        const data = await makeRequest(
-            '{{ route('send.otp') }}',
-            {
-                email,
-                name,
-                phone,
-                role
-            }
-        );
-
-
-        if (!data.success) {
-
-            showStatus(
-                data.message ||
-                'Unable to send OTP. Please try again.'
-            );
-
-            return;
-        }
-
-
-        showOtpStep(
-            'register',
-            email
-        );
+        showStatus('Registration is handled on the dedicated /register page.');
 
     };
 
@@ -972,38 +721,12 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Register Submit
-    |--------------------------------------------------------------------------
-    */
-
-    document
-        .getElementById('publicAuthRegisterForm')
-        ?.addEventListener('submit', async (event) => {
-
-            event.preventDefault();
-
-            await validateAndSendOtp('register');
-
-        });
-
-
-    /*
-    |--------------------------------------------------------------------------
     | Back From OTP
     |--------------------------------------------------------------------------
     */
 
     const backToForm = () => {
-
-        const mode =
-            window.__apnanestAuthMode || 'login';
-
-        switchTab(
-            mode === 'register'
-                ? 'register'
-                : 'login'
-        );
-
+        switchTab('login');
     };
 
 
@@ -1082,43 +805,12 @@
 
             } else {
 
-                payload.name =
-                    document
-                        .getElementById(
-                            'publicAuthRegisterName'
-                        )
-                        ?.value
-                        .trim();
-
-                payload.email =
-                    document
-                        .getElementById(
-                            'publicAuthRegisterEmail'
-                        )
-                        ?.value
-                        .trim();
-
-                payload.phone =
-                    document
-                        .getElementById(
-                            'publicAuthRegisterPhone'
-                        )
-                        ?.value
-                        .trim();
-
-                payload.role =
-                    document
-                        .querySelector(
-                            'input[name="auth_role"]:checked'
-                        )
-                        ?.value || 'user';
+                window.location.href = '{{ route('register') }}';
+                return;
             }
 
 
-            const url =
-                mode === 'login'
-                    ? '{{ route('verify.login.otp') }}'
-                    : '{{ route('verify.registration.otp') }}';
+            const url = '{{ route('verify.login.otp') }}';
 
 
             const data =
@@ -1212,10 +904,7 @@
         ).get('auth');
 
 
-    if (
-        requestedAuthTab === 'login' ||
-        requestedAuthTab === 'register'
-    ) {
+    if (requestedAuthTab === 'login') {
 
         openModal(requestedAuthTab);
 
