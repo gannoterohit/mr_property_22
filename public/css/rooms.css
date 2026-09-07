@@ -235,18 +235,18 @@
         .rooms-results-head h2{font-size:1.35rem!important}
         .rooms-trust-strip{display:none}
     }
+@media(min-width:1440px){
+    .rooms-search-shell > .container,
+    .rooms-main > .container,
+    .rooms-trust-strip > .container {max-width: 1440px !important}
+}
 @media(min-width:1600px){
     .rooms-search-shell > .container,
     .rooms-main > .container,
     .rooms-trust-strip > .container {max-width: 1600px !important}
 }
-@media(min-width:1920px){
+@media(max-width:1366px){
     .rooms-search-shell > .container,
     .rooms-main > .container,
-    .rooms-trust-strip > .container {max-width: 1800px !important}
-}
-@media(min-width:2560px){
-    .rooms-search-shell > .container,
-    .rooms-main > .container,
-    .rooms-trust-strip > .container {max-width: 2000px !important}
+    .rooms-trust-strip > .container {max-width: 1200px !important}
 }

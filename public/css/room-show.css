@@ -97,6 +97,11 @@
     }
 
 
-@media(min-width:1600px){.room-detail-page>.container{max-width:1400px!important}}
-@media(min-width:1920px){.room-detail-page>.container{max-width:1500px!important}}
-@media(min-width:2560px){.room-detail-page>.container{max-width:1700px!important}}
+@media(min-width:1600px){
+    .room-detail-page>.container{max-width:1440px!important}
+    .related-room-container{width:min(1440px,calc(100% - 48px))!important}
+}
+@media(max-width:1366px){
+    .room-detail-page>.container{max-width:1200px!important}
+    .related-room-container{width:min(1200px,calc(100% - 40px))!important}
+}
