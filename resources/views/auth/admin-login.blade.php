@@ -1,129 +1,661 @@
 @php
-    $primary = \App\Models\Setting::get('primary_color', '#4F46E5');
-    $primary = ltrim($primary, '#');
-    if (strlen($primary) === 3) { $primary = $primary[0].$primary[0].$primary[1].$primary[1].$primary[2].$primary[2]; }
-    $pr = hexdec(substr($primary,0,2)); $pg = hexdec(substr($primary,2,2)); $pb = hexdec(substr($primary,4,2));
-    $hex = fn($r,$g,$b) => sprintf('#%02x%02x%02x', max(0,min(255,$r)), max(0,min(255,$g)), max(0,min(255,$b)));
-    $primaryHex = $hex($pr,$pg,$pb);
-    $primaryLight = $hex((int)($pr+(255-$pr)*.94), (int)($pg+(255-$pg)*.94), (int)($pb+(255-$pb)*.94));
-    $primaryMid   = $hex((int)($pr+(255-$pr)*.88), (int)($pg+(255-$pg)*.88), (int)($pb+(255-$pb)*.88));
     $websiteName = \App\Models\Setting::get('website_name', 'ApnaNest');
+    $websiteLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo');
+    $primaryColor = \App\Models\Setting::get('primary_color', '#4F46E5');
 @endphp
 
-@extends('layouts.auth')
+@extends('layouts.base')
 
-@section('title', 'Secure Access | '.$websiteName)
-@section('description', 'Admin and staff secure access portal.')
+@section('title', 'Admin Security Gate | ' . $websiteName)
+@section('description', 'Restricted access portal for authorized administration personnel only.')
+
+@section('layout-top-banner')
+@endsection
+
+@section('layout-navigation')
+@endsection
+
+@section('layout-loading')
+@endsection
+
+@section('layout-footer')
+@endsection
+
+@section('layout-bottom-navigation')
+@endsection
+
+@section('layout-popup')
+@endsection
 
 @push('styles')
 <style>
-    :root{--admin-primary:{{ $primaryHex }};--admin-primary-light:{{ $primaryLight }};--admin-primary-mid:{{ $primaryMid }};--admin-ink:#0f172a;--admin-muted:#64748b;--admin-border:#e2e8f0}
-    *{box-sizing:border-box}
-    .admin-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#f8fafc 0%,#eef2ff 50%,#f8fafc 100%);position:relative;overflow:hidden}
-    .admin-page::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,var(--admin-primary-light) 0%,transparent 70%);top:-200px;right:-150px;opacity:.6;pointer-events:none}
-    .admin-page::after{content:"";position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,var(--admin-primary-mid) 0%,transparent 70%);bottom:-150px;left:-100px;opacity:.5;pointer-events:none}
-    .admin-card{width:100%;max-width:440px;background:#fff;border-radius:24px;box-shadow:0 25px 50px -20px rgba(15,23,42,.18),0 0 0 1px rgba(15,23,42,.04);position:relative;z-index:1;overflow:hidden}
-    .admin-card-head{padding:36px 36px 0;text-align:center}
-    .admin-brand{font-size:22px;font-weight:800;color:var(--admin-ink);letter-spacing:-.02em;margin-bottom:4px}
-    .admin-brand span{color:var(--admin-primary)}
-    .admin-card-head p{font-size:13px;color:var(--admin-muted);margin:0}
-    .admin-steps{display:flex;align-items:center;justify-content:center;gap:8px;padding:24px 36px 0}
-    .admin-step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:all .3s ease;flex-shrink:0}
-    .admin-step-dot.active{background:var(--admin-primary);color:#fff}
-    .admin-step-dot.done{background:var(--admin-primary-light);color:var(--admin-primary)}
-    .admin-step-dot.pending{background:#f1f5f9;color:#94a3b8}
-    .admin-step-line{width:40px;height:2px;background:#e2e8f0;border-radius:1px;transition:background .3s ease}
-    .admin-step-line.done{background:var(--admin-primary-light)}
-    .admin-body{padding:28px 36px 36px}
-    .admin-form-step{display:none;animation:adminFadeIn .35s ease}
-    .admin-form-step.visible{display:block}
-    @keyframes adminFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .admin-label{display:block;font-size:12px;font-weight:700;color:var(--admin-ink);margin-bottom:6px;letter-spacing:.02em}
-    .admin-input-wrap{position:relative;margin-bottom:14px}
-    .admin-input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13px;color:#94a3b8;pointer-events:none}
-    .admin-input-wrap input{width:100%;padding:12px 14px 12px 40px;border:1.5px solid var(--admin-border);border-radius:12px;font-size:14px;color:var(--admin-ink);background:#f8fafc;transition:all .2s ease;outline:none;font-family:inherit}
-    .admin-input-wrap input:focus{border-color:var(--admin-primary);background:#fff;box-shadow:0 0 0 3px var(--admin-primary-light)}
-    .admin-input-wrap input::placeholder{color:#cbd5e1}
-    .admin-btn{width:100%;padding:13px;border:none;border-radius:12px;background:var(--admin-primary);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s ease;display:inline-flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.01em}
-    .admin-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
-    .admin-btn:active{transform:translateY(0)}
-    .admin-btn i{font-size:12px}
-    .admin-alert{padding:12px 14px;border-radius:10px;font-size:12px;font-weight:600;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px;line-height:1.4}
-    .admin-alert.error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
-    .admin-alert.success{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
-    .admin-alert i{margin-top:1px;flex-shrink:0}
-    .admin-footer{text-align:center;padding:0 36px 32px;font-size:12px;color:var(--admin-muted)}
-    .admin-footer a{color:var(--admin-primary);text-decoration:none;font-weight:600}
-    .admin-footer a:hover{text-decoration:underline}
-    .admin-shield{width:48px;height:48px;border-radius:14px;background:var(--admin-primary-light);color:var(--admin-primary);display:inline-flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
-    @media(max-width:480px){.admin-card-head,.admin-steps,.admin-body,.admin-footer{padding-left:24px;padding-right:24px}.admin-card{border-radius:20px}}
+    /* Reset and lock portal atmosphere */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #090d16 !important;
+        color: #f1f5f9;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .portal-screen {
+        min-height: 100vh;
+        min-height: 100dvh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
+        background:
+            radial-gradient(ellipse 70% 50% at 50% -10%, rgba(79, 70, 229, 0.28), transparent 70%),
+            radial-gradient(ellipse 60% 40% at 100% 100%, rgba(37, 99, 235, 0.16), transparent 60%),
+            radial-gradient(ellipse 50% 35% at 0% 100%, rgba(147, 51, 234, 0.12), transparent 50%),
+            #090d16;
+    }
+
+    /* Ambient decorative rings */
+    .portal-screen::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 760px;
+        height: 760px;
+        border: 1px dashed rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .portal-card {
+        width: 100%;
+        max-width: 440px;
+        background: rgba(15, 23, 42, 0.88);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        box-shadow:
+            0 25px 60px -15px rgba(0, 0, 0, 0.7),
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            0 0 40px rgba(79, 70, 229, 0.15);
+        padding: 36px 30px 30px;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 2;
+        animation: portalFadeIn 0.35s ease-out;
+    }
+
+    @keyframes portalFadeIn {
+        from { opacity: 0; transform: translateY(12px) scale(0.98); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .portal-badge-wrap {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 16px;
+    }
+
+    .portal-shield-badge {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(79, 70, 229, 0.25) 0%, rgba(99, 102, 241, 0.1) 100%);
+        border: 1px solid rgba(129, 140, 248, 0.35);
+        color: #818cf8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.4);
+    }
+
+    .portal-header {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .portal-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        margin-bottom: 4px;
+        text-decoration: none;
+    }
+
+    .portal-brand span {
+        color: #818cf8;
+    }
+
+    .portal-subtitle {
+        color: #94a3b8;
+        font-size: 12.5px;
+        margin: 0;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    /* Steps indicator bar */
+    .portal-steps-bar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        background: rgba(2, 6, 23, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 5px;
+        border-radius: 14px;
+        margin-bottom: 24px;
+    }
+
+    .portal-step-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        font-size: 11.5px;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        text-align: center;
+        user-select: none;
+    }
+
+    .portal-step-item.is-active {
+        background: rgba(79, 70, 229, 0.3);
+        border: 1px solid rgba(129, 140, 248, 0.4);
+        color: #e0e7ff;
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+    }
+
+    .portal-step-item.is-done {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #6ee7b7;
+    }
+
+    .portal-step-item.is-pending {
+        color: #64748b;
+        background: transparent;
+    }
+
+    /* Alerts */
+    .portal-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        font-size: 12px;
+        line-height: 1.45;
+        margin-bottom: 18px;
+        font-weight: 600;
+        animation: portalAlertIn 0.2s ease;
+    }
+
+    @keyframes portalAlertIn {
+        from { opacity: 0; transform: translateY(-4px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .portal-alert.is-error {
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.35);
+        color: #fca5a5;
+    }
+
+    .portal-alert.is-success {
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.35);
+        color: #6ee7b7;
+    }
+
+    .portal-alert i {
+        margin-top: 1.5px;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    /* Form controls */
+    .portal-field-group {
+        margin-bottom: 16px;
+    }
+
+    .portal-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #cbd5e1;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 7px;
+    }
+
+    .portal-input-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .portal-input-icon {
+        position: absolute;
+        left: 14px;
+        color: #64748b;
+        font-size: 13px;
+        pointer-events: none;
+        transition: color 0.2s ease;
+    }
+
+    .portal-input {
+        width: 100%;
+        height: 48px;
+        background: rgba(2, 6, 23, 0.65);
+        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 0 42px 0 40px;
+        color: #f8fafc;
+        font-size: 14px;
+        font-weight: 600;
+        box-sizing: border-box;
+        outline: none;
+        transition: all 0.2s ease;
+        font-family: inherit;
+    }
+
+    .portal-input:focus {
+        border-color: #6366f1;
+        background: rgba(2, 6, 23, 0.9);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.22);
+    }
+
+    .portal-input:focus ~ .portal-input-icon {
+        color: #818cf8;
+    }
+
+    .portal-input::placeholder {
+        color: #475569;
+        font-weight: 500;
+    }
+
+    .portal-toggle-visibility {
+        position: absolute;
+        right: 12px;
+        background: transparent;
+        border: none;
+        color: #64748b;
+        font-size: 13px;
+        cursor: pointer;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: color 0.2s ease;
+    }
+
+    .portal-toggle-visibility:hover {
+        color: #cbd5e1;
+    }
+
+    .portal-checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 14px 0 20px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .portal-checkbox-row input {
+        width: 16px;
+        height: 16px;
+        accent-color: #6366f1;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .portal-checkbox-row span {
+        font-size: 12.5px;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    /* Submit Button */
+    .portal-submit-btn {
+        width: 100%;
+        height: 48px;
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 13.5px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        box-shadow: 0 10px 22px -5px rgba(79, 70, 229, 0.45);
+        transition: all 0.2s ease;
+        margin-top: 6px;
+    }
+
+    .portal-submit-btn:hover {
+        background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 14px 26px -6px rgba(79, 70, 229, 0.6);
+    }
+
+    .portal-submit-btn:active {
+        transform: translateY(0);
+    }
+
+    .portal-submit-btn i {
+        font-size: 12px;
+        transition: transform 0.2s ease;
+    }
+
+    .portal-submit-btn:hover i {
+        transform: translateX(2px);
+    }
+
+    /* Footer Links */
+    .portal-card-footer {
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .portal-link {
+        color: #94a3b8;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: color 0.2s ease;
+    }
+
+    .portal-link:hover {
+        color: #e0e7ff;
+    }
+
+    .portal-meta-note {
+        font-size: 10.5px;
+        color: #64748b;
+        letter-spacing: 0.04em;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .portal-meta-note i {
+        font-size: 9px;
+        color: #10b981;
+    }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 480px) {
+        .portal-screen {
+            padding: 16px 12px;
+        }
+
+        .portal-card {
+            padding: 28px 20px 22px;
+            border-radius: 20px;
+        }
+
+        .portal-brand {
+            font-size: 18px;
+        }
+
+        .portal-steps-bar {
+            margin-bottom: 18px;
+        }
+
+        .portal-step-item {
+            font-size: 11px;
+            padding: 7px 6px;
+        }
+
+        .portal-input {
+            height: 46px;
+            font-size: 13.5px;
+        }
+
+        .portal-submit-btn {
+            height: 46px;
+            font-size: 13px;
+        }
+    }
 </style>
 @endpush
 
 @section('content')
-<div class="admin-page">
-    <div class="admin-card">
-        <div class="admin-card-head">
-            <div style="display:flex;justify-content:center"><div class="admin-shield"><i class="fas fa-shield-halved"></i></div></div>
-            <div class="admin-brand">{{ $websiteName }} <span>Portal</span></div>
-            <p>Restricted access — authorised personnel only</p>
+<main class="portal-screen">
+    <div class="portal-card">
+
+        <!-- Top Shield Icon -->
+        <div class="portal-badge-wrap">
+            <div class="portal-shield-badge">
+                <i class="fas fa-shield-halved"></i>
+            </div>
         </div>
 
-        <div class="admin-steps">
-            <div class="admin-step-dot {{ !$passkeyValidated ? 'active' : 'done' }}">1</div>
-            <div class="admin-step-line {{ $passkeyValidated ? 'done' : '' }}"></div>
-            <div class="admin-step-dot {{ $passkeyValidated ? 'active' : 'pending' }}">2</div>
+        <!-- Header -->
+        <div class="portal-header">
+            <a href="{{ route('home') }}" class="portal-brand">
+                {{ $websiteName }} <span>Portal</span>
+            </a>
+            <p class="portal-subtitle">Restricted area — 2-factor verified staff access</p>
         </div>
 
-        <div class="admin-body">
-            @if(session('status'))
-                <div class="admin-alert success"><i class="fas fa-check-circle"></i><span>{{ session('status') }}</span></div>
-            @endif
-            @if($errors->any())
-                <div class="admin-alert error"><i class="fas fa-triangle-exclamation"></i><span>{{ $errors->first() }}</span></div>
-            @endif
+        <!-- Visual Step Tracker -->
+        <div class="portal-steps-bar">
+            <div class="portal-step-item {{ $passkeyValidated ? 'is-done' : 'is-active' }}">
+                @if($passkeyValidated)
+                    <i class="fas fa-circle-check"></i>
+                @else
+                    <i class="fas fa-key"></i>
+                @endif
+                <span>1. Passkey</span>
+            </div>
+            <div class="portal-step-item {{ $passkeyValidated ? 'is-active' : 'is-pending' }}">
+                <i class="fas fa-user-lock"></i>
+                <span>2. Login</span>
+            </div>
+        </div>
 
-            <form method="POST" action="{{ route('admin.login.submit') }}" id="portalForm">
+        <!-- Flash Status or Errors -->
+        @if(session('status'))
+            <div class="portal-alert is-success" role="status">
+                <i class="fas fa-circle-check"></i>
+                <span>{{ session('status') }}</span>
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="portal-alert is-error" role="alert">
+                <i class="fas fa-triangle-exclamation"></i>
+                <span>{{ $errors->first() }}</span>
+            </div>
+        @endif
+
+        <!-- STEP 1: Security Passkey Verification -->
+        @if(!$passkeyValidated)
+            <form method="POST" action="{{ route('admin.login.submit') }}" id="portalPasskeyForm" autocomplete="off">
                 @csrf
-
-                <div class="admin-form-step {{ !$passkeyValidated ? 'visible' : '' }}" id="stepPasskey">
-                    <label class="admin-label" for="access_passkey">Security Passkey</label>
-                    <div class="admin-input-wrap">
-                        <i class="fas fa-key"></i>
-                        <input type="password" id="access_passkey" name="access_passkey" placeholder="Enter your access passkey" required autocomplete="off">
-                    </div>
-                    <button type="submit" class="admin-btn"><span>Verify Access</span><i class="fas fa-arrow-right"></i></button>
-                </div>
-            </form>
-
-            <form method="POST" action="{{ route('admin.login.submit') }}" id="portalForm2">
-                @csrf
-                <div class="admin-form-step {{ $passkeyValidated ? 'visible' : '' }}" id="stepLogin">
-                    <label class="admin-label" for="email">Admin email</label>
-                    <div class="admin-input-wrap">
-                        <i class="far fa-envelope"></i>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="admin@example.com" required autocomplete="email">
-                    </div>
-
-                    <label class="admin-label" for="password">Password</label>
-                    <div class="admin-input-wrap">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" name="password" placeholder="Enter password" required autocomplete="current-password">
-                    </div>
-
-                    <label class="admin-label" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;cursor:pointer;font-weight:500">
-                        <input type="checkbox" name="remember" value="1" style="width:15px;height:15px;accent-color:var(--admin-primary);border-radius:4px">
-                        <span style="font-size:13px;color:var(--admin-muted)">Remember this session</span>
+                <div class="portal-field-group">
+                    <label class="portal-label" for="access_passkey">
+                        <span>Security Passkey</span>
+                        <span style="color: #818cf8; font-size: 10px; font-weight: 700;">REQUIRED</span>
                     </label>
-
-                    <button type="submit" class="admin-btn"><span>Sign In</span><i class="fas fa-arrow-right-to-bracket"></i></button>
+                    <div class="portal-input-box">
+                        <i class="fas fa-key portal-input-icon"></i>
+                        <input
+                            type="password"
+                            id="access_passkey"
+                            name="access_passkey"
+                            class="portal-input"
+                            placeholder="Enter gateway passkey..."
+                            required
+                            autofocus
+                            autocomplete="off"
+                        >
+                        <button type="button" class="portal-toggle-visibility" onclick="toggleSecretVisibility('access_passkey', this)" aria-label="Toggle passkey visibility">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
+
+                <button type="submit" class="portal-submit-btn" id="portalPasskeySubmit">
+                    <span>Verify Security Passkey</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </form>
+        @else
+        <!-- STEP 2: Administrator Credentials -->
+            <form method="POST" action="{{ route('admin.login.submit') }}" id="portalLoginForm">
+                @csrf
+
+                <!-- Admin Email -->
+                <div class="portal-field-group">
+                    <label class="portal-label" for="email">Admin Email</label>
+                    <div class="portal-input-box">
+                        <i class="far fa-envelope portal-input-icon"></i>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="portal-input"
+                            value="{{ old('email') }}"
+                            placeholder="admin@example.com"
+                            required
+                            autofocus
+                            autocomplete="email"
+                        >
+                    </div>
+                </div>
+
+                <!-- Admin Password -->
+                <div class="portal-field-group">
+                    <label class="portal-label" for="password">Password</label>
+                    <div class="portal-input-box">
+                        <i class="fas fa-lock portal-input-icon"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="portal-input"
+                            placeholder="••••••••••••"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="portal-toggle-visibility" onclick="toggleSecretVisibility('password', this)" aria-label="Toggle password visibility">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember session -->
+                <label class="portal-checkbox-row">
+                    <input type="checkbox" name="remember" value="1">
+                    <span>Keep admin session active</span>
+                </label>
+
+                <!-- Submit Button -->
+                <button type="submit" class="portal-submit-btn" id="portalLoginSubmit">
+                    <span>Sign In to Dashboard</span>
+                    <i class="fas fa-arrow-right-to-bracket"></i>
+                </button>
+            </form>
+        @endif
+
+        <!-- Card Footer -->
+        <div class="portal-card-footer">
+            @if($passkeyValidated)
+                <a href="{{ route('admin.login-access', ['reset_passkey' => 1]) }}" class="portal-link" style="color: #a5b4fc;">
+                    <i class="fas fa-rotate-left" style="font-size: 11px;"></i> Re-enter security passkey
+                </a>
+            @endif
+
+            <a href="{{ route('home') }}" class="portal-link">
+                <i class="fas fa-arrow-left" style="font-size: 10px;"></i> Return to public website
+            </a>
+
+            <div class="portal-meta-note">
+                <i class="fas fa-shield-check"></i>
+                <span>256-Bit SSL Encrypted &amp; Monitored</span>
+            </div>
         </div>
 
-        <div class="admin-footer">
-            <a href="{{ route('home') }}"><i class="fas fa-arrow-left" style="font-size:10px;margin-right:4px"></i>Back to website</a>
-        </div>
     </div>
-</div>
+</main>
+
+<script>
+    function toggleSecretVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            if (icon) {
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        } else {
+            input.type = 'password';
+            if (icon) {
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    }
+
+    // Handle form submit state to give immediate visual feedback
+    document.addEventListener('DOMContentLoaded', function () {
+        const pForm = document.getElementById('portalPasskeyForm');
+        if (pForm) {
+            pForm.addEventListener('submit', function () {
+                const btn = document.getElementById('portalPasskeySubmit');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.7';
+                    btn.innerHTML = '<span>Verifying passkey...</span><i class="fas fa-spinner fa-spin"></i>';
+                }
+            });
+        }
+
+        const lForm = document.getElementById('portalLoginForm');
+        if (lForm) {
+            lForm.addEventListener('submit', function () {
+                const btn = document.getElementById('portalLoginSubmit');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.7';
+                    btn.innerHTML = '<span>Signing in...</span><i class="fas fa-spinner fa-spin"></i>';
+                }
+            });
+        }
+    });
+</script>
 @endsection

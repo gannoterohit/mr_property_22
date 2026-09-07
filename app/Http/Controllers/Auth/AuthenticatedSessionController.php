@@ -27,6 +27,11 @@ class AuthenticatedSessionController extends Controller
             $request->session()->regenerateToken();
         }
 
+        if ($request->has('reset_passkey')) {
+            $request->session()->forget(self::SESSION_PASSKEY);
+            return redirect()->route('admin.login-access');
+        }
+
         $passed = $request->session()->get(self::SESSION_PASSKEY, false);
 
         return view('auth.admin-login', ['passkeyValidated' => (bool) $passed]);
