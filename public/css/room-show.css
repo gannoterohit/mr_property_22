@@ -69,13 +69,19 @@
 
 .room-detail-grid {
     display: grid !important;
-    grid-template-columns: minmax(0, 1.78fr) minmax(320px, 0.82fr) !important;
+    grid-template-columns: minmax(0, 1.8fr) minmax(320px, 0.85fr) !important;
     gap: 24px !important;
     align-items: start !important;
 }
 
-.room-detail-page .lg\:col-span-2 {
-    min-width: 0;
+.room-detail-grid > .lg\:col-span-2 {
+    grid-column: 1 / 2 !important;
+    min-width: 0 !important;
+}
+
+.room-detail-grid > .lg\:col-span-1 {
+    grid-column: 2 / 3 !important;
+    min-width: 0 !important;
 }
 
 .room-detail-page .space-y-4 > :not([hidden]) ~ :not([hidden]) {
@@ -589,6 +595,10 @@
 @media (max-width: 1023px) {
     .room-detail-grid {
         grid-template-columns: 1fr !important;
+    }
+    .room-detail-grid > .lg\:col-span-2,
+    .room-detail-grid > .lg\:col-span-1 {
+        grid-column: 1 / -1 !important;
     }
     .room-detail-page .sticky {
         position: static !important;
