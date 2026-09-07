@@ -12,6 +12,8 @@ class Enquiry extends Model
         'payment_id',
         'unlocked',
         'unlocked_at',
+        'status',
+        'notes',
     ];
 
     protected $casts = [

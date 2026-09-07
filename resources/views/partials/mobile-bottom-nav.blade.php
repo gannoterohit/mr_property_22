@@ -5,33 +5,41 @@
         <span class="nav-label">Home</span>
     </a>
 
-    <!-- 2. Earn -->
-    @if(\App\Models\Setting::isEnabled('referral_enabled', true))
-        <a href="{{ route('referral.index') }}" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full {{ Route::is('referral.index') ? 'active' : '' }}" data-nav="earn">
-            <i class="fas fa-gift nav-icon"></i>
-            <span class="nav-label">Earn</span>
-        </a>
-    @endif
+    <!-- 2. Agencies -->
+    <a href="{{ route('agencies.index') }}" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full {{ Route::is('agencies.*', 'agency.*') ? 'active' : '' }}" data-nav="agencies">
+        <i class="fas fa-building-user nav-icon"></i>
+        <span class="nav-label">Agencies</span>
+    </a>
 
     <!-- 3. Saved -->
     <a href="{{ route('wishlist.index') }}" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full {{ Route::is('wishlist.index') ? 'active' : '' }}" data-nav="saved">
         <i class="{{ Route::is('wishlist.index') ? 'fas' : 'far' }} fa-heart nav-icon"></i>
         <span class="nav-label">Saved</span>
     </a>
-    
-    <!-- 4. Reads -->
-    <a href="{{ route('blogs.index') }}" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full {{ Route::is('blogs.*') ? 'active' : '' }}" data-nav="reads">
-        <i class="{{ Route::is('blogs.*') ? 'fas' : 'far' }} fa-newspaper nav-icon"></i>
-        <span class="nav-label">Reads</span>
-    </a>
+
+    <!-- 4. Earn / Reads -->
+    @if(\App\Models\Setting::isEnabled('referral_enabled', true))
+        <a href="{{ route('referral.index') }}" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full {{ Route::is('referral.index') ? 'active' : '' }}" data-nav="earn">
+            <i class="fas fa-gift nav-icon"></i>
+            <span class="nav-label">Earn</span>
+        </a>
+    @else
+        <a href="{{ route('blogs.index') }}" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full {{ Route::is('blogs.*') ? 'active' : '' }}" data-nav="reads">
+            <i class="{{ Route::is('blogs.*') ? 'fas' : 'far' }} fa-newspaper nav-icon"></i>
+            <span class="nav-label">Reads</span>
+        </a>
+    @endif
     
     <!-- 5. Account -->
     @auth
         @php
-            $accountRoute = Auth::user()->role === 'owner' 
-                ? route('owner.dashboard') 
-                : (Auth::user()->role === 'admin' ? route('admin.dashboard') : route('profile.edit'));
-            $isAccountActive = Route::is('dashboard') || (Auth::user()->role === 'user' && Route::is('profile.edit'));
+            $accountRoute = match (Auth::user()->role) {
+                'broker' => route('agent.dashboard'),
+                'owner'  => route('owner.dashboard'),
+                'admin'  => route('admin.dashboard'),
+                default  => route('profile.edit'),
+            };
+            $isAccountActive = Route::is('dashboard', 'agent.*', 'owner.*', 'admin.*') || (Auth::user()->role === 'user' && Route::is('profile.edit'));
         @endphp
         <a href="{{ $accountRoute }}" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full {{ $isAccountActive ? 'active' : '' }}" data-nav="account">
             <i class="{{ $isAccountActive ? 'fas' : 'far' }} fa-user-circle nav-icon"></i>

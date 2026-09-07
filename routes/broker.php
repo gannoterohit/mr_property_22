@@ -12,6 +12,7 @@ Route::middleware(['auth', 'role:broker', 'broker.active'])->prefix('agent')->na
     Route::get('/pending', [BrokerDashboardController::class, 'pending'])->name('pending');
     Route::get('/properties', [BrokerDashboardController::class, 'properties'])->name('properties');
     Route::get('/enquiries', [BrokerDashboardController::class, 'enquiries'])->name('enquiries');
+    Route::patch('/enquiries/{enquiry}/status', [BrokerDashboardController::class, 'updateEnquiryStatus'])->name('enquiries.update-status');
     Route::get('/rooms/drafts', [BrokerRoomDraftController::class, 'index'])->name('rooms.drafts');
     Route::post('/rooms/drafts/save', [BrokerRoomDraftController::class, 'save'])->name('rooms.drafts.save');
     Route::get('/rooms/drafts/latest', [BrokerRoomDraftController::class, 'latest'])->name('rooms.drafts.latest');

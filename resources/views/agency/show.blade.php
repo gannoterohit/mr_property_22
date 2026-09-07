@@ -25,9 +25,13 @@
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="flex items-center gap-5">
                     {{-- Agency Avatar / Badge --}}
-                    <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-3xl md:text-4xl font-black shadow-xl shrink-0 ring-4 ring-white/10">
-                        {{ strtoupper(substr($agencyName, 0, 1)) }}
-                        <span class="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs shadow-md ring-2 ring-slate-900" title="Verified Agent">
+                    <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-3xl md:text-4xl font-black shadow-xl shrink-0 ring-4 ring-white/10">
+                        @if($user->avatar)
+                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $agencyName }}" class="w-full h-full object-cover">
+                        @else
+                            {{ strtoupper(substr($agencyName, 0, 1)) }}
+                        @endif
+                        <span class="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs shadow-md ring-2 ring-slate-900 z-10" title="Verified Agent">
                             <i class="fas fa-check"></i>
                         </span>
                     </div>
@@ -49,7 +53,16 @@
                             @if($user->city)
                                 <span><i class="fas fa-location-dot text-rose-400 mr-1.5"></i>{{ $user->city }}</span>
                             @endif
+                            @if($user->agency_gst)
+                                <span><i class="fas fa-file-invoice text-slate-300 mr-1.5"></i>GST: {{ $user->agency_gst }}</span>
+                            @endif
                         </p>
+                        @if($user->agency_address)
+                            <p class="text-slate-400 text-xs mt-1.5 flex items-start gap-1.5">
+                                <i class="fas fa-building text-indigo-400 mt-0.5 shrink-0"></i>
+                                <span>{{ $user->agency_address }}</span>
+                            </p>
+                        @endif
                     </div>
                 </div>
 

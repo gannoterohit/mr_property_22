@@ -210,12 +210,55 @@ class LandingPageController extends Controller
                 ->distinct('city')->count('city');
         });
 
+        $topAgencies = FacadesCache::remember('home.top_agencies.' . md5($cityContext['activeCityName'] ?? 'all'), 600, function () use ($cityContext) {
+            $query = User::where('role', 'broker')
+                ->where('is_broker_active', true)
+                ->withCount([
+                    'rooms as active_rooms_count' => function ($q) {
+                        $q->publicVisible();
+                    }
+                ])
+                ->orderByDesc('active_rooms_count')
+                ->take(6);
+
+            if (!empty($cityContext['activeCityName'])) {
+                $city = $cityContext['activeCityName'];
+                $query->where(function ($q) use ($city) {
+                    $q->where('city', 'like', '%' . $city . '%')
+                      ->orWhereHas('rooms', function ($rq) use ($city) {
+                          $rq->publicVisible()->where('city', 'like', '%' . $city . '%');
+                      });
+                });
+            }
+
+            $agencies = $query->get();
+
+            if ($agencies->isEmpty()) {
+                $agencies = User::where('role', 'broker')
+                    ->where('is_broker_active', true)
+                    ->withCount([
+                        'rooms as active_rooms_count' => function ($q) {
+                            $q->publicVisible();
+                        }
+                    ])
+                    ->orderByDesc('active_rooms_count')
+                    ->take(6)
+                    ->get();
+            }
+
+            $agencies->load(['rooms' => function ($rq) {
+                $rq->publicVisible()->select('rooms.id', 'rooms.broker_id', 'rooms.user_id', 'rooms.city');
+            }]);
+
+            return $agencies;
+        });
+
         return view('home.index', compact(
             'rooms', 'otherRooms', 'otherRoomGroups', 'popularCities', 'popularLocations', 'propertyTypes', 'propertyCategories', 'latestBlogs',
             'homeFeatures', 'testimonials',
             'faqs',
             'heroRoom', 'totalRooms', 'totalOwners', 'totalUsers', 'totalAreas',
-            'cityContext', 'hiwItems', 'ownerCtaItems'
+            'cityContext', 'hiwItems', 'ownerCtaItems', 'topAgencies'
         ));
     }
 }

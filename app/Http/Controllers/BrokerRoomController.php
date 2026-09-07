@@ -52,9 +52,7 @@ class BrokerRoomController extends Controller
         $newRoom->listed_by = 'broker';
         $newRoom->listing_type = 'broker';
 
-        $expiryDays = (int) \App\Models\BrokerSetting::get('broker_listing_expiry_days', 30);
-        $newRoom->expires_at = now()->addDays($expiryDays > 0 ? $expiryDays : 30);
-
+        $newRoom->expires_at = null; // Listings are credit/count based, no day expiration
         $newRoom->save();
 
         return redirect()->route('agent.rooms.edit', $newRoom)

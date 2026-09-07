@@ -45,9 +45,30 @@
                 </div>
             </div>
 
-            <form action="{{ route('agent.profile.update') }}" method="POST" class="space-y-5">
+            <form action="{{ route('agent.profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
                 @csrf
                 @method('PATCH')
+
+                {{-- Agency Logo / Photo --}}
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div class="relative w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl font-black shrink-0 shadow-sm ring-2 ring-white">
+                        @if($broker->avatar)
+                            <img id="logo-preview-img" src="{{ asset('storage/' . $broker->avatar) }}" alt="{{ $broker->name }}" class="w-full h-full object-cover">
+                        @else
+                            <span id="logo-preview-placeholder">{{ strtoupper(substr($broker->name, 0, 1)) }}</span>
+                            <img id="logo-preview-img" src="" alt="" class="w-full h-full object-cover hidden">
+                        @endif
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                            Agency Logo / Profile Photo
+                        </label>
+                        <p class="text-[11px] text-slate-500 mb-2">Upload your agency logo or photo (JPG, PNG, WebP · Max 2MB).</p>
+                        <input type="file" name="avatar" id="avatar" accept="image/*" onchange="previewAgencyLogo(event)"
+                               class="text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                        @error('avatar')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                    </div>
+                </div>
 
                 <div class="agent-form-row">
                     <div>
@@ -63,13 +84,19 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Agency Name</label>
-                    <input type="text" name="agency_name" value="{{ old('agency_name', $broker->agency_name) }}" placeholder="e.g. Apex Realty Solutions">
+                <div class="agent-form-row">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Agency Name</label>
+                        <input type="text" name="agency_name" value="{{ old('agency_name', $broker->agency_name) }}" placeholder="e.g. Apex Realty Solutions">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Operating City</label>
+                        <input type="text" name="city" value="{{ old('city', $broker->city) }}" placeholder="e.g. Indore">
+                    </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Agency Address</label>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Office / Agency Address</label>
                     <textarea name="agency_address" rows="3" placeholder="Enter complete office/agency address...">{{ old('agency_address', $broker->agency_address) }}</textarea>
                 </div>
 
@@ -177,4 +204,27 @@
 
     </div>
 </div>
+
+@push('scripts')
+<script>
+function previewAgencyLogo(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById('logo-preview-img');
+            const placeholder = document.getElementById('logo-preview-placeholder');
+            if (img) {
+                img.src = e.target.result;
+                img.classList.remove('hidden');
+            }
+            if (placeholder) {
+                placeholder.classList.add('hidden');
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+@endpush
 @endsection

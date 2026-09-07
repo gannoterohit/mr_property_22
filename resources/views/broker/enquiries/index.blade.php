@@ -4,13 +4,78 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/owner-rooms.css') }}">
+<style>
+.lead-filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0 24px;
+}
+.lead-filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #475569;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.lead-filter-pill:hover {
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+.lead-filter-pill.active {
+    background: #4f46e5;
+    color: #ffffff;
+    border-color: #4f46e5;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+.lead-filter-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    background: rgba(0, 0, 0, 0.08);
+}
+.lead-filter-pill.active .lead-filter-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+.lead-status-select {
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    font-weight: 800;
+    border: 1px solid #cbd5e1;
+    background-color: #f8fafc;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+}
+.lead-status-select:focus {
+    border-color: #6366f1;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+.lead-badge-new { background: #ecfdf5; color: #059669; border-color: #a7f3d0; }
+.lead-badge-contacted { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+.lead-badge-visit_scheduled { background: #fdf4ff; color: #9333ea; border-color: #f0abfc; }
+.lead-badge-closed { background: #f0fdf4; color: #16a34a; border-color: #86efac; font-weight: 900; }
+.lead-badge-lost { background: #f1f5f9; color: #64748b; border-color: #cbd5e1; }
+</style>
 @endpush
 
 @section('broker-content')
 @php
-    $total    = $enquiries->total();
-    $unlocked = $enquiries->filter(fn($e) => $e->unlocked)->count();
-    $unread   = $enquiries->filter(fn($e) => !$e->unlocked)->count();
+    $siteName = \App\Models\Setting::get('website_name', 'RoomRental');
 @endphp
 <div class="owner-rooms-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -18,41 +83,79 @@
     <div class="agent-page-header">
         <div>
             <h2 class="agent-page-header-title">Leads &amp; Enquiries</h2>
-            <p class="agent-page-header-sub">All contact unlock activity for your properties.</p>
+            <p class="agent-page-header-sub">Track potential tenants, schedule visits and close rental deals.</p>
         </div>
     </div>
 
-    {{-- Stat Tiles --}}
-    <div class="owner-room-stats owner-room-stats-3">
-        <div class="owner-room-stat">
-            <div class="owner-room-stat-row">
-                <i class="fas fa-address-card owner-room-stat-icon stat-indigo"></i>
-                <span class="owner-room-stat-label">Total Leads</span>
+    {{-- Stat Tiles Funnel --}}
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6">
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-bold mb-1">
+                <span>Total Leads</span>
+                <i class="fas fa-users text-indigo-500"></i>
             </div>
-            <div class="owner-room-stat-value">{{ $total }}</div>
+            <div class="text-2xl font-black text-slate-900">{{ $statusCounts['all'] ?? 0 }}</div>
         </div>
-        <div class="owner-room-stat">
-            <div class="owner-room-stat-row">
-                <i class="fas fa-lock-open owner-room-stat-icon stat-emerald"></i>
-                <span class="owner-room-stat-label">Unlocked</span>
+
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-bold mb-1">
+                <span>New / Uncontacted</span>
+                <i class="fas fa-bell text-amber-500"></i>
             </div>
-            <div class="owner-room-stat-value stat-emerald-val">{{ $unlocked }}</div>
+            <div class="text-2xl font-black text-amber-600">{{ $statusCounts['new'] ?? 0 }}</div>
         </div>
-        <div class="owner-room-stat">
-            <div class="owner-room-stat-row">
-                <i class="fas fa-bell owner-room-stat-icon stat-amber"></i>
-                <span class="owner-room-stat-label">New Leads</span>
+
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-bold mb-1">
+                <span>Visits Scheduled</span>
+                <i class="fas fa-calendar-check text-purple-500"></i>
             </div>
-            <div class="owner-room-stat-value stat-amber-val">{{ $unread }}</div>
+            <div class="text-2xl font-black text-purple-600">{{ $statusCounts['visit_scheduled'] ?? 0 }}</div>
         </div>
+
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-bold mb-1">
+                <span>Deals Closed</span>
+                <i class="fas fa-trophy text-emerald-500"></i>
+            </div>
+            <div class="text-2xl font-black text-emerald-600">{{ $statusCounts['closed'] ?? 0 }}</div>
+        </div>
+    </div>
+
+    {{-- Filter Pills --}}
+    <div class="lead-filter-pills">
+        <a href="{{ route('agent.enquiries') }}" class="lead-filter-pill {{ !request('lead_status') ? 'active' : '' }}">
+            <span>All Leads</span>
+            <span class="lead-filter-count">{{ $statusCounts['all'] ?? 0 }}</span>
+        </a>
+        <a href="{{ route('agent.enquiries', ['lead_status' => 'new']) }}" class="lead-filter-pill {{ request('lead_status') === 'new' ? 'active' : '' }}">
+            <span>New Leads</span>
+            <span class="lead-filter-count">{{ $statusCounts['new'] ?? 0 }}</span>
+        </a>
+        <a href="{{ route('agent.enquiries', ['lead_status' => 'contacted']) }}" class="lead-filter-pill {{ request('lead_status') === 'contacted' ? 'active' : '' }}">
+            <span>Contacted</span>
+            <span class="lead-filter-count">{{ $statusCounts['contacted'] ?? 0 }}</span>
+        </a>
+        <a href="{{ route('agent.enquiries', ['lead_status' => 'visit_scheduled']) }}" class="lead-filter-pill {{ request('lead_status') === 'visit_scheduled' ? 'active' : '' }}">
+            <span>Visit Scheduled</span>
+            <span class="lead-filter-count">{{ $statusCounts['visit_scheduled'] ?? 0 }}</span>
+        </a>
+        <a href="{{ route('agent.enquiries', ['lead_status' => 'closed']) }}" class="lead-filter-pill {{ request('lead_status') === 'closed' ? 'active' : '' }}">
+            <span>Deal Closed</span>
+            <span class="lead-filter-count">{{ $statusCounts['closed'] ?? 0 }}</span>
+        </a>
+        <a href="{{ route('agent.enquiries', ['lead_status' => 'lost']) }}" class="lead-filter-pill {{ request('lead_status') === 'lost' ? 'active' : '' }}">
+            <span>Lost</span>
+            <span class="lead-filter-count">{{ $statusCounts['lost'] ?? 0 }}</span>
+        </a>
     </div>
 
     {{-- Leads Grid --}}
     <section class="owner-listing-section">
         <div class="owner-listing-heading">
             <div>
-                <h2 class="owner-listing-title">All Leads</h2>
-                <p class="owner-listing-sub">Property seekers who showed interest in your listings.</p>
+                <h2 class="owner-listing-title">Enquiry List</h2>
+                <p class="owner-listing-sub">Direct interested tenants who unlocked or sent inquiries for your properties.</p>
             </div>
             <span class="owner-listing-count">
                 {{ $enquiries->total() }} {{ Str::plural('lead', $enquiries->total()) }}
@@ -65,19 +168,18 @@
                     @php
                         $room    = $enquiry->room;
                         $seeker  = $enquiry->user;
-                        $gateway = ucfirst(str_replace('_', ' ', $enquiry->payment?->gateway ?? 'free'));
-                        $badgeClass = $enquiry->unlocked ? 'badge-active' : 'badge-pending';
-                        $badgeLabel = $enquiry->unlocked ? 'Unlocked' : 'New';
+                        $gateway = ucfirst(str_replace('_', ' ', $enquiry->payment?->gateway ?? 'direct'));
+                        $currentStatus = $enquiry->status ?: 'new';
                     @endphp
-                    <article class="owner-room-card">
+                    <article class="owner-room-card" id="enquiry-card-{{ $enquiry->id }}">
                         {{-- Room thumbnail --}}
                         <div class="owner-room-media">
-                            <div class="owner-room-placeholder"><i class="fas fa-user"></i></div>
+                            <div class="owner-room-placeholder"><i class="fas fa-home"></i></div>
                             @if($room && $room->photo_url)
                                 <img src="{{ $room->photo_url }}" alt="{{ $room->title }}" width="400" height="300" loading="lazy" onerror="this.style.display='none'">
                             @endif
-                            <span class="owner-room-status-badge {{ $badgeClass }}">
-                                <span class="badge-dot"></span>{{ $badgeLabel }}
+                            <span class="owner-room-status-badge {{ $enquiry->unlocked ? 'badge-active' : 'badge-pending' }}">
+                                <span class="badge-dot"></span>{{ $enquiry->unlocked ? 'Contact Unlocked' : 'Direct Inquiry' }}
                             </span>
                         </div>
 
@@ -85,52 +187,70 @@
                             {{-- Seeker Info --}}
                             <div class="owner-lead-info">
                                 <div class="owner-lead-avatar">
-                                    {{ strtoupper(substr($seeker->name ?? 'D', 0, 1)) }}
+                                    {{ strtoupper(substr($seeker->name ?? 'U', 0, 1)) }}
                                 </div>
-                                <div style="min-width:0">
-                                    <p class="owner-lead-name">{{ $seeker->name ?? 'Deleted user' }}</p>
-                                    <p class="owner-lead-prop">
-                                        <i class="fas fa-home" style="color:#818cf8;margin-right:.2rem"></i>
-                                        {{ $room->title ?? 'Deleted property' }}
+                                <div style="min-width:0" class="flex-1">
+                                    <p class="owner-lead-name font-bold text-slate-900">{{ $seeker->name ?? 'Tenant User' }}</p>
+                                    <p class="owner-lead-prop truncate text-xs text-slate-500">
+                                        <i class="fas fa-home text-indigo-500 mr-1"></i>
+                                        {{ $room->title ?? 'Property' }}
                                     </p>
                                 </div>
                             </div>
 
-                            {{-- Details --}}
+                            {{-- Details Grid --}}
                             <div class="owner-lead-grid">
                                 <div class="owner-lead-row">
-                                    <i class="fas fa-map-marker-alt" style="color:#f43f5e"></i>
-                                    <span>{{ $room?->city ?? '—' }}{{ $room?->state ? ', '.$room->state : '' }}</span>
+                                    <i class="fas fa-location-dot" style="color:#f43f5e"></i>
+                                    <span>{{ $room?->city ?? '—' }}</span>
                                 </div>
                                 <div class="owner-lead-row">
                                     <i class="fas fa-rupee-sign" style="color:#10b981"></i>
                                     <span>&#8377;{{ number_format($room?->rent ?? 0) }}/mo</span>
                                 </div>
                                 <div class="owner-lead-row">
-                                    <i class="fas fa-credit-card" style="color:#818cf8"></i>
-                                    <span>{{ $gateway }}</span>
+                                    <i class="fas fa-calendar" style="color:#6366f1"></i>
+                                    <span>{{ ($enquiry->unlocked_at ?? $enquiry->created_at)->format('d M Y, h:i A') }}</span>
                                 </div>
                                 <div class="owner-lead-row">
-                                    <i class="fas fa-clock" style="color:#f59e0b"></i>
-                                    <span>{{ ($enquiry->unlocked_at ?? $enquiry->created_at)->format('d M Y') }}</span>
+                                    <i class="fas fa-phone" style="color:#0ea5e9"></i>
+                                    <span>{{ $seeker?->phone ?: 'Phone not provided' }}</span>
                                 </div>
                             </div>
 
+                            {{-- Lead Status & Followup Dropdown --}}
+                            <div class="my-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2">
+                                <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Status:</span>
+                                <select onchange="updateLeadStatus({{ $enquiry->id }}, this.value)"
+                                        class="lead-status-select lead-badge-{{ $currentStatus }}"
+                                        id="status-select-{{ $enquiry->id }}">
+                                    <option value="new" {{ $currentStatus === 'new' ? 'selected' : '' }}>🟢 New Lead</option>
+                                    <option value="contacted" {{ $currentStatus === 'contacted' ? 'selected' : '' }}>🔵 Contacted</option>
+                                    <option value="visit_scheduled" {{ $currentStatus === 'visit_scheduled' ? 'selected' : '' }}>🟣 Visit Scheduled</option>
+                                    <option value="closed" {{ $currentStatus === 'closed' ? 'selected' : '' }}>🏆 Deal Closed</option>
+                                    <option value="lost" {{ $currentStatus === 'lost' ? 'selected' : '' }}>⚫ Lost</option>
+                                </select>
+                            </div>
+
+                            {{-- Actions --}}
                             @if($room)
                             <div class="owner-room-actions" style="grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .35rem;">
                                 <a href="{{ route('agent.rooms.show', $room) }}" target="_blank" class="owner-room-btn owner-room-btn-outline" title="View Property">
                                     <i class="fas fa-eye"></i> View
                                 </a>
+
                                 @if(!empty($seeker?->phone))
                                     @php
                                         $seekerDigits = preg_replace('/[^0-9]/', '', $seeker->phone);
                                         if(strlen($seekerDigits) === 10) { $seekerDigits = '91' . $seekerDigits; }
-                                        $waMsg = 'Hello ' . ($seeker->name ?? '') . ', I saw your enquiry for ' . ($room->title ?? 'our property') . ' on ' . config('app.name', 'ApnaNest') . '. When would you like to visit?';
+                                        elseif(strlen($seekerDigits) === 11 && str_starts_with($seekerDigits, '0')) { $seekerDigits = '91' . substr($seekerDigits, 1); }
+                                        $roomUrl = route('rooms.show', $room);
+                                        $waMsg = "Hello " . ($seeker->name ?? 'Sir/Madam') . "! 👋\n\nAapne hamari property me interest show kiya tha:\n🏠 *" . ($room->title ?? 'Rental Property') . "*\n📍 *" . ($room->city ?? '') . "*\n💰 Rent: ₹" . number_format($room->rent ?? 0) . "/month\n\nIs property ki complete photos & details yahan dekhein:\n" . $roomUrl . "\n\nAap kab visit karna chahenge? Please batayein.";
                                     @endphp
                                     <a href="tel:{{ $seeker->phone }}" class="owner-room-btn owner-room-btn-indigo" title="Call Seeker">
                                         <i class="fas fa-phone-alt"></i> Call
                                     </a>
-                                    <a href="https://wa.me/{{ $seekerDigits }}?text={{ rawurlencode($waMsg) }}" target="_blank" class="owner-room-btn owner-room-btn-green" title="Chat on WhatsApp" style="background:#10b981;color:#fff;">
+                                    <a href="https://wa.me/{{ $seekerDigits }}?text={{ rawurlencode($waMsg) }}" target="_blank" rel="noopener" class="owner-room-btn owner-room-btn-green" title="Send WhatsApp Brochure" style="background:#10b981;color:#fff;">
                                         <i class="fa-brands fa-whatsapp"></i> Chat
                                     </a>
                                 @else
@@ -145,10 +265,17 @@
                 @endforeach
             </div>
         @else
-            <div class="agent-empty-state">
-                <i class="fas fa-inbox"></i>
-                <h2>No leads yet</h2>
-                <p>When a property seeker shows interest in your listings, leads will appear here.</p>
+            <div class="agent-empty-state text-center py-16 bg-white rounded-3xl border border-slate-200 shadow-xs">
+                <i class="fas fa-inbox text-slate-300 text-4xl mb-3 block"></i>
+                <h2 class="text-base font-black text-slate-800 mb-1">No leads found</h2>
+                <p class="text-xs text-slate-500">
+                    @if(request('lead_status'))
+                        No leads match the status "{{ ucfirst(str_replace('_', ' ', request('lead_status'))) }}".
+                        <br><a href="{{ route('agent.enquiries') }}" class="text-indigo-600 font-bold hover:underline mt-2 inline-block">View all leads</a>
+                    @else
+                        When tenants show interest or contact you for your listings, their inquiries will appear here.
+                    @endif
+                </p>
             </div>
         @endif
 
@@ -158,3 +285,50 @@
     </section>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function updateLeadStatus(enquiryId, newStatus) {
+    const select = document.getElementById(`status-select-${enquiryId}`);
+    if (!select) return;
+
+    select.disabled = true;
+
+    fetch(`{{ url('agent/enquiries') }}/${enquiryId}/status`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+    })
+    .then(response => response.json())
+    .then(data => {
+        select.disabled = false;
+        if (data.success) {
+            // Update select styling class
+            select.className = `lead-status-select lead-badge-${newStatus}`;
+
+            // Toast feedback
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: data.message || 'Status updated!',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        } else {
+            alert(data.message || 'Could not update status');
+        }
+    })
+    .catch(err => {
+        select.disabled = false;
+        console.error('Error updating status:', err);
+    });
+}
+</script>
+@endpush

@@ -91,16 +91,64 @@ class BrokerDashboardController extends Controller
         abort_if(!$broker->is_broker_active, 403);
 
         $query = Enquiry::whereHas('room', function ($q) use ($broker) {
-            $q->where('broker_id', $broker->id);
+            $q->where('broker_id', $broker->id)
+              ->orWhere('user_id', $broker->id);
         })->with(['user', 'room', 'payment']);
 
         if ($request->filled('status')) {
             $query->where('unlocked', $request->boolean('status'));
         }
 
-        $enquiries = $query->latest()->paginate(20);
+        if ($request->filled('lead_status')) {
+            $query->where('status', $request->lead_status);
+        }
 
-        return view('broker.enquiries.index', compact('enquiries'));
+        $enquiries = $query->latest()->paginate(20)->withQueryString();
+
+        $baseCountQuery = fn() => Enquiry::whereHas('room', function ($q) use ($broker) {
+            $q->where('broker_id', $broker->id)->orWhere('user_id', $broker->id);
+        });
+
+        $statusCounts = [
+            'all' => $baseCountQuery()->count(),
+            'new' => $baseCountQuery()->where('status', 'new')->count(),
+            'contacted' => $baseCountQuery()->where('status', 'contacted')->count(),
+            'visit_scheduled' => $baseCountQuery()->where('status', 'visit_scheduled')->count(),
+            'closed' => $baseCountQuery()->where('status', 'closed')->count(),
+            'lost' => $baseCountQuery()->where('status', 'lost')->count(),
+        ];
+
+        return view('broker.enquiries.index', compact('enquiries', 'statusCounts'));
+    }
+
+    public function updateEnquiryStatus(Request $request, Enquiry $enquiry)
+    {
+        $broker = Auth::user();
+        abort_if(!$broker->is_broker_active, 403);
+
+        // Verify that the enquiry belongs to one of this broker's listings
+        $room = $enquiry->room;
+        abort_unless($room && ($room->broker_id === $broker->id || $room->user_id === $broker->id), 403);
+
+        $validated = $request->validate([
+            'status' => 'required|in:new,contacted,visit_scheduled,closed,lost',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $enquiry->update([
+            'status' => $validated['status'],
+            'notes' => array_key_exists('notes', $validated) ? $validated['notes'] : $enquiry->notes,
+        ]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Lead status updated to ' . ucfirst(str_replace('_', ' ', $enquiry->status)),
+                'status' => $enquiry->status,
+            ]);
+        }
+
+        return back()->with('success', 'Lead status updated successfully.');
     }
 
     public function payments(Request $request)
@@ -147,14 +195,27 @@ class BrokerDashboardController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
+            'city' => 'nullable|string|max:100',
             'agency_name' => 'nullable|string|max:255',
             'agency_address' => 'nullable|string|max:500',
             'agency_gst' => 'nullable|string|max:50',
             'broker_license' => 'nullable|string|max:100',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        if ($request->hasFile('avatar')) {
+            if ($broker->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($broker->avatar)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($broker->avatar);
+            }
+            if (class_exists(\App\Services\ImageOptimizer::class)) {
+                $data['avatar'] = \App\Services\ImageOptimizer::optimize($request->file('avatar'), 'avatar');
+            } else {
+                $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            }
+        }
 
         $broker->update($data);
 
-        return back()->with('success', 'Profile updated successfully.');
+        return back()->with('success', 'Profile and agency settings updated successfully.');
     }
 }

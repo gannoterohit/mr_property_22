@@ -36,8 +36,8 @@
                                             </span>
                                         @endif
                                         @if($room->listing_type === 'broker')
-                                            <span class="bg-amber-500 text-white text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1 shadow-sm">
-                                                <i class="fas fa-user-tie"></i> Verified Agent
+                                            <span class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-[8.5px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
+                                                <i class="fas fa-building"></i> Verified Agency
                                             </span>
                                         @else
                                             <span class="bg-emerald-600 text-white text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg flex items-center gap-1 shadow-sm">

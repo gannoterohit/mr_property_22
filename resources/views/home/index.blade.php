@@ -30,6 +30,7 @@
     @include('home.partials.categories')
     @include('home.partials.why-choose-us')
     @include('home.partials.latest-rooms')
+    @include('home.partials.agencies')
     @include('home.partials.list-property')
     @include('home.partials.how-it-works')
     @include('home.partials.testimonials')

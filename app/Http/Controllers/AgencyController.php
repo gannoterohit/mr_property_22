@@ -9,6 +9,78 @@ use Illuminate\Http\Request;
 class AgencyController extends Controller
 {
     /**
+     * Display a public directory of all verified real estate agencies.
+     */
+    public function index(Request $request)
+    {
+        $query = User::where('role', 'broker')
+            ->where('is_broker_active', true)
+            ->withCount([
+                'rooms as active_rooms_count' => function ($q) {
+                    $q->publicVisible();
+                }
+            ]);
+
+        // Search query (agency name, agent name, license, address)
+        if ($request->filled('q')) {
+            $term = '%' . trim($request->q) . '%';
+            $query->where(function ($q) use ($term) {
+                $q->where('agency_name', 'like', $term)
+                  ->orWhere('name', 'like', $term)
+                  ->orWhere('agency_address', 'like', $term)
+                  ->orWhere('broker_license', 'like', $term)
+                  ->orWhereHas('rooms', function ($rq) use ($term) {
+                      $rq->publicVisible()->where(function ($sq) use ($term) {
+                          $sq->where('city', 'like', $term)
+                             ->orWhere('address', 'like', $term)
+                             ->orWhere('title', 'like', $term);
+                      });
+                  });
+            });
+        }
+
+        // City filter
+        if ($request->filled('city')) {
+            $city = trim($request->city);
+            $query->whereHas('rooms', function ($rq) use ($city) {
+                $rq->publicVisible()->where('city', $city);
+            });
+        }
+
+        // Sorting
+        $sortBy = $request->get('sort_by', 'popular');
+        if ($sortBy === 'properties') {
+            $query->orderByDesc('active_rooms_count');
+        } elseif ($sortBy === 'name') {
+            $query->orderBy('agency_name', 'asc')->orderBy('name', 'asc');
+        } else {
+            $query->orderByDesc('active_rooms_count')->latest('id');
+        }
+
+        $agencies = $query->paginate(12)->withQueryString();
+
+        // Eager load active room cities for displayed agencies
+        $agencies->load(['rooms' => function ($rq) {
+            $rq->publicVisible()->select('rooms.id', 'rooms.broker_id', 'rooms.user_id', 'rooms.city');
+        }]);
+
+        // Get list of distinct cities where active broker rooms exist
+        $availableCities = Room::publicVisible()
+            ->where('listing_type', 'broker')
+            ->whereNotNull('city')
+            ->where('city', '!=', '')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city')
+            ->values();
+
+        $totalAgenciesCount = User::where('role', 'broker')->where('is_broker_active', true)->count();
+        $totalBrokerProperties = Room::publicVisible()->where('listing_type', 'broker')->count();
+
+        return view('agency.index', compact('agencies', 'availableCities', 'totalAgenciesCount', 'totalBrokerProperties'));
+    }
+
+    /**
      * Display the public profile of a verified broker / agency.
      */
     public function show(User $user, ?Request $request = null)

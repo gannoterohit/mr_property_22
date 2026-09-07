@@ -113,6 +113,9 @@
                                         <i class="fas fa-copy"></i> Copy
                                     </button>
                                 </form>
+                                <button type="button" onclick="sharePropertyBrochure(@json($property->title), '{{ number_format($property->rent) }}', '{{ number_format($property->deposit) }}', @json($property->city), @json(route('rooms.show', $property)))" class="owner-room-btn owner-room-btn-outline" style="color: #059669; border-color: #a7f3d0;" title="Share WhatsApp brochure with clients">
+                                    <i class="fa-brands fa-whatsapp text-emerald-600"></i> Share
+                                </button>
                                 @if($property->status === 'active')
                                     <button type="button" onclick="markRoomRented({{ $property->id }})" class="owner-room-btn owner-room-btn-rose owner-room-btn-full">
                                         <i class="fas fa-key"></i> Mark as Rented
@@ -160,13 +163,45 @@ async function markRoomRented(roomId) {
     catch (error) { Swal.fire('Could not update property', error.message, 'error'); }
 }
 async function makeRoomAvailable(roomId) {
-    const confirmation = await Swal.fire({ title: 'Make property available?', text: 'This property will be visible to users again.', icon: 'question', showCancelButton: true, confirmButtonText: 'Make available', confirmButtonColor: '#059669' });
+    const confirmation = await Swal.fire({
+        title: 'Make property available?',
+        text: 'This will use 1 listing credit from your plan and make the property live again.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Make Available (1 Credit)',
+        confirmButtonColor: '#059669'
+    });
     if (!confirmation.isConfirmed) return;
     try {
-        const data = await agentRoomPost(`{{ route('agent.rooms.markAvailable', ':room') }}`.replace(':room', roomId), { payment_method: 'free' });
-        await Swal.fire('Property available', data.message || 'Your property is visible to property seekers again.', 'success');
+        const data = await agentRoomPost(`{{ route('agent.rooms.markAvailable', ':room') }}`.replace(':room', roomId));
+        await Swal.fire('Property Available!', data.message || 'Your property is now live and visible to property seekers.', 'success');
         location.reload();
-    } catch (error) { Swal.fire('Could not publish property', error.message, 'error'); }
+    } catch (error) {
+        Swal.fire({
+            title: 'Credits Required',
+            text: error.message || 'You have 0 listing credits remaining. Please buy more credits to activate this property.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Buy Listing Credits',
+            confirmButtonColor: '#4f46e5'
+        }).then((res) => {
+            if (res.isConfirmed) {
+                window.location.href = '{{ route("agent.plans") }}';
+            }
+        });
+    }
+}
+function sharePropertyBrochure(title, rent, deposit, city, link) {
+    var agency = @json(Auth::user()->agency_name ?: Auth::user()->name);
+    var text = "🏠 *" + title + "*\n" +
+               "💰 *Rent:* ₹" + rent + "/month" + (deposit ? " | *Deposit:* ₹" + deposit : "") + "\n" +
+               (city ? "📍 *Location:* " + city + "\n" : "") +
+               "✨ *Managed by:* " + agency + " (Verified Agent)\n\n" +
+               "📸 *Photos, Video & Complete Details:* \n" + link + "\n\n" +
+               "_Interested? Reply to this message for immediate visit scheduling!_";
+
+    var waUrl = "https://wa.me/?text=" + encodeURIComponent(text);
+    window.open(waUrl, '_blank');
 }
 </script>
 @endpush

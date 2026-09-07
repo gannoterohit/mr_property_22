@@ -32,8 +32,8 @@
                     {{ $room->roomTypeLabel() }}
                 </span>
                 @if($room->listing_type === 'broker')
-                    <span class="bg-amber-500 text-white px-2 py-1 rounded-md text-[9px] font-black shadow-sm uppercase tracking-wider">
-                        Broker Fee
+                    <span class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-2 py-1 rounded-md text-[9px] font-black shadow-sm uppercase tracking-wider flex items-center gap-1">
+                        <i class="fas fa-building text-[8px]"></i> Verified Agency
                     </span>
                 @else
                     <span class="bg-emerald-500 text-white px-2 py-1 rounded-md text-[9px] font-black shadow-sm uppercase tracking-wider">
@@ -68,9 +68,17 @@
             <h2 class="font-black text-base text-slate-900 leading-tight line-clamp-2 mb-1.5">
                 <a href="{{ route('rooms.show', $room->id) }}" class="transition-colors" style="color: var(--primary);">{{ $room->title }}</a>
             </h2>
-            <div class="flex items-center text-slate-500 text-xs font-medium">
-                <i class="fas fa-location-dot mr-1.5 text-[10px]" style="color: var(--primary);"></i>
-                <span class="truncate">{{ $room->city }}</span>
+            <div class="flex items-center justify-between text-slate-500 text-xs font-medium">
+                <div class="flex items-center">
+                    <i class="fas fa-location-dot mr-1.5 text-[10px]" style="color: var(--primary);"></i>
+                    <span class="truncate">{{ $room->city }}</span>
+                </div>
+                @if($room->listing_type === 'broker' && $room->user)
+                    <a href="{{ route('agency.show', $room->user) }}" class="text-[11px] font-extrabold text-indigo-600 hover:underline flex items-center gap-1">
+                        <i class="fas fa-building text-[10px]"></i>
+                        <span class="truncate max-w-[130px]">{{ $room->user->agency_name ?: $room->user->name }}</span>
+                    </a>
+                @endif
             </div>
         </div>
 

@@ -783,6 +783,21 @@ class RoomController extends Controller {
         // Auto-unlock for brokers as per transparent model
         if ($room->listing_type === 'broker') {
             $isUnlocked = true;
+
+            // Safely log lead for broker dashboard if authenticated tenant views room
+            if (Auth::check() && Auth::id() !== $room->user_id && Auth::id() !== $room->broker_id) {
+                \App\Models\Enquiry::firstOrCreate(
+                    [
+                        'user_id' => Auth::id(),
+                        'room_id' => $room->id,
+                    ],
+                    [
+                        'unlocked' => true,
+                        'unlocked_at' => now(),
+                        'payment_id' => null,
+                    ]
+                );
+            }
         }
         
         $room->load(['owner', 'propertyType', 'propertyCategory', 'roomTypeOption', 'furnishingOption', 'tenantOption']);
@@ -1130,30 +1145,82 @@ class RoomController extends Controller {
             DB::beginTransaction();
             try {
                 $isBroker = Auth::user()->role === 'broker';
-                $brokerListingChargesEnabled = \App\Models\BrokerSetting::isEnabled('broker_listing_charges_enabled', false);
 
-                // For brokers, check broker-specific settings
-                if ($isBroker && !$brokerListingChargesEnabled) {
-                    $payment = Payment::create([
-                        'user_id' => Auth::id(),
-                        'type' => 'broker_listing',
-                        'amount' => 0,
-                        'gateway' => 'free',
-                        'reference_id' => $room->id,
-                        'status' => 'completed',
-                    ]);
-                    $room->update([
-                        'status' => 'active',
-                        'listing_fee_paid' => true,
-                        'listing_payment_id' => $payment->id,
-                    ]);
-                    DB::commit();
+                // For brokers: Listing Count / Credit based logic
+                if ($isBroker) {
+                    // Check if broker has listing credits available
+                    $brokerCredit = \App\Models\BrokerListingCredit::where('broker_id', Auth::id())
+                        ->where('credits_remaining', '>', 0)
+                        ->where('type', 'listing')
+                        ->lockForUpdate()
+                        ->first();
 
+                    if ($brokerCredit) {
+                        $brokerCredit->decrement('credits_remaining');
+
+                        $room->update([
+                            'status' => 'active',
+                            'listing_fee_paid' => true,
+                            'listing_payment_id' => null,
+                            'expires_at' => null, // No days limit, listing count based
+                        ]);
+
+                        DB::commit();
+
+                        return response()->json([
+                            'success' => true,
+                            'credits_used' => true,
+                            'credits_remaining' => $brokerCredit->credits_remaining,
+                            'message' => "Room marked as available! 1 listing credit used. Remaining credits: {$brokerCredit->credits_remaining}",
+                        ]);
+                    }
+
+                    // If broker wants to pay from wallet
+                    $brokerPerListingCharge = (float) \App\Models\BrokerSetting::get('broker_per_listing_charge', 199);
+                    $user = Auth::user();
+                    $brokerWallet = $user->brokerWallet;
+                    $walletBalance = (float) ($brokerWallet?->balance ?? $user->wallet_balance ?? 0);
+
+                    if ($request->payment_method === 'wallet' && $walletBalance >= $brokerPerListingCharge) {
+                        if ($brokerWallet && $brokerWallet->balance >= $brokerPerListingCharge) {
+                            $brokerWallet->decrement('balance', $brokerPerListingCharge);
+                        } else {
+                            $user->decrement('wallet_balance', $brokerPerListingCharge);
+                        }
+
+                        $payment = Payment::create([
+                            'user_id' => $user->id,
+                            'type' => 'broker_listing',
+                            'amount' => $brokerPerListingCharge,
+                            'gateway' => 'wallet',
+                            'reference_id' => $room->id,
+                            'status' => 'completed',
+                        ]);
+
+                        $room->update([
+                            'status' => 'active',
+                            'listing_fee_paid' => true,
+                            'listing_payment_id' => $payment->id,
+                            'expires_at' => null,
+                        ]);
+
+                        DB::commit();
+
+                        return response()->json([
+                            'success' => true,
+                            'wallet_used' => true,
+                            'message' => 'Room made available successfully using wallet balance!',
+                        ]);
+                    }
+
+                    // Broker has 0 credits remaining
+                    DB::rollBack();
                     return response()->json([
-                        'success' => true,
-                        'free_listing' => true,
-                        'message' => 'Room marked as available successfully.',
-                    ]);
+                        'success' => false,
+                        'insufficient_credits' => true,
+                        'plans_url' => route('agent.plans'),
+                        'message' => 'You have 0 listing credits remaining. Please purchase a plan or add credits to make this room available again.',
+                    ], 402);
                 }
 
                 $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
