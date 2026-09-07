@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @php
-    $siteName = \App\Models\Setting::get('website_name', 'RoomRental');
+    $siteName   = \App\Models\Setting::get('website_name', 'RoomRental');
 @endphp
 
 @section('title', 'Verified Real Estate Agencies & Agents | ' . $siteName)
@@ -9,20 +9,31 @@
 
 @push('styles')
 <style>
-/* Scoped Agency Directory Styles */
+/* =============================================
+   Agency Directory – Dynamic Themed Styles
+   Uses var(--primary) & var(--primary-rgb)
+   set dynamically from admin settings
+   ============================================= */
 .agencies-directory-page {
     background-color: #f8fafc;
     min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
 }
 
-/* Hero Section */
+/* ── Hero ─────────────────────────────────── */
 .agency-hero {
-    background: linear-gradient(135deg, #090e17 0%, #0f172a 50%, #1e1b4b 100%) !important;
+    background: linear-gradient(145deg,
+        color-mix(in srgb, var(--primary) 15%, #000) 0%,
+        color-mix(in srgb, var(--primary) 25%, #0f172a) 50%,
+        color-mix(in srgb, var(--primary) 35%, #1e293b) 100%) !important;
     color: #ffffff !important;
     position: relative;
     overflow: hidden;
-    padding-top: 3rem;
-    padding-bottom: 5.5rem;
+    padding-top: 4rem;
+    padding-bottom: 7rem;
+    width: 100%;
+    display: block;
 }
 
 .agency-hero-glow-1 {
@@ -32,7 +43,7 @@
     width: 420px;
     height: 420px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(99, 102, 241, 0) 70%);
+    background: radial-gradient(circle, rgba(var(--primary-rgb), 0.22) 0%, rgba(var(--primary-rgb), 0) 70%);
     pointer-events: none;
 }
 
@@ -43,7 +54,7 @@
     width: 380px;
     height: 380px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(16, 185, 129, 0.20) 0%, rgba(16, 185, 129, 0) 70%);
+    background: radial-gradient(circle, rgba(var(--primary-rgb), 0.18) 0%, rgba(var(--primary-rgb), 0) 70%);
     pointer-events: none;
 }
 
@@ -53,14 +64,14 @@
     gap: 8px;
     padding: 6px 14px;
     border-radius: 9999px;
-    background: rgba(16, 185, 129, 0.15);
-    border: 1px solid rgba(16, 185, 129, 0.35);
-    color: #34d399;
+    background: rgba(var(--primary-rgb), 0.18);
+    border: 1px solid rgba(var(--primary-rgb), 0.38);
+    color: #a7f3d0;
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
 }
 
 .agency-hero-badge .pulse-dot {
@@ -69,13 +80,13 @@
     border-radius: 50%;
     background: #10b981;
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-    animation: pulseGlow 2s infinite;
+    animation: agencyPulse 2s infinite;
 }
 
-@keyframes pulseGlow {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+@keyframes agencyPulse {
+    0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
+    70%  { transform: scale(1);    box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16,185,129,0); }
 }
 
 .agency-hero-title {
@@ -88,9 +99,12 @@
 }
 
 .agency-hero-gradient-text {
-    background: linear-gradient(135deg, #818cf8 0%, #38bdf8 50%, #34d399 100%);
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--primary) 70%, white) 0%,
+        #a7f3d0 60%, #7dd3fc 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .agency-hero-sub {
@@ -98,27 +112,27 @@
     font-size: 15px;
     line-height: 1.65;
     max-width: 650px;
-    margin-top: 0.75rem;
+    margin-top: 0.85rem;
 }
 
 .agency-stat-chip {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 8px 16px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 9px 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     color: #e2e8f0;
     font-size: 12.5px;
     backdrop-filter: blur(8px);
 }
 
 .agency-stat-chip-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -126,14 +140,14 @@
     flex-shrink: 0;
 }
 
-/* Floating Search Bar */
+/* ── Search Bar ──────────────────────────── */
 .agency-search-card {
     background: #ffffff;
-    border-radius: 20px;
-    padding: 12px 14px;
-    box-shadow: 0 16px 40px -8px rgba(15, 23, 42, 0.12), 0 4px 14px rgba(0, 0, 0, 0.04);
+    border-radius: 24px;
+    padding: 16px 20px;
+    box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.14), 0 4px 18px rgba(0,0,0,0.04);
     border: 1px solid #e2e8f0;
-    margin-top: -36px;
+    margin-top: -38px;
     position: relative;
     z-index: 25;
 }
@@ -154,10 +168,10 @@
 
 .agency-search-input {
     width: 100%;
-    padding: 12px 16px 12px 42px;
+    padding: 13px 16px 13px 44px;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 14px;
     font-size: 13.5px;
     font-weight: 600;
     color: #0f172a;
@@ -167,20 +181,22 @@
 
 .agency-search-input:focus {
     background: #ffffff;
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.14);
 }
 
 .agency-search-btn {
-    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--primary) 80%, #000) 0%,
+        var(--primary) 100%);
     color: #ffffff;
-    padding: 12px 24px;
-    border-radius: 12px;
+    padding: 13px 26px;
+    border-radius: 14px;
     font-size: 13.5px;
     font-weight: 800;
     border: none;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.35);
     transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
@@ -190,56 +206,61 @@
 }
 
 .agency-search-btn:hover {
-    background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--primary) 60%, #000) 0%,
+        color-mix(in srgb, var(--primary) 80%, #000) 100%);
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
+    box-shadow: 0 6px 18px rgba(var(--primary-rgb), 0.45);
 }
 
-/* Agency Cards */
+/* ── Agency Cards ────────────────────────── */
 .agency-card {
     background: #ffffff;
-    border-radius: 20px;
+    border-radius: 22px;
     border: 1px solid #e2e8f0;
     overflow: hidden;
-    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
     transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: 100%;
 }
 
 .agency-card:hover {
     transform: translateY(-5px);
-    border-color: #cbd5e1;
-    box-shadow: 0 20px 35px -8px rgba(15, 23, 42, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.04);
+    border-color: rgba(var(--primary-rgb), 0.3);
+    box-shadow: 0 22px 40px -8px rgba(var(--primary-rgb), 0.16), 0 8px 16px -4px rgba(15,23,42,0.04);
 }
 
 .agency-card-banner {
-    height: 72px;
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    height: 84px;
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--primary) 25%, #0f172a) 0%,
+        color-mix(in srgb, var(--primary) 40%, #1e293b) 100%);
     position: relative;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 12px 16px;
+    padding: 14px 18px;
 }
 
 .agency-card-avatar {
-    width: 68px;
-    height: 68px;
-    border-radius: 18px;
-    border: 3.5px solid #ffffff;
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    border: 4px solid #ffffff;
     position: absolute;
-    left: 20px;
-    bottom: -28px;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    left: 22px;
+    bottom: -32px;
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 60%, #7c3aed) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 900;
-    box-shadow: 0 8px 18px -2px rgba(15, 23, 42, 0.2);
+    box-shadow: 0 10px 22px -3px rgba(var(--primary-rgb), 0.3);
     overflow: hidden;
     z-index: 5;
 }
@@ -254,51 +275,52 @@
     position: absolute;
     bottom: -2px;
     right: -2px;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     background: #10b981;
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 9.5px;
+    font-size: 10px;
     border: 2px solid #ffffff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .agency-card-body {
-    padding: 38px 20px 20px;
+    padding: 48px 22px 24px;
     flex-grow: 1;
 }
 
 .agency-name-link {
-    font-size: 17px;
+    font-size: 17.5px;
     font-weight: 850;
     color: #0f172a;
     text-decoration: none;
     transition: color 0.18s ease;
     display: inline-block;
-    line-height: 1.3;
+    line-height: 1.35;
 }
 
 .agency-name-link:hover {
-    color: #4f46e5;
+    color: var(--primary);
 }
 
 .agency-stat-badge {
-    padding: 10px 14px;
-    border-radius: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
     background: #f8fafc;
     border: 1px solid #f1f5f9;
 }
 
+/* ── Card Buttons ────────────────────────── */
 .agency-btn-primary {
-    background: #0f172a;
+    background: var(--primary);
     color: #ffffff;
-    border-radius: 12px;
-    padding: 11px 16px;
-    font-size: 13px;
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-size: 13.5px;
     font-weight: 800;
     text-decoration: none;
     display: inline-flex;
@@ -307,28 +329,30 @@
     gap: 8px;
     transition: all 0.2s ease;
     flex: 1;
+    box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.28);
 }
 
 .agency-btn-primary:hover {
-    background: #4f46e5;
+    background: color-mix(in srgb, var(--primary) 80%, #000);
     color: #ffffff;
-    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 6px 18px rgba(var(--primary-rgb), 0.4);
+    transform: translateY(-1px);
 }
 
 .agency-btn-whatsapp {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
     background: #25D366;
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 19px;
     text-decoration: none;
     transition: all 0.2s ease;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.28);
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.28);
 }
 
 .agency-btn-whatsapp:hover {
@@ -339,9 +363,9 @@
 }
 
 .agency-btn-phone {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
     background: #f1f5f9;
     color: #334155;
     display: flex;
@@ -355,8 +379,87 @@
 }
 
 .agency-btn-phone:hover {
-    background: #e2e8f0;
-    color: #0f172a;
+    background: rgba(var(--primary-rgb), 0.08);
+    color: var(--primary);
+    border-color: rgba(var(--primary-rgb), 0.25);
+}
+
+/* ── Section count badge ─────────────────── */
+.agency-count-badge {
+    font-size: 11.5px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(var(--primary-rgb), 0.08);
+    color: var(--primary);
+    font-weight: 800;
+    border: 1px solid rgba(var(--primary-rgb), 0.2);
+}
+
+/* ── Filter tag ──────────────────────────── */
+.agency-filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 14px;
+    background: rgba(var(--primary-rgb), 0.06);
+    border: 1px solid rgba(var(--primary-rgb), 0.2);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* ── Trust Banner ────────────────────────── */
+.agency-trust-banner {
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--primary) 15%, #0f172a) 0%,
+        color-mix(in srgb, var(--primary) 20%, #1e293b) 100%);
+    border-radius: 28px;
+    padding: 3rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px -12px rgba(var(--primary-rgb), 0.22);
+}
+
+.agency-trust-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(var(--primary-rgb), 0.15) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.agency-trust-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.1);
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.agency-trust-icon.icon-primary  { color: var(--primary); }
+.agency-trust-icon.icon-emerald  { color: #34d399; }
+.agency-trust-icon.icon-amber    { color: #fbbf24; }
+
+/* ── Empty State ─────────────────────────── */
+.agency-empty-icon {
+    width: 84px;
+    height: 84px;
+    border-radius: 22px;
+    background: rgba(var(--primary-rgb), 0.08);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    margin: 0 auto 1.25rem;
+    border: 1px solid rgba(var(--primary-rgb), 0.15);
 }
 </style>
 @endpush
@@ -371,56 +474,99 @@
 
         <div class="container mx-auto max-w-6xl px-4 relative z-10">
             {{-- Breadcrumb --}}
-            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-5">
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6">
                 <a href="{{ route('home') }}" class="hover:text-white transition text-slate-400">Home</a>
                 <span class="text-slate-600">/</span>
                 <span class="text-slate-200 font-bold">Verified Agencies</span>
             </nav>
 
-            <div class="max-w-3xl">
-                <div class="agency-hero-badge">
-                    <span class="pulse-dot"></span>
-                    <i class="fas fa-shield-check"></i>
-                    <span>100% KYC & License Verified Real Estate Directory</span>
+            {{-- 2-Column Hero Layout --}}
+            <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+                {{-- Left: Title & Description --}}
+                <div class="flex-1 min-w-0">
+                    <div class="agency-hero-badge mb-4">
+                        <span class="pulse-dot"></span>
+                        <i class="fas fa-shield-check"></i>
+                        <span>100% KYC &amp; License Verified Real Estate Directory</span>
+                    </div>
+
+                    <h1 class="agency-hero-title mb-4">
+                        Verified Real Estate <span class="agency-hero-gradient-text">Agencies &amp; Consultants</span>
+                    </h1>
+
+                    <p class="agency-hero-sub mb-6">
+                        Connect directly with trusted property consultants and authorized real estate agencies. Browse verified rental rooms, flats, and commercial properties with <strong>zero unlock fees</strong> and direct WhatsApp contact.
+                    </p>
+
+                    {{-- Stat Chips --}}
+                    <div class="flex flex-wrap items-center gap-3 pt-5 border-t border-white/10">
+                        <div class="agency-stat-chip">
+                            <span class="agency-stat-chip-icon" style="color: #a7f3d0;">
+                                <i class="fas fa-building"></i>
+                            </span>
+                            <span><strong class="text-white text-sm font-extrabold">{{ $totalAgenciesCount }}</strong> Verified Agencies</span>
+                        </div>
+
+                        <div class="agency-stat-chip">
+                            <span class="agency-stat-chip-icon text-emerald-400">
+                                <i class="fas fa-house-circle-check"></i>
+                            </span>
+                            <span><strong class="text-white text-sm font-extrabold">{{ $totalBrokerProperties }}</strong> Active Properties</span>
+                        </div>
+
+                        <div class="agency-stat-chip">
+                            <span class="agency-stat-chip-icon text-amber-400">
+                                <i class="fas fa-comments"></i>
+                            </span>
+                            <span>Direct WhatsApp Connect</span>
+                        </div>
+                    </div>
                 </div>
 
-                <h1 class="agency-hero-title">
-                    Verified Real Estate <span class="agency-hero-gradient-text">Agencies & Consultants</span>
-                </h1>
+                {{-- Right: Decorative Feature Cards --}}
+                <div class="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0">
+                    <div class="rounded-2xl p-4 flex items-center gap-4"
+                         style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(8px);">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                             style="background: rgba(255,255,255,0.12);">
+                            <i class="fas fa-badge-check text-emerald-400 text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="text-white text-sm font-bold">KYC &amp; License Verified</div>
+                            <div class="text-slate-400 text-xs mt-0.5">Every agency is ID-checked</div>
+                        </div>
+                    </div>
 
-                <p class="agency-hero-sub">
-                    Connect directly with trusted property consultants and authorized real estate agencies. Browse verified rental rooms, flats, and commercial properties with <strong>zero unlock fees</strong> and direct WhatsApp contact.
-                </p>
-            </div>
+                    <div class="rounded-2xl p-4 flex items-center gap-4"
+                         style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(8px);">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                             style="background: rgba(255,255,255,0.12);">
+                            <i class="fas fa-unlock-keyhole text-amber-400 text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="text-white text-sm font-bold">Zero Unlock Fee</div>
+                            <div class="text-slate-400 text-xs mt-0.5">Contact brokers for free</div>
+                        </div>
+                    </div>
 
-            {{-- Stat Chips --}}
-            <div class="flex flex-wrap items-center gap-3 mt-8 pt-6 border-t border-white/10">
-                <div class="agency-stat-chip">
-                    <span class="agency-stat-chip-icon text-indigo-400">
-                        <i class="fas fa-building"></i>
-                    </span>
-                    <span><strong class="text-white text-sm font-extrabold">{{ $totalAgenciesCount }}</strong> Verified Agencies</span>
-                </div>
-
-                <div class="agency-stat-chip">
-                    <span class="agency-stat-chip-icon text-emerald-400">
-                        <i class="fas fa-house-circle-check"></i>
-                    </span>
-                    <span><strong class="text-white text-sm font-extrabold">{{ $totalBrokerProperties }}</strong> Active Managed Properties</span>
-                </div>
-
-                <div class="agency-stat-chip">
-                    <span class="agency-stat-chip-icon text-amber-400">
-                        <i class="fas fa-comments"></i>
-                    </span>
-                    <span>Direct WhatsApp & Call Connect</span>
+                    <div class="rounded-2xl p-4 flex items-center gap-4"
+                         style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(8px);">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                             style="background: rgba(255,255,255,0.12);">
+                            <i class="fa-brands fa-whatsapp text-green-400 text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="text-white text-sm font-bold">Direct WhatsApp</div>
+                            <div class="text-slate-400 text-xs mt-0.5">Instant agent contact</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     {{-- Floating Search & Filter Bar --}}
-    <div class="container mx-auto max-w-6xl px-4">
+    <div class="container mx-auto max-w-6xl px-4" style="position: relative; z-index: 30;">
         <form method="GET" action="{{ route('agencies.index') }}" class="agency-search-card flex flex-col md:flex-row items-stretch md:items-center gap-3">
             {{-- Keyword Search --}}
             <div class="agency-input-group flex-1">
@@ -442,9 +588,8 @@
                 <i class="fas fa-chevron-down text-[10px] text-slate-400 absolute right-4 left-auto pointer-events-none"></i>
             </div>
 
-            {{-- Sort By --}}
             <div class="agency-input-group md:w-48">
-                <i class="fas fa-arrow-down-wide-short text-indigo-500"></i>
+                <i class="fas fa-arrow-down-wide-short" style="color: var(--primary);"></i>
                 <select name="sort_by" class="agency-search-input cursor-pointer appearance-none pr-8">
                     <option value="popular" {{ request('sort_by') === 'popular' ? 'selected' : '' }}>Most Active</option>
                     <option value="properties" {{ request('sort_by') === 'properties' ? 'selected' : '' }}>Most Properties</option>
@@ -470,13 +615,13 @@
     </div>
 
     {{-- Agencies Listing Section --}}
-    <main class="container mx-auto max-w-6xl px-4 mt-12">
+    <main class="container mx-auto max-w-6xl px-4 mt-16 sm:mt-20">
         {{-- Section Header --}}
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-3 border-b border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200/80">
             <div>
                 <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
                     <span>Featured Real Estate Partners</span>
-                    <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold border border-indigo-200/70">
+                    <span class="agency-count-badge">
                         {{ $agencies->total() }} Listed
                     </span>
                 </h2>
@@ -486,10 +631,11 @@
             </div>
 
             @if(request()->filled('city'))
-                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">
+                <div class="agency-filter-tag">
                     <i class="fas fa-location-dot text-rose-500"></i>
-                    <span>Filtered by: {{ request('city') }}</span>
-                    <a href="{{ route('agencies.index', request()->except('city')) }}" class="ml-1 text-slate-400 hover:text-slate-700">
+                    <span>Filtered: {{ request('city') }}</span>
+                    <a href="{{ route('agencies.index', request()->except('city')) }}"
+                       class="ml-1 opacity-60 hover:opacity-100 transition">
                         <i class="fas fa-xmark"></i>
                     </a>
                 </div>
@@ -497,7 +643,7 @@
         </div>
 
         @if($agencies->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
                 @foreach($agencies as $agency)
                     @php
                         $agencyDisplayName = $agency->agency_name ?: ($agency->name . ' Real Estate');
@@ -543,15 +689,15 @@
                         {{-- Card Body --}}
                         <div class="agency-card-body">
                             {{-- Agency Name --}}
-                            <div class="mb-1">
+                            <div class="mb-1.5">
                                 <a href="{{ route('agency.show', $agency) }}" class="agency-name-link truncate max-w-full block" title="{{ $agencyDisplayName }}">
                                     {{ $agencyDisplayName }}
                                 </a>
                             </div>
 
                             {{-- Agent & City details --}}
-                            <p class="text-xs text-slate-500 font-medium flex items-center gap-1.5 mb-3">
-                                <i class="fas fa-user-tie text-indigo-500 text-[11px]"></i>
+                            <p class="text-xs text-slate-500 font-medium flex items-center gap-1.5 mb-3.5">
+                                <i class="fas fa-user-tie text-[11px]" style="color: var(--primary);"></i>
                                 <span class="text-slate-700 font-semibold">{{ $agency->name }}</span>
                                 <span class="text-slate-300">·</span>
                                 <span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded text-[10px]">
@@ -561,7 +707,7 @@
 
                             {{-- License / RERA badge --}}
                             @if($agency->broker_license)
-                                <div class="mb-3 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200/80 text-[11px] font-bold text-amber-900 inline-flex items-center gap-1.5 max-w-full truncate">
+                                <div class="mb-3.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] font-bold text-amber-900 inline-flex items-center gap-1.5 max-w-full truncate">
                                     <i class="fas fa-id-card text-amber-600 shrink-0"></i>
                                     <span class="truncate">RERA / Lic: {{ $agency->broker_license }}</span>
                                 </div>
@@ -575,12 +721,12 @@
                                 </p>
                             @else
                                 <p class="text-xs text-slate-400 italic mb-4">
-                                    <i class="fas fa-shield-heart text-indigo-400 mr-1"></i>Zero brokerage direct contact listing partner
+                                    <i class="fas fa-shield-heart mr-1" style="color: var(--primary);"></i>Zero brokerage direct contact listing partner
                                 </p>
                             @endif
 
                             {{-- Stats Ribbon --}}
-                            <div class="grid grid-cols-2 gap-2 mb-4">
+                            <div class="grid grid-cols-2 gap-2.5 mb-4">
                                 <div class="agency-stat-badge">
                                     <span class="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Active Portfolio</span>
                                     <span class="font-black text-slate-900 text-sm flex items-center gap-1.5 mt-0.5">
@@ -600,7 +746,7 @@
                         </div>
 
                         {{-- Card Actions --}}
-                        <div class="px-5 pb-5 pt-1 border-t border-slate-100 flex items-center gap-2">
+                        <div class="px-5 pb-5 pt-4 border-t border-slate-100 flex items-center gap-2.5">
                             <a href="{{ route('agency.show', $agency) }}" class="agency-btn-primary">
                                 <span>View Portfolio</span>
                                 <i class="fas fa-arrow-right text-[11px]"></i>
@@ -631,7 +777,7 @@
         @else
             {{-- Empty State --}}
             <div class="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-sm max-w-lg mx-auto my-8">
-                <div class="w-20 h-20 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-5 text-3xl shadow-inner">
+                <div class="agency-empty-icon">
                     <i class="fas fa-building-circle-xmark"></i>
                 </div>
                 <h3 class="text-lg font-black text-slate-900 mb-1">No Verified Agencies Found</h3>
@@ -639,7 +785,9 @@
                     We couldn't find any real estate partners matching your criteria. Try clearing filters or searching for another city.
                 </p>
                 <div class="flex flex-wrap items-center justify-center gap-3">
-                    <a href="{{ route('agencies.index') }}" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black transition shadow-md shadow-indigo-200 inline-flex items-center gap-2">
+                    <a href="{{ route('agencies.index') }}"
+                       class="px-6 py-3 rounded-xl text-white text-xs font-black transition shadow-md inline-flex items-center gap-2"
+                       style="background: var(--primary); box-shadow: 0 4px 14px rgba(var(--primary-rgb),0.3);">
                         <i class="fas fa-rotate-left text-[11px]"></i>
                         <span>Reset All Filters</span>
                     </a>
@@ -653,15 +801,15 @@
     </main>
 
     {{-- Trust / Why Choose Verified Agencies Banner --}}
-    <section class="container mx-auto max-w-6xl px-4 mt-16">
-        <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-3xl p-8 sm:p-10 text-white shadow-xl relative overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);">
+    <section class="container mx-auto max-w-6xl px-4 mt-20 sm:mt-24">
+        <div class="agency-trust-banner">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-emerald-400 text-xl shrink-0">
+                    <div class="agency-trust-icon icon-emerald">
                         <i class="fas fa-badge-check"></i>
                     </div>
                     <div>
-                        <h4 class="font-extrabold text-white text-sm mb-1">Government & KYC Verified</h4>
+                        <h4 class="font-extrabold text-white text-sm mb-1">Government &amp; KYC Verified</h4>
                         <p class="text-slate-300 text-xs leading-relaxed">
                             Every agency is verified with identity checks, broker licenses and verified office details.
                         </p>
@@ -669,7 +817,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-indigo-400 text-xl shrink-0">
+                    <div class="agency-trust-icon icon-primary">
                         <i class="fas fa-unlock-keyhole"></i>
                     </div>
                     <div>
@@ -681,7 +829,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-amber-400 text-xl shrink-0">
+                    <div class="agency-trust-icon icon-amber">
                         <i class="fas fa-handshake"></i>
                     </div>
                     <div>

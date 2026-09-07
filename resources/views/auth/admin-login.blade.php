@@ -1,10 +1,13 @@
 @php
     $websiteName = \App\Models\Setting::get('website_name', 'RoomRental');
     $navbarLogo = \App\Models\Setting::get('navbar_logo') ?: \App\Models\Setting::get('website_logo');
-    $primaryColor = \App\Models\Setting::get('primary_color', '#105024'); // matches theme
-    if (!$primaryColor || $primaryColor === '#4F46E5') {
-        $primaryColor = '#0f766e'; // or brand theme
+    $primaryColor = \App\Models\Setting::get('primary_color', '#105024');
+    if (!$primaryColor) {
+        $primaryColor = '#105024';
     }
+    // Compute RGB for rgba() usage
+    [$pr, $pg, $pb] = sscanf(ltrim($primaryColor, '#'), '%02x%02x%02x');
+    $primaryRgb = "$pr,$pg,$pb";
 @endphp
 
 @extends('layouts.base')
@@ -50,8 +53,8 @@
         padding: 40px 20px;
         box-sizing: border-box;
         background:
-            radial-gradient(circle at 12% 12%, rgba(16, 80, 36, 0.08) 0%, transparent 35%),
-            radial-gradient(circle at 88% 88%, rgba(15, 118, 110, 0.07) 0%, transparent 40%),
+            radial-gradient(circle at 12% 12%, rgba({{ $primaryRgb }}, 0.08) 0%, transparent 35%),
+            radial-gradient(circle at 88% 88%, rgba({{ $primaryRgb }}, 0.07) 0%, transparent 40%),
             linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
     }
 
@@ -73,7 +76,7 @@
         position: relative;
         padding: 50px 45px;
         color: #ffffff;
-        background: linear-gradient(145deg, #091a10 0%, #0d2818 45%, #105024 100%);
+        background: linear-gradient(145deg, color-mix(in srgb, var(--primary) 30%, #000) 0%, color-mix(in srgb, var(--primary) 50%, #000) 45%, var(--primary) 100%);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -269,7 +272,7 @@
 
     .portal-step-label {
         display: block;
-        color: #105024;
+        color: var(--primary);
         font-size: 11px;
         font-weight: 900;
         letter-spacing: 0.12em;
@@ -321,15 +324,15 @@
 
     .portal-tab.is-active {
         background: #ffffff;
-        color: #105024;
-        border: 1px solid #bbf7d0;
-        box-shadow: 0 2px 8px rgba(16, 80, 36, 0.08);
+        color: var(--primary);
+        border: 1px solid rgba(var(--primary-rgb), 0.4);
+        box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.08);
     }
 
     .portal-tab.is-done {
-        background: #ecfdf5;
-        color: #059669;
-        border: 1px solid #a7f3d0;
+        background: rgba(var(--primary-rgb), 0.08);
+        color: var(--primary);
+        border: 1px solid rgba(var(--primary-rgb), 0.3);
     }
 
     .portal-tab.is-pending {
@@ -417,12 +420,12 @@
     }
 
     .portal-input-field:focus {
-        border-color: #105024;
-        box-shadow: 0 0 0 4px rgba(16, 80, 36, 0.12);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.12);
     }
 
     .portal-input-field:focus ~ i.field-icon {
-        color: #105024;
+        color: var(--primary);
     }
 
     .portal-input-field::placeholder {
@@ -463,7 +466,7 @@
     .portal-checkbox-label input {
         width: 17px;
         height: 17px;
-        accent-color: #105024;
+        accent-color: var(--primary);
         border-radius: 4px;
         cursor: pointer;
         margin: 0;
@@ -479,7 +482,7 @@
     .portal-btn-primary {
         width: 100%;
         height: 52px;
-        background: linear-gradient(135deg, #0d3819 0%, #105024 100%);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 60%, #000) 0%, var(--primary) 100%);
         border: none;
         border-radius: 13px;
         color: #ffffff;
@@ -491,15 +494,15 @@
         justify-content: center;
         gap: 10px;
         cursor: pointer;
-        box-shadow: 0 10px 24px -5px rgba(16, 80, 36, 0.4);
+        box-shadow: 0 10px 24px -5px rgba(var(--primary-rgb), 0.4);
         transition: all 0.2s ease;
         margin-top: 4px;
     }
 
     .portal-btn-primary:hover {
-        background: linear-gradient(135deg, #082611 0%, #0d3819 100%);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 40%, #000) 0%, color-mix(in srgb, var(--primary) 60%, #000) 100%);
         transform: translateY(-1px);
-        box-shadow: 0 14px 28px -5px rgba(16, 80, 36, 0.5);
+        box-shadow: 0 14px 28px -5px rgba(var(--primary-rgb), 0.5);
     }
 
     .portal-btn-primary:active {
@@ -537,7 +540,7 @@
     }
 
     .portal-footer-link:hover {
-        color: #105024;
+        color: var(--primary);
     }
 
     .portal-reset-link {
@@ -760,7 +763,7 @@
                     <div class="portal-form-group">
                         <label class="portal-label" for="access_passkey">
                             <span>Master Security Passkey</span>
-                            <span style="color: #105024; font-size: 10px; font-weight: 800;">REQUIRED</span>
+                            <span style="color: var(--primary); font-size: 10px; font-weight: 800;">REQUIRED</span>
                         </label>
                         <div class="portal-input-container">
                             <i class="fas fa-key field-icon"></i>
@@ -855,7 +858,7 @@
                     </a>
                 @else
                     <span style="font-size: 11.5px; color: #94a3b8; font-weight: 600;">
-                        <i class="fas fa-shield-check" style="color: #105024; margin-right: 4px;"></i> Protected Gateway
+                        <i class="fas fa-shield-check" style="color: var(--primary); margin-right: 4px;"></i> Protected Gateway
                     </span>
                 @endif
             </div>
