@@ -103,7 +103,16 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-4 py-4 text-slate-600 text-sm">{{ $broker->agency_name ?: '-' }}</td>
+                            <td class="px-4 py-4 text-slate-600 text-sm">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="font-medium text-slate-900">{{ $broker->agency_name ?: '-' }}</span>
+                                    @if($broker->broker_verification_status === 'approved' || $broker->is_broker_active)
+                                        <a href="{{ route('agency.show', $broker) }}" target="_blank" class="inline-flex items-center justify-center h-6 w-6 rounded-md bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition text-[10px]" title="Open Public Agency Website">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    @endif
+                                </div>
+                            </td>
                             <td class="px-4 py-4">
                                 <span class="rounded-full px-2.5 py-1 text-[10px] font-extrabold {{ $tone }}">{{ ucfirst($broker->broker_verification_status) }}</span>
                             </td>
@@ -127,6 +136,7 @@
                                     </div>
                                 @elseif($broker->broker_verification_status === 'approved')
                                     <div class="flex justify-end gap-2">
+                                        <a href="{{ route('agency.show', $broker) }}" target="_blank" title="View Public Agency Website" class="rounded-lg bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition"><i class="fas fa-globe"></i></a>
                                         <a href="{{ route('admin.brokers.show', $broker) }}" title="View details" class="rounded-lg bg-slate-100 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-200 transition"><i class="fas fa-eye"></i></a>
                                         <form action="{{ route('admin.brokers.suspend', $broker) }}" method="POST" class="admin-confirm inline" data-confirm-title="Suspend broker?" data-confirm-text="Broker will not be able to list properties." data-confirm-button="Yes, suspend">@csrf @method('POST')<button type="submit" class="rounded-lg bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700 hover:bg-amber-100 transition"><i class="fas fa-pause"></i></button></form>
                                     </div>

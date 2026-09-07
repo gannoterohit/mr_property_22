@@ -25,4 +25,39 @@ class BrokerRoomController extends Controller
 
         return view('broker.rooms.create-multistep', compact('propertyTypes', 'amenities', 'storeRoute', 'draftsIndex'));
     }
+
+    public function duplicate(Room $room)
+    {
+        $broker = Auth::user();
+        if ($room->user_id !== $broker->id && $room->broker_id !== $broker->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $newRoom = $room->replicate([
+            'slug',
+            'is_featured',
+            'listing_payment_id',
+            'created_at',
+            'updated_at',
+        ]);
+
+        $newRoom->title = '[Copy] ' . $room->title;
+        $newRoom->slug = Room::generateUniqueSlug($newRoom->title);
+        $newRoom->status = 'pending';
+        $newRoom->listing_status = 'pending';
+        $newRoom->is_featured = false;
+        $newRoom->listing_fee_paid = true;
+        $newRoom->user_id = $broker->id;
+        $newRoom->broker_id = $broker->id;
+        $newRoom->listed_by = 'broker';
+        $newRoom->listing_type = 'broker';
+
+        $expiryDays = (int) \App\Models\BrokerSetting::get('broker_listing_expiry_days', 30);
+        $newRoom->expires_at = now()->addDays($expiryDays > 0 ? $expiryDays : 30);
+
+        $newRoom->save();
+
+        return redirect()->route('agent.rooms.edit', $newRoom)
+            ->with('success', 'Property duplicated successfully! You can now edit unit number, rent, and publish.');
+    }
 }

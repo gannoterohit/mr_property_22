@@ -466,19 +466,35 @@
 
                                         @if($room->listing_type === 'broker')
                                         <div class="mt-3 p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl shadow-2xs">
-                                            <div class="flex items-center gap-2 mb-1.5">
-                                                <span class="flex h-5 w-5 items-center justify-center rounded-md bg-amber-600 text-white text-[10px]"><i class="fas fa-id-badge"></i></span>
-                                                <div class="min-w-0">
-                                                    <p class="text-xs font-bold text-amber-950 truncate">{{ $room->owner?->agency_name ?: ($room->owner?->name . ' (Agent)') }}</p>
-                                                    @if($room->owner?->broker_license)
-                                                        <p class="text-[10px] text-amber-700 font-semibold">Lic: {{ $room->owner->broker_license }}</p>
-                                                    @endif
+                                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                                <div class="flex items-center gap-2 min-w-0">
+                                                    <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-amber-600 text-white text-[10px]"><i class="fas fa-id-badge"></i></span>
+                                                    <div class="min-w-0">
+                                                        <p class="text-xs font-bold text-amber-950 truncate">{{ $room->owner?->agency_name ?: ($room->owner?->name . ' (Agent)') }}</p>
+                                                        @if($room->owner?->broker_license)
+                                                            <p class="text-[10px] text-amber-700 font-semibold">Lic: {{ $room->owner->broker_license }}</p>
+                                                        @endif
+                                                    </div>
                                                 </div>
+                                                @if($room->owner)
+                                                <a href="{{ route('agency.show', $room->owner) }}" class="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 hover:text-amber-950 hover:underline shrink-0">
+                                                    <span>Profile</span>
+                                                    <i class="fas fa-arrow-right text-[9px]"></i>
+                                                </a>
+                                                @endif
                                             </div>
                                             <div class="pt-1.5 border-t border-amber-200/60 text-[11px] text-amber-900 leading-tight">
                                                 <span class="font-bold">Brokerage:</span> {{ $room->broker_fee ? '₹' . number_format($room->broker_fee) : 'As per agreement' }}
                                                 <span class="text-[10px] text-amber-700 block mt-0.5">(Payable only after deal finalization)</span>
                                             </div>
+                                            @if($room->owner)
+                                            <div class="mt-2.5 pt-2 border-t border-amber-200/60">
+                                                <a href="{{ route('agency.show', $room->owner) }}" class="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-amber-100/90 hover:bg-amber-200/90 text-amber-950 text-xs font-bold transition-colors">
+                                                    <i class="fas fa-building text-amber-700"></i>
+                                                    <span>View Agency & All Listings</span>
+                                                </a>
+                                            </div>
+                                            @endif
                                         </div>
                                         @endif
 

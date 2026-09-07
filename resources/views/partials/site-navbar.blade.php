@@ -77,6 +77,9 @@
                             <a href="{{ route('rooms.map') }}" class="flex items-center gap-2 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition border-t border-slate-50">
                                 <i class="fas fa-map-marked-alt text-indigo-500 w-4"></i> Map View
                             </a>
+                            <a href="{{ route('rooms.index', ['listing_type' => 'broker']) }}" class="flex items-center gap-2 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition border-t border-slate-50">
+                                <i class="fas fa-building-user text-indigo-500 w-4"></i> Verified Agencies
+                            </a>
                         </div>
                     </div>
 

@@ -96,7 +96,7 @@
                                     <div class="room-owner-row">
                                         @if($room->user?->avatar)<img src="{{ asset('storage/'.$room->user->avatar) }}" alt="{{ $room->user?->name ?? 'Property Lister' }}" loading="lazy">@else<div class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center"><i class="fas fa-user" aria-hidden="true"></i><span class="sr-only">Property lister</span></div>@endif
                                         @if($room->listing_type === 'broker')
-                                            <span>Agent: <strong>{{ $room->user?->agency_name ?: ($room->user?->name ?? 'Verified Agent') }}</strong></span>
+                                            <span>Agent: @if($room->user)<a href="{{ route('agency.show', $room->user) }}" class="font-bold text-indigo-600 hover:text-indigo-800 hover:underline inline-flex items-center gap-1">{{ $room->user->agency_name ?: ($room->user->name ?? 'Verified Agent') }} <i class="fas fa-arrow-up-right-from-square text-[9px]"></i></a>@else<strong>Verified Agent</strong>@endif</span>
                                         @else
                                             <span>Owner: <strong>{{ $room->user?->name ?? 'Verified Owner' }}</strong></span>
                                         @endif

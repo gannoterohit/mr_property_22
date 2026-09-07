@@ -101,12 +101,18 @@
                                 </div>
                             @endif
                             <div class="owner-room-actions">
-                                <a href="{{ route('agent.rooms.show', $property) }}" class="owner-room-btn owner-room-btn-outline">
+                                <a href="{{ route('agent.rooms.show', $property) }}" class="owner-room-btn owner-room-btn-outline" title="Preview listing">
                                     <i class="fas fa-eye"></i> View
                                 </a>
-                                <a href="{{ route('agent.rooms.edit', $property) }}" class="owner-room-btn owner-room-btn-indigo">
+                                <a href="{{ route('agent.rooms.edit', $property) }}" class="owner-room-btn owner-room-btn-indigo" title="Edit details">
                                     <i class="fas fa-pen"></i> Edit
                                 </a>
+                                <form action="{{ route('agent.rooms.duplicate', $property) }}" method="POST" class="inline" onsubmit="return confirm('Clone this listing to quickly add another unit in the same property?');">
+                                    @csrf
+                                    <button type="submit" class="owner-room-btn owner-room-btn-outline" title="Quick clone/duplicate unit">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </form>
                                 @if($property->status === 'active')
                                     <button type="button" onclick="markRoomRented({{ $property->id }})" class="owner-room-btn owner-room-btn-rose owner-room-btn-full">
                                         <i class="fas fa-key"></i> Mark as Rented

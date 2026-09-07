@@ -24,6 +24,11 @@
             @if($broker->broker_verification_status === 'suspended')
                 <form action="{{ route('admin.brokers.activate', $broker) }}" method="POST" class="admin-confirm" data-confirm-title="Activate broker?" data-confirm-button="Yes, activate">@csrf @method('POST')<button type="submit" class="admin-theme-bg inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold shadow-sm"><i class="fas fa-play"></i> Activate</button></form>
             @endif
+            @if($broker->broker_verification_status === 'approved' || $broker->is_broker_active)
+                <a href="{{ route('agency.show', $broker) }}" target="_blank" class="inline-flex items-center gap-2 rounded-xl bg-indigo-50 border border-indigo-200 px-4 py-2.5 text-sm font-bold text-indigo-700 hover:bg-indigo-100 transition shadow-xs">
+                    <i class="fas fa-globe"></i> View Public Agency Page <i class="fas fa-external-link-alt text-xs"></i>
+                </a>
+            @endif
             <a href="{{ route('admin.brokers.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50"><i class="fas fa-arrow-left"></i> Back</a>
         </div>
     </div>
