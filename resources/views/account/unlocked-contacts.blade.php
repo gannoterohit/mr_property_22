@@ -48,8 +48,11 @@
 
                         <div class="unlock-actions">
                             @if($owner->phone)
+                                @php
+                                    $unlockedWaMsg = "Hello " . ($owner->name ?? 'ji') . "! Maine aapka room '" . $room->title . "' dekha hai. Kya yeh room abhi available hai? " . route('rooms.show', $room->id);
+                                @endphp
                                 <a class="call" href="tel:{{ $owner->phone }}"><i class="fas fa-phone"></i> Call</a>
-                                <a class="whatsapp" href="https://wa.me/{{ $whatsappNumber }}" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                                <a class="whatsapp" href="https://wa.me/{{ $whatsappNumber }}?text={{ rawurlencode($unlockedWaMsg) }}" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp</a>
                             @endif
                             <a class="view" href="{{ route('rooms.show', $room) }}"><i class="fas fa-eye"></i> View Room</a>
                         </div>

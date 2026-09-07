@@ -342,34 +342,69 @@
                                 $maskedOwnerPhone = $hasOwnerPhone
                                     ? substr($localPhoneDigits, 0, 2) . str_repeat('*', max(4, strlen($localPhoneDigits) - 4)) . substr($localPhoneDigits, -2)
                                     : '98******42';
+
+                                // WhatsApp expects standard international number (e.g. 919876543210 for India)
+                                $waPhone = $localPhoneDigits;
+                                if (strlen($waPhone) === 10) {
+                                    $waPhone = '91' . $waPhone;
+                                } elseif (strlen($waPhone) === 11 && str_starts_with($waPhone, '0')) {
+                                    $waPhone = '91' . substr($waPhone, 1);
+                                }
+                                $ownerDisplayName = $room->owner?->name ?: ($room->listing_type === 'broker' ? 'Property Agent' : 'Home Owner');
+                                $siteName = \App\Models\Setting::get('website_name', 'RoomRental');
+                                $waPreMessage = "Hello {$ownerDisplayName} ji! Maine aapka room '{$room->title}' {$siteName} par dekha hai. Kya yeh room abhi available hai? Mujhe visit karni hai: " . route('rooms.show', $room->id);
+                                $waLink = "https://wa.me/{$waPhone}?text=" . rawurlencode($waPreMessage);
                             @endphp
                             @if($isUnlocked)
-                                <div class="bg-green-50 border-2 border-green-300 rounded-lg p-3 mb-3">
-                                    <p class="font-bold text-green-800 mb-2 text-sm"><i class="fas fa-unlock-alt mr-1"></i> {{ $room->listing_type === 'broker' ? 'Free Contact' : 'Unlocked' }}</p>
-                                    <div class="space-y-2 text-sm">
-                                        <div>
-                                            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">
-                                                {{ $room->listing_type === 'broker' ? 'Broker Contact' : 'Direct Contact' }}
-                                            </p>
-                                            <div class="flex flex-col gap-2">
-                                                @if($hasOwnerPhone)
-                                                    <a href="tel:{{ $ownerPhoneDigits }}" class="flex items-center justify-center bg-blue-600 text-white font-bold py-2.5 px-4 rounded-xl hover:bg-blue-700 transition shadow-md">
-                                                        <i class="fas fa-phone-alt mr-2"></i> {{ $room->listing_type === 'broker' ? 'Call Broker' : 'Call Owner' }}
-                                                    </a>
-                                                    <div class="rounded-xl border border-blue-200 bg-white px-4 py-3 text-center">
-                                                        <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">{{ $room->listing_type === 'broker' ? 'Broker phone number' : 'Owner phone number' }}</p>
-                                                        <a href="tel:{{ $ownerPhoneDigits }}" class="mt-1 block text-lg font-extrabold tracking-wide text-blue-700">{{ $ownerPhoneRaw }}</a>
-                                                    </div>
-                                                <a href="https://wa.me/{{ $ownerPhoneDigits }}?text={{ rawurlencode('Hi, I am interested in your room: ' . $room->title . ' (' . route('rooms.show', $room->id) . ')') }}"
-                                                   target="_blank"
-                                                   class="flex items-center justify-center bg-green-500 text-white font-bold py-2.5 px-4 rounded-xl hover:bg-green-600 transition shadow-md">
-                                                    <i class="fa-brands fa-whatsapp mr-2 text-lg"></i> WhatsApp Now
+                                <div class="bg-emerald-50/90 border-2 border-emerald-300 rounded-2xl p-4 mb-3 shadow-sm">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-extrabold text-[11px] uppercase tracking-wider shadow-xs">
+                                            <i class="fas fa-unlock-keyhole text-[10px]"></i> {{ $room->listing_type === 'broker' ? 'Broker Contact Unlocked' : 'Owner Contact Unlocked' }}
+                                        </span>
+                                        <span class="text-[11px] font-extrabold text-emerald-700 flex items-center gap-1">
+                                            <i class="fas fa-circle-check text-emerald-600"></i> Verified
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-2.5 text-sm">
+                                        @if($hasOwnerPhone)
+                                            {{-- Display Phone Box --}}
+                                            <div class="rounded-xl border border-emerald-200/80 bg-white p-3 text-center shadow-xs">
+                                                <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                                                    {{ $room->listing_type === 'broker' ? 'Broker Mobile Number' : 'Owner Mobile Number' }}
+                                                </p>
+                                                <a href="tel:{{ $localPhoneDigits }}" class="mt-1 block text-xl font-black tracking-wide text-slate-900 hover:text-emerald-700 transition">
+                                                    {{ $ownerPhoneRaw }}
                                                 </a>
-                                                @else
-                                                    <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-semibold text-amber-800"><i class="fas fa-circle-exclamation mr-1"></i>Phone number not provided by owner</div>
-                                                @endif
+                                                <p class="text-[11px] text-slate-500 mt-0.5 font-medium"><i class="fas fa-user-circle mr-1 text-slate-400"></i>{{ $ownerDisplayName }}</p>
                                             </div>
-                                        </div>
+
+                                            {{-- Direct WhatsApp Connect Button with Pre-filled Message --}}
+                                            <a href="{{ $waLink }}"
+                                               target="_blank"
+                                               rel="noopener"
+                                               class="group flex items-center justify-between bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-extrabold py-3 px-4 rounded-xl shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0">
+                                                <div class="flex items-center gap-2.5">
+                                                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/20 text-white text-xl">
+                                                        <i class="fa-brands fa-whatsapp"></i>
+                                                    </span>
+                                                    <div class="text-left leading-tight">
+                                                        <span class="block text-sm font-black">Chat on WhatsApp</span>
+                                                        <span class="block text-[10px] text-emerald-100 font-semibold">Fast reply · Pre-filled details</span>
+                                                    </div>
+                                                </div>
+                                                <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                                            </a>
+
+                                            {{-- Direct Phone Call Button --}}
+                                            <a href="tel:{{ $localPhoneDigits }}"
+                                               class="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
+                                                <i class="fas fa-phone-alt text-[11px]"></i> Call Directly
+                                            </a>
+                                        @else
+                                            <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-xs font-semibold text-amber-800"><i class="fas fa-circle-exclamation mr-1"></i>Phone number not provided by owner</div>
+                                        @endif
+                                    </div>
                                         
                                         @if($room->listing_type === 'broker')
                                         <div class="mt-4 p-3.5 bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-2xl shadow-sm">
