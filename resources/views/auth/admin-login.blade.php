@@ -29,13 +29,13 @@
 
 @push('styles')
 <style>
-    /* Reset and lock portal atmosphere */
+    /* Clean Light Theme Gateway */
     html, body {
         height: 100%;
         margin: 0;
         padding: 0;
-        background: #090d16 !important;
-        color: #f1f5f9;
+        background: #f8fafc !important;
+        color: #0f172a;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
@@ -46,27 +46,26 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 24px 16px;
+        padding: 28px 16px;
         box-sizing: border-box;
         position: relative;
         overflow: hidden;
         background:
-            radial-gradient(ellipse 70% 50% at 50% -10%, rgba(79, 70, 229, 0.28), transparent 70%),
-            radial-gradient(ellipse 60% 40% at 100% 100%, rgba(37, 99, 235, 0.16), transparent 60%),
-            radial-gradient(ellipse 50% 35% at 0% 100%, rgba(147, 51, 234, 0.12), transparent 50%),
-            #090d16;
+            radial-gradient(circle at 10% 10%, rgba(79, 70, 229, 0.08) 0%, transparent 40%),
+            radial-gradient(circle at 90% 90%, rgba(37, 99, 235, 0.07) 0%, transparent 45%),
+            radial-gradient(circle at 50% 50%, #ffffff 0%, #f1f5f9 100%);
     }
 
-    /* Ambient decorative rings */
+    /* Ambient soft rings */
     .portal-screen::before {
         content: "";
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 760px;
-        height: 760px;
-        border: 1px dashed rgba(255, 255, 255, 0.05);
+        width: 800px;
+        height: 800px;
+        border: 1px dashed #e2e8f0;
         border-radius: 50%;
         pointer-events: none;
     }
@@ -74,25 +73,22 @@
     .portal-card {
         width: 100%;
         max-width: 440px;
-        background: rgba(15, 23, 42, 0.88);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
         border-radius: 24px;
         box-shadow:
-            0 25px 60px -15px rgba(0, 0, 0, 0.7),
-            0 0 0 1px rgba(255, 255, 255, 0.05),
-            0 0 40px rgba(79, 70, 229, 0.15);
-        padding: 36px 30px 30px;
+            0 20px 45px -10px rgba(15, 23, 42, 0.09),
+            0 0 1px rgba(15, 23, 42, 0.05);
+        padding: 38px 32px 32px;
         box-sizing: border-box;
         position: relative;
         z-index: 2;
-        animation: portalFadeIn 0.35s ease-out;
+        animation: portalFadeIn 0.3s ease-out;
     }
 
     @keyframes portalFadeIn {
-        from { opacity: 0; transform: translateY(12px) scale(0.98); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
     }
 
     .portal-badge-wrap {
@@ -102,17 +98,17 @@
     }
 
     .portal-shield-badge {
-        width: 54px;
-        height: 54px;
+        width: 56px;
+        height: 56px;
         border-radius: 16px;
-        background: linear-gradient(135deg, rgba(79, 70, 229, 0.25) 0%, rgba(99, 102, 241, 0.1) 100%);
-        border: 1px solid rgba(129, 140, 248, 0.35);
-        color: #818cf8;
+        background: #eef2ff;
+        border: 1px solid #e0e7ff;
+        color: var(--primary, #4f46e5);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 22px;
-        box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.4);
+        font-size: 24px;
+        box-shadow: 0 4px 14px rgba(79, 70, 229, 0.12);
     }
 
     .portal-header {
@@ -124,33 +120,33 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: #fff;
-        font-size: 20px;
-        font-weight: 800;
+        color: #0f172a;
+        font-size: 22px;
+        font-weight: 850;
         letter-spacing: -0.5px;
         margin-bottom: 4px;
         text-decoration: none;
     }
 
     .portal-brand span {
-        color: #818cf8;
+        color: var(--primary, #4f46e5);
     }
 
     .portal-subtitle {
-        color: #94a3b8;
-        font-size: 12.5px;
+        color: #64748b;
+        font-size: 13px;
         margin: 0;
         font-weight: 500;
         line-height: 1.5;
     }
 
-    /* Steps indicator bar */
+    /* Steps indicator bar (Clean Light Pill) */
     .portal-steps-bar {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        background: rgba(2, 6, 23, 0.55);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        gap: 6px;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
         padding: 5px;
         border-radius: 14px;
         margin-bottom: 24px;
@@ -164,27 +160,27 @@
         padding: 8px 10px;
         border-radius: 10px;
         font-size: 11.5px;
-        font-weight: 700;
+        font-weight: 750;
         transition: all 0.2s ease;
         text-align: center;
         user-select: none;
     }
 
     .portal-step-item.is-active {
-        background: rgba(79, 70, 229, 0.3);
-        border: 1px solid rgba(129, 140, 248, 0.4);
-        color: #e0e7ff;
-        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+        background: #ffffff;
+        border: 1px solid #dbeafe;
+        color: var(--primary, #4f46e5);
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
     }
 
     .portal-step-item.is-done {
-        background: rgba(16, 185, 129, 0.15);
-        border: 1px solid rgba(16, 185, 129, 0.3);
-        color: #6ee7b7;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #059669;
     }
 
     .portal-step-item.is-pending {
-        color: #64748b;
+        color: #94a3b8;
         background: transparent;
     }
 
@@ -199,24 +195,18 @@
         line-height: 1.45;
         margin-bottom: 18px;
         font-weight: 600;
-        animation: portalAlertIn 0.2s ease;
-    }
-
-    @keyframes portalAlertIn {
-        from { opacity: 0; transform: translateY(-4px); }
-        to   { opacity: 1; transform: translateY(0); }
     }
 
     .portal-alert.is-error {
-        background: rgba(239, 68, 68, 0.12);
-        border: 1px solid rgba(239, 68, 68, 0.35);
-        color: #fca5a5;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
     }
 
     .portal-alert.is-success {
-        background: rgba(16, 185, 129, 0.12);
-        border: 1px solid rgba(16, 185, 129, 0.35);
-        color: #6ee7b7;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #15803d;
     }
 
     .portal-alert i {
@@ -227,14 +217,14 @@
 
     /* Form controls */
     .portal-field-group {
-        margin-bottom: 16px;
+        margin-bottom: 18px;
     }
 
     .portal-label {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        color: #cbd5e1;
+        color: #334155;
         font-size: 11px;
         font-weight: 800;
         text-transform: uppercase;
@@ -251,7 +241,7 @@
     .portal-input-icon {
         position: absolute;
         left: 14px;
-        color: #64748b;
+        color: #94a3b8;
         font-size: 13px;
         pointer-events: none;
         transition: color 0.2s ease;
@@ -260,11 +250,11 @@
     .portal-input {
         width: 100%;
         height: 48px;
-        background: rgba(2, 6, 23, 0.65);
-        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        background: #f8fafc;
+        border: 1.5px solid #cbd5e1;
         border-radius: 12px;
         padding: 0 42px 0 40px;
-        color: #f8fafc;
+        color: #0f172a;
         font-size: 14px;
         font-weight: 600;
         box-sizing: border-box;
@@ -274,17 +264,17 @@
     }
 
     .portal-input:focus {
-        border-color: #6366f1;
-        background: rgba(2, 6, 23, 0.9);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.22);
+        border-color: var(--primary, #4f46e5);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
     }
 
     .portal-input:focus ~ .portal-input-icon {
-        color: #818cf8;
+        color: var(--primary, #4f46e5);
     }
 
     .portal-input::placeholder {
-        color: #475569;
+        color: #94a3b8;
         font-weight: 500;
     }
 
@@ -293,7 +283,7 @@
         right: 12px;
         background: transparent;
         border: none;
-        color: #64748b;
+        color: #94a3b8;
         font-size: 13px;
         cursor: pointer;
         padding: 6px;
@@ -305,7 +295,7 @@
     }
 
     .portal-toggle-visibility:hover {
-        color: #cbd5e1;
+        color: #334155;
     }
 
     .portal-checkbox-row {
@@ -320,7 +310,7 @@
     .portal-checkbox-row input {
         width: 16px;
         height: 16px;
-        accent-color: #6366f1;
+        accent-color: var(--primary, #4f46e5);
         border-radius: 4px;
         cursor: pointer;
         margin: 0;
@@ -328,19 +318,19 @@
 
     .portal-checkbox-row span {
         font-size: 12.5px;
-        color: #94a3b8;
-        font-weight: 500;
+        color: #475569;
+        font-weight: 550;
     }
 
     /* Submit Button */
     .portal-submit-btn {
         width: 100%;
         height: 48px;
-        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: var(--primary, #4f46e5);
+        border: none;
         border-radius: 12px;
         color: #ffffff;
-        font-size: 13.5px;
+        font-size: 14px;
         font-weight: 800;
         letter-spacing: 0.02em;
         display: inline-flex;
@@ -348,15 +338,15 @@
         justify-content: center;
         gap: 8px;
         cursor: pointer;
-        box-shadow: 0 10px 22px -5px rgba(79, 70, 229, 0.45);
+        box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.35);
         transition: all 0.2s ease;
-        margin-top: 6px;
+        margin-top: 4px;
     }
 
     .portal-submit-btn:hover {
-        background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+        background: var(--primary-dark, #4338ca);
         transform: translateY(-1px);
-        box-shadow: 0 14px 26px -6px rgba(79, 70, 229, 0.6);
+        box-shadow: 0 12px 24px -5px rgba(79, 70, 229, 0.45);
     }
 
     .portal-submit-btn:active {
@@ -376,7 +366,7 @@
     .portal-card-footer {
         margin-top: 24px;
         padding-top: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid #f1f5f9;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -385,7 +375,7 @@
     }
 
     .portal-link {
-        color: #94a3b8;
+        color: #64748b;
         font-size: 12px;
         font-weight: 600;
         text-decoration: none;
@@ -396,20 +386,20 @@
     }
 
     .portal-link:hover {
-        color: #e0e7ff;
+        color: var(--primary, #4f46e5);
     }
 
     .portal-meta-note {
         font-size: 10.5px;
-        color: #64748b;
-        letter-spacing: 0.04em;
+        color: #94a3b8;
+        letter-spacing: 0.03em;
         display: flex;
         align-items: center;
         gap: 5px;
     }
 
     .portal-meta-note i {
-        font-size: 9px;
+        font-size: 10px;
         color: #10b981;
     }
 
@@ -425,7 +415,7 @@
         }
 
         .portal-brand {
-            font-size: 18px;
+            font-size: 19px;
         }
 
         .portal-steps-bar {
@@ -507,7 +497,7 @@
                 <div class="portal-field-group">
                     <label class="portal-label" for="access_passkey">
                         <span>Security Passkey</span>
-                        <span style="color: #818cf8; font-size: 10px; font-weight: 700;">REQUIRED</span>
+                        <span style="color: var(--primary, #4f46e5); font-size: 10px; font-weight: 800;">REQUIRED</span>
                     </label>
                     <div class="portal-input-box">
                         <i class="fas fa-key portal-input-icon"></i>
@@ -593,7 +583,7 @@
         <!-- Card Footer -->
         <div class="portal-card-footer">
             @if($passkeyValidated)
-                <a href="{{ route('admin.login-access', ['reset_passkey' => 1]) }}" class="portal-link" style="color: #a5b4fc;">
+                <a href="{{ route('admin.login-access', ['reset_passkey' => 1]) }}" class="portal-link" style="color: var(--primary, #4f46e5); font-weight: 700;">
                     <i class="fas fa-rotate-left" style="font-size: 11px;"></i> Re-enter security passkey
                 </a>
             @endif
@@ -603,7 +593,7 @@
             </a>
 
             <div class="portal-meta-note">
-                <i class="fas fa-shield-check"></i>
+                <i class="fas fa-circle-check"></i>
                 <span>256-Bit SSL Encrypted &amp; Monitored</span>
             </div>
         </div>
