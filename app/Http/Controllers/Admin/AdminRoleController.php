@@ -19,7 +19,10 @@ class AdminRoleController extends Controller
 
     public function create()
     {
-        return view('admin.roles.create');
+        return view('admin.roles.create', [
+            'catalog' => config('admin_permissions.catalog'),
+            'existingRoles' => AdminRole::withCount('staff')->orderBy('name')->get(),
+        ]);
     }
 
     public function store(Request $request)

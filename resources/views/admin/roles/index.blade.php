@@ -44,7 +44,7 @@
         </div>
     @endif
 
-    @if($errors->any())
+    @if(isset($errors) && $errors->any())
         <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-bold text-red-700 flex items-center gap-2">
             <i class="fas fa-circle-exclamation text-red-600"></i>{{ $errors->first() }}
         </div>
