@@ -68,6 +68,78 @@ class Room extends Model
     }
 
     /**
+     * Anti-bypass: Detect direct phone numbers or contact phrases in title/description.
+     */
+    public function detectDirectContactInfo(): array
+    {
+        $text = ($this->title ?? '') . ' ' . ($this->description ?? '');
+        $found = [];
+
+        // Match standard 10-digit Indian numbers starting with 6, 7, 8, 9
+        if (preg_match_all('/\b(?:(?:\+|0{0,2})91[\s-]*)?[6-9]\d{9}\b/', $text, $matches)) {
+            foreach ($matches[0] as $m) {
+                $found[] = trim($m);
+            }
+        }
+
+        // Match spaced numbers like 98765 43210 or 9876-543-210
+        if (preg_match_all('/\b[6-9]\d{4}[\s-]\d{5}\b/', $text, $matches)) {
+            foreach ($matches[0] as $m) {
+                $found[] = trim($m);
+            }
+        }
+
+        // Match evasion keywords like "call me at 98...", "whatsapp on 98..."
+        if (preg_match_all('/(?:call|whatsapp|contact|ph(?:one)?|mob(?:ile)?)\s*(?:me|on|at|no|number)?\s*[:=\-]?\s*(\d{5,12})/i', $text, $matches)) {
+            foreach ($matches[0] as $m) {
+                $found[] = trim($m);
+            }
+        }
+
+        $found = array_unique($found);
+
+        return [
+            'flagged' => !empty($found),
+            'count' => count($found),
+            'matches' => array_slice($found, 0, 3),
+        ];
+    }
+
+    /**
+     * Detect suspected duplicate listings in the same city with identical address or title/rent.
+     */
+    public function getSuspectedDuplicates(int $limit = 3)
+    {
+        if (!$this->exists) {
+            return collect();
+        }
+
+        $query = static::where('id', '!=', $this->id);
+
+        if ($this->city) {
+            $query->where('city', $this->city);
+        }
+
+        $cleanAddress = trim((string)$this->address);
+        $cleanTitle = trim((string)$this->title);
+
+        $query->where(function ($q) use ($cleanAddress, $cleanTitle) {
+            if (strlen($cleanAddress) >= 6) {
+                $q->where('address', $cleanAddress);
+            }
+            if (strlen($cleanTitle) >= 6) {
+                $q->orWhere(function ($sq) use ($cleanTitle) {
+                    $sq->where('title', $cleanTitle)
+                       ->where('rent', $this->rent);
+                });
+            }
+        });
+
+        return $query->limit($limit)->get(['id', 'slug', 'title', 'rent', 'city', 'address', 'listing_status', 'user_id', 'created_at']);
+    }
+
+
+    /**
      * Get the route key for the model.
      */
     public function getRouteKeyName()

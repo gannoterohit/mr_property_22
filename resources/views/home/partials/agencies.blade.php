@@ -39,11 +39,19 @@
                     $waLink = !empty($digits) ? "https://wa.me/{$digits}?text=" . rawurlencode($waMsg) : null;
                 @endphp
 
-                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04); transition: transform 0.2s ease, box-shadow 0.2s ease; display: flex; flex-direction: column; justify-content: space-between;"
-                     onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 24px -4px rgba(15, 23, 42, 0.1)';"
-                     onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 12px rgba(15, 23, 42, 0.04)';">
+                <div style="background: #ffffff; border: {{ $agency->is_featured_agency ? '1.5px solid #f59e0b' : '1px solid #e2e8f0' }}; border-radius: 18px; padding: 20px; box-shadow: {{ $agency->is_featured_agency ? '0 6px 18px rgba(245, 158, 11, 0.15)' : '0 4px 12px rgba(15, 23, 42, 0.04)' }}; transition: transform 0.2s ease, box-shadow 0.2s ease; display: flex; flex-direction: column; justify-content: space-between;"
+                     onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='{{ $agency->is_featured_agency ? '0 14px 28px -4px rgba(245, 158, 11, 0.25)' : '0 12px 24px -4px rgba(15, 23, 42, 0.1)' }}';"
+                     onmouseout="this.style.transform='none';this.style.boxShadow='{{ $agency->is_featured_agency ? '0 6px 18px rgba(245, 158, 11, 0.15)' : '0 4px 12px rgba(15, 23, 42, 0.04)' }}';">
                     
                     <div>
+                        @if($agency->is_featured_agency)
+                            <div style="margin-bottom: 12px;">
+                                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; font-size: 10.5px; font-weight: 900; border: 1px solid #fcd34d; box-shadow: 0 1px 3px rgba(245, 158, 11, 0.2);">
+                                    <i class="fas fa-crown text-amber-600 text-[10px]"></i> Featured Agency
+                                </span>
+                            </div>
+                        @endif
+
                         {{-- Top Agency Header --}}
                         <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
                             <div style="position: relative; width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 22px; font-weight: 900; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25); flex-shrink: 0; overflow: hidden;">
@@ -79,10 +87,11 @@
                                 </span>
                             </div>
                             <div>
-                                <span style="display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.04em;">Status</span>
-                                <span style="display: flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 800; color: #d97706; margin-top: 2px;">
-                                    <i class="fas fa-award text-amber-500 text-xs"></i>
-                                    KYC Verified
+                                <span style="display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.04em;">Rating</span>
+                                <span style="display: flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 900; color: #d97706; margin-top: 2px;">
+                                    <i class="fas fa-star text-amber-500 text-xs"></i>
+                                    {{ number_format($agency->broker_rating ?: 5.0, 1) }}
+                                    <span style="font-size: 10.5px; font-weight: 600; color: #64748b;">({{ $agency->broker_reviews_count }})</span>
                                 </span>
                             </div>
                         </div>

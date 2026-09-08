@@ -48,6 +48,7 @@ Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show')
 Route::get('/map-search', [MapSearchController::class, 'index'])->name('rooms.map');
 Route::get('/agencies', [\App\Http\Controllers\AgencyController::class, 'index'])->name('agencies.index');
 Route::get('/agency/{user}', [\App\Http\Controllers\AgencyController::class, 'show'])->name('agency.show');
+Route::post('/agency/{user}/reviews', [\App\Http\Controllers\AgencyController::class, 'storeReview'])->name('agency.review.store');
 
 // Role-specific route modules
 require __DIR__.'/admin.php';

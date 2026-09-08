@@ -43,6 +43,11 @@
                             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-extrabold border border-emerald-500/30">
                                 <i class="fas fa-certificate text-[10px]"></i> Verified Agent
                             </span>
+                            @if($user->is_featured_agency)
+                                <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 text-slate-950 text-xs font-black shadow-md border border-amber-300">
+                                    <i class="fas fa-crown text-amber-900 text-xs"></i> Featured Spotlight
+                                </span>
+                            @endif
                         </div>
 
                         <p class="text-slate-300 text-xs md:text-sm font-medium flex flex-wrap items-center gap-x-4 gap-y-1">
@@ -107,10 +112,14 @@
                     <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Verified Partner</span>
                     <span class="text-sm font-extrabold text-emerald-400 mt-0.5 block"><i class="fas fa-shield-halved mr-1"></i>KYC Approved</span>
                 </div>
-                <div class="p-3 rounded-xl bg-white/5 border border-white/10">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Brokerage Model</span>
-                    <span class="text-sm font-extrabold text-amber-400 mt-0.5 block">Transparent / Regulated</span>
-                </div>
+                <a href="#reviews-section" class="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition block group">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Client Trust Rating</span>
+                    <span class="text-sm font-black text-amber-400 mt-0.5 flex items-center gap-1">
+                        <i class="fas fa-star text-amber-400 text-xs"></i>
+                        <span>{{ number_format($avgRating, 1) }}</span>
+                        <span class="text-slate-300 text-[11px] font-medium ml-1 group-hover:text-white transition">({{ $totalReviewsCount }} {{ Str::plural('Review', $totalReviewsCount) }})</span>
+                    </span>
+                </a>
             </div>
         </div>
     </div>
@@ -249,6 +258,228 @@
         @endif
     </div>
 
+    {{-- Ratings & Reviews Section --}}
+    <div id="reviews-section" class="container mx-auto max-w-6xl px-4 mt-12">
+        <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm">
+            @if(session('success'))
+                <div class="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-bold flex items-center gap-3">
+                    <i class="fas fa-circle-check text-emerald-500 text-lg"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-bold flex items-center gap-3">
+                    <i class="fas fa-circle-exclamation text-rose-500 text-lg"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-8 pb-6 border-b border-slate-100">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-xl md:text-2xl font-black text-slate-900">Ratings & Client Reviews</h2>
+                        <span class="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-xs font-black border border-amber-200">
+                            ★ {{ number_format($avgRating, 1) }}
+                        </span>
+                    </div>
+                    <p class="text-xs md:text-sm text-slate-500 mt-0.5">Authentic feedback from verified tenants and property seekers.</p>
+                </div>
+
+                <div class="text-xs text-slate-400 font-semibold flex items-center gap-1.5">
+                    <i class="fas fa-shield-check text-emerald-500"></i>
+                    <span>Verified Reviews System</span>
+                </div>
+            </div>
+
+            {{-- Breakdown & Review Form Grid --}}
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-10">
+                {{-- Left: Rating Breakdown (5 cols) --}}
+                <div class="lg:col-span-5 bg-slate-50/80 rounded-2xl p-6 border border-slate-100">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div class="text-center shrink-0">
+                            <span class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight block">{{ number_format($avgRating, 1) }}</span>
+                            <div class="flex items-center justify-center gap-0.5 text-amber-400 text-sm mt-1">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= floor($avgRating))
+                                        <i class="fas fa-star"></i>
+                                    @elseif($i - 0.5 <= $avgRating)
+                                        <i class="fas fa-star-half-stroke"></i>
+                                    @else
+                                        <i class="far fa-star text-slate-300"></i>
+                                    @endif
+                                @endfor
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-400 block mt-1">
+                                {{ $totalReviewsCount }} {{ Str::plural('Review', $totalReviewsCount) }}
+                            </span>
+                        </div>
+
+                        <div class="flex-1 space-y-1.5 border-l border-slate-200/80 pl-4">
+                            @foreach([5, 4, 3, 2, 1] as $star)
+                                @php
+                                    $count = $ratingCounts[$star] ?? 0;
+                                    $pct = $totalReviewsCount > 0 ? round(($count / $totalReviewsCount) * 100) : 0;
+                                @endphp
+                                <div class="flex items-center gap-2 text-xs">
+                                    <span class="w-7 text-[11px] font-bold text-slate-600 shrink-0">{{ $star }} ★</span>
+                                    <div class="flex-1 h-2 rounded-full bg-slate-200 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500" style="width: {{ $pct }}%;"></div>
+                                    </div>
+                                    <span class="w-6 text-[10px] font-bold text-slate-400 text-right shrink-0">{{ $count }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200/60 text-[11px] text-slate-500 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-indigo-500 shrink-0"></i>
+                        <span>Reviews are monitored to prevent fake or incentivized ratings.</span>
+                    </div>
+                </div>
+
+                {{-- Right: Submit Review Form / Login CTA (7 cols) --}}
+                <div class="lg:col-span-7 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+                    @auth
+                        @if(auth()->id() === $user->id)
+                            <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                                <i class="fas fa-user-shield text-slate-400 text-2xl mb-2"></i>
+                                <h4 class="text-sm font-bold text-slate-800">Agency Owner Notice</h4>
+                                <p class="text-xs text-slate-500 mt-1">You are viewing your own agency profile. You cannot review your own business.</p>
+                            </div>
+                        @else
+                            <form action="{{ route('agency.review.store', $user) }}" method="POST" id="agency-review-form">
+                                @csrf
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-extrabold text-slate-900 text-base">
+                                        {{ $userExistingReview ? 'Update Your Review' : 'Rate & Review this Agency' }}
+                                    </h3>
+                                    @if($userExistingReview)
+                                        <span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-[11px] font-bold">
+                                            Previously Reviewed
+                                        </span>
+                                    @endif
+                                </div>
+
+                                {{-- Star Rating Picker --}}
+                                <div class="mb-4">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1.5">Select Rating <span class="text-rose-500">*</span></label>
+                                    <div class="flex items-center gap-2" id="star-rating-picker">
+                                        @php $currentRating = old('rating', $userExistingReview->rating ?? 5); @endphp
+                                        <input type="hidden" name="rating" id="review-rating-input" value="{{ $currentRating }}">
+                                        <div class="flex items-center gap-1 cursor-pointer">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <button type="button" class="star-btn text-2xl transition transform hover:scale-110 focus:outline-none {{ $i <= $currentRating ? 'text-amber-400' : 'text-slate-300' }}" data-value="{{ $i }}" title="{{ $i }} Star{{ $i > 1 ? 's' : '' }}">
+                                                    ★
+                                                </button>
+                                            @endfor
+                                        </div>
+                                        <span id="rating-label-text" class="text-xs font-black text-slate-700 ml-2">
+                                            {{ $currentRating }} out of 5 Stars
+                                        </span>
+                                    </div>
+                                    @error('rating')
+                                        <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                {{-- Comment Textarea --}}
+                                <div class="mb-4">
+                                    <label for="review-comment" class="block text-xs font-bold text-slate-600 mb-1.5">
+                                        Your Experience / Feedback <span class="text-slate-400 font-normal">(Optional)</span>
+                                    </label>
+                                    <textarea name="comment" id="review-comment" rows="3" maxlength="1000"
+                                              placeholder="Share how prompt they were, broker fee clarity, property visit experience..."
+                                              class="w-full rounded-xl border-slate-200 text-sm focus:border-indigo-500 focus:ring-indigo-500 placeholder-slate-400 p-3">{{ old('comment', $userExistingReview->comment ?? '') }}</textarea>
+                                    @error('comment')
+                                        <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="flex items-center justify-between pt-2">
+                                    <span class="text-[11px] text-slate-400">Reviews are published publicly.</span>
+                                    <button type="submit"
+                                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs shadow-md transition transform active:scale-95">
+                                        <i class="fas fa-paper-plane text-xs"></i>
+                                        <span>{{ $userExistingReview ? 'Update Review' : 'Post Review' }}</span>
+                                    </button>
+                                </div>
+                            </form>
+                        @endif
+                    @else
+                        <div class="p-6 rounded-2xl bg-gradient-to-br from-indigo-50/70 to-purple-50/70 border border-indigo-100/80 text-center">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+                                <i class="fas fa-star text-lg"></i>
+                            </div>
+                            <h4 class="text-base font-extrabold text-slate-900 mb-1">Rented or Visited with {{ $agencyName }}?</h4>
+                            <p class="text-xs text-slate-600 max-w-md mx-auto mb-4">
+                                Log in to share your genuine feedback, site visit experience, and rate this agency to help other tenants.
+                            </p>
+                            <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white text-xs font-black shadow-md transition">
+                                <i class="fas fa-right-to-bracket text-xs"></i>
+                                <span>Log In to Leave a Review</span>
+                            </a>
+                        </div>
+                    @endauth
+                </div>
+            </div>
+
+            {{-- Recent Reviews List --}}
+            <div class="pt-6 border-t border-slate-100">
+                <h3 class="text-base font-black text-slate-900 mb-4 flex items-center justify-between">
+                    <span>Recent Client Reviews ({{ $totalReviewsCount }})</span>
+                </h3>
+
+                @if($recentReviews->count() > 0)
+                    <div class="space-y-4">
+                        @foreach($recentReviews as $rev)
+                            <div class="p-4 md:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/70 hover:border-slate-300 transition flex flex-col gap-3">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-800 to-indigo-900 text-white font-black text-sm flex items-center justify-center shadow-xs shrink-0">
+                                            @if($rev->user && $rev->user->avatar)
+                                                <img src="{{ asset('storage/' . $rev->user->avatar) }}" alt="{{ $rev->user->name }}" class="w-full h-full rounded-full object-cover">
+                                            @else
+                                                {{ strtoupper(substr($rev->user->name ?? 'User', 0, 1)) }}
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-extrabold text-sm text-slate-900">{{ $rev->user->name ?? 'Verified Tenant' }}</span>
+                                                <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                                                    <i class="fas fa-check-circle text-[9px] mr-0.5"></i> Verified
+                                                </span>
+                                            </div>
+                                            <span class="text-[11px] text-slate-400 block">{{ $rev->created_at ? $rev->created_at->diffForHumans() : 'Recently' }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-1 text-amber-400 text-xs">
+                                        @for($s = 1; $s <= 5; $s++)
+                                            <i class="{{ $s <= $rev->rating ? 'fas' : 'far text-slate-300' }} fa-star"></i>
+                                        @endfor
+                                        <span class="font-black text-slate-700 ml-1 text-xs">{{ $rev->rating }}.0</span>
+                                    </div>
+                                </div>
+
+                                @if($rev->comment)
+                                    <p class="text-xs md:text-sm text-slate-700 leading-relaxed pl-13">
+                                        "{{ $rev->comment }}"
+                                    </p>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8 px-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                        <i class="fas fa-comment-dots text-slate-300 text-3xl mb-2"></i>
+                        <h4 class="text-sm font-bold text-slate-700">No client reviews yet</h4>
+                        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Be the first client or tenant to rate {{ $agencyName }} and share your feedback!</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
     {{-- Floating Toast Notification --}}
     <div id="agency-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transform transition-all duration-300 opacity-0 pointer-events-none translate-y-4">
         <div class="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-slate-950/95 text-white shadow-2xl backdrop-blur-md border border-white/10 text-xs font-bold">
@@ -259,6 +490,49 @@
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    var starBtns = document.querySelectorAll('.star-btn');
+    var ratingInput = document.getElementById('review-rating-input');
+    var ratingLabel = document.getElementById('rating-label-text');
+
+    if (starBtns.length && ratingInput) {
+        function updateStars(val) {
+            starBtns.forEach(function(btn) {
+                var btnVal = parseInt(btn.getAttribute('data-value'));
+                if (btnVal <= val) {
+                    btn.classList.remove('text-slate-300');
+                    btn.classList.add('text-amber-400');
+                } else {
+                    btn.classList.remove('text-amber-400');
+                    btn.classList.add('text-slate-300');
+                }
+            });
+            if (ratingLabel) {
+                ratingLabel.textContent = val + ' out of 5 Stars';
+            }
+        }
+
+        starBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var val = parseInt(this.getAttribute('data-value'));
+                ratingInput.value = val;
+                updateStars(val);
+            });
+            btn.addEventListener('mouseenter', function() {
+                var val = parseInt(this.getAttribute('data-value'));
+                updateStars(val);
+            });
+        });
+
+        var pickerContainer = document.getElementById('star-rating-picker');
+        if (pickerContainer) {
+            pickerContainer.addEventListener('mouseleave', function() {
+                var currentVal = parseInt(ratingInput.value) || 5;
+                updateStars(currentVal);
+            });
+        }
+    }
+});
 function shareAgencyProfile() {
     var shareUrl = window.location.href;
     var shareTitle = @json($agencyName . ' - Verified Agency Profile');

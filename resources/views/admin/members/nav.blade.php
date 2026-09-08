@@ -4,6 +4,7 @@
         ['admin.users','admin.users*','fa-users','Users'],
         ['admin.owners','admin.owners*','fa-user-tie','Owners'],
         ['admin.brokers.index','admin.brokers*','fa-handshake','Brokers'],
+        ['admin.broker-reviews.index','admin.broker-reviews*','fa-star','Broker Reviews'],
     ] as [$routeName,$match,$icon,$label])
         <a href="{{ route($routeName) }}" class="inline-flex min-w-max items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-extrabold transition {{ request()->routeIs($match) ? 'admin-theme-bg' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
             <i class="fas {{ $icon }}"></i>{{ $label }}

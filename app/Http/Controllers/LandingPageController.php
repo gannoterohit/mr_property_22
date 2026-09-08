@@ -211,6 +211,8 @@ class LandingPageController extends Controller
         });
 
         $topAgencies = FacadesCache::remember('home.top_agencies.' . md5($cityContext['activeCityName'] ?? 'all'), 600, function () use ($cityContext) {
+            User::cleanupExpiredFeaturedAgencies();
+
             $query = User::where('role', 'broker')
                 ->where('is_broker_active', true)
                 ->withCount([
@@ -218,6 +220,7 @@ class LandingPageController extends Controller
                         $q->publicVisible();
                     }
                 ])
+                ->orderByDesc('is_featured_agency')
                 ->orderByDesc('active_rooms_count')
                 ->take(6);
 
@@ -241,6 +244,7 @@ class LandingPageController extends Controller
                             $q->publicVisible();
                         }
                     ])
+                    ->orderByDesc('is_featured_agency')
                     ->orderByDesc('active_rooms_count')
                     ->take(6)
                     ->get();

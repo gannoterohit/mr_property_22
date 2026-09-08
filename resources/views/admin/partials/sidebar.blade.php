@@ -13,6 +13,7 @@
             ['route' => 'admin.members.index', 'match' => 'admin.members.index', 'icon' => 'fa-magnifying-glass-chart', 'label' => 'Member 360'],
             ['route' => 'admin.owners', 'match' => 'admin.owners*', 'icon' => 'fa-user-tie', 'label' => 'Owners'],
             ['route' => 'admin.brokers.index', 'match' => 'admin.brokers*', 'icon' => 'fa-handshake', 'label' => 'Brokers'],
+            ['route' => 'admin.broker-reviews.index', 'match' => 'admin.broker-reviews*', 'icon' => 'fa-star', 'label' => 'Broker Reviews'],
             ['route' => 'admin.users', 'match' => 'admin.users*', 'icon' => 'fa-users', 'label' => 'Users'],
         ]],
         'support' => ['label' => 'Support & Push', 'icon' => 'fa-headset', 'items' => [
@@ -57,6 +58,8 @@
     $unreadContactCount = \App\Models\AdminNotification::where('type', 'contact_inquiry')->where('is_read', false)->count();
     $unreadRoomsCount = \App\Models\AdminNotification::where('type', 'room_posted')->where('is_read', false)->count();
     $unreadComplaintsCount = \App\Models\AdminNotification::where('type', 'complaint_submitted')->where('is_read', false)->count();
+    $pendingBrokersCount = \App\Models\User::where('role', 'broker')->where('broker_verification_status', 'pending')->count();
+    $pendingReviewsCount = \Illuminate\Support\Facades\Schema::hasTable('broker_reviews') ? \App\Models\BrokerReview::where('status', 'pending')->count() : 0;
 @endphp
 
 <button id="adminSidebarOpen" class="admin-theme-avatar lg:hidden fixed top-3 left-3 z-[70] w-10 h-10 rounded-xl shadow-lg" aria-label="Open admin menu"><i class="fas fa-bars"></i></button>
@@ -119,11 +122,13 @@
             @endphp
             @continue($groupItems->isEmpty())
             @php
-                $groupBadgeCount = collect($group['items'])->sum(function($item) use ($unreadContactCount, $unreadRoomsCount, $unreadComplaintsCount) {
+                $groupBadgeCount = collect($group['items'])->sum(function($item) use ($unreadContactCount, $unreadRoomsCount, $unreadComplaintsCount, $pendingBrokersCount, $pendingReviewsCount) {
                     return match($item['route']) {
                         'admin.contact-messages.index' => $unreadContactCount,
                         'admin.all-rooms' => $unreadRoomsCount,
                         'admin.complaints.index' => $unreadComplaintsCount,
+                        'admin.brokers.index' => $pendingBrokersCount,
+                        'admin.broker-reviews.index' => $pendingReviewsCount,
                         default => 0,
                     };
                 });
@@ -151,6 +156,8 @@
                                 'admin.contact-messages.index' => $unreadContactCount,
                                 'admin.all-rooms' => $unreadRoomsCount,
                                 'admin.complaints.index' => $unreadComplaintsCount,
+                                'admin.brokers.index' => $pendingBrokersCount,
+                                'admin.broker-reviews.index' => $pendingReviewsCount,
                                 default => 0,
                             };
                         @endphp

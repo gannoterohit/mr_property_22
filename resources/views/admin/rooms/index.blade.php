@@ -141,6 +141,22 @@
                                     <div class="min-w-0">
                                         <a href="{{ route('admin.rooms.show',$room) }}" class="admin-theme-text block max-w-[220px] truncate text-xs font-bold">{{ $room->title }}</a>
                                         <p class="text-[10px] text-slate-400">#{{ $room->id }} - {{ $room->roomTypeOption?->label??'Property' }}</p>
+                                        @php
+                                            $cCheck = $room->detectDirectContactInfo();
+                                            $dups = $room->getSuspectedDuplicates(1);
+                                        @endphp
+                                        <div class="flex items-center gap-1 flex-wrap mt-0.5">
+                                            @if($cCheck['flagged'])
+                                                <span class="inline-flex items-center gap-1 rounded bg-rose-50 px-1.5 py-0.5 text-[9px] font-extrabold text-rose-700 border border-rose-200" title="Direct phone number detected in listing: {{ implode(', ', $cCheck['matches']) }}">
+                                                    <i class="fas fa-phone-slash text-rose-600 text-[8px]"></i> Phone Flagged
+                                                </span>
+                                            @endif
+                                            @if($dups->isNotEmpty())
+                                                <a href="{{ route('admin.rooms.show', $dups->first()->slug ?: $dups->first()->id) }}" target="_blank" class="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[9px] font-extrabold text-amber-700 border border-amber-200 hover:bg-amber-100 transition" title="Suspected duplicate with Room #{{ $dups->first()->id }}">
+                                                    <i class="fas fa-copy text-amber-600 text-[8px]"></i> Dup #{{ $dups->first()->id }}
+                                                </a>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </td>

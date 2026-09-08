@@ -34,54 +34,79 @@ class AdminController extends Controller
             'content_manage' => $allowed('content.manage'), 'reports_manage' => $allowed('reports.manage'),
             'brokers' => $allowed('brokers.view'), 'brokers_manage' => $allowed('brokers.manage'),
         ];
-        $data = ['access' => $access, 'actionQueues' => [], 'quickLinks' => [], 'revenueData' => array_fill(0, 12, 0)];
+        $data = ['access' => $access, 'revenueData' => array_fill(0, 12, 0)];
+        $actionQueues = [];
+        $quickLinks = [];
 
         if ($access['listings']) {
-            $data += [
+            $pendingRooms = Room::where('listing_status', 'pending')->count();
+            $data = array_merge($data, [
                 'rooms' => Room::where('listing_fee_paid', true)->count(),
                 'activeRooms' => Room::where('status', 'active')->where('listing_fee_paid', true)->count(),
                 'approvedRooms' => Room::where('listing_status', 'approved')->count(),
-                'pendingRooms' => Room::where('listing_status', 'pending')->count(),
+                'pendingRooms' => $pendingRooms,
                 'rejectedRooms' => Room::where('listing_status', 'rejected')->count(),
                 'recentRooms' => Room::with('owner')->latest()->limit(5)->get(),
-            ];
-            $data['actionQueues'][] = ['label' => 'Pending room approvals', 'count' => $data['pendingRooms'], 'route' => route('admin.all-rooms', ['listing_status' => 'pending']), 'icon' => 'fa-house-circle-exclamation'];
-            $data['quickLinks'][] = ['label' => 'All listings', 'route' => route('admin.all-rooms'), 'icon' => 'fa-building'];
+            ]);
+            $actionQueues[] = ['label' => 'Pending room approvals', 'count' => $pendingRooms, 'route' => route('admin.all-rooms', ['listing_status' => 'pending']), 'icon' => 'fa-house-circle-exclamation'];
+            $quickLinks[] = ['label' => 'All listings', 'route' => route('admin.all-rooms'), 'icon' => 'fa-building'];
             if ($access['listings_manage']) {
-                $data['quickLinks'][] = ['label' => 'Add room', 'route' => route('admin.rooms.create'), 'icon' => 'fa-plus'];
+                $quickLinks[] = ['label' => 'Add room', 'route' => route('admin.rooms.create'), 'icon' => 'fa-plus'];
             }
         }
         if ($access['people']) {
-            $data += [
+            $data = array_merge($data, [
                 'users' => User::where('role', 'user')->count(),
                 'owners' => User::where('role', 'owner')->count(),
                 'recentUsers' => User::where('role', 'user')->latest()->limit(5)->get(),
                 'recentOwners' => User::where('role', 'owner')->withCount('rooms')->latest()->limit(5)->get(),
-            ];
-            $data['actionQueues'][] = ['label' => 'Pending owner KYC', 'count' => User::where('role', 'owner')->where('verification_status', 'pending')->count(), 'route' => route('admin.owners', ['verification_status' => 'pending']), 'icon' => 'fa-id-card'];
-            $data['quickLinks'][] = ['label' => 'Users & owners', 'route' => route('admin.members.index'), 'icon' => 'fa-users'];
+            ]);
+            $actionQueues[] = ['label' => 'Pending owner KYC', 'count' => User::where('role', 'owner')->where('verification_status', 'pending')->count(), 'route' => route('admin.owners', ['verification_status' => 'pending']), 'icon' => 'fa-id-card'];
+            $quickLinks[] = ['label' => 'Users & owners', 'route' => route('admin.members.index'), 'icon' => 'fa-users'];
             if ($access['people_manage']) {
-                $data['quickLinks'][] = ['label' => 'Add owner', 'route' => route('admin.owners.create'), 'icon' => 'fa-user-plus'];
+                $quickLinks[] = ['label' => 'Add owner', 'route' => route('admin.owners.create'), 'icon' => 'fa-user-plus'];
             }
         }
         if ($access['brokers']) {
-            $data += [
+            $pendingBrokers = User::where('role', 'broker')->where('broker_verification_status', 'pending')->count();
+            $data = array_merge($data, [
                 'brokers' => User::where('role', 'broker')->count(),
-                'pendingBrokers' => User::where('role', 'broker')->where('broker_verification_status', 'pending')->count(),
+                'pendingBrokers' => $pendingBrokers,
                 'approvedBrokers' => User::where('role', 'broker')->where('broker_verification_status', 'approved')->count(),
                 'recentBrokers' => User::where('role', 'broker')->latest()->limit(5)->get(),
-            ];
-            $data['actionQueues'][] = ['label' => 'Pending broker verification', 'count' => $data['pendingBrokers'], 'route' => route('admin.brokers.index', ['verification_status' => 'pending']), 'icon' => 'fa-user-tie'];
-            $data['quickLinks'][] = ['label' => 'Brokers', 'route' => route('admin.brokers.index'), 'icon' => 'fa-user-tie'];
+            ]);
+            $actionQueues[] = ['label' => 'Pending broker verification', 'count' => $pendingBrokers, 'route' => route('admin.brokers.index', ['verification_status' => 'pending']), 'icon' => 'fa-user-tie'];
+            $pendingReviews = \App\Models\BrokerReview::where('status', 'pending')->count();
+            if ($pendingReviews > 0) {
+                $actionQueues[] = ['label' => 'Pending broker reviews', 'count' => $pendingReviews, 'route' => route('admin.broker-reviews.index', ['status' => 'pending']), 'icon' => 'fa-star'];
+            }
+            $expiringSpotlights = User::where('role', 'broker')
+                ->where('is_featured_agency', true)
+                ->whereNotNull('featured_agency_expires_at')
+                ->whereBetween('featured_agency_expires_at', [now(), now()->addDays(7)])
+                ->get(['id', 'name', 'agency_name', 'phone', 'featured_agency_expires_at']);
+            $data['expiringSpotlights'] = $expiringSpotlights;
+            if ($expiringSpotlights->isNotEmpty()) {
+                $actionQueues[] = [
+                    'label' => 'Spotlights expiring in 7 days',
+                    'count' => $expiringSpotlights->count(),
+                    'route' => route('admin.brokers.index', ['featured' => '1']),
+                    'icon' => 'fa-crown'
+                ];
+            }
+            $quickLinks[] = ['label' => 'Brokers', 'route' => route('admin.brokers.index'), 'icon' => 'fa-user-tie'];
+            $quickLinks[] = ['label' => 'Broker Reviews', 'route' => route('admin.broker-reviews.index'), 'icon' => 'fa-star'];
         }
         if ($access['support']) {
-            $data['openComplaints'] = \App\Models\Complaint::whereNotIn('status', ['resolved', 'rejected', 'closed'])->count();
-            $data['unreadContacts'] = \App\Models\ContactMessage::where('is_read', false)->count();
+            $openComplaints = \App\Models\Complaint::whereNotIn('status', ['resolved', 'rejected', 'closed'])->count();
+            $unreadContacts = \App\Models\ContactMessage::where('is_read', false)->count();
+            $data['openComplaints'] = $openComplaints;
+            $data['unreadContacts'] = $unreadContacts;
             $data['recentComplaints'] = \App\Models\Complaint::with('assignee:id,name')->latest()->limit(5)->get();
-            $data['actionQueues'][] = ['label' => 'Unresolved complaints', 'count' => $data['openComplaints'], 'route' => route('admin.complaints.index', ['status' => 'open']), 'icon' => 'fa-shield-halved'];
-            $data['actionQueues'][] = ['label' => 'Unread contact enquiries', 'count' => $data['unreadContacts'], 'route' => route('admin.contact-messages.index'), 'icon' => 'fa-envelope'];
-            $data['quickLinks'][] = ['label' => 'Support tickets', 'route' => route('admin.complaints.index'), 'icon' => 'fa-headset'];
-            $data['quickLinks'][] = ['label' => 'Contact enquiries', 'route' => route('admin.contact-messages.index'), 'icon' => 'fa-envelope'];
+            $actionQueues[] = ['label' => 'Unresolved complaints', 'count' => $openComplaints, 'route' => route('admin.complaints.index', ['status' => 'open']), 'icon' => 'fa-shield-halved'];
+            $actionQueues[] = ['label' => 'Unread contact enquiries', 'count' => $unreadContacts, 'route' => route('admin.contact-messages.index'), 'icon' => 'fa-envelope'];
+            $quickLinks[] = ['label' => 'Support tickets', 'route' => route('admin.complaints.index'), 'icon' => 'fa-headset'];
+            $quickLinks[] = ['label' => 'Contact enquiries', 'route' => route('admin.contact-messages.index'), 'icon' => 'fa-envelope'];
         }
         if ($access['finance']) {
             $types = ['listing', 'featured', 'unlock', 'subscription'];
@@ -93,23 +118,23 @@ class AdminController extends Controller
             $currentMonthEarnings = (clone $completed)->whereYear('created_at', now()->year)->whereMonth('created_at', now()->month)->sum('amount') + (clone $brokerCompleted)->whereYear('created_at', now()->year)->whereMonth('created_at', now()->month)->sum('amount');
             $lastMonthEarnings = (clone $completed)->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->sum('amount') + (clone $brokerCompleted)->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->sum('amount');
 
-            $data += [
+            $data = array_merge($data, [
                 'totalEarnings' => $totalEarnings,
                 'todayEarnings' => $todayEarnings,
                 'currentMonthEarnings' => $currentMonthEarnings,
                 'lastMonthEarnings' => $lastMonthEarnings,
                 'recentPayments' => Payment::with('user')->latest()->limit(5)->get(),
-            ];
+            ]);
             $monthSql = DB::getDriverName() === 'sqlite' ? "CAST(strftime('%m', created_at) AS INTEGER)" : 'MONTH(created_at)';
             $monthly = (clone $completed)->selectRaw("{$monthSql} month, SUM(amount) total")->whereYear('created_at', now()->year)->groupByRaw($monthSql)->pluck('total', 'month');
             $brokerMonthly = (clone $brokerCompleted)->selectRaw("{$monthSql} month, SUM(amount) total")->whereYear('created_at', now()->year)->groupByRaw($monthSql)->pluck('total', 'month');
             $data['revenueData'] = collect(range(1, 12))->map(fn ($month) => (float) (($monthly[$month] ?? 0) + ($brokerMonthly[$month] ?? 0)))->all();
-            $data['percentageChange'] = $data['lastMonthEarnings'] > 0 ? (($data['currentMonthEarnings'] - $data['lastMonthEarnings']) / $data['lastMonthEarnings']) * 100 : 0;
-            $data['actionQueues'][] = ['label' => 'Failed / pending payments', 'count' => Payment::whereIn('status', ['failed', 'pending'])->count() + \App\Models\BrokerPayment::whereIn('status', ['failed', 'pending'])->count(), 'route' => route('admin.payments.index', ['status' => 'pending']), 'icon' => 'fa-credit-card'];
-            $data['quickLinks'][] = ['label' => 'Payments', 'route' => route('admin.payments.index'), 'icon' => 'fa-credit-card'];
-            $data['quickLinks'][] = ['label' => 'Plans', 'route' => route('admin.plans.index'), 'icon' => 'fa-tags'];
+            $data['percentageChange'] = $lastMonthEarnings > 0 ? (($currentMonthEarnings - $lastMonthEarnings) / $lastMonthEarnings) * 100 : 0;
+            $actionQueues[] = ['label' => 'Failed / pending payments', 'count' => Payment::whereIn('status', ['failed', 'pending'])->count() + \App\Models\BrokerPayment::whereIn('status', ['failed', 'pending'])->count(), 'route' => route('admin.payments.index', ['status' => 'pending']), 'icon' => 'fa-credit-card'];
+            $quickLinks[] = ['label' => 'Payments', 'route' => route('admin.payments.index'), 'icon' => 'fa-credit-card'];
+            $quickLinks[] = ['label' => 'Plans', 'route' => route('admin.plans.index'), 'icon' => 'fa-tags'];
             if ($access['finance_manage']) {
-                $data['quickLinks'][] = ['label' => 'Payments', 'route' => route('admin.payments.index'), 'icon' => 'fa-credit-card'];
+                $quickLinks[] = ['label' => 'Payments', 'route' => route('admin.payments.index'), 'icon' => 'fa-credit-card'];
             }
         }
         if ($access['content']) {
@@ -121,27 +146,57 @@ class AdminController extends Controller
                 'how_it_works' => \App\Models\HowItWorksItem::count(),
                 'testimonials' => \App\Models\Testimonial::count(),
             ];
-            $data['quickLinks'][] = ['label' => 'Blogs', 'route' => route('admin.blogs.index'), 'icon' => 'fa-newspaper'];
-            $data['quickLinks'][] = ['label' => 'Offers', 'route' => route('admin.offers.index'), 'icon' => 'fa-bullhorn'];
-            $data['quickLinks'][] = ['label' => 'Why Choose Us', 'route' => route('admin.home-features.index'), 'icon' => 'fa-circle-check'];
-            $data['quickLinks'][] = ['label' => 'How It Works', 'route' => route('admin.how-it-works.index'), 'icon' => 'fa-route'];
-            $data['quickLinks'][] = ['label' => 'Testimonials', 'route' => route('admin.testimonials.index'), 'icon' => 'fa-star'];
+            $quickLinks[] = ['label' => 'Blogs', 'route' => route('admin.blogs.index'), 'icon' => 'fa-newspaper'];
+            $quickLinks[] = ['label' => 'Offers', 'route' => route('admin.offers.index'), 'icon' => 'fa-bullhorn'];
+            $quickLinks[] = ['label' => 'Why Choose Us', 'route' => route('admin.home-features.index'), 'icon' => 'fa-circle-check'];
+            $quickLinks[] = ['label' => 'How It Works', 'route' => route('admin.how-it-works.index'), 'icon' => 'fa-route'];
+            $quickLinks[] = ['label' => 'Testimonials', 'route' => route('admin.testimonials.index'), 'icon' => 'fa-star'];
         }
         if ($access['reports']) {
             $data['reportStats'] = ['searches_today' => \App\Models\SearchLog::whereDate('created_at', today())->count(), 'unlocks_today' => \App\Models\Enquiry::where('unlocked', true)->whereDate('unlocked_at', today())->count()];
-            $data['quickLinks'][] = ['label' => 'Business reports', 'route' => route('admin.reports'), 'icon' => 'fa-chart-pie'];
-            $data['quickLinks'][] = ['label' => 'Search analytics', 'route' => route('admin.analytics'), 'icon' => 'fa-chart-line'];
+            
+            // Market Opportunity: Localities with high search volume vs low available room supply
+            $marketOpportunities = collect();
+            if (\Illuminate\Support\Facades\Schema::hasTable('search_logs')) {
+                $marketOpportunities = \App\Models\SearchLog::whereNotNull('city')
+                    ->where('city', '!=', '')
+                    ->select('city', DB::raw('count(*) as searches'))
+                    ->groupBy('city')
+                    ->orderByDesc('searches')
+                    ->limit(10)
+                    ->get()
+                    ->map(function ($log) {
+                        $roomsCount = Room::where('city', $log->city)->where('status', 'active')->count();
+                        return [
+                            'city' => $log->city,
+                            'searches' => $log->searches,
+                            'rooms' => $roomsCount,
+                            'ratio' => $roomsCount > 0 ? round($log->searches / $roomsCount, 1) : $log->searches,
+                            'status' => $roomsCount === 0 ? 'Zero Supply' : ($roomsCount <= 2 ? 'High Demand' : 'Healthy'),
+                        ];
+                    })
+                    ->sortByDesc('ratio')
+                    ->take(4)
+                    ->values();
+            }
+            $data['marketOpportunities'] = $marketOpportunities;
+
+            $quickLinks[] = ['label' => 'Business reports', 'route' => route('admin.reports'), 'icon' => 'fa-chart-pie'];
+            $quickLinks[] = ['label' => 'Search analytics', 'route' => route('admin.analytics'), 'icon' => 'fa-chart-line'];
         }
         if ($access['settings']) {
-            $data['quickLinks'][] = ['label' => 'Business settings', 'route' => route('admin.settings'), 'icon' => 'fa-gear'];
-            $data['quickLinks'][] = ['label' => 'Data maintenance', 'route' => route('admin.data-maintenance.index'), 'icon' => 'fa-database'];
+            $quickLinks[] = ['label' => 'Business settings', 'route' => route('admin.settings'), 'icon' => 'fa-gear'];
+            $quickLinks[] = ['label' => 'Data maintenance', 'route' => route('admin.data-maintenance.index'), 'icon' => 'fa-database'];
         }
         if ($access['staff']) {
-            $data['quickLinks'][] = ['label' => 'Staff & roles', 'route' => route('admin.staff.index'), 'icon' => 'fa-users-gear'];
+            $quickLinks[] = ['label' => 'Staff & roles', 'route' => route('admin.staff.index'), 'icon' => 'fa-users-gear'];
         }
         if ($access['activity']) {
-            $data['quickLinks'][] = ['label' => 'Activity logs', 'route' => route('admin.activity.index'), 'icon' => 'fa-clock-rotate-left'];
+            $quickLinks[] = ['label' => 'Activity logs', 'route' => route('admin.activity.index'), 'icon' => 'fa-clock-rotate-left'];
         }
+
+        $data['actionQueues'] = $actionQueues;
+        $data['quickLinks'] = $quickLinks;
 
         return view('admin.dashboard', $data);
     }
@@ -545,6 +600,35 @@ class AdminController extends Controller
 
         return back()->with('success', 'Member notes and verification updated.');
     }
+
+    /**
+     * Send 1-click KYC reminder notification to an Owner with pending KYC.
+     */
+    public function remindKyc(Request $request, User $owner)
+    {
+        $admin = $request->user();
+        abort_if(!$admin->hasAdminPermission('people.manage'), 403);
+
+        $title = "Action Required: Complete Your KYC Verification";
+        $message = "Hello {$owner->name}, your property owner KYC verification is currently pending. Please complete your verification to keep your property listings active on " . config('app.name', 'ApnaNest') . ".";
+        $link = route('dashboard');
+
+        try {
+            \App\Models\UserNotification::send(
+                $owner->id,
+                'announcement',
+                $title,
+                $message,
+                $link,
+                'fa-id-card'
+            );
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("KYC reminder notification failed for User #{$owner->id}: " . $e->getMessage());
+        }
+
+        return back()->with('success', "KYC reminder notification sent to {$owner->name}.");
+    }
+
 
     /**
      * Send direct message / notification to an individual User or Owner via selected channels.

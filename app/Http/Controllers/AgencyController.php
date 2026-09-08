@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BrokerReview;
 use App\Models\Room;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,6 +14,8 @@ class AgencyController extends Controller
      */
     public function index(Request $request)
     {
+        User::cleanupExpiredFeaturedAgencies();
+
         $query = User::where('role', 'broker')
             ->where('is_broker_active', true)
             ->withCount([
@@ -47,10 +50,14 @@ class AgencyController extends Controller
             });
         }
 
-        // Sorting
+        // Sorting: Featured agencies always prioritized on top
+        $query->orderByDesc('is_featured_agency');
+
         $sortBy = $request->get('sort_by', 'popular');
         if ($sortBy === 'properties') {
             $query->orderByDesc('active_rooms_count');
+        } elseif ($sortBy === 'rating') {
+            $query->orderByDesc('broker_rating')->orderByDesc('broker_reviews_count');
         } elseif ($sortBy === 'name') {
             $query->orderBy('agency_name', 'asc')->orderBy('name', 'asc');
         } else {
@@ -153,6 +160,20 @@ class AgencyController extends Controller
         $waMessage = "Hello {$agencyName}! Maine aapki agency profile {$siteName} par dekhi hai. Mujhe rental property ke baare mein baat karni hai.";
         $waLink = "https://wa.me/{$digits}?text=" . rawurlencode($waMessage);
 
+        // Reviews and Ratings
+        $allReviews = $user->approvedBrokerReviews()->with('user:id,name,avatar')->get();
+        $totalReviewsCount = $allReviews->count();
+        $avgRating = $totalReviewsCount > 0 ? round((float) $allReviews->avg('rating'), 1) : (float) ($user->broker_rating ?: 5.0);
+        $ratingCounts = [
+            5 => $allReviews->where('rating', 5)->count(),
+            4 => $allReviews->where('rating', 4)->count(),
+            3 => $allReviews->where('rating', 3)->count(),
+            2 => $allReviews->where('rating', 2)->count(),
+            1 => $allReviews->where('rating', 1)->count(),
+        ];
+        $recentReviews = $allReviews->take(15);
+        $userExistingReview = auth()->check() ? $allReviews->firstWhere('user_id', auth()->id()) : null;
+
         return view('agency.show', compact(
             'user',
             'properties',
@@ -161,7 +182,50 @@ class AgencyController extends Controller
             'waLink',
             'rawPhone',
             'digits',
-            'agencyName'
+            'agencyName',
+            'recentReviews',
+            'totalReviewsCount',
+            'avgRating',
+            'ratingCounts',
+            'userExistingReview'
         ));
+    }
+
+    /**
+     * Submit a review for a verified broker / agency.
+     */
+    public function storeReview(Request $request, User $user)
+    {
+        abort_if($user->role !== 'broker' || !$user->is_broker_active, 404);
+
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please log in to submit a review.');
+        }
+
+        if (auth()->id() === $user->id) {
+            return back()->with('error', 'You cannot submit a review for your own agency.');
+        }
+
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+
+        BrokerReview::updateOrCreate(
+            [
+                'broker_id' => $user->id,
+                'user_id' => auth()->id(),
+            ],
+            [
+                'room_id' => null,
+                'rating' => $validated['rating'],
+                'comment' => $validated['comment'],
+                'status' => 'approved',
+            ]
+        );
+
+        $user->recalculateBrokerRating();
+
+        return back()->with('success', 'Thank you! Your review has been published successfully.');
     }
 }

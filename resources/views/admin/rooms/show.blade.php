@@ -182,6 +182,75 @@
                 </div>
             </section>
 
+            @php
+                $fraudCheck = $room->detectDirectContactInfo();
+                $duplicateRooms = $room->getSuspectedDuplicates(3);
+            @endphp
+            <section class="rounded-2xl border bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between gap-2">
+                    <h2 class="text-sm font-extrabold text-slate-950 flex items-center gap-1.5">
+                        <i class="fas fa-shield-halved text-indigo-600 text-xs"></i>
+                        Integrity & Anti-Fraud Audit
+                    </h2>
+                    @if($fraudCheck['flagged'] || $duplicateRooms->isNotEmpty())
+                        <span class="rounded-full bg-rose-50 px-2 py-0.5 text-[9px] font-extrabold text-rose-700">Warning</span>
+                    @else
+                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-extrabold text-emerald-700">Clean</span>
+                    @endif
+                </div>
+
+                <div class="mt-3 space-y-2 text-xs">
+                    {{-- Direct Contact Check --}}
+                    @if($fraudCheck['flagged'])
+                        <div class="rounded-xl border border-rose-200 bg-rose-50/70 p-3 text-rose-900">
+                            <strong class="flex items-center gap-1.5 text-xs font-bold text-rose-700">
+                                <i class="fas fa-triangle-exclamation"></i> Direct Contact Detected
+                            </strong>
+                            <p class="mt-1 text-[11px] text-rose-800 leading-tight">
+                                Phone number or bypass phrase in description/title:
+                            </p>
+                            <div class="mt-1.5 flex flex-wrap gap-1">
+                                @foreach($fraudCheck['matches'] as $match)
+                                    <span class="rounded bg-rose-200/80 px-1.5 py-0.5 font-mono text-[10px] font-bold text-rose-950">{{ $match }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600">
+                            <span>Phone Bypass Check</span>
+                            <strong class="text-emerald-700 font-bold"><i class="fas fa-check-circle mr-1"></i>Passed</strong>
+                        </div>
+                    @endif
+
+                    {{-- Duplicate Check --}}
+                    @if($duplicateRooms->isNotEmpty())
+                        <div class="rounded-xl border border-amber-200 bg-amber-50/70 p-3 text-amber-900">
+                            <strong class="flex items-center gap-1.5 text-xs font-bold text-amber-800">
+                                <i class="fas fa-copy"></i> Suspected Duplicate Listing
+                            </strong>
+                            <p class="mt-1 text-[11px] text-amber-800 leading-tight">
+                                Similar property found in the same city:
+                            </p>
+                            <ul class="mt-2 space-y-1">
+                                @foreach($duplicateRooms as $dup)
+                                    <li>
+                                        <a href="{{ route('admin.rooms.show', $dup->slug ?: $dup->id) }}" target="_blank" class="flex items-center justify-between rounded-lg bg-white/80 border border-amber-200 p-1.5 text-[11px] font-bold text-amber-950 hover:bg-white transition">
+                                            <span class="truncate max-w-[150px]">#{{ $dup->id }} - {{ $dup->title }}</span>
+                                            <span class="text-indigo-600"><i class="fas fa-external-link-alt text-[9px]"></i> View</span>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @else
+                        <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600">
+                            <span>Duplicate Check</span>
+                            <strong class="text-emerald-700 font-bold"><i class="fas fa-check-circle mr-1"></i>Unique</strong>
+                        </div>
+                    @endif
+                </div>
+            </section>
+
             <section class="rounded-2xl border bg-white p-5 shadow-sm">
                 <h2 class="text-sm font-extrabold text-slate-950">Owner</h2>
                 <div class="mt-4 flex items-center gap-3">
@@ -193,7 +262,15 @@
                 </div>
                 <dl class="mt-4 space-y-3 text-xs">
                     <div class="flex justify-between gap-3"><dt class="text-slate-400">Owner ID</dt><dd class="font-bold text-slate-700">{{ $room->user_id }}</dd></div>
-                    <div class="flex justify-between gap-3"><dt class="text-slate-400">Phone</dt><dd class="font-bold text-slate-700">{{ $room->owner?->phone ?? 'Not provided' }}</dd></div>
+                    <div class="flex items-center justify-between gap-3">
+                        <dt class="text-slate-400">Phone</dt>
+                        <dd class="flex items-center gap-1.5 font-bold text-slate-700">
+                            <span>{{ $room->owner?->phone ?? 'Not provided' }}</span>
+                            @if($room->owner?->phone)
+                                <x-admin.whatsapp-btn :phone="$room->owner->phone" :name="$room->owner->name" context="Property Listing #{{ $room->id }} ('{{ $room->title }}')" size="xs" />
+                            @endif
+                        </dd>
+                    </div>
                     <div class="flex justify-between gap-3"><dt class="text-slate-400">KYC</dt><dd class="font-bold text-slate-700">{{ ucfirst(str_replace('_', ' ', $room->owner?->verification_status ?? 'unknown')) }}</dd></div>
                     <div class="flex justify-between gap-3"><dt class="text-slate-400">Created</dt><dd class="font-bold text-slate-700">{{ $room->created_at->format('d M Y') }}</dd></div>
                     <div class="flex justify-between gap-3"><dt class="text-slate-400">Updated</dt><dd class="font-bold text-slate-700">{{ $room->updated_at->format('d M Y, h:i A') }}</dd></div>

@@ -103,7 +103,12 @@
                                     <div class="min-w-0">
                                         <p class="truncate text-sm font-extrabold text-slate-900">{{ $owner->name }}</p>
                                         <p class="truncate text-xs text-slate-400">#{{ $owner->id }} - {{ $owner->email }}</p>
-                                        <p class="text-[10px] text-slate-400">{{ $owner->phone ?: 'No phone number' }}</p>
+                                        <div class="flex items-center gap-1.5 mt-0.5">
+                                            <span class="text-[10px] text-slate-400">{{ $owner->phone ?: 'No phone number' }}</span>
+                                            @if($owner->phone)
+                                                <x-admin.whatsapp-btn :phone="$owner->phone" :name="$owner->name" context="Property Owner Account on ApnaNest" size="xs" />
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </td>
@@ -126,6 +131,14 @@
                                     <form method="POST" action="{{ route('admin.members.restore',$owner->id) }}">@csrf<button class="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">Restore</button></form>
                                 @else
                                     <div class="flex justify-end gap-2">
+                                        @if($owner->verification_status !== 'verified')
+                                            <form method="POST" action="{{ route('admin.owners.remind-kyc', $owner) }}" class="inline">
+                                                @csrf
+                                                <button type="submit" title="Send 1-Click KYC Reminder" class="rounded-lg bg-amber-50 px-2.5 py-2 text-xs font-bold text-amber-700 hover:bg-amber-100 transition">
+                                                    <i class="fas fa-bell"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                         <a href="{{ route('admin.owners.detail',$owner) }}#direct-msg-card" title="Send Direct Notification / SMS" class="rounded-lg bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition"><i class="fas fa-paper-plane"></i></a>
                                         <a href="{{ route('admin.members.index',['q'=>$owner->email,'member_id'=>$owner->id]) }}" title="Member 360" class="admin-theme-soft rounded-lg px-3 py-2 text-xs font-bold"><i class="fas fa-chart-pie"></i></a>
                                         <x-admin.action-icon variant="view" :href="route('admin.owners.detail',$owner)" />

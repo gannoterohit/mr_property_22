@@ -61,6 +61,10 @@ class User extends Authenticatable
         'broker_subscription_expires_at',
         'broker_subscription_listings_limit',
         'broker_subscription_listings_used',
+        'is_featured_agency',
+        'featured_agency_expires_at',
+        'broker_rating',
+        'broker_reviews_count',
     ];
 
     protected static function booted()
@@ -120,6 +124,10 @@ class User extends Authenticatable
             'is_broker_active' => 'boolean',
             'broker_approved_at' => 'datetime',
             'broker_subscription_expires_at' => 'datetime',
+            'is_featured_agency' => 'boolean',
+            'featured_agency_expires_at' => 'datetime',
+            'broker_rating' => 'float',
+            'broker_reviews_count' => 'integer',
         ];
     }
 
@@ -219,5 +227,42 @@ class User extends Authenticatable
     public function getBrokerVerificationStatusAttribute($value)
     {
         return $value ?: $this->broker_verification_status;
+    }
+
+    public function brokerReviews()
+    {
+        return $this->hasMany(BrokerReview::class, 'broker_id');
+    }
+
+    public function approvedBrokerReviews()
+    {
+        return $this->brokerReviews()->where('status', 'approved')->latest();
+    }
+
+    public function recalculateBrokerRating(): void
+    {
+        $approved = $this->brokerReviews()->where('status', 'approved');
+        $count = $approved->count();
+        $avg = $count > 0 ? round((float) $approved->avg('rating'), 2) : 5.00;
+
+        $this->updateQuietly([
+            'broker_rating' => $avg,
+            'broker_reviews_count' => $count,
+        ]);
+    }
+
+    /**
+     * Automatically reset any featured agencies whose spotlight duration has expired.
+     */
+    public static function cleanupExpiredFeaturedAgencies(): int
+    {
+        return static::where('role', 'broker')
+            ->where('is_featured_agency', true)
+            ->whereNotNull('featured_agency_expires_at')
+            ->where('featured_agency_expires_at', '<=', now())
+            ->update([
+                'is_featured_agency' => false,
+                'featured_agency_expires_at' => null,
+            ]);
     }
 }

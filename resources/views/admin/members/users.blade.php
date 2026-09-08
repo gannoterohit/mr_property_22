@@ -87,8 +87,12 @@
                                     <span class="admin-theme-soft flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-extrabold">{{ strtoupper(substr($user->name,0,1)) }}</span>
                                     <div class="min-w-0">
                                         <p class="truncate text-sm font-extrabold text-slate-900">{{ $user->name }}</p>
-                                        <p class="truncate text-xs text-slate-400">#{{ $user->id }} - {{ $user->email }}</p>
-                                        <p class="truncate text-[10px] text-slate-400">{{ $user->phone ?: 'No phone number' }}</p>
+                                        <div class="flex items-center gap-1.5 mt-0.5">
+                                            <span class="truncate text-[10px] text-slate-400">{{ $user->phone ?: 'No phone number' }}</span>
+                                            @if($user->phone)
+                                                <x-admin.whatsapp-btn :phone="$user->phone" :name="$user->name" context="ApnaNest Account Support" size="xs" />
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </td>

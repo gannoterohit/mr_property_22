@@ -21,6 +21,65 @@
 
     @if(count($actionQueues))<section class="rounded-2xl border bg-white p-5 shadow-sm"><div class="flex justify-between"><div><h2 class="text-sm font-extrabold">Action required</h2><p class="text-xs text-slate-500">Queues available to your role</p></div><span class="rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-bold text-red-700">{{ collect($actionQueues)->sum('count') }} pending</span></div><div class="mt-4 dash-grid">@foreach($actionQueues as $queue)<a href="{{ $queue['route'] }}" class="flex items-center gap-3 rounded-xl border p-3 hover:bg-slate-50"><span class="flex h-9 w-9 items-center justify-center rounded-lg admin-theme-soft"><i class="fas {{ $queue['icon'] }}"></i></span><span class="min-w-0 flex-1 text-xs font-semibold text-slate-600">{{ $queue['label'] }}</span><strong>{{ $queue['count'] }}</strong></a>@endforeach</div></section>@endif
 
+    @if(!empty($expiringSpotlights) && $expiringSpotlights->isNotEmpty())
+        <section class="rounded-2xl border border-amber-200 bg-amber-50/60 p-5 shadow-sm">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                    <h2 class="text-sm font-extrabold text-amber-950 flex items-center gap-2">
+                        <i class="fas fa-crown text-amber-600"></i>
+                        Spotlights Expiring Soon (Next 7 Days)
+                    </h2>
+                    <p class="text-xs text-amber-800">Reach out to brokers on WhatsApp to renew their featured placement before it expires.</p>
+                </div>
+                <span class="rounded-full bg-amber-200/70 px-2.5 py-1 text-[10px] font-extrabold text-amber-950">{{ $expiringSpotlights->count() }} Expiring</span>
+            </div>
+            <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach($expiringSpotlights as $exp)
+                    <div class="flex items-center justify-between rounded-xl border border-amber-200 bg-white p-3 shadow-xs">
+                        <div class="min-w-0 pr-2">
+                            <strong class="block truncate text-xs text-slate-900">{{ $exp->agency_name ?: $exp->name }}</strong>
+                            <small class="text-[10px] text-amber-700 font-semibold">Expires: {{ $exp->featured_agency_expires_at->format('M d, Y') }} ({{ $exp->featured_agency_expires_at->diffForHumans() }})</small>
+                        </div>
+                        @if($exp->phone)
+                            <x-admin.whatsapp-btn :phone="$exp->phone" :name="$exp->name" context="Featured Agency Spotlight Renewal on ApnaNest" size="sm" :show-text="true" />
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    @if(!empty($marketOpportunities) && $marketOpportunities->isNotEmpty())
+        <section class="rounded-2xl border bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                    <h2 class="text-sm font-extrabold text-slate-950 flex items-center gap-2">
+                        <i class="fas fa-bullseye text-indigo-600"></i>
+                        Market Opportunity (High Search Volume · Low Supply)
+                    </h2>
+                    <p class="text-xs text-slate-500">Localities where tenants are actively searching but rooms are unavailable. Prioritize onboarding owners here.</p>
+                </div>
+                <a href="{{ route('admin.analytics') }}" class="text-xs font-bold admin-theme-text">View Analytics <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+            <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach($marketOpportunities as $opp)
+                    <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+                        <div class="flex items-center justify-between">
+                            <strong class="text-xs text-slate-900">{{ $opp['city'] }}</strong>
+                            <span class="rounded-full px-2 py-0.5 text-[9px] font-extrabold {{ $opp['rooms'] === 0 ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800' }}">
+                                {{ $opp['status'] }}
+                            </span>
+                        </div>
+                        <div class="mt-2.5 flex items-center justify-between text-xs">
+                            <span class="text-slate-500"><i class="fas fa-magnifying-glass mr-1 text-[10px]"></i>{{ $opp['searches'] }} searches</span>
+                            <span class="font-bold text-slate-700">{{ $opp['rooms'] }} rooms</span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
     @if($access['finance'])<section class="rounded-2xl border bg-white p-5 shadow-sm"><div class="flex justify-between"><div><h2 class="text-sm font-extrabold">Monthly platform revenue</h2><p class="text-xs text-slate-500">Collections in {{ now()->year }}</p></div><a href="{{ route('admin.payments.index') }}" class="text-xs font-bold admin-theme-text">View payments</a></div><div class="mt-4 h-[280px]"><canvas id="revenueChart"></canvas></div></section>@endif
 
     <section class="dash-two">

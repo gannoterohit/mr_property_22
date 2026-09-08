@@ -26,6 +26,20 @@
 @media(max-width:1023px){.owner-filter{grid-template-columns:1fr 1fr}}
 @media(max-width:767px){.people-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.owner-filter{grid-template-columns:1fr}}
 
+/* admin-brokers-index.css */
+.broker-filter{display:grid;grid-template-columns:minmax(220px,1.2fr) 150px 160px 140px auto;gap:10px}
+.brokers-table{width:100%;min-width:1180px;border-collapse:separate;border-spacing:0}
+.brokers-table th,.brokers-table td{padding:12px 16px!important;box-sizing:border-box!important;vertical-align:middle!important}
+.brokers-table th:nth-child(1),.brokers-table td:nth-child(1){width:24%!important}
+.brokers-table th:nth-child(2),.brokers-table td:nth-child(2){width:16%!important}
+.brokers-table th:nth-child(3),.brokers-table td:nth-child(3){width:12%!important}
+.brokers-table th:nth-child(4),.brokers-table td:nth-child(4){width:12%!important}
+.brokers-table th:nth-child(5),.brokers-table td:nth-child(5){width:12%!important}
+.brokers-table th:nth-child(6),.brokers-table td:nth-child(6){width:10%!important}
+.brokers-table th:nth-child(7),.brokers-table td:nth-child(7){width:14%!important;text-align:right!important}
+@media(max-width:1199px){.broker-filter{grid-template-columns:repeat(3,1fr)!important}}
+@media(max-width:767px){.broker-filter{grid-template-columns:1fr!important}}
+
 /* admin-members-users.css */
 .people-filter{display:grid;grid-template-columns:minmax(260px,1fr) 180px auto;gap:10px}
 .people-table{width:100%;min-width:1180px}
