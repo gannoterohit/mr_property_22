@@ -38,8 +38,6 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::post('/subscription/purchase', [SubscriptionController::class, 'store'])->middleware('throttle:5,1')->name('subscription.purchase');
     Route::post('/subscribe', [SubscriptionController::class, 'store'])->middleware('throttle:5,1')->name('subscribe');
     Route::get('/refer-and-earn', [\App\Http\Controllers\ReferralController::class, 'index'])->name('referral.index');
-    Route::get('/wishlist', [\App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
-    Route::post('/wishlist/toggle/{roomId}', [\App\Http\Controllers\WishlistController::class, 'toggle'])->name('wishlist.toggle');
     Route::post('/city-alerts', [\App\Http\Controllers\CityAlertController::class, 'store'])->name('city-alerts.store');
     Route::delete('/city-alerts/{alert}', [\App\Http\Controllers\CityAlertController::class, 'destroy'])->name('city-alerts.destroy');
     Route::get('/wallet', [WalletController::class, 'index'])->name('wallet');

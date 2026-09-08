@@ -19,14 +19,15 @@
         <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">{{ $errors->first() }}</div>
     @endif
 
-    <div class="grid gap-3 sm:grid-cols-4">
+    <div class="grid gap-3 sm:grid-cols-5">
         @foreach([
             ['Total staff', $staffStats['total'], 'fa-users-gear', 'admin-theme-soft'],
             ['Active', $staffStats['active'], 'fa-user-check', 'bg-emerald-50 text-emerald-600'],
             ['Disabled', $staffStats['disabled'], 'fa-user-lock', 'bg-amber-50 text-amber-600'],
             ['Deleted', $staffStats['deleted'], 'fa-trash-arrow-up', 'bg-red-50 text-red-600'],
+            ['Assigned queues', $staffStats['total_assigned_open'], 'fa-headset', 'bg-indigo-50 text-indigo-600'],
         ] as [$label, $value, $icon, $tone])
-            <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4">
+            <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
                 <span class="flex h-10 w-10 items-center justify-center rounded-xl {{ $tone }}"><i class="fas {{ $icon }}"></i></span>
                 <div><p class="text-[10px] font-bold uppercase text-slate-400">{{ $label }}</p><p class="text-xl font-extrabold text-slate-900">{{ $value }}</p></div>
             </div>
@@ -54,14 +55,14 @@
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div class="flex items-center justify-between border-b px-5 py-4">
             <div>
-                <h2 class="text-sm font-extrabold">Staff directory</h2>
+                <h2 class="text-sm font-extrabold">Staff directory & performance</h2>
                 <p class="text-xs text-slate-500">{{ $staff->total() }} staff accounts match the current filters</p>
             </div>
             <span class="rounded-full admin-theme-soft px-3 py-1.5 text-[10px] font-extrabold">Page {{ $staff->currentPage() }} / {{ max(1, $staff->lastPage()) }}</span>
         </div>
         <div class="overflow-x-auto">
             <table class="staff-table admin-table-base">
-                <thead><tr><th>Staff member</th><th>Role</th><th>Status</th><th>Last admin login</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Staff member</th><th>Role</th><th>Status</th><th>Workload & Activity</th><th>Last admin login</th><th>Actions</th></tr></thead>
                 <tbody class="divide-y divide-slate-100">
                 @forelse($staff as $member)
                     @php
@@ -74,7 +75,7 @@
                         ];
                     @endphp
                     <tr class="{{ $member->trashed() ? 'bg-slate-50 opacity-75' : '' }}">
-                        <td><div class="font-bold text-slate-900">{{ $member->name }} @if(auth()->id() === $member->id)<span class="text-xs admin-theme-text">(You)</span>@endif</div><div class="text-xs text-slate-500">{{ $member->email }} - {{ $member->phone ?: 'No phone' }}</div></td>
+                        <td><div class="font-bold text-slate-900">{{ $member->name }} @if(auth()->id() === $member->id)<span class="text-xs admin-theme-text font-bold">(You)</span>@endif</div><div class="text-xs text-slate-500">{{ $member->email }} - {{ $member->phone ?: 'No phone' }}</div></td>
                         <td><span class="rounded-full admin-theme-soft px-2.5 py-1 text-xs font-bold admin-theme-text">{{ $member->adminRole?->name ?? 'Legacy Super Admin' }}</span></td>
                         <td>
                             @if($member->trashed())
@@ -84,6 +85,21 @@
                             @else
                                 <x-admin.status-toggle :active="$member->is_staff_active" active-label="Active" inactive-label="Disabled" :action="route('admin.staff.toggle', $member)" :data-label="$member->name" method="POST" />
                             @endif
+                        </td>
+                        <td>
+                            <div class="space-y-1 min-w-[160px]">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <a href="{{ route('admin.complaints.index', ['assigned_to' => $member->id]) }}" class="inline-flex items-center gap-1 text-[11px] font-bold {{ ($staffWorkload[$member->id]['open_tickets'] ?? 0) > 0 ? 'text-amber-800 bg-amber-50 border border-amber-200 hover:bg-amber-100' : 'text-slate-500 bg-slate-100' }} px-2 py-0.5 rounded-md transition" title="Open tickets assigned">
+                                        <i class="fas fa-headset text-[9px]"></i> {{ $staffWorkload[$member->id]['open_tickets'] ?? 0 }} open
+                                    </a>
+                                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md" title="Resolved tickets">
+                                        <i class="fas fa-circle-check text-[9px]"></i> {{ $staffWorkload[$member->id]['resolved_tickets'] ?? 0 }}
+                                    </span>
+                                </div>
+                                <p class="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                                    <i class="fas fa-bolt text-indigo-500 text-[9px]"></i> {{ $staffWorkload[$member->id]['weekly_actions'] ?? 0 }} actions (7d)
+                                </p>
+                            </div>
                         </td>
                         <td class="text-xs text-slate-500">{{ $member->last_admin_login_at?->format('d M Y, h:i A') ?? 'Not recorded' }}</td>
                         <td>

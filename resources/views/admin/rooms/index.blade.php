@@ -179,7 +179,7 @@
                                 <p class="text-xs">{{ $room->city }}</p>
                                 <p class="text-xs font-bold">&#8377;{{ number_format($room->rent) }}/mo</p>
                             </td>
-                            <td class="px-4">
+                            <td class="px-4" id="room-status-td-{{ $room->id }}">
                                 <div class="flex flex-col items-start gap-1.5">
                                     <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold {{ $room->listing_status==='approved'?'bg-emerald-50 text-emerald-700':($room->listing_status==='rejected'?'bg-red-50 text-red-700':'bg-amber-50 text-amber-700') }}">{{ ucfirst($room->listing_status) }}</span>
                                     <x-admin.status-toggle
@@ -200,8 +200,20 @@
                                     <span class="mt-1 block text-[10px] font-semibold text-slate-500">{{ number_format((float)$room->area_sqft, 2) }} sqft</span>
                                 @endif
                             </td>
-                            <td class="px-4">
-                                <div class="flex justify-end items-center gap-2">
+                            <td class="px-4" id="room-actions-td-{{ $room->id }}">
+                                <div class="flex justify-end items-center gap-1.5 flex-wrap">
+                                    @if($room->listing_status === 'pending')
+                                        <button type="button" onclick="quickApproveRoom({{ $room->id }}, @json($room->title))"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-2xs transition cursor-pointer"
+                                                title="1-Click Quick Approve">
+                                            <i class="fas fa-check text-[9px]"></i> Approve
+                                        </button>
+                                        <button type="button" onclick="openQuickRejectModal({{ $room->id }}, @json($room->title))"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[11px] font-bold transition cursor-pointer"
+                                                title="Reject with Reasons">
+                                            <i class="fas fa-times text-[9px]"></i> Reject
+                                        </button>
+                                    @endif
                                     <x-admin.action-icon variant="view" :href="route('admin.rooms.show',$room)" />
                                     <x-admin.action-icon variant="edit" :href="route('admin.rooms.edit',$room)" />
                                     <x-admin.action-icon variant="delete" type="submit" form="delete-room-{{ $room->id }}" />
@@ -230,6 +242,49 @@
             @method('DELETE')
         </form>
     @endforeach
+
+    {{-- Quick Rejection Modal --}}
+    <div id="quickRejectModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 hidden" onclick="if(event.target===this) closeQuickRejectModal()">
+        <div class="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl transition-all">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                    <h3 class="text-sm font-extrabold text-slate-900">Reject Property Listing</h3>
+                    <p class="text-[11px] text-slate-500 truncate max-w-xs" id="quickRejectRoomTitle">Room #</p>
+                </div>
+                <button type="button" onclick="closeQuickRejectModal()" class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-slate-400 hover:text-slate-600 transition cursor-pointer">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+
+            <form id="quickRejectForm" onsubmit="submitQuickReject(event)" class="mt-4 space-y-4">
+                <input type="hidden" id="quickRejectRoomId">
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-2">Select Rejection Reason(s):</label>
+                    <div class="max-h-48 overflow-y-auto space-y-2 border border-slate-200 rounded-xl p-3 bg-slate-50">
+                        @foreach($rejectionReasons as $reason)
+                            <label class="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer hover:text-slate-900">
+                                <input type="checkbox" name="reasons[]" value="{{ $reason->id }}" class="rounded text-rose-600 focus:ring-rose-500">
+                                <span>{{ $reason->reason }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Custom Note / Feedback to Owner:</label>
+                    <textarea id="quickRejectCustomNote" rows="2" class="w-full rounded-xl border border-slate-200 text-xs p-2.5 outline-none focus:border-rose-400" placeholder="Optional explanation or correction steps..."></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeQuickRejectModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 transition cursor-pointer">Cancel</button>
+                    <button type="submit" id="quickRejectSubmitBtn" class="px-4 py-2 text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-xs transition cursor-pointer">
+                        Confirm Rejection
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -237,6 +292,138 @@
 <script>
 const csrf=document.querySelector('meta[name="csrf-token"]').content;
 document.getElementById('selectAllRooms')?.addEventListener('change',e=>document.querySelectorAll('.room-check').forEach(c=>c.checked=e.target.checked));
+
+let activeRejectRoomId = null;
+
+async function quickApproveRoom(roomId, title) {
+    const result = await Swal.fire({
+        title: 'Approve Listing?',
+        text: `Approve "${title}" and publish it live?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Approve',
+        confirmButtonColor: '#059669',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        const response = await fetch(`/admin/rooms/${roomId}/approve`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            Swal.fire({
+                title: 'Approved!',
+                text: 'Property has been approved successfully.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            const statusTd = document.getElementById(`room-status-td-${roomId}`);
+            if (statusTd) {
+                const badge = statusTd.querySelector('span');
+                if (badge) {
+                    badge.className = 'inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold bg-emerald-50 text-emerald-700';
+                    badge.textContent = 'Approved';
+                }
+            }
+            const actionsTd = document.getElementById(`room-actions-td-${roomId}`);
+            if (actionsTd) {
+                actionsTd.querySelectorAll('button[onclick^="quickApproveRoom"], button[onclick^="openQuickRejectModal"]').forEach(b => b.remove());
+            }
+        } else {
+            Swal.fire('Error', data.message || 'Approval failed', 'error');
+        }
+    } catch (e) {
+        Swal.fire('Error', 'Something went wrong', 'error');
+    }
+}
+
+function openQuickRejectModal(roomId, title) {
+    activeRejectRoomId = roomId;
+    document.getElementById('quickRejectRoomId').value = roomId;
+    document.getElementById('quickRejectRoomTitle').textContent = `Room #${roomId}: ${title}`;
+    document.getElementById('quickRejectCustomNote').value = '';
+    document.querySelectorAll('#quickRejectForm input[name="reasons[]"]').forEach(cb => cb.checked = false);
+    document.getElementById('quickRejectModal').classList.remove('hidden');
+}
+
+function closeQuickRejectModal() {
+    document.getElementById('quickRejectModal').classList.add('hidden');
+    activeRejectRoomId = null;
+}
+
+async function submitQuickReject(event) {
+    event.preventDefault();
+    if (!activeRejectRoomId) return;
+
+    const checkedReasons = Array.from(document.querySelectorAll('#quickRejectForm input[name="reasons[]"]:checked')).map(cb => cb.value);
+    const customNote = document.getElementById('quickRejectCustomNote').value.trim();
+
+    if (checkedReasons.length === 0 && !customNote) {
+        alert('Please select at least one rejection reason or enter a custom note.');
+        return;
+    }
+
+    const submitBtn = document.getElementById('quickRejectSubmitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Rejecting...';
+
+    try {
+        const response = await fetch(`/admin/rooms/${activeRejectRoomId}/reject`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                reasons: checkedReasons,
+                customReason: customNote
+            })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            closeQuickRejectModal();
+            Swal.fire({
+                title: 'Rejected',
+                text: 'Property has been rejected.',
+                icon: 'info',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            const statusTd = document.getElementById(`room-status-td-${activeRejectRoomId}`);
+            if (statusTd) {
+                const badge = statusTd.querySelector('span');
+                if (badge) {
+                    badge.className = 'inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold bg-red-50 text-red-700';
+                    badge.textContent = 'Rejected';
+                }
+            }
+            const actionsTd = document.getElementById(`room-actions-td-${activeRejectRoomId}`);
+            if (actionsTd) {
+                actionsTd.querySelectorAll('button[onclick^="quickApproveRoom"], button[onclick^="openQuickRejectModal"]').forEach(b => b.remove());
+            }
+        } else {
+            alert(data.message || 'Rejection failed');
+        }
+    } catch (e) {
+        alert('Something went wrong');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirm Rejection';
+    }
+}
 
 document.querySelectorAll('.toggle-room-status').forEach((form) => {
     form.addEventListener('submit', async (event) => {

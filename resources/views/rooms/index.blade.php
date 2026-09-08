@@ -116,10 +116,15 @@
 </div>
 
 @include('rooms.partials.index.trust-strip')
+@include('rooms.partials.recently-viewed')
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderRecentlyViewed === 'function') {
+        renderRecentlyViewed();
+    }
+
     const hasSearchIntent = @json($hasMetaSearchIntent);
     if (hasSearchIntent) {
         window.trackRoomNestEvent?.('Search', {

@@ -28,14 +28,45 @@ class AdminStaffController extends Controller
         $staff = $query->latest()->paginate(15)->withQueryString();
         $roles = AdminRole::orderBy('name')->get();
 
+        // Workload & Performance stats for each staff member
+        $staffIds = $staff->pluck('id')->all();
+        $openComplaintsCounts = \App\Models\Complaint::whereIn('assigned_to', $staffIds)
+            ->whereNotIn('status', ['resolved', 'rejected', 'closed'])
+            ->selectRaw('assigned_to, count(*) as total')
+            ->groupBy('assigned_to')
+            ->pluck('total', 'assigned_to');
+
+        $resolvedComplaintsCounts = \App\Models\Complaint::whereIn('assigned_to', $staffIds)
+            ->where('status', 'resolved')
+            ->selectRaw('assigned_to, count(*) as total')
+            ->groupBy('assigned_to')
+            ->pluck('total', 'assigned_to');
+
+        $weeklyActivitiesCounts = \App\Models\AdminActivityLog::whereIn('actor_id', $staffIds)
+            ->where('created_at', '>=', now()->subDays(7))
+            ->selectRaw('actor_id, count(*) as total')
+            ->groupBy('actor_id')
+            ->pluck('total', 'actor_id');
+
+        $staffWorkload = [];
+        foreach ($staff as $s) {
+            $staffWorkload[$s->id] = [
+                'open_tickets' => (int) ($openComplaintsCounts[$s->id] ?? 0),
+                'resolved_tickets' => (int) ($resolvedComplaintsCounts[$s->id] ?? 0),
+                'weekly_actions' => (int) ($weeklyActivitiesCounts[$s->id] ?? 0),
+            ];
+        }
+
         return view('admin.staff.index', [
             'staff' => $staff,
             'roles' => $roles,
+            'staffWorkload' => $staffWorkload,
             'staffStats' => [
                 'total' => User::where('role', 'admin')->count(),
                 'active' => User::where('role', 'admin')->where('is_staff_active', true)->count(),
                 'disabled' => User::where('role', 'admin')->where('is_staff_active', false)->count(),
                 'deleted' => User::onlyTrashed()->where('role', 'admin')->count(),
+                'total_assigned_open' => \App\Models\Complaint::whereNotNull('assigned_to')->whereNotIn('status', ['resolved', 'rejected', 'closed'])->count(),
             ],
         ]);
     }

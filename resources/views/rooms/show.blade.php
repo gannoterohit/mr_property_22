@@ -63,11 +63,64 @@
             {{-- LEFT COLUMN - Main Content --}}
             <div class="lg:col-span-2 space-y-4">
                 
-                {{-- COMPACT HERO WITH INFO --}}
-                @php
-                    $mainPhoto = $room->photo ?? ($room->photos && count($room->photos) > 0 ? $room->photos[0] : null);
-                @endphp
-                
+                {{-- TOP ACTIONS BAR --}}
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-2 bg-white rounded-2xl p-3 border border-slate-200 shadow-xs">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-100">
+                            <i class="fas fa-building text-[10px]"></i> {{ $room->roomTypeLabel() }}
+                        </span>
+                        @if($room->is_featured)
+                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+                                <i class="fas fa-star text-amber-500 text-[10px]"></i> Featured
+                            </span>
+                        @endif
+                        @if($room->listing_type === 'broker')
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-orange-50 text-orange-700 border border-orange-200">
+                                Broker Fee: ₹{{ $room->broker_fee }}
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                Zero Brokerage
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        {{-- Save / Wishlist Button --}}
+                        @php
+                            $isSaved = Auth::check() && Auth::user()->hasInWishlist($room->id);
+                        @endphp
+                        <button type="button" onclick="toggleWishlist({{ $room->id }})"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border {{ $isSaved ? 'border-rose-200 bg-rose-50 text-rose-600' : 'border-slate-200 bg-white text-slate-700 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600' }} text-xs font-bold transition shadow-2xs cursor-pointer"
+                                id="wishlist-btn-{{ $room->id }}"
+                                aria-label="Toggle wishlist for {{ $room->title }}"
+                                title="{{ $isSaved ? 'Remove from wishlist' : 'Save to wishlist' }}">
+                            <i id="wishlist-icon-{{ $room->id }}" class="{{ $isSaved ? 'fas text-rose-500' : 'far text-slate-400' }} fa-heart text-sm"></i>
+                            <span id="wishlist-text-{{ $room->id }}">{{ $isSaved ? 'Saved' : 'Save' }}</span>
+                        </button>
+
+                        {{-- WhatsApp Share Property Card Button --}}
+                        <button type="button"
+                                onclick="openShareModal()"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs cursor-pointer"
+                                aria-label="Share {{ $room->title }} summary on WhatsApp"
+                                title="Share WhatsApp Property Card">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                            <span>WhatsApp Card</span>
+                        </button>
+
+                        {{-- Facebook Share Button --}}
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('rooms.show', $room->id)) }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-200 text-slate-600 hover:text-blue-600 transition shadow-2xs"
+                           aria-label="Share {{ $room->title }} on Facebook"
+                           title="Share on Facebook">
+                            <i class="fa-brands fa-facebook-f text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
                 <div class="bg-white rounded-xl overflow-hidden shadow-xl">
                     {{-- Image Section - Reduced Height --}}
                     @if($room->photos && count($room->photos) > 0)
@@ -90,32 +143,6 @@
                                 </span>
                             @endif
 
-                            {{-- Wishlist Toggle --}}
-                            <div class="absolute top-3 left-3 flex flex-col gap-2">
-                                <button onclick="toggleWishlist({{ $room->id }})"
-                                        class="w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/50 transition-all shadow-lg active:scale-90"
-                                        id="wishlist-btn-{{ $room->id }}"
-                                        aria-label="Toggle wishlist for {{ $room->title }}">
-                                    <i class="{{ (Auth::check() && Auth::user()->hasInWishlist($room->id)) ? 'fas' : 'far' }} fa-heart text-xl {{ (Auth::check() && Auth::user()->hasInWishlist($room->id)) ? 'text-red-500' : '' }}" aria-hidden="true"></i>
-                                </button>
-                                 
-                                <a href="https://api.whatsapp.com/send?text={{ rawurlencode('Check out this room: ' . $room->title . ' at ' . route('rooms.show', $room->id)) }}"
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   class="w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-green-500 transition-all shadow-lg active:scale-90"
-                                   aria-label="Share {{ $room->title }} on WhatsApp">
-                                    <i class="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i>
-                                </a>
-                                 
-                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('rooms.show', $room->id)) }}"
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   class="w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-blue-600 transition-all shadow-lg active:scale-90"
-                                   aria-label="Share {{ $room->title }} on Facebook">
-                                    <i class="fa-brands fa-facebook-f text-lg" aria-hidden="true"></i>
-                                </a>
-                            </div>
-                             
                             {{-- Info Overlay --}}
                             <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
                                 <h1 class="text-2xl lg:text-3xl font-black mb-1">{{ $room->title }}</h1>
@@ -667,13 +694,38 @@
 </div>
 
 @include('rooms.partials.show.related-rooms')
-
+@include('rooms.partials.recently-viewed')
+@include('rooms.partials.share-card-modal')
 
 @include('rooms.partials.show.modals')
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Record view in Recently Viewed History
+    try {
+        let recent = JSON.parse(localStorage.getItem('recently_viewed_rooms') || '[]');
+        recent = recent.filter(r => String(r.id) !== String({{ $room->id }}));
+        recent.unshift({
+            id: {{ $room->id }},
+            title: @json($room->title),
+            slug: @json($room->slug),
+            rent: {{ (float) $room->rent }},
+            city: @json($room->city),
+            image: @json($room->photo_url ?: asset('assets/images/default-room.svg')),
+            room_type: @json($room->roomTypeOption?->label ?? 'Room'),
+            url: @json(route('rooms.show', $room->slug ?: $room->id)),
+            viewed_at: Date.now()
+        });
+        if (recent.length > 8) recent = recent.slice(0, 8);
+        localStorage.setItem('recently_viewed_rooms', JSON.stringify(recent));
+    } catch (e) {}
+
+    // Render recently viewed on page
+    if (typeof renderRecentlyViewed === 'function') {
+        renderRecentlyViewed({{ $room->id }});
+    }
+
     window.trackRoomNestEvent?.('ViewContent', {
         content_type: 'room',
         content_ids: [@json((string) $room->id)],
@@ -791,35 +843,114 @@ async function confirmPaymentSelection(method) {
 
 async function toggleWishlist(roomId) {
     @guest
-        window.location.href = '{{ route("login") }}';
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Login Required',
+                text: 'Please log in to save this property to your wishlist.',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                confirmButtonText: 'Log In Now',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '{{ route("login") }}';
+                }
+            });
+        } else {
+            if (confirm('Please log in to save this property. Would you like to log in now?')) {
+                window.location.href = '{{ route("login") }}';
+            }
+        }
         return;
     @endguest
 
+    const btn = document.getElementById(`wishlist-btn-${roomId}`);
+    const icon = document.getElementById(`wishlist-icon-${roomId}`) || (btn ? btn.querySelector('i') : null);
+    const text = document.getElementById(`wishlist-text-${roomId}`) || (btn ? btn.querySelector('span') : null);
+
     try {
+        if (btn) btn.disabled = true;
         const response = await fetch(`{{ url('/wishlist/toggle') }}/${roomId}`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             }
         });
 
-        if (!response.ok) throw new Error('Failed to toggle wishlist');
+        if (!response.ok) {
+            const err = await response.json().catch(() => ({}));
+            throw new Error(err.message || 'Failed to toggle wishlist');
+        }
+
         const data = await response.json();
 
         if (data.success) {
-            const btn = document.getElementById(`wishlist-btn-${roomId}`);
-            const icon = btn.querySelector('i');
             if (data.status === 'added') {
-                icon.classList.remove('far');
-                icon.classList.add('fas', 'text-red-500');
+                if (icon) {
+                    icon.className = 'fas fa-heart text-sm text-rose-500';
+                }
+                if (text) {
+                    text.textContent = 'Saved';
+                }
+                if (btn) {
+                    btn.classList.add('border-rose-200', 'bg-rose-50', 'text-rose-600');
+                    btn.classList.remove('border-slate-200', 'bg-white', 'text-slate-700');
+                    btn.setAttribute('title', 'Remove from wishlist');
+                }
+                if (typeof toastr !== 'undefined') {
+                    toastr.success('Saved to your wishlist!');
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Saved to wishlist!',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
             } else {
-                icon.classList.remove('fas', 'text-red-500');
-                icon.classList.add('far');
+                if (icon) {
+                    icon.className = 'far fa-heart text-sm text-slate-400';
+                }
+                if (text) {
+                    text.textContent = 'Save';
+                }
+                if (btn) {
+                    btn.classList.remove('border-rose-200', 'bg-rose-50', 'text-rose-600');
+                    btn.classList.add('border-slate-200', 'bg-white', 'text-slate-700');
+                    btn.setAttribute('title', 'Save to wishlist');
+                }
+                if (typeof toastr !== 'undefined') {
+                    toastr.info('Removed from wishlist');
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'info',
+                        title: 'Removed from wishlist',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
             }
         }
     } catch (error) {
-        console.error(error);
+        console.error('Wishlist toggle error:', error);
+        if (typeof toastr !== 'undefined') {
+            toastr.error(error.message || 'Error updating wishlist');
+        } else if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Could not update wishlist'
+            });
+        }
+    } finally {
+        if (btn) btn.disabled = false;
     }
 }
 

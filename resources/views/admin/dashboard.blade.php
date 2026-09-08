@@ -7,6 +7,116 @@
 <div class="space-y-5 p-5 lg:p-6">
     <header><p class="text-[10px] font-extrabold uppercase tracking-[.2em] admin-theme-text">Your workspace</p><h1 class="mt-1 text-2xl font-extrabold text-slate-900">Good {{ now()->hour<12?'morning':(now()->hour<17?'afternoon':'evening') }}, {{ Auth::user()->name }}</h1><p class="text-sm text-slate-500">Only the modules assigned to your role are shown here.</p></header>
 
+    {{-- SLA Stale Queue Alerts Warning Banner --}}
+    @if(!empty($slaAlerts) && $slaAlerts['totalAlerts'] > 0)
+        <section class="rounded-2xl border border-red-200 bg-red-50/70 p-4 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 text-red-700 shrink-0">
+                        <i class="fas fa-triangle-exclamation text-lg animate-pulse"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-red-950 uppercase tracking-wider">High Priority SLA Alerts</h3>
+                        <p class="text-xs text-red-800">
+                            You have <strong>{{ $slaAlerts['totalAlerts'] }} stale items</strong> that require immediate staff moderation or assignment.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    @if($slaAlerts['staleComplaints'] > 0)
+                        <a href="{{ route('admin.complaints.index', ['assigned' => 'unassigned']) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 transition shadow-2xs">
+                            <i class="fas fa-user-clock"></i> {{ $slaAlerts['staleComplaints'] }} Unassigned Tickets (&gt;24h)
+                        </a>
+                    @endif
+                    @if($slaAlerts['staleRooms'] > 0)
+                        <a href="{{ route('admin.all-rooms', ['listing_status' => 'pending']) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 transition shadow-2xs">
+                            <i class="fas fa-clock"></i> {{ $slaAlerts['staleRooms'] }} Pending Rooms (&gt;24h)
+                        </a>
+                    @endif
+                    @if($slaAlerts['overdueComplaints'] > 0)
+                        <a href="{{ route('admin.complaints.index', ['sla' => 'overdue']) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 transition shadow-2xs">
+                            <i class="fas fa-hourglass-end"></i> {{ $slaAlerts['overdueComplaints'] }} Overdue SLA Tickets
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </section>
+    @endif
+
+    {{-- Today's Operational Business Snapshot --}}
+    @if(!empty($todaySnapshot))
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between flex-wrap gap-2 mb-4">
+                <div class="flex items-center gap-2.5">
+                    <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                        <i class="fas fa-bolt text-xs"></i>
+                    </span>
+                    <div>
+                        <h2 class="text-sm font-extrabold text-slate-900">Today's Operational Snapshot</h2>
+                        <p class="text-[11px] text-slate-400">Live performance comparing today vs yesterday</p>
+                    </div>
+                </div>
+                <span class="text-[11px] font-bold text-slate-400 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
+                    <i class="far fa-calendar-check mr-1 text-indigo-500"></i> {{ now()->format('d M Y') }}
+                </span>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {{-- New Users Today --}}
+                <div class="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">New Users</span>
+                        <i class="fas fa-user-plus text-slate-300 text-xs"></i>
+                    </div>
+                    <p class="mt-2 text-xl font-black text-slate-900">{{ $todaySnapshot['users']['today'] }}</p>
+                    <p class="mt-1 text-[10px] font-bold {{ $todaySnapshot['users']['diff'] >= 0 ? 'text-emerald-600' : 'text-slate-400' }}">
+                        <i class="fas {{ $todaySnapshot['users']['diff'] >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }}"></i>
+                        {{ abs($todaySnapshot['users']['diff']) }} vs yesterday ({{ $todaySnapshot['users']['yesterday'] }})
+                    </p>
+                </div>
+
+                {{-- Rooms Posted Today --}}
+                <div class="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Rooms Posted</span>
+                        <i class="fas fa-home text-slate-300 text-xs"></i>
+                    </div>
+                    <p class="mt-2 text-xl font-black text-slate-900">{{ $todaySnapshot['rooms']['today'] }}</p>
+                    <p class="mt-1 text-[10px] font-bold {{ $todaySnapshot['rooms']['diff'] >= 0 ? 'text-emerald-600' : 'text-slate-400' }}">
+                        <i class="fas {{ $todaySnapshot['rooms']['diff'] >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }}"></i>
+                        {{ abs($todaySnapshot['rooms']['diff']) }} vs yesterday ({{ $todaySnapshot['rooms']['yesterday'] }})
+                    </p>
+                </div>
+
+                {{-- Contact Unlocks Today --}}
+                <div class="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Contact Unlocks</span>
+                        <i class="fas fa-key text-slate-300 text-xs"></i>
+                    </div>
+                    <p class="mt-2 text-xl font-black text-slate-900">{{ $todaySnapshot['unlocks']['today'] }}</p>
+                    <p class="mt-1 text-[10px] font-bold {{ $todaySnapshot['unlocks']['diff'] >= 0 ? 'text-emerald-600' : 'text-slate-400' }}">
+                        <i class="fas {{ $todaySnapshot['unlocks']['diff'] >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }}"></i>
+                        {{ abs($todaySnapshot['unlocks']['diff']) }} vs yesterday ({{ $todaySnapshot['unlocks']['yesterday'] }})
+                    </p>
+                </div>
+
+                {{-- Today's Revenue --}}
+                <div class="rounded-xl border border-indigo-100 bg-indigo-50/40 p-3.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-700">Today's Revenue</span>
+                        <i class="fas fa-indian-rupee-sign text-indigo-400 text-xs"></i>
+                    </div>
+                    <p class="mt-2 text-xl font-black text-indigo-900">₹{{ number_format($todaySnapshot['revenue']['today']) }}</p>
+                    <p class="mt-1 text-[10px] font-bold {{ $todaySnapshot['revenue']['diff'] >= 0 ? 'text-emerald-600' : 'text-slate-400' }}">
+                        <i class="fas {{ $todaySnapshot['revenue']['diff'] >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }}"></i>
+                        ₹{{ number_format(abs($todaySnapshot['revenue']['diff'])) }} vs yesterday (₹{{ number_format($todaySnapshot['revenue']['yesterday']) }})
+                    </p>
+                </div>
+            </div>
+        </section>
+    @endif
+
     <section class="dash-grid">
         @if($access['listings'])
             @foreach([['Active listings',$activeRooms,'fa-building-circle-check','emerald'],['Pending review',$pendingRooms,'fa-clock','amber'],['Approved listings',$approvedRooms,'fa-circle-check','blue']] as [$label,$value,$icon,$tone])<article class="rounded-2xl border bg-white p-4 shadow-sm"><div class="flex justify-between"><div><p class="text-[10px] font-bold uppercase text-slate-400">{{ $label }}</p><p class="mt-2 text-2xl font-extrabold">{{ $value }}</p></div><span class="flex h-10 w-10 items-center justify-center rounded-xl bg-{{ $tone }}-50 text-{{ $tone }}-600"><i class="fas {{ $icon }}"></i></span></div></article>@endforeach

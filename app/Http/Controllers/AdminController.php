@@ -21,8 +21,8 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        $admin = request()->user();
-        $allowed = fn (string $permission) => $admin->hasAdminPermission($permission);
+        $admin = request()->user() ?? auth()->user();
+        $allowed = fn (string $permission) => $admin?->hasAdminPermission($permission) ?? false;
         $access = [
             'listings' => $allowed('listings.view'), 'people' => $allowed('people.view'),
             'support' => $allowed('support.view'), 'finance' => $allowed('finance.view'),
@@ -182,7 +182,6 @@ class AdminController extends Controller
             $data['marketOpportunities'] = $marketOpportunities;
 
             $quickLinks[] = ['label' => 'Business reports', 'route' => route('admin.reports'), 'icon' => 'fa-chart-pie'];
-            $quickLinks[] = ['label' => 'Search analytics', 'route' => route('admin.analytics'), 'icon' => 'fa-chart-line'];
         }
         if ($access['settings']) {
             $quickLinks[] = ['label' => 'Business settings', 'route' => route('admin.settings'), 'icon' => 'fa-gear'];
@@ -193,6 +192,64 @@ class AdminController extends Controller
         }
         if ($access['activity']) {
             $quickLinks[] = ['label' => 'Activity logs', 'route' => route('admin.activity.index'), 'icon' => 'fa-clock-rotate-left'];
+        }
+
+        // Today's Operational Business Snapshot
+        $todayUsers = User::where('role', 'user')->whereDate('created_at', today())->count();
+        $yesterdayUsers = User::where('role', 'user')->whereDate('created_at', today()->subDay())->count();
+
+        $todayRooms = Room::whereDate('created_at', today())->count();
+        $yesterdayRooms = Room::whereDate('created_at', today()->subDay())->count();
+
+        $todayUnlocks = \App\Models\Enquiry::where('unlocked', true)->whereDate('unlocked_at', today())->count();
+        $yesterdayUnlocks = \App\Models\Enquiry::where('unlocked', true)->whereDate('unlocked_at', today()->subDay())->count();
+
+        $todayRevenue = Payment::where('status', 'completed')->whereDate('created_at', today())->sum('amount')
+            + \App\Models\BrokerPayment::where('status', 'completed')->whereDate('created_at', today())->sum('amount');
+        $yesterdayRevenue = Payment::where('status', 'completed')->whereDate('created_at', today()->subDay())->sum('amount')
+            + \App\Models\BrokerPayment::where('status', 'completed')->whereDate('created_at', today()->subDay())->sum('amount');
+
+        $data['todaySnapshot'] = [
+            'users' => ['today' => $todayUsers, 'yesterday' => $yesterdayUsers, 'diff' => $todayUsers - $yesterdayUsers],
+            'rooms' => ['today' => $todayRooms, 'yesterday' => $yesterdayRooms, 'diff' => $todayRooms - $yesterdayRooms],
+            'unlocks' => ['today' => $todayUnlocks, 'yesterday' => $yesterdayUnlocks, 'diff' => $todayUnlocks - $yesterdayUnlocks],
+            'revenue' => ['today' => $todayRevenue, 'yesterday' => $yesterdayRevenue, 'diff' => $todayRevenue - $yesterdayRevenue],
+        ];
+
+        // Stale SLA Alerts (Unassigned > 24h & Pending Approvals > 24h)
+        $staleComplaints = \App\Models\Complaint::whereNull('assigned_to')
+            ->whereNotIn('status', ['resolved', 'rejected', 'closed'])
+            ->where('created_at', '<', now()->subHours(24))
+            ->count();
+        $staleRooms = Room::where('listing_status', 'pending')
+            ->where('created_at', '<', now()->subHours(24))
+            ->count();
+        $overdueComplaints = \App\Models\Complaint::whereNotIn('status', ['resolved', 'rejected', 'closed'])
+            ->where('due_at', '<', now())
+            ->count();
+
+        $data['slaAlerts'] = [
+            'staleComplaints' => $staleComplaints,
+            'staleRooms' => $staleRooms,
+            'overdueComplaints' => $overdueComplaints,
+            'totalAlerts' => $staleComplaints + $staleRooms + $overdueComplaints,
+        ];
+
+        if ($staleComplaints > 0) {
+            $actionQueues[] = [
+                'label' => 'Complaints unassigned >24h',
+                'count' => $staleComplaints,
+                'route' => route('admin.complaints.index', ['assigned' => 'unassigned']),
+                'icon' => 'fa-triangle-exclamation'
+            ];
+        }
+        if ($staleRooms > 0) {
+            $actionQueues[] = [
+                'label' => 'Rooms pending approval >24h',
+                'count' => $staleRooms,
+                'route' => route('admin.all-rooms', ['listing_status' => 'pending']),
+                'icon' => 'fa-clock-rotate-left'
+            ];
         }
 
         $data['actionQueues'] = $actionQueues;
