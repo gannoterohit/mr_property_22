@@ -58,6 +58,9 @@ class SubscriptionController extends Controller
         $finalPrice = $originalPrice;
 
         if ($request->filled('coupon_code')) {
+            if (!\App\Models\Setting::isEnabled('promo_enabled', true)) {
+                return response()->json(['success' => false, 'message' => 'Coupons and promo codes are currently disabled.'], 422);
+            }
             $code = strtoupper(trim($request->input('coupon_code')));
             $offer = \App\Models\Offer::where('code', $code)->first();
             if (!$offer) {

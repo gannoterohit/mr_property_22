@@ -47,7 +47,7 @@ class BusinessSettingsController extends Controller
             'adsense_room_content_id', 'adsense_room_sidebar_id',
         ],
         'mail' => ['mail_host', 'mail_port', 'mail_username', 'mail_password'],
-        'referral' => ['referral_enabled'],
+        'referral' => ['referral_enabled', 'wallet_enabled', 'promo_enabled'],
         'modal' => [
             'promo_enabled', 'promo_modal_enabled', 'promo_modal_audience', 'promo_modal_type',
             'promo_modal_badge', 'promo_modal_title', 'promo_modal_description', 'promo_modal_btn_text',
@@ -199,6 +199,9 @@ class BusinessSettingsController extends Controller
             'google_login_enabled',
             'facebook_login_enabled',
             'promo_modal_enabled',
+            'referral_enabled',
+            'wallet_enabled',
+            'promo_enabled',
         ], self::TAB_FIELDS[$activeTab]) as $booleanKey) {
             $data[$booleanKey] = $request->boolean($booleanKey) ? '1' : '0';
         }

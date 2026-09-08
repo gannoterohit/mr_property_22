@@ -17,6 +17,10 @@ class ApiCouponController extends BaseApiController
             'context' => 'required|string|in:owner_plans,user_plans,broker_plans,unlocks,all',
         ]);
 
+        if (!\App\Models\Setting::isEnabled('promo_enabled', true)) {
+            return $this->sendError('Coupons and promo codes are currently disabled.', [], 422);
+        }
+
         $offer = Offer::where('code', strtoupper(trim($validated['code'])))->first();
 
         if (!$offer) {

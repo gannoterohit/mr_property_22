@@ -13,6 +13,7 @@ Route::middleware(['auth:sanctum', 'role:broker'])->prefix('broker')->group(func
     Route::middleware('broker.active')->group(function () {
     Route::get('/properties',   [ApiBrokerController::class, 'properties']);
     Route::get('/enquiries',    [ApiBrokerController::class, 'enquiries']);
+    Route::patch('/enquiries/{enquiry}/status', [ApiBrokerController::class, 'updateEnquiryStatus']);
     Route::get('/payments',     [ApiBrokerController::class, 'payments']);
     Route::get('/transactions', [ApiBrokerController::class, 'transactions']);
     Route::get('/profile',      [ApiBrokerController::class, 'profile']);
@@ -30,6 +31,7 @@ Route::middleware(['auth:sanctum', 'role:broker'])->prefix('broker')->group(func
     Route::put('/rooms/{room}',                 [ApiRoomController::class, 'update']);
     Route::post('/rooms/{room}',                [ApiRoomController::class, 'update']);
     Route::delete('/rooms/{room}',              [ApiRoomController::class, 'destroy']);
+    Route::post('/rooms/{room}/duplicate',      [ApiBrokerController::class, 'duplicate']);
     Route::post('/rooms/{room}/toggle-status',  [ApiRoomController::class, 'toggleStatus']);
     Route::post('/rooms/{room}/booked',          [ApiRoomController::class, 'markBooked']);
     Route::post('/rooms/{room}/available',       [ApiRoomController::class, 'markAvailable']);

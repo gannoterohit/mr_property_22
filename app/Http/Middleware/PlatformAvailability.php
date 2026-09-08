@@ -25,18 +25,23 @@ class PlatformAvailability
             return $this->unavailable($request, 'maintenance');
         }
 
-        if (!$this->enabled('registration_enabled', true) && ($request->routeIs('register', 'verify.registration.otp')
+        if (!$this->enabled('registration_enabled', true) && ($request->routeIs('register', 'verify.registration.otp', 'register.broker')
             || $request->is('api/v1/auth/register'))) {
             return $this->unavailable($request, 'registration');
         }
 
-        if (!$this->enabled('new_listings_enabled', true) && ($request->routeIs('rooms.create', 'rooms.store')
-            || ($request->is('api/v1/owner/rooms') && $request->isMethod('post')))) {
+        if (!$this->enabled('new_listings_enabled', true) && ($request->routeIs(
+            'owner.rooms.create', 'owner.rooms.store', 'owner.rooms.drafts.*',
+            'agent.rooms.create', 'agent.rooms.store', 'agent.rooms.drafts.*',
+            '*.rooms.create', '*.rooms.store'
+        ) || ($request->is('api/v1/owner/rooms') && $request->isMethod('post')))) {
             return $this->unavailable($request, 'listings');
         }
 
-        if (!$this->enabled('payments_enabled', true) && ($request->routeIs('unlock.contact', 'razorpay.createOrder', 'subscription.purchase', 'subscribe')
-            || $request->is('api/v1/unlock/*', 'api/v1/payments/*', 'api/v1/subscriptions/purchase'))) {
+        if (!$this->enabled('payments_enabled', true) && ($request->routeIs(
+            'unlock.contact', 'razorpay.createOrder', 'subscription.purchase', 'subscribe',
+            'owner.rooms.featured', 'agent.rooms.featured', '*.rooms.featured'
+        ) || $request->is('api/v1/unlock/*', 'api/v1/payments/*', 'api/v1/subscriptions/purchase'))) {
             return $this->unavailable($request, 'payments');
         }
 

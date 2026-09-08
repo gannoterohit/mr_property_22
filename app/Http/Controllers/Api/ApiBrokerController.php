@@ -100,9 +100,78 @@ class ApiBrokerController extends BaseApiController
             $query->where('unlocked', $request->boolean('status'));
         }
 
+        if ($request->filled('lead_status')) {
+            $query->where('lead_status', $request->lead_status);
+        }
+
+        if ($search = trim($request->get('search', ''))) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($uq) use ($search) {
+                    $uq->where('name', 'like', "%{$search}%")
+                       ->orWhere('phone', 'like', "%{$search}%")
+                       ->orWhere('email', 'like', "%{$search}%");
+                })->orWhereHas('room', function ($rq) use ($search) {
+                    $rq->where('title', 'like', "%{$search}%")
+                       ->orWhere('city', 'like', "%{$search}%");
+                });
+            });
+        }
+
         $enquiries = $query->latest()->paginate(max(1, min(50, $request->integer('limit', 20))));
 
         return $this->sendSuccess($enquiries);
+    }
+
+    public function updateEnquiryStatus(Request $request, Enquiry $enquiry)
+    {
+        $broker = Auth::user();
+
+        if ($enquiry->room?->broker_id !== $broker->id && $enquiry->room?->user_id !== $broker->id) {
+            return $this->sendError('Unauthorized', [], 403);
+        }
+
+        $validated = $request->validate([
+            'lead_status' => 'required|in:new,contacted,visit_scheduled,converted,lost',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $enquiry->update([
+            'lead_status' => $validated['lead_status'],
+            'notes' => $validated['notes'] ?? $enquiry->notes,
+        ]);
+
+        return $this->sendSuccess($enquiry->fresh(['user', 'room']), 'Enquiry status updated successfully.');
+    }
+
+    public function duplicate(Room $room)
+    {
+        $broker = Auth::user();
+        if ($room->user_id !== $broker->id && $room->broker_id !== $broker->id) {
+            return $this->sendError('Unauthorized', [], 403);
+        }
+
+        $newRoom = $room->replicate([
+            'slug',
+            'is_featured',
+            'listing_payment_id',
+            'created_at',
+            'updated_at',
+        ]);
+
+        $newRoom->title = '[Copy] ' . $room->title;
+        $newRoom->slug = Room::generateUniqueSlug($newRoom->title);
+        $newRoom->status = 'pending';
+        $newRoom->listing_status = 'pending';
+        $newRoom->is_featured = false;
+        $newRoom->listing_fee_paid = true;
+        $newRoom->user_id = $broker->id;
+        $newRoom->broker_id = $broker->id;
+        $newRoom->listed_by = 'broker';
+        $newRoom->listing_type = 'broker';
+        $newRoom->expires_at = null;
+        $newRoom->save();
+
+        return $this->sendSuccess(new \App\Http\Resources\RoomResource($newRoom), 'Property duplicated successfully.');
     }
 
     public function payments(Request $request)

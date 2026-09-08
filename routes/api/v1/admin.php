@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Admin\AdminAccessController;
 use App\Http\Controllers\Api\Admin\AdminSystemController;
 use App\Http\Controllers\Api\Admin\AdminAuthController;
 use App\Http\Controllers\Api\Admin\AdminPlatformController;
+use App\Http\Controllers\Api\Admin\AdminBrokerController;
 
 Route::post('/admin/auth/login', [AdminAuthController::class, 'login'])->middleware('throttle:strict_login');
 Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.activity'])->prefix('admin')->group(function () {
@@ -46,6 +47,15 @@ Route::middleware(['auth:sanctum', 'role:admin', 'admin.permission', 'admin.acti
     Route::post('/owners/{id}/toggle-block', [AdminUserController::class, 'toggleBlockOwner']);
     Route::put('/members/{id}/notes',        [AdminUserController::class, 'updateMemberNotes']);
     Route::post('/members/{id}/restore',     [AdminUserController::class, 'restoreMember']);
+
+    // ── Broker Management ────────────────────
+    Route::get('/brokers',                          [AdminBrokerController::class, 'index']);
+    Route::get('/brokers/{id}',                     [AdminBrokerController::class, 'show']);
+    Route::post('/brokers/{id}/approve',            [AdminBrokerController::class, 'approve']);
+    Route::post('/brokers/{id}/reject',             [AdminBrokerController::class, 'reject']);
+    Route::post('/brokers/{id}/suspend',            [AdminBrokerController::class, 'suspend']);
+    Route::post('/brokers/{id}/activate',           [AdminBrokerController::class, 'activate']);
+    Route::post('/brokers/{id}/toggle-featured',    [AdminBrokerController::class, 'toggleFeatured']);
 
     // ── Room Management ─────────────────────
     Route::get('/rooms',                    [AdminRoomController::class, 'index']);

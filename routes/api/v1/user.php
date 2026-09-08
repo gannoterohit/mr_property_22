@@ -18,61 +18,62 @@ use App\Http\Controllers\Api\ApiFcmTokenController;
 use App\Http\Controllers\Api\ApiNotificationController;
 use App\Http\Controllers\Api\ApiCouponController;
 
+// ── Shared Authenticated Member Services (User, Owner, Broker) ────
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/auth/me',              [ApiAuthController::class, 'user']);
+    Route::post('/auth/logout',          [ApiAuthController::class, 'logout']);
+
+    // Profile
+    Route::get('/profile',              [ApiProfileController::class, 'show']);
+    Route::post('/profile/update',       [ApiProfileController::class, 'update']);
+    Route::post('/profile/delete-otp',   [ApiProfileController::class, 'sendDeleteOtp']);
+    Route::delete('/profile',            [ApiProfileController::class, 'destroy']);
+
+    // Push Notifications & FCM
+    Route::post('/fcm-token',            [ApiFcmTokenController::class, 'store']);
+    Route::delete('/fcm-token',         [ApiFcmTokenController::class, 'destroy']);
+    Route::get('/notifications',               [ApiNotificationController::class, 'index']);
+    Route::post('/notifications/read-all',     [ApiNotificationController::class, 'markAllRead']);
+    Route::get('/notifications/unread-count',  [ApiNotificationController::class, 'unreadCount']);
+    Route::post('/notifications/{id}/read',    [ApiNotificationController::class, 'markRead']);
+
+    // Wallet & Balance
+    Route::get('/wallet',               [ApiWalletController::class, 'index']);
+    Route::post('/wallet/convert',      [ApiWalletController::class, 'convertPoints'])->middleware('throttle:10,1');
+
+    // Payments & Razorpay
+    Route::post('/payments/create-order', [ApiPaymentController::class, 'createOrder'])->middleware('throttle:10,1');
+    Route::post('/payments/verify',       [ApiPaymentController::class, 'verifyPayment'])->middleware('throttle:20,1');
+
+    // Plans & Subscriptions (Role-filtered in controller)
+    Route::get('/plans',                     [ApiSubscriptionController::class, 'plans']);
+    Route::post('/subscriptions/purchase',   [ApiSubscriptionController::class, 'purchase'])->middleware('throttle:5,1');
+    Route::get('/subscriptions',              [ApiAccountController::class, 'subscriptions']);
+    Route::get('/payments',                   [ApiAccountController::class, 'payments']);
+
+    // Coupons
+    Route::post('/coupon/apply',  [ApiCouponController::class, 'apply'])->middleware('throttle:20,1');
+    Route::post('/coupon/remove', [ApiCouponController::class, 'remove'])->middleware('throttle:20,1');
+});
+
+// ── Renter / User Specific Features ──────────────────────────
 Route::middleware(['auth:sanctum', 'role:user'])->group(function () {
-
-    // ── Auth & Profile ────────────────────────
-    Route::get('/profile',             [ApiProfileController::class, 'show']);
-    Route::post('/profile/update',      [ApiProfileController::class, 'update']);
-    Route::post('/profile/delete-otp',  [ApiProfileController::class, 'sendDeleteOtp']);
-    Route::delete('/profile',           [ApiProfileController::class, 'destroy']);
-    Route::post('/fcm-token',           [ApiFcmTokenController::class, 'store']);
-    Route::delete('/fcm-token',        [ApiFcmTokenController::class, 'destroy']);
-
-    // ── Notifications ─────────────────────────
-    Route::get('/notifications',              [ApiNotificationController::class, 'index']);
-    Route::post('/notifications/read-all',    [ApiNotificationController::class, 'markAllRead']);
-    Route::get('/notifications/unread-count', [ApiNotificationController::class, 'unreadCount']);
-    Route::post('/notifications/{id}/read',   [ApiNotificationController::class, 'markRead']);
-
-    // ── Dashboard ─────────────────────────────
     Route::get('/dashboard',        [ApiDashboardController::class, 'index']);
     Route::get('/referral-stats',   [ApiDashboardController::class, 'referralStats']);
     Route::post('/rooms/set-city',  [ApiRoomController::class, 'setCity']);
 
-    // ── Payments ──────────────────────────────
-    Route::post('/payments/create-order', [ApiPaymentController::class, 'createOrder'])->middleware('throttle:10,1');
-    Route::post('/payments/verify',       [ApiPaymentController::class, 'verifyPayment'])->middleware('throttle:20,1');
+    // Unlocking Contacts
+    Route::post('/unlock/{room}',   [ApiUnlockController::class, 'unlock'])->middleware('throttle:10,1');
+    Route::get('/unlocks',          [ApiAccountController::class, 'unlocks']);
 
-    // ── Transactions ──────────────────────────
-    Route::post('/unlock/{room}', [ApiUnlockController::class, 'unlock'])->middleware('throttle:10,1');
+    // Wishlist
+    Route::get('/wishlist',                  [ApiWishlistController::class, 'index']);
+    Route::post('/wishlist/toggle/{roomId}', [ApiWishlistController::class, 'toggle']);
 
-    // ── Wallet & Wishlist ─────────────────────
-    Route::get('/wallet',          [ApiWalletController::class, 'index']);
-    Route::post('/wallet/convert', [ApiWalletController::class, 'convertPoints'])->middleware('throttle:10,1');
-    Route::get('/wishlist',                     [ApiWishlistController::class, 'index']);
-    Route::post('/wishlist/toggle/{roomId}',    [ApiWishlistController::class, 'toggle']);
-
-    // ── City Alerts ───────────────────────────
+    // City Alerts
     Route::get('/city-alerts',          [ApiGeneralController::class, 'getCityAlerts']);
     Route::post('/city-alerts',         [ApiGeneralController::class, 'addCityAlert']);
     Route::delete('/city-alerts/{id}',  [ApiGeneralController::class, 'removeCityAlert']);
-
-    // ── Coupons ───────────────────────────────
-    Route::post('/coupon/apply',  [ApiCouponController::class, 'apply'])->middleware('throttle:20,1');
-    Route::post('/coupon/remove', [ApiCouponController::class, 'remove'])->middleware('throttle:20,1');
-
-    // ── Subscriptions ─────────────────────────
-    Route::get('/plans',                    [ApiSubscriptionController::class, 'plans']);
-    Route::post('/subscriptions/purchase',  [ApiSubscriptionController::class, 'purchase'])->middleware('throttle:5,1');
-    Route::get('/subscriptions',             [ApiAccountController::class, 'subscriptions']);
-    Route::get('/payments',                  [ApiAccountController::class, 'payments']);
-    Route::get('/unlocks',                   [ApiAccountController::class, 'unlocks']);
-
-});
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/auth/me', [ApiAuthController::class, 'user']);
-    Route::post('/auth/logout', [ApiAuthController::class, 'logout']);
 });
 
 // Support is shared by renters, owners, and brokers.

@@ -25,12 +25,14 @@ class PlanController extends Controller
             'broker' => 'broker_plans',
             default  => 'user_plans',
         };
-        $coupons = \App\Models\Offer::active()
-            ->where(function($q) use ($context, $role) {
-                $q->whereIn('applicable_for', ['all', $context])
-                  ->whereIn('target_audience', ['both', 'all', $role]);
-            })
-            ->get();
+        $coupons = \App\Models\Setting::isEnabled('promo_enabled', true)
+            ? \App\Models\Offer::active()
+                ->where(function($q) use ($context, $role) {
+                    $q->whereIn('applicable_for', ['all', $context])
+                      ->whereIn('target_audience', ['both', 'all', $role]);
+                })
+                ->get()
+            : collect();
 
         // Show contact subscription plans ONLY to users (ACTIVE ONLY)
         if ($role === 'user') {
