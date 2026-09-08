@@ -46,6 +46,20 @@
                                         @endif
                                     </div>
 
+                                    <!-- Compare button -->
+                                    <button type="button" 
+                                            data-compare-id="{{ $room->id }}"
+                                            data-compare-title="{{ $room->title }}"
+                                            data-compare-rent="{{ (float)$room->rent }}"
+                                            data-compare-image="{{ $room->photo_url ?: asset('assets/images/default-room.svg') }}"
+                                            data-compare-url="{{ route('rooms.show', $room->slug ?: $room->id) }}"
+                                            onclick="handleCompareClick(this, event)"
+                                            title="Compare this property"
+                                            class="compare-btn-wrapper absolute top-2.5 right-12 h-8 px-2 rounded-xl bg-white/95 backdrop-blur-sm shadow-md text-slate-500 hover:text-indigo-600 active:scale-90 transition-all flex items-center justify-center gap-1 text-[11px] font-bold border border-slate-100 cursor-pointer">
+                                        <i class="fas fa-code-compare text-xs"></i>
+                                        <span class="hidden sm:inline">Compare</span>
+                                    </button>
+
                                     <!-- Wishlist heart -->
                                     <button onclick="toggleWishlist(event, {{ $room->id }})" id="wishlist-btn-{{ $room->id }}"
                                             class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-white/95 backdrop-blur-sm shadow-md text-slate-400 hover:text-red-500 active:scale-90 transition-all flex items-center justify-center">

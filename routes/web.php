@@ -45,6 +45,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
+Route::get('/rooms/compare', [RoomController::class, 'compare'])->name('rooms.compare');
 Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
 Route::get('/map-search', [MapSearchController::class, 'index'])->name('rooms.map');
 Route::get('/agencies', [\App\Http\Controllers\AgencyController::class, 'index'])->name('agencies.index');

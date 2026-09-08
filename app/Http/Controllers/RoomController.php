@@ -1404,6 +1404,38 @@ class RoomController extends Controller {
         }
     }
     
+    public function compare(Request $request)
+    {
+        $rawIds = $request->get('ids');
+        $ids = [];
+        if (is_array($rawIds)) {
+            $ids = array_filter(array_map('intval', $rawIds));
+        } elseif (is_string($rawIds) && trim($rawIds) !== '') {
+            $ids = array_filter(array_map('intval', explode(',', $rawIds)));
+        }
+
+        $ids = array_slice(array_unique($ids), 0, 3);
+
+        $rooms = collect();
+        if (!empty($ids)) {
+            $rooms = Room::whereIn('id', $ids)
+                ->with(['propertyType', 'propertyCategory', 'roomTypeOption', 'furnishingOption', 'tenantOption'])
+                ->get()
+                ->sortBy(function ($room) use ($ids) {
+                    return array_search($room->id, $ids);
+                })
+                ->values();
+        }
+
+        // Active amenities for comparison matrix
+        $allAmenities = RoomOption::activeLabelsFor('amenity')->values()->all();
+        if (empty($allAmenities)) {
+            $allAmenities = ['WiFi', 'AC', 'Attached Bathroom', 'Geyser', 'RO Water', 'Parking', 'Refrigerator', 'Power Backup', 'Security/CCTV', 'Lift', 'Balcony', 'Washing Machine'];
+        }
+
+        return view('rooms.compare', compact('rooms', 'allAmenities', 'ids'));
+    }
+
     public function setCity(Request $request) {
         $city = $request->get('city');
         if ($city) {

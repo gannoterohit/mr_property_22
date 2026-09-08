@@ -86,6 +86,22 @@
                     </div>
 
                     <div class="flex items-center gap-2">
+                        {{-- Compare Button --}}
+                        <button type="button" 
+                                data-compare-id="{{ $room->id }}"
+                                data-compare-title="{{ $room->title }}"
+                                data-compare-rent="{{ (float)$room->rent }}"
+                                data-compare-image="{{ $room->photo_url ?: asset('assets/images/default-room.svg') }}"
+                                data-compare-url="{{ route('rooms.show', $room->slug ?: $room->id) }}"
+                                onclick="handleCompareClick(this, event)"
+                                data-detail-compare-btn="{{ $room->id }}"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-indigo-50 hover:border-indigo-200 text-xs font-bold text-slate-700 hover:text-indigo-600 transition shadow-2xs cursor-pointer"
+                                aria-label="Compare {{ $room->title }}"
+                                title="Compare this property">
+                            <i class="fas fa-code-compare text-sm text-slate-400"></i>
+                            <span>Compare</span>
+                        </button>
+
                         {{-- Save / Wishlist Button --}}
                         @php
                             $isSaved = Auth::check() && Auth::user()->hasInWishlist($room->id);
