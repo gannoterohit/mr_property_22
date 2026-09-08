@@ -32,7 +32,7 @@ class AdminPermission
             if (str_contains($path, '/notifications')) return $write ? 'support.manage' : 'support.view';
             if (str_contains($path, '/staff') || str_contains($path, '/roles') || str_contains($path, '/permission-catalog')) return 'staff.manage';
             if (str_contains($path, '/activity-logs')) return 'activity.view';
-            if (str_contains($path, '/brokers')) {
+            if (str_contains($path, '/brokers') || str_contains($path, '/broker-reviews')) {
                 if (str_contains($path, '/broker-settings')) return 'brokers.settings';
                 if (str_contains($path, '/broker-plans')) return 'brokers.plans.manage';
                 return $write ? 'brokers.manage' : 'brokers.view';
@@ -52,7 +52,7 @@ class AdminPermission
         if (str_starts_with($route, 'admin.notifications')) return $write ? 'support.manage' : 'support.view';
         if (str_starts_with($route, 'admin.staff') || str_starts_with($route, 'admin.roles')) return 'staff.manage';
         if (str_starts_with($route, 'admin.activity')) return 'activity.view';
-        if (str_starts_with($route, 'admin.brokers') || str_starts_with($route, 'admin.broker-settings') || str_starts_with($route, 'admin.broker-plans')) {
+        if (str_starts_with($route, 'admin.brokers') || str_starts_with($route, 'admin.broker-reviews') || str_starts_with($route, 'admin.broker-settings') || str_starts_with($route, 'admin.broker-plans')) {
             if (str_starts_with($route, 'admin.broker-settings')) return 'brokers.settings';
             if (str_starts_with($route, 'admin.broker-plans')) return 'brokers.plans.manage';
             return $write ? 'brokers.manage' : 'brokers.view';
