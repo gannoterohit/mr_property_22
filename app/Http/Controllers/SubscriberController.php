@@ -29,6 +29,9 @@ class SubscriberController extends Controller
             'email' => $request->email
         ]);
 
+        // Send newsletter subscription email confirmation
+        \App\Services\NotificationService::notifyNewsletterSubscribed($request->email);
+
         return response()->json([
             'success' => true,
             'message' => 'Thank you for subscribing to our newsletter!'

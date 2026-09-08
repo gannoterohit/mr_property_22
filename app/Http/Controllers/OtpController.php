@@ -236,6 +236,7 @@ class OtpController extends Controller
                 $referredBy = $referrer->id;
                 $referrer->increment('free_unlocks', 1);
                 $initialFreeUnlocks = 1;
+                \App\Services\NotificationService::notifyReferralBonusReceived($referrer, 1, 'A new user registered using your referral code');
             }
         }
 
@@ -265,6 +266,9 @@ class OtpController extends Controller
         }
 
         $user = User::create($userData);
+
+        // Send Welcome email and notification
+        \App\Services\NotificationService::notifyWelcome($user);
 
         // Clear referral session
         session()->forget('referral_code');

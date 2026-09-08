@@ -82,6 +82,54 @@ class NotificationService
                 Log::warning("Admin notification for unlock failed: " . $adminEx->getMessage());
             }
 
+            // 5. Send Instant Lead Email Alert to Property Host (Owner / Broker)
+            $owner = $room->owner;
+            if ($owner && $owner->email) {
+                try {
+                    $ownerRoute = $owner->role === 'broker' ? route('agent.enquiries') : route('owner.enquiries');
+
+                    // Bell Notification to Owner
+                    UserNotification::send(
+                        $owner->id,
+                        'lead_received',
+                        "New Lead: {$user->name} unlocked '{$room->title}'",
+                        "Tenant {$user->name} (Phone: " . ($user->phone ?? 'N/A') . ") has unlocked contact details for your listing '{$room->title}'.",
+                        $ownerRoute,
+                        'fa-user-clock'
+                    );
+
+                    // Firebase Push to Owner
+                    FirebaseService::sendToUser(
+                        $owner,
+                        "New Lead Received ⚡",
+                        "{$user->name} unlocked contact details for '{$room->title}'. Tap to view lead details.",
+                        ['type' => 'lead_received', 'room_id' => (string) $room->id],
+                        $ownerRoute
+                    );
+
+                    // Email to Owner / Broker
+                    Mail::to($owner->email)->send(new BrandedMessageMail(
+                        "New Lead Alert: Contact Unlocked for {$room->title} ⚡",
+                        "New Lead Interested in Your Property",
+                        "A prospective tenant has unlocked contact details for your listing '{$room->title}' on ApnaNest. Please reach out to them promptly!",
+                        "New Lead Alert",
+                        "View Lead Details",
+                        $ownerRoute,
+                        [
+                            'Tenant Name'  => $user->name,
+                            'Tenant Phone' => $user->phone ?? 'N/A',
+                            'Tenant Email' => $user->email ?? 'N/A',
+                            'Property'     => $room->title,
+                            'Unlocked At'  => now()->format('d M Y, h:i A'),
+                        ],
+                        'success',
+                        'Pro tip: Replying or calling leads within 15 minutes increases closing success rates!'
+                    ));
+                } catch (\Exception $ownerMailEx) {
+                    Log::warning("Lead alert email to owner failed: " . $ownerMailEx->getMessage());
+                }
+            }
+
         } catch (\Exception $e) {
             Log::error("NotificationService notifyContactUnlocked error: " . $e->getMessage());
         }
@@ -268,4 +316,465 @@ class NotificationService
             Log::warning("Bell/Firebase notification for complaint update failed: " . $e->getMessage());
         }
     }
+
+    /**
+     * Notify newly registered User/Owner/Broker with a Welcome email and bell notification.
+     */
+    public static function notifyWelcome(User $user): void
+    {
+        try {
+            $roleLabel = ucfirst($user->role);
+            $actionUrl = match ($user->role) {
+                'broker' => route('agent.dashboard'),
+                'owner'  => route('owner.dashboard'),
+                default  => route('home'),
+            };
+
+            // 1. Bell notification
+            try {
+                UserNotification::send(
+                    $user->id,
+                    'welcome',
+                    "Welcome to ApnaNest, {$user->name}! 🎉",
+                    "Thank you for registering on ApnaNest. Explore verified properties or list your own spaces easily.",
+                    $actionUrl,
+                    'fa-user-check'
+                );
+            } catch (\Exception $e) {
+                Log::warning("Welcome bell notification failed: " . $e->getMessage());
+            }
+
+            // 2. Firebase Push Notification
+            FirebaseService::sendToUser(
+                $user,
+                "Welcome to ApnaNest! 🎉",
+                "Thank you for joining ApnaNest. Tap to explore verified properties!",
+                ['type' => 'welcome'],
+                $actionUrl
+            );
+
+            // 2. Welcome Email
+            if ($user->email) {
+                try {
+                    Mail::to($user->email)->send(new BrandedMessageMail(
+                        "Welcome to ApnaNest! 🎉",
+                        "Welcome to ApnaNest, {$user->name}",
+                        "Thank you for joining ApnaNest — your trusted real estate & property listing platform. We are thrilled to have you onboard as a {$roleLabel}!",
+                        "Account Created",
+                        "Go to My Dashboard",
+                        $actionUrl,
+                        [
+                            'Account Name' => $user->name,
+                            'Email'        => $user->email,
+                            'Role'         => $roleLabel,
+                            'Status'       => 'Active',
+                        ],
+                        'primary',
+                        'Need help getting started? Contact our support team anytime from your account dashboard.'
+                    ));
+                } catch (\Exception $mailEx) {
+                    Log::warning("Welcome email failed: " . $mailEx->getMessage());
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error("NotificationService notifyWelcome error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify Broker when their account verification status is updated (Approved, Rejected, Suspended).
+     */
+    public static function notifyBrokerStatusChanged(User $broker, string $status, ?string $reason = null): void
+    {
+        try {
+            if (!$broker->isBroker()) return;
+
+            $statusLabel = ucfirst($status);
+
+            $subject = match ($status) {
+                'approved'  => "Broker Verification Approved! 🎉",
+                'rejected'  => "Broker Verification Status Update ⚠️",
+                'suspended' => "Broker Account Suspended ⚠️",
+                default     => "Broker Account Status Updated",
+            };
+
+            $heading = match ($status) {
+                'approved'  => "Your Broker Account is Verified",
+                'rejected'  => "Verification Status Update",
+                'suspended' => "Account Suspended",
+                default     => "Broker Status Updated: {$statusLabel}",
+            };
+
+            $bodyText = match ($status) {
+                'approved'  => "Congratulations! Your broker verification and agency profile have been approved by admin. You can now post and manage property listings.",
+                'rejected'  => "Your broker verification application could not be approved at this time." . ($reason ? " Reason: {$reason}" : " Please update your agency details and re-submit for review."),
+                'suspended' => "Your broker account has been temporarily suspended by admin. Please contact support if you believe this is an error.",
+                default     => "Your broker account status has been updated to {$statusLabel}.",
+            };
+
+            $actionUrl = match ($status) {
+                'approved' => route('agent.dashboard'),
+                default    => route('agent.pending'),
+            };
+
+            // 1. Bell notification
+            try {
+                UserNotification::send(
+                    $broker->id,
+                    'broker_status',
+                    $heading,
+                    $bodyText,
+                    $actionUrl,
+                    $status === 'approved' ? 'fa-check-circle' : 'fa-exclamation-circle'
+                );
+            } catch (\Exception $e) {
+                Log::warning("Broker status bell notification failed: " . $e->getMessage());
+            }
+
+            // 2. Firebase Push
+            FirebaseService::sendToUser(
+                $broker,
+                $heading,
+                $bodyText,
+                ['type' => 'broker_status', 'status' => $status],
+                $actionUrl
+            );
+
+            // 3. Email Notification
+            if ($broker->email) {
+                try {
+                    $details = [
+                        'Broker Name'  => $broker->name,
+                        'Agency Name'  => $broker->agency_name ?? 'N/A',
+                        'New Status'   => $statusLabel,
+                        'Updated Date' => now()->format('d M Y, h:i A'),
+                    ];
+                    if ($reason) {
+                        $details['Reason / Notes'] = $reason;
+                    }
+
+                    Mail::to($broker->email)->send(new BrandedMessageMail(
+                        $subject,
+                        $heading,
+                        $bodyText,
+                        "Broker Account Update",
+                        $status === 'approved' ? "Go to Agent Dashboard" : "View Account Status",
+                        $actionUrl,
+                        $details,
+                        $status === 'approved' ? 'success' : 'danger',
+                        $status === 'rejected' ? 'You can update your agency details and license information from your profile.' : null
+                    ));
+                } catch (\Exception $mailEx) {
+                    Log::warning("Broker status email failed: " . $mailEx->getMessage());
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error("NotificationService notifyBrokerStatusChanged error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify subscriber when they join newsletter.
+     */
+    public static function notifyNewsletterSubscribed(string $email): void
+    {
+        try {
+            if (!$email) return;
+
+            Mail::to($email)->send(new BrandedMessageMail(
+                "Welcome to ApnaNest Newsletter! 📩",
+                "Thank You for Subscribing!",
+                "You have successfully subscribed to the ApnaNest newsletter. You will now receive regular updates on trending properties, real estate market insights, and exclusive offers.",
+                "Newsletter Subscription",
+                "Explore Properties",
+                route('home'),
+                [
+                    'Subscribed Email' => $email,
+                    'Date'             => now()->format('d M Y'),
+                ],
+                'primary',
+                'You can unsubscribe at any time using the link in our emails.'
+            ));
+        } catch (\Exception $e) {
+            Log::warning("Newsletter subscription email failed: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify Broker when their listing credits are low (<= 1 credit remaining).
+     */
+    public static function notifyLowListingCredits(User $broker, int $remainingCredits): void
+    {
+        try {
+            if (!$broker || !$broker->email) return;
+
+            $actionUrl = route('agent.dashboard');
+
+            // 1. Bell notification
+            try {
+                UserNotification::send(
+                    $broker->id,
+                    'low_credits',
+                    "Low Listing Credits Warning ⚠️",
+                    "You have only {$remainingCredits} listing credit(s) remaining. Top-up credits to continue posting.",
+                    $actionUrl,
+                    'fa-exclamation-triangle'
+                );
+            } catch (\Exception $e) {
+                Log::warning("Low credit bell notification failed: " . $e->getMessage());
+            }
+
+            // 2. Firebase Push Notification
+            FirebaseService::sendToUser(
+                $broker,
+                "Low Listing Credits ⚠️",
+                "Only {$remainingCredits} credit(s) remaining. Tap to top-up!",
+                ['type' => 'low_credits', 'credits' => (string) $remainingCredits],
+                $actionUrl
+            );
+
+            // 2. Email Notification
+            Mail::to($broker->email)->send(new BrandedMessageMail(
+                "Action Required: Low Property Listing Credits ⚠️",
+                "Listing Credits Running Low",
+                "Your account has only {$remainingCredits} listing credit(s) remaining. Top-up your credits now to ensure uninterrupted listing submission.",
+                "Credit Warning",
+                "Buy Listing Credits",
+                $actionUrl,
+                [
+                    'Broker Name'        => $broker->name,
+                    'Remaining Credits' => (string)$remainingCredits,
+                    'Status'            => 'Low Balance',
+                ],
+                'warning',
+                'Credits can be purchased instantly via your agent dashboard.'
+            ));
+        } catch (\Exception $e) {
+            Log::error("NotificationService notifyLowListingCredits error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify Broker when a tenant posts an approved rating/review on their profile.
+     */
+    public static function notifyBrokerReviewReceived(User $broker, $review): void
+    {
+        try {
+            if (!$broker || !$broker->email) return;
+
+            $reviewerName = $review->user->name ?? 'A Tenant';
+            $ratingStars  = str_repeat('⭐', (int) ($review->rating ?? 5));
+            $actionUrl    = route('agent.dashboard');
+
+            // 1. Bell notification
+            try {
+                UserNotification::send(
+                    $broker->id,
+                    'broker_review',
+                    "New Review Received ({$ratingStars}) ⭐",
+                    "{$reviewerName} rated you {$review->rating}/5 stars on ApnaNest.",
+                    $actionUrl,
+                    'fa-star'
+                );
+            } catch (\Exception $e) {
+                Log::warning("Broker review bell notification failed: " . $e->getMessage());
+            }
+
+            // 2. Firebase Push Notification
+            FirebaseService::sendToUser(
+                $broker,
+                "New Review Received ⭐",
+                "{$reviewerName} rated you {$review->rating}/5 stars on ApnaNest.",
+                ['type' => 'broker_review'],
+                $actionUrl
+            );
+
+            // 2. Email Notification
+            Mail::to($broker->email)->send(new BrandedMessageMail(
+                "New Tenant Review & Rating Received! {$ratingStars}",
+                "You Received a New Review!",
+                "A tenant has published a review on your broker profile on ApnaNest. Positive reviews build trust and attract more leads!",
+                "New Client Review",
+                "View My Profile Reviews",
+                $actionUrl,
+                [
+                    'Reviewer' => $reviewerName,
+                    'Rating'   => "{$review->rating} / 5 Stars ({$ratingStars})",
+                    'Review'   => $review->comment ?: 'No written comment.',
+                    'Date'     => now()->format('d M Y'),
+                ],
+                'success'
+            ));
+        } catch (\Exception $e) {
+            Log::error("NotificationService notifyBrokerReviewReceived error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify Broker when a property listing is submitted for admin approval.
+     */
+    public static function notifyPropertySubmitted(User $broker, Room $room): void
+    {
+        try {
+            if (!$broker || !$broker->email) return;
+
+            $actionUrl = route('agent.dashboard');
+
+            // 1. Bell notification
+            try {
+                UserNotification::send(
+                    $broker->id,
+                    'property_submitted',
+                    "Property Submitted: {$room->title}",
+                    "Your listing '{$room->title}' was submitted and is pending admin approval.",
+                    $actionUrl,
+                    'fa-file-upload'
+                );
+            } catch (\Exception $e) {
+                Log::warning("Property submitted bell notification failed: " . $e->getMessage());
+            }
+
+            // 2. Firebase Push Notification
+            FirebaseService::sendToUser(
+                $broker,
+                "Property Submitted 📝",
+                "'{$room->title}' was submitted and is pending admin approval.",
+                ['type' => 'property_submitted', 'room_id' => (string) $room->id],
+                $actionUrl
+            );
+
+            // 2. Email Notification
+            Mail::to($broker->email)->send(new BrandedMessageMail(
+                "Property Submitted for Approval: {$room->title} 📝",
+                "Property Listing Submitted Successfully",
+                "Your property listing '{$room->title}' has been received and is currently under review by the ApnaNest verification team. We usually process listings within a few hours.",
+                "Listing Submitted",
+                "View My Properties",
+                $actionUrl,
+                [
+                    'Property Title' => $room->title,
+                    'City'           => $room->city ?? 'N/A',
+                    'Price'          => '₹' . number_format($room->rent ?? 0, 2),
+                    'Status'         => 'Pending Approval',
+                ],
+                'primary',
+                'You will receive an email notification as soon as your listing is approved and goes live.'
+            ));
+        } catch (\Exception $e) {
+            Log::error("NotificationService notifyPropertySubmitted error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify User when they submit a new complaint / support ticket.
+     */
+    public static function notifyComplaintSubmitted(User $user, $complaint): void
+    {
+        try {
+            if (!$user || !$user->email) return;
+
+            $ticketNumber = $complaint->ticket_number ?? "TKT-{$complaint->id}";
+            $actionUrl    = route('home');
+
+            // 1. Bell notification
+            try {
+                UserNotification::send(
+                    $user->id,
+                    'complaint_submitted',
+                    "Complaint Submitted: #{$ticketNumber} 🎫",
+                    "Your complaint #{$ticketNumber} has been received and is being reviewed by our support team.",
+                    $actionUrl,
+                    'fa-headset'
+                );
+            } catch (\Exception $e) {
+                Log::warning("Complaint submission bell notification failed: " . $e->getMessage());
+            }
+
+            // 2. Firebase Push Notification
+            FirebaseService::sendToUser(
+                $user,
+                "Complaint Ticket Submitted 🎫",
+                "Ticket #{$ticketNumber} received and under review.",
+                ['type' => 'complaint_submitted', 'ticket' => (string) $ticketNumber],
+                $actionUrl
+            );
+
+            // 2. Email Notification
+            Mail::to($user->email)->send(new BrandedMessageMail(
+                "Complaint Ticket Received: #{$ticketNumber} 🎫",
+                "Complaint Ticket Received",
+                "Thank you for contacting ApnaNest Support. We have received your complaint ticket (#{$ticketNumber}). Our dedicated support team is currently reviewing your issue and will get back to you shortly.",
+                "Support Ticket Acknowledgement",
+                "View My Account",
+                $actionUrl,
+                [
+                    'Ticket Number' => "#{$ticketNumber}",
+                    'Subject'       => $complaint->subject ?? 'N/A',
+                    'Category'      => ucfirst($complaint->category ?? 'General'),
+                    'Status'        => 'Submitted (Under Review)',
+                    'Submitted At'  => now()->format('d M Y, h:i A'),
+                ],
+                'primary',
+                'We aim to respond to all support queries within 24 hours.'
+            ));
+        } catch (\Exception $e) {
+            Log::error("NotificationService notifyComplaintSubmitted error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify User when they receive a Referral or Bonus Free Contact Unlock Credit.
+     */
+    public static function notifyReferralBonusReceived(User $user, int $credits = 1, ?string $reason = null): void
+    {
+        try {
+            if (!$user || !$user->email) return;
+
+            $actionUrl = route('home');
+            $reasonText = $reason ?: 'A friend joined ApnaNest using your referral code!';
+
+            // 1. Bell notification
+            try {
+                UserNotification::send(
+                    $user->id,
+                    'referral_bonus',
+                    "Free Unlock Bonus Received! 🎁",
+                    "{$reasonText} You received {$credits} Free Contact Unlock Credit(s).",
+                    $actionUrl,
+                    'fa-gift'
+                );
+            } catch (\Exception $e) {
+                Log::warning("Referral bonus bell notification failed: " . $e->getMessage());
+            }
+
+            // 2. Firebase Push
+            FirebaseService::sendToUser(
+                $user,
+                "Free Contact Credit Earned! 🎁",
+                "{$reasonText} You have +{$credits} Free Unlock Credit(s) available.",
+                ['type' => 'referral_bonus'],
+                $actionUrl
+            );
+
+            // 3. Email Notification
+            Mail::to($user->email)->send(new BrandedMessageMail(
+                "Congratulations! Free Contact Unlock Credit Received 🎁",
+                "Free Contact Credit Added to Your Account!",
+                "Great news! You have earned {$credits} Free Contact Unlock Credit(s) on ApnaNest. {$reasonText}",
+                "Bonus Reward",
+                "Explore & Unlock Properties",
+                $actionUrl,
+                [
+                    'Bonus Credit'        => "+{$credits} Free Unlock(s)",
+                    'Total Free Unlocks' => (string) ($user->free_unlocks ?? 1),
+                    'Reason'             => $reasonText,
+                ],
+                'success',
+                'Use your free credits to instantly unlock owner phone numbers for any verified property listing on ApnaNest!'
+            ));
+        } catch (\Exception $e) {
+            Log::error("NotificationService notifyReferralBonusReceived error: " . $e->getMessage());
+        }
+    }
 }
+

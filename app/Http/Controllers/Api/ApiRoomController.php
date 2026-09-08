@@ -381,6 +381,25 @@ class ApiRoomController extends BaseApiController
                 report($notifEx);
             }
 
+            // Notify broker of property submission & check remaining listing credits (API side)
+            if (Auth::user()?->role === 'broker') {
+                try {
+                    \App\Services\NotificationService::notifyPropertySubmitted(Auth::user(), $room);
+                    $creditRecord = \App\Models\BrokerListingCredit::where('broker_id', Auth::id())
+                        ->where('credits_remaining', '>', 0)
+                        ->where(function ($q) {
+                            $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                        })
+                        ->first();
+                    $remaining = $creditRecord ? $creditRecord->credits_remaining : 0;
+                    if ($remaining <= 1) {
+                        \App\Services\NotificationService::notifyLowListingCredits(Auth::user(), $remaining);
+                    }
+                } catch (\Throwable $ex) {
+                    report($ex);
+                }
+            }
+
             $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
 
             $brokerListingChargesEnabled = \App\Models\BrokerSetting::isEnabled('broker_listing_charges_enabled', false);

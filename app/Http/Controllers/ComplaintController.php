@@ -78,6 +78,9 @@ class ComplaintController extends Controller
             report($e);
         }
 
+        // Send acknowledgement email & notification to user
+        \App\Services\NotificationService::notifyComplaintSubmitted($request->user(), $complaint);
+
         return redirect()->route('complaints.show', $complaint)->with('success', 'Complaint submitted. Your ticket number is ' . $complaint->ticket_number . '.');
     }
 

@@ -89,6 +89,7 @@ class SocialAuthController extends Controller
                     'provider' => $provider,
                     'provider_id' => $socialUser->getId(),
                 ]);
+                \App\Services\NotificationService::notifyWelcome($user);
             } else {
                 $user->update([
                     'provider' => $provider,

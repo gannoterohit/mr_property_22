@@ -81,6 +81,23 @@ class ApiComplaintController extends BaseApiController
             report($e);
         }
 
+        try {
+            $adminEmail = Setting::get('contact_email', config('mail.from.address'));
+            if ($adminEmail) {
+                Mail::to($adminEmail)->send(new BrandedMessageMail(
+                    "New complaint {$complaint->ticket_number}", 'A new complaint needs review',
+                    'A user has submitted a new complaint via Mobile App. Review the ticket and assign it to the appropriate team member.',
+                    'Admin notification', 'Review complaint', route('admin.complaints.show', $complaint),
+                    ['Ticket' => $complaint->ticket_number, 'Subject' => $complaint->subject], 'warning'
+                ));
+            }
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        // Send acknowledgement email & notification to user
+        \App\Services\NotificationService::notifyComplaintSubmitted($request->user(), $complaint);
+
         return $this->sendSuccess($complaint->load('room:id,slug,title'), 'Complaint submitted successfully', 201);
     }
 

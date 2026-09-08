@@ -221,6 +221,7 @@ class ApiAuthController extends BaseApiController
                 'password'          => Hash::make(Str::random(64)),
                 'email_verified_at' => now(),
             ]);
+            \App\Services\NotificationService::notifyWelcome($user);
         }
 
         if ($user->is_blocked) {
@@ -288,6 +289,7 @@ class ApiAuthController extends BaseApiController
                 $referredBy = $referrer->id;
                 $referrer->increment('free_unlocks', 1);
                 $initialFreeUnlocks = 1;
+                \App\Services\NotificationService::notifyReferralBonusReceived($referrer, 1, 'A new user registered using your referral code');
             }
         }
 
@@ -303,6 +305,8 @@ class ApiAuthController extends BaseApiController
             'free_unlocks'      => $initialFreeUnlocks,
             'fcm_token'         => $request->fcm_token ?? null,
         ]);
+
+        \App\Services\NotificationService::notifyWelcome($user);
 
         $token = $user->createToken('flutter_app')->plainTextToken;
 
@@ -386,6 +390,7 @@ class ApiAuthController extends BaseApiController
                     'provider' => $provider,
                     'provider_id' => $socialUser->getId(),
                 ]);
+                \App\Services\NotificationService::notifyWelcome($user);
             } else {
                 $user->update([
                     'provider' => $provider,

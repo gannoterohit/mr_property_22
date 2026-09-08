@@ -211,7 +211,7 @@ class AgencyController extends Controller
             'comment' => 'nullable|string|max:1000',
         ]);
 
-        BrokerReview::updateOrCreate(
+        $review = BrokerReview::updateOrCreate(
             [
                 'broker_id' => $user->id,
                 'user_id' => auth()->id(),
@@ -225,6 +225,8 @@ class AgencyController extends Controller
         );
 
         $user->recalculateBrokerRating();
+
+        \App\Services\NotificationService::notifyBrokerReviewReceived($user, $review);
 
         return back()->with('success', 'Thank you! Your review has been published successfully.');
     }

@@ -446,6 +446,25 @@ class RoomController extends Controller {
                 report($e);
             }
 
+            // Notify broker of property submission & check remaining listing credits
+            if (Auth::user()?->role === 'broker') {
+                try {
+                    \App\Services\NotificationService::notifyPropertySubmitted(Auth::user(), $room);
+                    $creditRecord = \App\Models\BrokerListingCredit::where('broker_id', Auth::id())
+                        ->where('credits_remaining', '>', 0)
+                        ->where(function ($q) {
+                            $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                        })
+                        ->first();
+                    $remaining = $creditRecord ? $creditRecord->credits_remaining : 0;
+                    if ($remaining <= 1) {
+                        \App\Services\NotificationService::notifyLowListingCredits(Auth::user(), $remaining);
+                    }
+                } catch (\Throwable $ex) {
+                    report($ex);
+                }
+            }
+
             // Free-launch mode: skip subscriptions, wallet and Razorpay while
             // keeping the configured listing amount saved for future use.
             $listingFeeEnabled = filter_var(Setting::get('listing_fee_enabled', '0'), FILTER_VALIDATE_BOOLEAN);

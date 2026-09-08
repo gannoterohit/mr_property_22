@@ -86,6 +86,8 @@ class AdminBrokerController extends BaseApiController
             'broker_rejection_reason'    => null,
         ]);
 
+        \App\Services\NotificationService::notifyBrokerStatusChanged($broker, 'approved');
+
         return $this->sendSuccess($broker, 'Broker approved successfully.');
     }
 
@@ -100,11 +102,14 @@ class AdminBrokerController extends BaseApiController
             'reason' => 'nullable|string|max:500',
         ]);
 
+        $reason = $request->input('reason', 'Application rejected by administration.');
         $broker->update([
             'broker_verification_status' => 'rejected',
             'is_broker_active'           => false,
-            'broker_rejection_reason'    => $request->input('reason', 'Application rejected by administration.'),
+            'broker_rejection_reason'    => $reason,
         ]);
+
+        \App\Services\NotificationService::notifyBrokerStatusChanged($broker, 'rejected', $reason);
 
         return $this->sendSuccess($broker, 'Broker rejected successfully.');
     }
@@ -120,11 +125,14 @@ class AdminBrokerController extends BaseApiController
             'reason' => 'nullable|string|max:500',
         ]);
 
+        $reason = $request->input('reason', 'Account suspended by administration.');
         $broker->update([
             'broker_verification_status' => 'suspended',
             'is_broker_active'           => false,
-            'broker_rejection_reason'    => $request->input('reason', 'Account suspended by administration.'),
+            'broker_rejection_reason'    => $reason,
         ]);
+
+        \App\Services\NotificationService::notifyBrokerStatusChanged($broker, 'suspended', $reason);
 
         return $this->sendSuccess($broker, 'Broker suspended successfully.');
     }
@@ -141,6 +149,8 @@ class AdminBrokerController extends BaseApiController
             'is_broker_active'           => true,
             'broker_rejection_reason'    => null,
         ]);
+
+        \App\Services\NotificationService::notifyBrokerStatusChanged($broker, 'approved');
 
         return $this->sendSuccess($broker, 'Broker activated successfully.');
     }

@@ -97,6 +97,8 @@ class AdminBrokerController extends Controller
             'broker_rejected_reason' => null,
         ]);
 
+        \App\Services\NotificationService::notifyBrokerStatusChanged($broker, 'approved');
+
         return back()->with('success', 'Broker approved successfully.');
     }
 
@@ -116,6 +118,8 @@ class AdminBrokerController extends Controller
             'broker_rejected_reason' => $request->reason,
         ]);
 
+        \App\Services\NotificationService::notifyBrokerStatusChanged($broker, 'rejected', $request->reason);
+
         return back()->with('success', 'Broker rejected successfully.');
     }
 
@@ -129,6 +133,8 @@ class AdminBrokerController extends Controller
             'broker_verification_status' => 'suspended',
             'is_broker_active' => false,
         ]);
+
+        \App\Services\NotificationService::notifyBrokerStatusChanged($broker, 'suspended');
 
         return back()->with('success', 'Broker suspended successfully.');
     }
@@ -144,6 +150,8 @@ class AdminBrokerController extends Controller
             'is_broker_active' => true,
             'broker_rejected_reason' => null,
         ]);
+
+        \App\Services\NotificationService::notifyBrokerStatusChanged($broker, 'approved');
 
         return back()->with('success', 'Broker activated successfully.');
     }
@@ -227,6 +235,10 @@ class AdminBrokerController extends Controller
 
         $broker->recalculateBrokerRating();
 
+        if ($review->status === 'approved') {
+            \App\Services\NotificationService::notifyBrokerReviewReceived($broker, $review);
+        }
+
         return back()->with('success', "Review status updated to " . ucfirst($review->status) . ".");
     }
 
@@ -253,6 +265,9 @@ class AdminBrokerController extends Controller
 
         if ($review->broker) {
             $review->broker->recalculateBrokerRating();
+            if ($review->status === 'approved') {
+                \App\Services\NotificationService::notifyBrokerReviewReceived($review->broker, $review);
+            }
         }
 
         return back()->with('success', "Review status updated to " . ucfirst($review->status) . ".");

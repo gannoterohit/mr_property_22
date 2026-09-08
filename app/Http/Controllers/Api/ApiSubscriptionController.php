@@ -147,7 +147,7 @@ class ApiSubscriptionController extends BaseApiController
                     'status'     => 'active',
                 ]);
 
-                Payment::create([
+                $payment = Payment::create([
                     'user_id'      => $user->id,
                     'type'         => 'subscription',
                     'amount'       => 0,
@@ -159,6 +159,7 @@ class ApiSubscriptionController extends BaseApiController
                 $appliedOffer->recordUsage($user->id, 'subscription', $subscription->id, $originalPrice, $discountAmount);
 
                 DB::commit();
+                \App\Services\NotificationService::notifyPaymentSuccess($user, $payment);
 
                 return $this->sendSuccess([
                     'subscription_id' => $subscription->id,
@@ -183,7 +184,7 @@ class ApiSubscriptionController extends BaseApiController
                     'status'     => 'active',
                 ]);
 
-                Payment::create([
+                $payment = Payment::create([
                     'user_id'      => $user->id,
                     'type'         => 'subscription',
                     'amount'       => $finalPrice,
@@ -197,6 +198,7 @@ class ApiSubscriptionController extends BaseApiController
                 }
 
                 DB::commit();
+                \App\Services\NotificationService::notifyPaymentSuccess($user, $payment);
 
                 return $this->sendSuccess([
                     'new_balance'     => (float) $user->wallet_balance,
