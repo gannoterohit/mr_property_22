@@ -60,7 +60,15 @@
                 @foreach($roles as $role)
                     <button type="button" @click="activeRole='{{ $role->slug }}'" :class="activeRole==='{{ $role->slug }}' ? 'admin-theme-bg shadow-sm' : 'text-slate-700 hover:bg-slate-50'" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition">
                         <span :class="activeRole==='{{ $role->slug }}' ? 'bg-white/15 text-white' : 'bg-slate-100 text-slate-500'" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
-                            <i class="fas {{ $role->slug==='super_admin'?'fa-crown':($role->slug==='finance_growth_executive'?'fa-coins':($role->slug==='customer_support_executive'?'fa-headset':($role->slug==='property_operations_executive'?'fa-building':'fa-user-shield'))) }} text-[11px]"></i>
+                            <i class="fas {{ match($role->slug) {
+                                'super_admin' => 'fa-crown',
+                                'property_operations_manager' => 'fa-building',
+                                'customer_support_executive' => 'fa-headset',
+                                'broker_operations_manager' => 'fa-handshake',
+                                'finance_accounts_officer' => 'fa-coins',
+                                'content_growth_manager' => 'fa-bullhorn',
+                                default => 'fa-user-shield'
+                            } }} text-[11px]"></i>
                         </span>
                         <span class="min-w-0 flex-1">
                             <strong class="block truncate text-xs">{{ $role->name }}</strong>
