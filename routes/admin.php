@@ -37,6 +37,7 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])
     Route::get('/roles/create', [\App\Http\Controllers\Admin\AdminRoleController::class, 'create'])->name('roles.create');
     Route::post('/roles', [\App\Http\Controllers\Admin\AdminRoleController::class, 'store'])->name('roles.store');
     Route::put('/roles/{role}', [\App\Http\Controllers\Admin\AdminRoleController::class, 'update'])->name('roles.update');
+    Route::delete('/roles/{role}', [\App\Http\Controllers\Admin\AdminRoleController::class, 'destroy'])->name('roles.destroy');
     Route::get('/activity-logs', [\App\Http\Controllers\Admin\AdminActivityController::class, 'index'])->name('activity.index');
     Route::delete('/activity-logs/bulk', [\App\Http\Controllers\Admin\AdminActivityController::class, 'bulkDestroy'])->name('activity.bulk-destroy');
     Route::delete('/activity-logs/filtered', [\App\Http\Controllers\Admin\AdminActivityController::class, 'destroyFiltered'])->name('activity.destroy-filtered');
