@@ -113,7 +113,16 @@
                                         <i class="fas fa-copy"></i> Copy
                                     </button>
                                 </form>
-                                <button type="button" onclick="sharePropertyBrochure(@json($property->title), '{{ number_format($property->rent) }}', '{{ number_format($property->deposit) }}', @json($property->city), @json(route('rooms.show', $property)))" class="owner-room-btn owner-room-btn-outline" style="color: #059669; border-color: #a7f3d0;" title="Share WhatsApp brochure with clients">
+                                <button type="button" 
+                                        data-share-title="{{ $property->title }}"
+                                        data-share-rent="{{ number_format($property->rent) }}"
+                                        data-share-deposit="{{ $property->deposit ? number_format($property->deposit) : '' }}"
+                                        data-share-city="{{ $property->city }}"
+                                        data-share-link="{{ route('rooms.show', $property) }}"
+                                        onclick="shareBrochureFromBtn(this)" 
+                                        class="owner-room-btn owner-room-btn-outline" 
+                                        style="color: #059669; border-color: #a7f3d0;" 
+                                        title="Share WhatsApp brochure with clients">
                                     <i class="fa-brands fa-whatsapp text-emerald-600"></i> Share
                                 </button>
                                 @if($property->status === 'active')
@@ -191,6 +200,16 @@ async function makeRoomAvailable(roomId) {
         });
     }
 }
+function shareBrochureFromBtn(btn) {
+    if (!btn) return;
+    var title = btn.getAttribute('data-share-title') || 'Rental Property';
+    var rent = btn.getAttribute('data-share-rent') || '0';
+    var deposit = btn.getAttribute('data-share-deposit') || '';
+    var city = btn.getAttribute('data-share-city') || '';
+    var link = btn.getAttribute('data-share-link') || window.location.href;
+    sharePropertyBrochure(title, rent, deposit, city, link);
+}
+
 function sharePropertyBrochure(title, rent, deposit, city, link) {
     var agency = @json(Auth::user()->agency_name ?: Auth::user()->name);
     var text = "🏠 *" + title + "*\n" +

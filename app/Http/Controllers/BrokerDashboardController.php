@@ -103,11 +103,40 @@ class BrokerDashboardController extends Controller
             $query->where('status', $request->lead_status);
         }
 
+        $search = trim((string) $request->get('search'));
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($uq) use ($search) {
+                    $uq->where('name', 'like', "%{$search}%")
+                       ->orWhere('phone', 'like', "%{$search}%")
+                       ->orWhere('email', 'like', "%{$search}%");
+                })->orWhereHas('room', function ($rq) use ($search) {
+                    $rq->where('title', 'like', "%{$search}%")
+                       ->orWhere('city', 'like', "%{$search}%");
+                });
+            });
+        }
+
         $enquiries = $query->latest()->paginate(20)->withQueryString();
 
-        $baseCountQuery = fn() => Enquiry::whereHas('room', function ($q) use ($broker) {
-            $q->where('broker_id', $broker->id)->orWhere('user_id', $broker->id);
-        });
+        $baseCountQuery = function () use ($broker, $search) {
+            $bQuery = Enquiry::whereHas('room', function ($q) use ($broker) {
+                $q->where('broker_id', $broker->id)->orWhere('user_id', $broker->id);
+            });
+            if ($search !== '') {
+                $bQuery->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                           ->orWhere('phone', 'like', "%{$search}%")
+                           ->orWhere('email', 'like', "%{$search}%");
+                    })->orWhereHas('room', function ($rq) use ($search) {
+                        $rq->where('title', 'like', "%{$search}%")
+                           ->orWhere('city', 'like', "%{$search}%");
+                    });
+                });
+            }
+            return $bQuery;
+        };
 
         $statusCounts = [
             'all' => $baseCountQuery()->count(),

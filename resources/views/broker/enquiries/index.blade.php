@@ -122,29 +122,62 @@
         </div>
     </div>
 
+    {{-- Search & Filter Toolbar --}}
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-5 mb-3">
+        <form action="{{ route('agent.enquiries') }}" method="GET" class="relative flex-1 max-w-md">
+            @if(request('lead_status'))
+                <input type="hidden" name="lead_status" value="{{ request('lead_status') }}">
+            @endif
+            <div class="relative flex items-center">
+                <i class="fas fa-search absolute left-3.5 text-slate-400 text-xs"></i>
+                <input type="text" 
+                       name="search" 
+                       value="{{ request('search') }}" 
+                       placeholder="Search by tenant name, phone, or property..." 
+                       class="w-full pl-9 pr-20 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-2xs">
+                @if(request('search'))
+                    <a href="{{ route('agent.enquiries', request()->except('search', 'page')) }}" 
+                       class="absolute right-16 text-slate-400 hover:text-slate-600 text-xs" 
+                       title="Clear search">
+                        <i class="fas fa-times"></i>
+                    </a>
+                @endif
+                <button type="submit" class="absolute right-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold transition shadow-xs">
+                    Search
+                </button>
+            </div>
+        </form>
+
+        @if(request('search') || request('lead_status'))
+            <a href="{{ route('agent.enquiries') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-600 hover:text-rose-600 hover:border-rose-200 transition shadow-2xs shrink-0 self-start sm:self-auto">
+                <i class="fas fa-rotate-left text-[10px]"></i> Clear Filters
+            </a>
+        @endif
+    </div>
+
     {{-- Filter Pills --}}
     <div class="lead-filter-pills">
-        <a href="{{ route('agent.enquiries') }}" class="lead-filter-pill {{ !request('lead_status') ? 'active' : '' }}">
+        <a href="{{ route('agent.enquiries', array_merge(request()->except('lead_status', 'page'), [])) }}" class="lead-filter-pill {{ !request('lead_status') ? 'active' : '' }}">
             <span>All Leads</span>
             <span class="lead-filter-count">{{ $statusCounts['all'] ?? 0 }}</span>
         </a>
-        <a href="{{ route('agent.enquiries', ['lead_status' => 'new']) }}" class="lead-filter-pill {{ request('lead_status') === 'new' ? 'active' : '' }}">
+        <a href="{{ route('agent.enquiries', array_merge(request()->except('lead_status', 'page'), ['lead_status' => 'new'])) }}" class="lead-filter-pill {{ request('lead_status') === 'new' ? 'active' : '' }}">
             <span>New Leads</span>
             <span class="lead-filter-count">{{ $statusCounts['new'] ?? 0 }}</span>
         </a>
-        <a href="{{ route('agent.enquiries', ['lead_status' => 'contacted']) }}" class="lead-filter-pill {{ request('lead_status') === 'contacted' ? 'active' : '' }}">
+        <a href="{{ route('agent.enquiries', array_merge(request()->except('lead_status', 'page'), ['lead_status' => 'contacted'])) }}" class="lead-filter-pill {{ request('lead_status') === 'contacted' ? 'active' : '' }}">
             <span>Contacted</span>
             <span class="lead-filter-count">{{ $statusCounts['contacted'] ?? 0 }}</span>
         </a>
-        <a href="{{ route('agent.enquiries', ['lead_status' => 'visit_scheduled']) }}" class="lead-filter-pill {{ request('lead_status') === 'visit_scheduled' ? 'active' : '' }}">
+        <a href="{{ route('agent.enquiries', array_merge(request()->except('lead_status', 'page'), ['lead_status' => 'visit_scheduled'])) }}" class="lead-filter-pill {{ request('lead_status') === 'visit_scheduled' ? 'active' : '' }}">
             <span>Visit Scheduled</span>
             <span class="lead-filter-count">{{ $statusCounts['visit_scheduled'] ?? 0 }}</span>
         </a>
-        <a href="{{ route('agent.enquiries', ['lead_status' => 'closed']) }}" class="lead-filter-pill {{ request('lead_status') === 'closed' ? 'active' : '' }}">
+        <a href="{{ route('agent.enquiries', array_merge(request()->except('lead_status', 'page'), ['lead_status' => 'closed'])) }}" class="lead-filter-pill {{ request('lead_status') === 'closed' ? 'active' : '' }}">
             <span>Deal Closed</span>
             <span class="lead-filter-count">{{ $statusCounts['closed'] ?? 0 }}</span>
         </a>
-        <a href="{{ route('agent.enquiries', ['lead_status' => 'lost']) }}" class="lead-filter-pill {{ request('lead_status') === 'lost' ? 'active' : '' }}">
+        <a href="{{ route('agent.enquiries', array_merge(request()->except('lead_status', 'page'), ['lead_status' => 'lost'])) }}" class="lead-filter-pill {{ request('lead_status') === 'lost' ? 'active' : '' }}">
             <span>Lost</span>
             <span class="lead-filter-count">{{ $statusCounts['lost'] ?? 0 }}</span>
         </a>
