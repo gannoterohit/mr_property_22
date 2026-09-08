@@ -53,4 +53,9 @@ class Complaint extends Model
     public function assignee() { return $this->belongsTo(User::class, 'assigned_to'); }
     public function replies() { return $this->hasMany(ComplaintReply::class); }
     public function activities() { return $this->hasMany(ComplaintActivity::class); }
+
+    public function isClosed(): bool
+    {
+        return in_array($this->status, ['resolved', 'rejected', 'closed']);
+    }
 }

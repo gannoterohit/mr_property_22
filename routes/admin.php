@@ -154,6 +154,7 @@ Route::middleware(['auth', 'role:admin', 'admin.permission', 'admin.activity'])
     Route::get('/complaints', [\App\Http\Controllers\Admin\ComplaintController::class, 'index'])->name('complaints.index');
     Route::get('/complaints/{complaint}', [\App\Http\Controllers\Admin\ComplaintController::class, 'show'])->name('complaints.show');
     Route::put('/complaints/{complaint}', [\App\Http\Controllers\Admin\ComplaintController::class, 'update'])->name('complaints.update');
+    Route::post('/complaints/{complaint}/assign', [\App\Http\Controllers\Admin\ComplaintController::class, 'assign'])->name('complaints.assign');
     Route::post('/complaints/{complaint}/reply', [\App\Http\Controllers\Admin\ComplaintController::class, 'reply'])->name('complaints.reply');
     Route::post('/complaints/{complaint}/reopen', [\App\Http\Controllers\Admin\ComplaintController::class, 'reopen'])->name('complaints.reopen');
     Route::resource('rejection-reasons', RejectionReasonController::class)->except(['show']);
